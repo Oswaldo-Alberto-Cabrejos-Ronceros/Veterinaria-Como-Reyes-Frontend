@@ -1,12 +1,20 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 @import 'tailwindcss';
-@import "tailwindcss-primeui";
+@import 'tailwindcss-primeui';
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-@theme{
-  --font-inter:"Inter", sans-serif
+@theme {
+  --font-inter: 'Inter', sans-serif;
 }
-body{
-  @apply font-inter
+
+body {
+  @apply font-inter;
+}
+
+//para cambiar el color del icono de todos los inputs addon
+@layer theme {
+  .p-inputgroupaddon {
+    @apply text-neutral-400;
+  }
 }
