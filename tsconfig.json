@@ -13,5 +13,6 @@
     {
       "path": "./tsconfig.cypress.json"
     }
-  ]
+  ],
+  "include": ["test", "src/**/__tests__/*"]
 }
