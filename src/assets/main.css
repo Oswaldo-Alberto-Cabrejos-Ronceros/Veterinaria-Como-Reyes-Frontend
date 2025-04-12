@@ -11,28 +11,35 @@ body {
   @apply font-inter;
 }
 
-
-.textSm{
-  @apply text-sm
+.textSm {
+  @apply text-sm;
 }
 
-.textBase{
-  @apply text-base
+.textBase {
+  @apply text-base;
 }
 
-.textLg{
-  @apply text-xl
+.textLg {
+  @apply text-xl;
 }
 
-.h3{
-  @apply text-2xl
+.h3 {
+  @apply text-2xl;
 }
 
-.h2{
-  @apply text-3xl
+.h2 {
+  @apply text-3xl;
 }
 
-.h1{
-  @apply text-4xl
+.h1 {
+  @apply text-4xl;
 }
 
+.button-the-header {
+  @apply bg-primary-900
+  dark:bg-primary-950
+  border-none
+  hover:bg-primary-950
+  dark:hover:bg-primary-900
+  text-surface-0
+}
