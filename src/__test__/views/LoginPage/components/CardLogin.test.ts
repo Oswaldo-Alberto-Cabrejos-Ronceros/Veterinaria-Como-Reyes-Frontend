@@ -1,6 +1,6 @@
 
 import { describe, expect, it } from "vitest"
-import CardLogin from "@/views/LoginPage/components/CardLogin.vue"
+import CardLogin from "@/views/Auth/LoginPage/components/CardLogin.vue"
 import { mountWithPrimeVue } from "@/__test__/utils/mountWithPrimeVue"
 import  Image  from "primevue/image"
 import InputText from "primevue/inputtext"
