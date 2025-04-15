@@ -2,7 +2,7 @@
 import CardLogin from './components/CardLogin.vue';
 </script>
 <template>
-<div class="w-full h-screen flex items-center justify-center">
+<div class="layout-princiapal-flex">
 <CardLogin/>
 </div>
 </template>

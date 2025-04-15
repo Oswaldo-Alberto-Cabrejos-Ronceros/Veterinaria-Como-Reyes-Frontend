@@ -43,3 +43,7 @@ body {
   dark:hover:bg-primary-900
   text-surface-0
 }
+
+.layout-princiapal-flex{
+  @apply w-full min-h-screen flex items-center justify-center
+}

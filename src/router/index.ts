@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import ClientLayout from '@/layouts/ClientLayout.vue'
 import EmployeeLayout from '@/layouts/EmployeeLayout.vue'
 import LoginPage from '@/views/Auth/LoginPage/LoginPage.vue'
+import RegistrationPage from '@/views/Auth/Registration/RegistrationPage.vue'
 import HomePageClient from '@/views/Client/HomePage/HomePage.vue'
 import HomePageAdministrator from '@/views/Employee/Administrator/HomePage/HomePage.vue'
 import HomePageManager from '@/views/Employee/Manager/HomePage/HomePage.vue'
@@ -22,6 +23,11 @@ const router = createRouter({
           path:'login',
           name:'login',
           component:LoginPage
+        },
+        {
+          path:'registration',
+          name:'registration',
+          component:RegistrationPage
         }
       ]
     },
