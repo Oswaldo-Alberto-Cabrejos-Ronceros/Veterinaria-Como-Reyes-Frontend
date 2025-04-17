@@ -3,7 +3,7 @@ import { LogoutUser } from '@/services/Authentication/aplication/LogoutUser'
 import { AuthApi } from '@/services/Authentication/infrastructure/AuthenticationApi'
 import type { HttpClient } from '../model/HttpClient'
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:8080/api',
+  baseURL: import.meta.env.VITE_API_URL,
   timeout: 5000,
   headers: { 'Content-Type': 'application/json' },
   withCredentials: true,
@@ -20,7 +20,7 @@ axios.interceptors.response.use(
       if (!originalRequest.url.includes('/auth/refresh')) {
         try {
           //try refresh token
-          await axiosInstance.post('auth/refresh')
+          await axiosInstance.post('/auth/refresh')
           return axiosInstance(originalRequest)
         } catch (refreshError) {
           //if resfresh fails, logout
