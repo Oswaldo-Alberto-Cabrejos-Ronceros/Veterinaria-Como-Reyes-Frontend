@@ -1,132 +1,234 @@
 <script setup lang="ts">
-import { Form, Field, ErrorMessage, useForm } from 'vee-validate'
-import * as yup from 'yup'
-
 import Card from 'primevue/card'
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import Checkbox from 'primevue/checkbox'
 import Button from 'primevue/button'
+import { toTypedSchema } from '@vee-validate/yup'
+import { schema } from '@/validation-schemas-forms/schema-register'
+import type { FormValues } from '@/validation-schemas-forms/schema-register'
+import { useForm } from 'vee-validate'
+import LogoRose from '@/assets/images/logos/logo-rose.png'
+import Image from 'primevue/image'
 import Message from 'primevue/message'
+import InputGroup from 'primevue/inputgroup'
+import InputGroupAddon from 'primevue/inputgroupaddon'
 
-//Esquema de validación
-const schema = yup.object({
-  dni: yup.string().required('El DNI es obligatorio').matches(/^\d{8}$/, 'DNI inválido (8 dígitos)'),
-  nombres: yup.string().required('Los nombres son obligatorios'),
-  apellidos: yup.string().required('Los apellidos son obligatorios'),
-  email: yup.string().required('El email es obligatorio').email('Formato de email inválido'),
-  direccion: yup.string().required('La dirección es obligatoria'),
-  celular: yup.string().required('El celular es obligatorio').matches(/^9\d{8}$/, 'Celular inválido (debe empezar con 9 y tener 9 dígitos)'),
-  password: yup.string().required('La contraseña es obligatoria').min(6, 'Mínimo 6 caracteres'),
-  confirmarPassword: yup.string()
-    .required('Debe confirmar la contraseña')
-    .oneOf([yup.ref('password')], 'Las contraseñas no coinciden'),
-  terminos: yup.boolean().oneOf([true], 'Debe aceptar los términos')
+const { handleSubmit, errors, defineField } = useForm<FormValues>({
+  validationSchema: toTypedSchema(schema),
+  initialValues: {
+    dni: '',
+    nombres: '',
+    apellidos: '',
+    email: '',
+    direccion: '',
+    celular: '',
+    password: '',
+    confirmarPassword: '',
+    terminos: false,
+  },
 })
 
-const { meta } = useForm({
-  validationSchema: schema
+// binding
+
+const [dni, dniAttrs] = defineField('dni')
+const [nombres, nombresAttrs] = defineField('nombres')
+const [apellidos, apellidosAttrs] = defineField('apellidos')
+const [email, emailAttrs] = defineField('email')
+const [direccion, direccionAttrs] = defineField('direccion')
+const [celular, celularAttrs] = defineField('celular')
+const [password, passwordAttrs] = defineField('password')
+const [confirmarPassword, confirmarPasswordAttrs] = defineField('confirmarPassword')
+const [terminos, terminosAttrs] = defineField('terminos')
+
+//for send
+
+const onSubmit = handleSubmit((values) => {
+  console.log(values)
 })
 </script>
 
 <template>
-  <Card class="w-full md:w-7 shadow-2xl">
-    <template #title>Registro de Usuario</template>
+  <Card
+    class="h-auto w-[90%] sm:w-xl flex flex-col items-center justify-center dark:bg-surface-800"
+  >
+    <template #header>
+      <Image :src="LogoRose" alt="Logo" width="220" />
+    </template>
+    <template #title><h3 class="h3 text-center">Registro</h3></template>
     <template #content>
-      <Form validate-on-input class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <form
+        @submit.prevent="onSubmit"
+        class="flex flex-col gap-4 w-full max-w-xl xs:min-w-96 sm:min-w-md text-neutral-950 dark:text-surface-0"
+      >
         <!-- DNI -->
         <label>DNI</label>
-        <Field name="dni" v-slot="{ field, errorMessage }">
-          <InputText v-bind="field" placeholder="DNI" :class="{ 'p-invalid': errorMessage }" class="w-full" />
-        </Field>
-        <ErrorMessage name="dni" v-slot="{ message }">
-          <Message severity="error" :text="message" />
-        </ErrorMessage>
+
+        <InputGroup>
+          <InputGroupAddon class="text-neutral-400">
+            <i class="pi pi-id-card"></i>
+          </InputGroupAddon>
+          <InputText v-bind="dniAttrs" v-model="dni" type="text" placeholder="DNI"  />
+        </InputGroup>
+
+        <Message v-if="errors.dni" severity="error" size="small" variant="simple">
+          {{ errors.dni }}
+        </Message>
 
         <!-- names -->
         <label>Nombres</label>
-        <Field name="nombres" v-slot="{ field, errorMessage }">
-          <InputText v-bind="field" placeholder="Nombres" :class="{ 'p-invalid': errorMessage }" class="w-full" />
-        </Field>
-        <ErrorMessage name="nombres" v-slot="{ message }">
-          <Message severity="error" :text="message" />
-        </ErrorMessage>
+
+        <InputGroup>
+          <InputGroupAddon class="text-neutral-400">
+            <i class="pi pi-user"></i>
+          </InputGroupAddon>
+          <InputText
+            v-bind="nombresAttrs"
+            v-model="nombres"
+            type="text"
+            placeholder="Nombres"
+
+          />
+        </InputGroup>
+
+        <Message v-if="errors.nombres" severity="error" size="small" variant="simple">
+          {{ errors.nombres }}
+        </Message>
 
         <!-- last names -->
         <label>Apellidos</label>
-        <Field name="apellidos" v-slot="{ field, errorMessage }">
-          <InputText v-bind="field" placeholder="Apellidos" :class="{ 'p-invalid': errorMessage }" class="w-full" />
-        </Field>
-        <ErrorMessage name="apellidos" v-slot="{ message }">
-          <Message severity="error" :text="message" />
-        </ErrorMessage>
+
+        <InputGroup>
+          <InputGroupAddon class="text-neutral-400">
+            <i class="pi pi-user"></i>
+          </InputGroupAddon>
+          <InputText
+            v-bind="apellidosAttrs"
+            v-model="apellidos"
+            type="text"
+            placeholder="Apellidos"
+
+          />
+        </InputGroup>
+
+        <Message v-if="errors.apellidos" severity="error" size="small" variant="simple">
+          {{ errors.apellidos }}
+        </Message>
 
         <!-- email -->
         <label>Email</label>
-        <Field name="email" v-slot="{ field, errorMessage }">
-          <InputText v-bind="field" placeholder="Correo electrónico" :class="{ 'p-invalid': errorMessage }" class="w-full" />
-        </Field>
-        <ErrorMessage name="email" v-slot="{ message }">
-          <Message severity="error" :text="message" />
-        </ErrorMessage>
+
+        <InputGroup>
+          <InputGroupAddon class="text-neutral-400">
+            <i class="pi pi-envelope"></i>
+          </InputGroupAddon>
+          <InputText
+            v-bind="emailAttrs"
+            v-model="email"
+            type="text"
+            placeholder="Correo electrónico"
+
+          />
+        </InputGroup>
+
+        <Message v-if="errors.email" severity="error" size="small" variant="simple">
+          {{ errors.email }}
+        </Message>
 
         <!-- address -->
         <label>Dirección</label>
-        <Field name="direccion" v-slot="{ field, errorMessage }">
-          <InputText v-bind="field" placeholder="Dirección" :class="{ 'p-invalid': errorMessage }" class="w-full" />
-        </Field>
-        <ErrorMessage name="direccion" v-slot="{ message }">
-          <Message severity="error" :text="message" />
-        </ErrorMessage>
+
+        <InputGroup>
+          <InputGroupAddon class="text-neutral-400">
+            <i class="pi pi-home"></i>
+          </InputGroupAddon>
+          <InputText
+            v-bind="direccionAttrs"
+            v-model="direccion"
+            type="text"
+            placeholder="Dirección"
+
+          />
+        </InputGroup>
+
+        <Message v-if="errors.direccion" severity="error" size="small" variant="simple">
+          {{ errors.direccion }}
+        </Message>
 
         <!-- cell phone -->
         <label>Celular</label>
-        <Field name="celular" v-slot="{ field, errorMessage }">
-          <InputText v-bind="field" placeholder="Celular" :class="{ 'p-invalid': errorMessage }" class="w-full" />
-        </Field>
-        <ErrorMessage name="celular" v-slot="{ message }">
-          <Message severity="error" :text="message" />
-        </ErrorMessage>
+
+        <InputGroup>
+          <InputGroupAddon class="text-neutral-400">
+            <i class="pi pi-mobile"></i>
+          </InputGroupAddon>
+          <InputText
+            v-bind="celularAttrs"
+            v-model="celular"
+            type="tel"
+            placeholder="Celular"
+
+          />
+        </InputGroup>
+
+        <Message v-if="errors.celular" severity="error" size="small" variant="simple">
+          {{ errors.celular }}
+        </Message>
 
         <!-- password -->
         <label>Contraseña</label>
-        <Field name="password" v-slot="{ field, errorMessage }">
-          <Password v-bind="field" toggleMask placeholder="Contraseña" :class="{ 'p-invalid': errorMessage }" class="w-full" />
-        </Field>
-        <ErrorMessage name="password" v-slot="{ message }">
-          <Message severity="error" :text="message" />
-        </ErrorMessage>
+        <InputGroup>
+          <InputGroupAddon class="text-neutral-400">
+            <i class="pi pi-lock"></i>
+          </InputGroupAddon>
+          <Password
+            v-bind="passwordAttrs"
+            v-model="password"
+            toggleMask
+            :feedback="false"
+            placeholder="Contraseña"
+          />
+        </InputGroup>
+        <Message v-if="errors.password" severity="error" size="small" variant="simple">
+          {{ errors.password }}
+        </Message>
 
         <!-- confirm password -->
         <label>Confirmar Contraseña</label>
-        <Field name="confirmarPassword" v-slot="{ field, errorMessage }">
-          <Password v-bind="field" toggleMask placeholder="Confirmar contraseña" :class="{ 'p-invalid': errorMessage }" class="w-full" />
-        </Field>
-        <ErrorMessage name="confirmarPassword" v-slot="{ message }">
-          <Message severity="error" :text="message" />
-        </ErrorMessage>
+
+        <InputGroup>
+          <InputGroupAddon class="text-neutral-400">
+            <i class="pi pi-lock"></i>
+          </InputGroupAddon>
+          <Password
+            v-bind="confirmarPasswordAttrs"
+            v-model="confirmarPassword"
+            toggleMask
+            placeholder="Confirmar contraseña"
+          />
+        </InputGroup>
+
+        <Message v-if="errors.confirmarPassword" severity="error" size="small" variant="simple">
+          {{ errors.confirmarPassword }}
+        </Message>
 
         <!-- terms -->
         <div class="col-span-2 flex items-center gap-2">
-          <Field name="terminos" type="checkbox" v-slot="{ field }">
-            <Checkbox v-bind="field" binary inputId="terminos" />
-          </Field>
+          <Checkbox v-bind="terminosAttrs" v-model="terminos" binary inputId="terminos" />
           <label for="terminos">Acepto los términos y condiciones</label>
         </div>
-        <ErrorMessage name="terminos" v-slot="{ message }">
-          <Message severity="error" :text="message" class="col-span-2" />
-        </ErrorMessage>
-
+        <Message v-if="errors.terminos" severity="error" size="small" variant="simple">
+          {{ errors.terminos }}
+        </Message>
         <!-- button -->
-        <div class="col-span-2">
+
           <Button
             label="Registrar"
             type="submit"
-            class="w-full"
-            :disabled="!meta.valid || !meta.dirty"
+            icon="pi pi-check-circle"
+            iconPos="right"
           />
-        </div>
-      </Form>
+      </form>
     </template>
   </Card>
 </template>

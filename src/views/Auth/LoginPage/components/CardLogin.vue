@@ -42,7 +42,7 @@ const onSubmit = handleSubmit((values) => {
     </template>
 
     <template #content>
-      <form form @submit.prevent="onSubmit"
+      <form @submit.prevent="onSubmit"
         class="flex flex-col gap-4 w-full max-w-lg  xs:min-w-96 sm:min-w-md "
       >
         <!-- email -->
