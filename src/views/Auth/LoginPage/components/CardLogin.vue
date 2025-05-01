@@ -32,7 +32,7 @@ const onSubmit = handleSubmit((values) => {
 </script>
 
 <template>
-  <Card class="h-auto w-md md:w-xl flex flex-col items-center justify-center text-neutral-950 dark:text-surface-0 dark:bg-surface-800 ">
+  <Card class="h-auto w-[90%] sm:w-xl flex flex-col items-center justify-center text-neutral-950 dark:text-surface-0 dark:bg-surface-800 ">
     <template #header>
       <Image :src="LogoRose" alt="Logo" width="220" />
     </template>
@@ -43,7 +43,7 @@ const onSubmit = handleSubmit((values) => {
 
     <template #content>
       <form form @submit.prevent="onSubmit"
-        class="flex flex-col gap-4 w-full max-w-lg min-w-sm md:min-w-md "
+        class="flex flex-col gap-4 w-full max-w-lg  xs:min-w-96 sm:min-w-md "
       >
         <!-- email -->
         <label>Email</label>
