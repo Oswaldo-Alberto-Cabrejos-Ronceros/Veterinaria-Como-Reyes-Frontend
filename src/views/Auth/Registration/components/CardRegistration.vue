@@ -1,128 +1,132 @@
 <script setup lang="ts">
+import { Form, Field, ErrorMessage, useForm } from 'vee-validate'
+import * as yup from 'yup'
+
 import Card from 'primevue/card'
-import InputGroup from 'primevue/inputgroup'
-import InputGroupAddon from 'primevue/inputgroupaddon'
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
-import Checkbox from 'primevue/checkbox';
+import Checkbox from 'primevue/checkbox'
 import Button from 'primevue/button'
-import Image from 'primevue/image'
-import LogoRose from '@/assets/images/logos/logo-rose.png'
+import Message from 'primevue/message'
+
+//Esquema de validación
+const schema = yup.object({
+  dni: yup.string().required('El DNI es obligatorio').matches(/^\d{8}$/, 'DNI inválido (8 dígitos)'),
+  nombres: yup.string().required('Los nombres son obligatorios'),
+  apellidos: yup.string().required('Los apellidos son obligatorios'),
+  email: yup.string().required('El email es obligatorio').email('Formato de email inválido'),
+  direccion: yup.string().required('La dirección es obligatoria'),
+  celular: yup.string().required('El celular es obligatorio').matches(/^9\d{8}$/, 'Celular inválido (debe empezar con 9 y tener 9 dígitos)'),
+  password: yup.string().required('La contraseña es obligatoria').min(6, 'Mínimo 6 caracteres'),
+  confirmarPassword: yup.string()
+    .required('Debe confirmar la contraseña')
+    .oneOf([yup.ref('password')], 'Las contraseñas no coinciden'),
+  terminos: yup.boolean().oneOf([true], 'Debe aceptar los términos')
+})
+
+const { meta } = useForm({
+  validationSchema: schema
+})
 </script>
 
 <template>
-  <Card
-    class="h-auto flex flex-col p-2 items-center justify-center text-neutral-950 dark:text-surface-0 dark:bg-surface-800"
-  >
-  <template #header>   <Image :src="LogoRose" alt="Logo" width="140" />  </template>
-    <template #title>
-      <h3 class="h3 text-center">Registro</h3>
-    </template>
-    <!-- for inputs -->
+  <Card class="w-full md:w-7 shadow-2xl">
+    <template #title>Registro de Usuario</template>
     <template #content>
-      <!-- for internals inputs -->
-      <div class="grid grid-cols-1 gap-2 gap-x-4">
-        <!-- for dni -->
-        <div class="flex justify-between items-center gap-2">
-          <p>DNI</p>
-          <InputGroup class="h-auto w-md">
-            <InputGroupAddon class="text-neutral-400">
-              <i class="pi pi-id-card"></i>
-            </InputGroupAddon>
-            <InputText type="text" placeholder="DNI" />
-            <InputGroupAddon>
-              <Button label="Buscar" />
-            </InputGroupAddon>
-          </InputGroup>
-        </div>
-        <div class="flex justify-between items-center gap-2">
-          <!-- for first name -->
-          <p>Nombres</p>
-          <InputGroup class="h-auto w-md">
-            <InputGroupAddon class="text-neutral-400">
-              <i class="pi pi-user"></i>
-            </InputGroupAddon>
-            <InputText type="text" placeholder="Nombres" />
-          </InputGroup>
-        </div>
-        <div class="flex justify-between items-center gap-2">
-          <!-- for paternal lastname -->
-          <p>Apellidos</p>
-          <InputGroup class="h-auto w-md">
-            <InputGroupAddon class="text-neutral-400">
-              <i class="pi pi-user"></i>
-            </InputGroupAddon>
-            <InputText type="text" placeholder="Apellido Paterno" />
-          </InputGroup>
-        </div>
-        <div class="flex justify-between items-center gap-2">
-          <!-- for email -->
-          <p>Email</p>
-          <InputGroup class="h-auto w-md">
-            <InputGroupAddon class="text-neutral-400">
-              <i class="pi pi-at"></i>
-            </InputGroupAddon>
-            <InputText type="email" placeholder="Email" />
-          </InputGroup>
-        </div>
+      <Form validate-on-input class="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <!-- DNI -->
+        <label>DNI</label>
+        <Field name="dni" v-slot="{ field, errorMessage }">
+          <InputText v-bind="field" placeholder="DNI" :class="{ 'p-invalid': errorMessage }" class="w-full" />
+        </Field>
+        <ErrorMessage name="dni" v-slot="{ message }">
+          <Message severity="error" :text="message" />
+        </ErrorMessage>
 
-        <div class="flex justify-between items-center gap-2">
-          <!-- for address -->
-          <p>Dirección</p>
-          <InputGroup class="h-auto w-md">
-            <InputGroupAddon class="text-neutral-400">
-              <i class="pi pi-home"></i>
-            </InputGroupAddon>
-            <InputText type="text" placeholder="Direccion" />
-          </InputGroup>
-        </div>
+        <!-- names -->
+        <label>Nombres</label>
+        <Field name="nombres" v-slot="{ field, errorMessage }">
+          <InputText v-bind="field" placeholder="Nombres" :class="{ 'p-invalid': errorMessage }" class="w-full" />
+        </Field>
+        <ErrorMessage name="nombres" v-slot="{ message }">
+          <Message severity="error" :text="message" />
+        </ErrorMessage>
 
-        <div class="flex justify-between items-center gap-2">
-          <!-- for cellphone -->
-          <p>Celular</p>
-          <InputGroup class="h-auto w-md">
-            <InputGroupAddon class="text-neutral-400">
-              <i class="pi pi-mobile"></i>
-            </InputGroupAddon>
-            <InputText type="text" placeholder="Celular" />
-          </InputGroup>
-        </div>
+        <!-- last names -->
+        <label>Apellidos</label>
+        <Field name="apellidos" v-slot="{ field, errorMessage }">
+          <InputText v-bind="field" placeholder="Apellidos" :class="{ 'p-invalid': errorMessage }" class="w-full" />
+        </Field>
+        <ErrorMessage name="apellidos" v-slot="{ message }">
+          <Message severity="error" :text="message" />
+        </ErrorMessage>
 
-        <div class="flex justify-between items-center gap-2">
-          <!-- for password -->
-          <p>Contraseña</p>
-          <InputGroup class="h-auto w-md">
-            <InputGroupAddon class="text-neutral-400">
-              <i class="pi pi-lock"></i>
-            </InputGroupAddon>
-            <Password  placeholder="Contraseña" toggleMask  promptLabel="Ingrese Contraseña" weakLabel="Muy simple" mediumLabel="Contreña más compleja" strongLabel="Contraseña segura" />
-          </InputGroup>
+        <!-- email -->
+        <label>Email</label>
+        <Field name="email" v-slot="{ field, errorMessage }">
+          <InputText v-bind="field" placeholder="Correo electrónico" :class="{ 'p-invalid': errorMessage }" class="w-full" />
+        </Field>
+        <ErrorMessage name="email" v-slot="{ message }">
+          <Message severity="error" :text="message" />
+        </ErrorMessage>
+
+        <!-- address -->
+        <label>Dirección</label>
+        <Field name="direccion" v-slot="{ field, errorMessage }">
+          <InputText v-bind="field" placeholder="Dirección" :class="{ 'p-invalid': errorMessage }" class="w-full" />
+        </Field>
+        <ErrorMessage name="direccion" v-slot="{ message }">
+          <Message severity="error" :text="message" />
+        </ErrorMessage>
+
+        <!-- cell phone -->
+        <label>Celular</label>
+        <Field name="celular" v-slot="{ field, errorMessage }">
+          <InputText v-bind="field" placeholder="Celular" :class="{ 'p-invalid': errorMessage }" class="w-full" />
+        </Field>
+        <ErrorMessage name="celular" v-slot="{ message }">
+          <Message severity="error" :text="message" />
+        </ErrorMessage>
+
+        <!-- password -->
+        <label>Contraseña</label>
+        <Field name="password" v-slot="{ field, errorMessage }">
+          <Password v-bind="field" toggleMask placeholder="Contraseña" :class="{ 'p-invalid': errorMessage }" class="w-full" />
+        </Field>
+        <ErrorMessage name="password" v-slot="{ message }">
+          <Message severity="error" :text="message" />
+        </ErrorMessage>
+
+        <!-- confirm password -->
+        <label>Confirmar Contraseña</label>
+        <Field name="confirmarPassword" v-slot="{ field, errorMessage }">
+          <Password v-bind="field" toggleMask placeholder="Confirmar contraseña" :class="{ 'p-invalid': errorMessage }" class="w-full" />
+        </Field>
+        <ErrorMessage name="confirmarPassword" v-slot="{ message }">
+          <Message severity="error" :text="message" />
+        </ErrorMessage>
+
+        <!-- terms -->
+        <div class="col-span-2 flex items-center gap-2">
+          <Field name="terminos" type="checkbox" v-slot="{ field }">
+            <Checkbox v-bind="field" binary inputId="terminos" />
+          </Field>
+          <label for="terminos">Acepto los términos y condiciones</label>
         </div>
-        <div class="flex justify-between items-center gap-2">
-          <!-- for password -->
-          <p>Confirmar contraseña</p>
-          <InputGroup class="h-auto w-md">
-            <InputGroupAddon class="text-neutral-400">
-              <i class="pi pi-lock"></i>
-            </InputGroupAddon>
-            <Password placeholder="Confirmar Contraseña" toggleMask :feedback="false" />
-          </InputGroup>
+        <ErrorMessage name="terminos" v-slot="{ message }">
+          <Message severity="error" :text="message" class="col-span-2" />
+        </ErrorMessage>
+
+        <!-- button -->
+        <div class="col-span-2">
+          <Button
+            label="Registrar"
+            type="submit"
+            class="w-full"
+            :disabled="!meta.valid || !meta.dirty"
+          />
         </div>
-      </div>
-    </template>
-    <template #footer>
-      <div class="w-full flex flex-col gap-1 items-center justify-center">
-        <div class="flex items-center gap-2 w-full">
-        <Checkbox  inputId="Terminos" name="Terminos" binary />
-        <label for="Terminos"> Acepto </label>
-        <a href="" class="hover:text-primary transition-colors duration-150">Terminos y condiciones</a>
-    </div>
-        <Button class="w-md mt-4" label="Registrar" severity="success" />
-        <div class="flex items-center gap-2">
-            <p>Ya tienes una cuenta?</p> 
-            <a href=""  class="hover:text-primary transition-colors duration-150">Iniciar Sesion</a>
-        </div>
-      </div >
+      </Form>
     </template>
   </Card>
 </template>

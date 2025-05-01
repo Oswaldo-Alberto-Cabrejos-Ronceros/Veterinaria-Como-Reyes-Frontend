@@ -1,71 +1,85 @@
 <script setup lang="ts">
+import InputText from 'primevue/inputtext'
 import Card from 'primevue/card'
 import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
-import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import Image from 'primevue/image'
 import LogoRose from '@/assets/images/logos/logo-rose.png'
 import Button from 'primevue/button'
-import { defineEmits, reactive } from 'vue'
-//emitter
-const emit = defineEmits(['emit-login'])
+import Message from 'primevue/message'
+import {schema} from '@/validation-schemas-forms/schema-login'
+import type {FormValues} from '@/validation-schemas-forms/schema-login'
+import { toTypedSchema } from '@vee-validate/yup';
+import { useForm } from 'vee-validate'
+// Setup del formulario con tipado
+const { handleSubmit, errors,  defineField } = useForm<FormValues>({
+  validationSchema: toTypedSchema(schema),
+  initialValues: {
+    email: '',
+    password: ''
+  }
+})
 
-//function that emit login action
-const doLogin = () => {
-  emit('emit-login',formLoginData)
-  console.log('Emitiendo',formLoginData)
-}
+// Campos individuales con binding
+const [email, emailAttrs] = defineField('email')
+const [password, passwordAttrs] = defineField('password')
 
-const formLoginData = reactive({ email: '', password: '' })
+// Al enviar
+const onSubmit = handleSubmit((values) => {
+  console.log('Valores enviados:', values)
+})
 </script>
 
 <template>
-  <form @submit.prevent="doLogin()">
-  <Card
-    class="h-auto w-xl flex flex-col items-center justify-center text-neutral-950 dark:text-surface-0 dark:bg-surface-800"
-  >
-    <!-- header for image -->
-    <template #header> <Image :src="LogoRose" alt="Logo" width="220" /></template>
+  <Card class="h-auto w-md md:w-xl flex flex-col items-center justify-center text-neutral-950 dark:text-surface-0 dark:bg-surface-800 ">
+    <template #header>
+      <Image :src="LogoRose" alt="Logo" width="220" />
+    </template>
 
     <template #title>
-      <h3 class="h3 text-center">Iniciar Sesion</h3>
+      <h3 class="h3 text-center">Iniciar Sesión</h3>
     </template>
-    <!-- for inputs -->
 
     <template #content>
-      <!-- for inputs internal -->
-      <div class="flex flex-col gap-4">
-        <!-- for email -->
-        <p>Email</p>
-        <InputGroup class="h-auto w-md">
+      <form form @submit.prevent="onSubmit"
+        class="flex flex-col gap-4 w-full max-w-lg min-w-sm md:min-w-md "
+      >
+        <!-- email -->
+        <label>Email</label>
+        <InputGroup>
           <InputGroupAddon class="text-neutral-400">
             <i class="pi pi-user"></i>
           </InputGroupAddon>
-          <InputText v-model="formLoginData.email" type="email" placeholder="Email" />
+          <InputText v-bind="emailAttrs" v-model="email" type="text" placeholder="Email" />
         </InputGroup>
-        <!-- for password -->
-        <p class="textBase">Contraseña</p>
+        <Message v-if="errors.email" severity="error" size="small" variant="simple">
+          {{ errors.email }}
+        </Message>
+
+
+        <!-- password -->
+        <label>Contraseña</label>
         <InputGroup>
           <InputGroupAddon class="text-neutral-400">
             <i class="pi pi-lock"></i>
           </InputGroupAddon>
-          <Password v-model="formLoginData.password" toggleMask :feedback="false" placeholder="Contraseña" />
+          <Password v-bind="passwordAttrs" v-model="password" toggleMask :feedback="false" placeholder="Contraseña" />
         </InputGroup>
-      </div>
-    </template>
-    <!-- for bottons -->
-    <template #footer>
-      <Button
-      type="submit"
-        class="w-md mt-4"
-        label="Ingresar"
-        severity="success"
-        icon="pi pi-sign-in"
-        iconPos="right"
-      />
-    </template>
+        <Message v-if="errors.password" severity="error" size="small" variant="simple">
+          {{ errors.password }}
+        </Message>
 
+
+        <!-- button -->
+        <Button
+          label="Ingresar"
+          type="submit"
+          icon="pi pi-sign-in"
+          iconPos="right"
+          class="mt-4"
+        />
+      </form>
+    </template>
   </Card>
-</form>
 </template>
