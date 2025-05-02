@@ -25,7 +25,7 @@ const items = ref<MenuItem[]>([
   <div class="w-full min-h-screen flex flex-col">
     <TheHeader />
     <main class="w-full flex-1 flex p-2">
-      <aside class="w-64"> <Menu :model="items">
+      <aside class="w-64"> <Menu class="" :model="items">
           <template #item="{ item, props }">
             <router-link v-if="item.to" v-slot="{ href, navigate }" :to="item.to" custom >
               <a :href="href" v-bind="props.action" @click="navigate" class="flex align-items-center">

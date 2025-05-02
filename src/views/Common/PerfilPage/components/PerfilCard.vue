@@ -86,7 +86,7 @@ const profileImageDefault:string="https://img.freepik.com/vector-gratis/circulo-
 
 <template>
   <Card
-    class="h-auto min-w-full flex text-neutral-950 dark:text-surface-0 dark:bg-surface-800 px-4 py-4"
+    class="h-min min-w-full flex text-neutral-950 dark:text-surface-0 dark:bg-surface-800 px-4 py-4"
   >
     <template #header>
       <div class="flex gap-4 items-center w-full">
