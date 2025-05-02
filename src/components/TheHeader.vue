@@ -4,7 +4,14 @@ import { RouterLink } from 'vue-router'
 import Image from 'primevue/image'
 import LogoWhite from '@/assets/images/logos/logo-white.png'
 import Button from 'primevue/button'
-import ButtonTheme from './ButtonTheme.vue'
+import { useThemeStore } from '@/stores/themeStore'
+import { computed } from 'vue'
+
+const themeStore = useThemeStore();
+
+const iconTheme= computed(()=>(
+  themeStore.isDark?"pi-moon":'pi-sun'
+))
 </script>
 
 <template>
@@ -19,12 +26,10 @@ import ButtonTheme from './ButtonTheme.vue'
     </template>
     <template #end>
     <div class="flex items-center gap-2">
-      <ButtonTheme/>
-      <Button icon="pi pi-sun" severity="info" rounded aria-label="Calendario" class="button-the-header" />
+      <Button :icon="`pi ${iconTheme}`" severity="info" rounded aria-label="Calendario" class="button-the-header" @click="themeStore.toggleTheme"/>
       <Button icon="pi pi-calendar" severity="info" rounded aria-label="Calendario" class="button-the-header" />
       <Button icon="pi pi-bell" severity="info" rounded aria-label="Notificaciones" class="button-the-header" />
       <RouterLink to="perfil"><Button icon="pi pi-user" severity="info" rounded aria-label="Usuario" class="button-the-header"  /></RouterLink>
-
     </div>
     </template>
   </Menubar>

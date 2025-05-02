@@ -6,12 +6,15 @@ import InputGroupAddon from 'primevue/inputgroupaddon'
 import Password from 'primevue/password'
 import Image from 'primevue/image'
 import LogoRose from '@/assets/images/logos/logo-rose.png'
+import LogoWhite from '@/assets/images/logos/logo-white.png'
 import Button from 'primevue/button'
 import Message from 'primevue/message'
 import {schema} from '@/validation-schemas-forms/schema-login'
 import type {FormValues} from '@/validation-schemas-forms/schema-login'
 import { toTypedSchema } from '@vee-validate/yup';
 import { useForm } from 'vee-validate'
+import { useThemeStore } from '@/stores/themeStore'
+import { computed } from 'vue'
 // Setup del formulario con tipado
 const { handleSubmit, errors,  defineField } = useForm<FormValues>({
   validationSchema: toTypedSchema(schema),
@@ -29,12 +32,19 @@ const [password, passwordAttrs] = defineField('password')
 const onSubmit = handleSubmit((values) => {
   console.log('Valores enviados:', values)
 })
+
+//for theme
+const storeTheme = useThemeStore();
+const imageLogo=computed(()=>(
+  storeTheme.isDark? LogoWhite: LogoRose
+))
+
 </script>
 
 <template>
   <Card class="self-center w-[90%] sm:w-xl flex flex-col items-center justify-center text-neutral-950 dark:text-surface-0 dark:bg-surface-800 ">
     <template #header>
-      <Image :src="LogoRose" alt="Logo" width="220" />
+      <Image :src="imageLogo" alt="Logo" width="220" />
     </template>
 
     <template #title>

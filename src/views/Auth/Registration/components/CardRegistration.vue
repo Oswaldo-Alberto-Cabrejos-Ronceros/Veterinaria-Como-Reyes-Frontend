@@ -9,10 +9,13 @@ import { schema } from '@/validation-schemas-forms/schema-register'
 import type { FormValues } from '@/validation-schemas-forms/schema-register'
 import { useForm } from 'vee-validate'
 import LogoRose from '@/assets/images/logos/logo-rose.png'
+import LogoWhite from '@/assets/images/logos/logo-white.png'
 import Image from 'primevue/image'
 import Message from 'primevue/message'
 import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
+import { useThemeStore } from '@/stores/themeStore'
+import { computed } from 'vue'
 
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
   validationSchema: toTypedSchema(schema),
@@ -46,6 +49,15 @@ const [terminos, terminosAttrs] = defineField('terminos')
 const onSubmit = handleSubmit((values) => {
   console.log(values)
 })
+
+
+//for theme
+
+const storeTheme = useThemeStore();
+const imageLogo=computed(()=>(
+  storeTheme.isDark? LogoWhite: LogoRose
+))
+
 </script>
 
 <template>
@@ -53,7 +65,7 @@ const onSubmit = handleSubmit((values) => {
     class="h-auto w-[90%] sm:w-xl flex flex-col items-center justify-center dark:bg-surface-800"
   >
     <template #header>
-      <Image :src="LogoRose" alt="Logo" width="220" />
+      <Image :src="imageLogo" alt="Logo" width="220" />
     </template>
     <template #title><h3 class="h3 text-center">Registro</h3></template>
     <template #content>
