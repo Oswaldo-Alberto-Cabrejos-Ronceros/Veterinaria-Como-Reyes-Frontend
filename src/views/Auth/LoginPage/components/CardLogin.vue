@@ -42,7 +42,7 @@ const imageLogo=computed(()=>(
 </script>
 
 <template>
-  <Card class="self-center w-[90%] sm:w-xl flex flex-col items-center justify-center text-neutral-950 dark:text-surface-0 dark:bg-surface-800 ">
+  <Card class="w-[90%] sm:w-xl flex flex-col items-center justify-center text-neutral-950 dark:text-surface-0 dark:bg-surface-800 ">
     <template #header>
       <Image :src="imageLogo" alt="Logo" width="220" />
     </template>
