@@ -36,7 +36,7 @@ const items = ref<MenuItem[]>([
           </template>
         </Menu>
       </aside>
-      <section class="flex-1 h-auto p-4"> <router-view />
+      <section class="flex-1 h-auto px-4"> <router-view />
       </section>
 
     </main>

@@ -23,7 +23,8 @@ import ButtonTheme from './ButtonTheme.vue'
       <Button icon="pi pi-sun" severity="info" rounded aria-label="Calendario" class="button-the-header" />
       <Button icon="pi pi-calendar" severity="info" rounded aria-label="Calendario" class="button-the-header" />
       <Button icon="pi pi-bell" severity="info" rounded aria-label="Notificaciones" class="button-the-header" />
-      <Button icon="pi pi-user" severity="info" rounded aria-label="Usuario" class="button-the-header"  />
+      <RouterLink to="perfil"><Button icon="pi pi-user" severity="info" rounded aria-label="Usuario" class="button-the-header"  /></RouterLink>
+
     </div>
     </template>
   </Menubar>

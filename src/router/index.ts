@@ -8,95 +8,121 @@ import HomePageAdministrator from '@/views/Employee/Administrator/HomePage/HomeP
 import HomePageManager from '@/views/Employee/Manager/HomePage/HomePage.vue'
 import HomePageReceptionist from '@/views/Employee/Receptionist/HomePage/HomePage.vue'
 import HomePageVeterinary from '@/views/Employee/Veterinary/HomePage/HomePage.vue'
+import PerfilPage from '@/views/Common/PerfilPage/PerfilPage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      redirect:'/auth/login'
+      redirect: '/auth/login',
     },
     {
-      path:'/auth',
-      children:[
+      path: '/auth',
+      children: [
         {
-          path:'login',
-          name:'login',
-          component:LoginPage
+          path: 'login',
+          name: 'login',
+          component: LoginPage,
         },
         {
-          path:'registration',
-          name:'registration',
-          component:RegistrationPage
-        }
-      ]
+          path: 'registration',
+          name: 'registration',
+          component: RegistrationPage,
+        },
+      ],
     },
     {
-      path:'/client',
-      redirect:'/client/home',
-      component:ClientLayout,
-      children:[
+      path: '/client',
+      redirect: '/client/home',
+      component: ClientLayout,
+      children: [
         {
-          path:'home',
-          name:'client-home',
-          component:HomePageClient
+          path: 'home',
+          name: 'client-home',
+          component: HomePageClient,
+        },
+        {
+          path: 'perfil',
+          name: 'client-perfil',
+          component: PerfilPage,
         }
-      ]
+      ],
     },
     {
-      path:'/employee',
-      component:EmployeeLayout,
-      redirect:'/',
-      children:[
+      path: '/employee',
+      component: EmployeeLayout,
+      redirect: '/',
+      children: [
         {
-          path:'administrador',
-          meta: { role:'ADMINISTRATOR' },
-          children:[
+          path: 'administrador',
+          meta: { role: 'ADMINISTRATOR' },
+          children: [
             {
-              path:'home',
-              name:'administrator-home',
-              component:HomePageAdministrator
+              path: 'home',
+              name: 'administrator-home',
+              component: HomePageAdministrator,
+            },
+            {
+              path: 'perfil',
+              name: 'administrator-perfil',
+              component: PerfilPage,
             }
-          ]
+          ],
         },
         {
-          path:'manager',
-          meta: { role:'MANAGER' },
-          redirect:'/employee/manager/home',
-          children:[
+          path: 'manager',
+          meta: { role: 'MANAGER' },
+          redirect: '/employee/manager/home',
+          children: [
             {
-              path:'home',
-              name:'manager-home',
-              component:HomePageManager
-            }
-          ]
+              path: 'home',
+              name: 'manager-home',
+              component: HomePageManager,
+            },
+            {
+              path: 'perfil',
+              name: 'maneger-perfil',
+              component: PerfilPage,
+            },
+          ],
         },
         {
-          path:'receptionist',
-          meta: { role:'RECEPTIONIST' },
-          redirect:'/employee/receptionist/home',
-          children:[
+          path: 'receptionist',
+          meta: { role: 'RECEPTIONIST' },
+          redirect: '/employee/receptionist/home',
+          children: [
             {
-              path:'home',
-              name:'receptionist-home',
-              component:HomePageReceptionist
-            }
-          ]
+              path: 'home',
+              name: 'receptionist-home',
+              component: HomePageReceptionist,
+            },
+            {
+              path: 'perfil',
+              name: 'receptionist-perfil',
+              component: PerfilPage,
+            },
+          ],
         },
         {
-          path:'veterinary',
-          meta: { role:'VETERINARY' },
-          redirect:'/employee/veterinary/home',
-          children:[
+          path: 'veterinary',
+          meta: { role: 'VETERINARY' },
+          redirect: '/employee/veterinary/home',
+          children: [
             {
-              path:'home',
-              name:'veterinary-home',
-              component:HomePageVeterinary
+              path: 'home',
+              name: 'veterinary-home',
+              component: HomePageVeterinary,
+            },
+            {
+              path: 'perfil',
+              name: 'veterinary-perfil',
+              component: PerfilPage,
             }
-          ]
-        }
-      ]
-    }
+          ],
+        },
+      ],
+    },
   ],
 })
 
