@@ -4,6 +4,8 @@ import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import Checkbox from 'primevue/checkbox'
 import Button from 'primevue/button'
+import DatePicker from 'primevue/datepicker'
+import Select from 'primevue/select'
 import { toTypedSchema } from '@vee-validate/yup'
 import { schema } from '@/validation-schemas-forms/schema-register'
 import type { FormValues } from '@/validation-schemas-forms/schema-register'
@@ -17,6 +19,7 @@ import InputGroupAddon from 'primevue/inputgroupaddon'
 import { useThemeStore } from '@/stores/themeStore'
 import { computed } from 'vue'
 
+
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
@@ -26,11 +29,21 @@ const { handleSubmit, errors, defineField } = useForm<FormValues>({
     email: '',
     direccion: '',
     celular: '',
+    fechaNac:undefined,
+    sede:undefined,
     password: '',
     confirmarPassword: '',
     terminos: false,
   },
 })
+
+
+//headquarkers
+const headquarkers = [
+  { name: 'Ica', value: 1},
+  { name: 'Parcona', value: 2 },
+  { name: 'Tinguiña', value: 3 }
+]
 
 // binding
 
@@ -39,6 +52,8 @@ const [nombres, nombresAttrs] = defineField('nombres')
 const [apellidos, apellidosAttrs] = defineField('apellidos')
 const [email, emailAttrs] = defineField('email')
 const [direccion, direccionAttrs] = defineField('direccion')
+const [fechaNac, fechaNacAttrs] = defineField('fechaNac')
+const [sede, sedeAttrs] = defineField('sede')
 const [celular, celularAttrs] = defineField('celular')
 const [password, passwordAttrs] = defineField('password')
 const [confirmarPassword, confirmarPasswordAttrs] = defineField('confirmarPassword')
@@ -186,6 +201,23 @@ const imageLogo=computed(()=>(
         <Message v-if="errors.celular" severity="error" size="small" variant="simple">
           {{ errors.celular }}
         </Message>
+
+        <!-- birthDate -->
+        <label>Fecha Nacimiento</label>
+
+        <DatePicker v-bind="fechaNacAttrs" v-model="fechaNac" showIcon fluid iconDisplay="input" />
+        <Message v-if="errors.fechaNac" severity="error" size="small" variant="simple">
+          {{ errors.fechaNac }}
+        </Message>
+
+        <!--sede-->
+        <label>Sede</label>
+        <Select v-bind="sedeAttrs" v-model="sede" :options="headquarkers" optionLabel="name" optionValue="value" placeholder="Selecciona Sede"  />
+
+        <Message v-if="errors.sede" severity="error" size="small" variant="simple">
+          {{ errors.sede }}
+        </Message>
+
 
         <!-- password -->
         <label>Contraseña</label>
