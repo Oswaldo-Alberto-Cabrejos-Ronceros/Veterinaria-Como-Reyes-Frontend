@@ -8,6 +8,7 @@ export interface Employee {
   address: string
   phone: string
   headquarterName: string
+  headquarterId:number
   birthDate: string
   dirImage: string
   role: string
