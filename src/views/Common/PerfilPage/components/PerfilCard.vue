@@ -98,7 +98,7 @@ const profileImageDefault:string="https://img.freepik.com/vector-gratis/circulo-
     <template #content>
       <div class="flex flex-col gap-6">
         <!-- images and ids -->
-        <div class="flex items-center gap-4 self-center">
+        <div class="flex flex-col xs:flex-row items-center gap-4 self-center">
           <div class="relative">
           <div class=" relative w-48 h-48 flex rounded-full overflow-hidden ">
               <Image
