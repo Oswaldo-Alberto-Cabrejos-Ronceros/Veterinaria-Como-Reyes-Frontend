@@ -5,6 +5,7 @@
 
 @theme {
   --font-inter: 'Inter', sans-serif;
+  --breakpoint-xs: 30rem;
 }
 
 body {
@@ -42,4 +43,12 @@ body {
   hover:bg-primary-950
   dark:hover:bg-primary-900
   text-surface-0
+}
+
+.layout-full-screen-flex{
+  @apply w-full min-h-screen flex justify-center
+}
+
+.layout-principal-flex{
+  @apply w-full flex justify-center
 }

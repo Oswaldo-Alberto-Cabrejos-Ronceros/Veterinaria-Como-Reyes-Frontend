@@ -1,16 +1,16 @@
 <script setup lang="ts" >
-import TheHeader from '@/components/TheHeader.vue';
-import type { MenuItem } from 'primevue/menuitem';
-import { ref } from 'vue';
-import Menu from 'primevue/menu';
-import { RouterLink } from 'vue-router';
+import TheHeader from '@/components/TheHeader.vue'
+import type { MenuItem } from 'primevue/menuitem'
+import {  ref, } from 'vue'
+import MenuNav from '@/components/MenuNav.vue'
+
 
 //for menuItems
 const items = ref<MenuItem[]>([
   {
     label:'Inicio',
     icon:'pi pi-home',
-    to:'/'
+    to:'home'
   },
   {
     label:'Citas',
@@ -19,28 +19,26 @@ const items = ref<MenuItem[]>([
   }
 ])
 
-</script>
+const showMenu = ref(true);
 
+const toggleMenu = ()=>{
+  showMenu.value=!showMenu.value;
+}
+
+
+</script>
 <template>
   <div class="w-full min-h-screen flex flex-col">
-    <TheHeader />
-    <main class="w-full flex-1 flex p-2">
-      <aside class="w-64"> <Menu :model="items">
-          <template #item="{ item, props }">
-            <router-link v-if="item.to" v-slot="{ href, navigate }" :to="item.to" custom >
-              <a :href="href" v-bind="props.action" @click="navigate" class="flex align-items-center">
-                <span v-if="item.icon" :class="item.icon" class="mr-2"></span>
-                <span>{{ item.label }}</span>
-              </a>
-            </router-link>
-          </template>
-        </Menu>
-      </aside>
-      <section class="flex-1 h-auto p-4"> <router-view />
+    <TheHeader @toggle-menu="toggleMenu" />
+
+    <main class="w-full flex-1 flex p-2 overflow-hidden">
+<MenuNav :items="items" :show-menu="showMenu" @update:show-menu="showMenu=$event"/>
+      <section
+        class="flex-1 h-auto px-0.5 xs:px-4 transition-all duration-200 ease-out"
+      >
+        <router-view />
       </section>
-
     </main>
-
   </div>
 </template>
 
