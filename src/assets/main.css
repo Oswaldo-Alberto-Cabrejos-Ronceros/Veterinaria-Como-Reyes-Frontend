@@ -45,6 +45,10 @@ body {
   text-surface-0
 }
 
-.layout-principal-flex{
+.layout-full-screen-flex{
   @apply w-full min-h-screen flex justify-center
+}
+
+.layout-principal-flex{
+  @apply w-full flex justify-center
 }

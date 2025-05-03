@@ -7,7 +7,7 @@ import SwitchTheme from '@/components/SwitchTheme.vue';
 
 </script>
 <template>
-  <div class="layout-principal-flex relative" >
+  <div class="layout-full-screen-flex relative" >
     <div class="p-2 absolute top-0 w-full flex justify-end">
       <SwitchTheme/>
     </div>
