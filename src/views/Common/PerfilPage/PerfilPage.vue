@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import PerfilCard from './components/PerfilCard.vue';
 import type { Client } from '@/models/Client';
-/*
-import type { Employee } from '@/models/Employee';*/
+
+import type { Employee } from '@/models/Employee';
 import EditClientCard from '@/views/Common/PerfilPage/components/EditClientCard.vue'
 import { useDialog } from 'primevue/usedialog';
 
@@ -19,7 +19,7 @@ const exampleClient: Client = {
   birthday:"05/10/2004",
   role: "Cliente"
 }
-/*
+
 const exampleEmployee: Employee = {
   userId: 10,
   employeeId: 2001,
@@ -33,7 +33,7 @@ const exampleEmployee: Employee = {
   birthDate: "1990-05-15",
   dirImage: "https://www.giorgiline.com/wp-content/uploads/2023/12/hombre-sonriente-que-sostiene-smartphone-1536x1024.jpg",
   role: "Veterinario"
-}*/
+}
 
 //for open dynamic dialog
 
@@ -64,7 +64,7 @@ const showEdit = ()=>{
 
 <template>
   <div class="layout-principal-flex">
-<PerfilCard :user-data="exampleClient" @edit:user="showEdit"/>
+<PerfilCard :user-data="exampleEmployee" @edit:client="showEdit"/>
 
   </div>
 </template>

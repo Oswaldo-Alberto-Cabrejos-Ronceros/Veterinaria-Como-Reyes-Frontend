@@ -83,12 +83,17 @@ const employeeData = !isClient(props.userData) ? props.userData : null
 
 const profileImageDefault:string="https://img.freepik.com/vector-gratis/circulo-azul-usuario-blanco_78370-4707.jpg?semt=ais_hybrid&w=740"
 //emit
-const emit = defineEmits(['edit:user'])
+const emit = defineEmits(['edit:client','edit:employee'])
 
 //for send emit edit user
 
 const handleEditUser = ()=>{
-  emit('edit:user')
+  if(isClient(props.userData)){
+    emit('edit:client')
+  } else{
+    emit('edit:employee')
+    console.log('empleado')
+  }
 }
 
 </script>
@@ -99,8 +104,8 @@ const handleEditUser = ()=>{
   >
     <template #header>
       <div class="flex gap-4 items-center w-full">
-        <p class="text-2xl font-medium">Perfil</p>
-        <p class="text-md text-gray-400">Role</p>
+        <p class="text-2xl font-medium"> Mi Perfil </p>
+        <p v-if="employeeData" class="text-md text-gray-400">{{employeeData.role}}</p>
       </div>
     </template>
 
