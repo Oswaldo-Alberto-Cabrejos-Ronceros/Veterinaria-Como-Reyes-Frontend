@@ -10,59 +10,58 @@ import {schema} from '@/validation-schemas-forms/schema-edit-client'
 import type {FormValues} from '@/validation-schemas-forms/schema-edit-client'
 import { useForm } from 'vee-validate'
 import Button from 'primevue/button'
-import { inject, onMounted } from "vue";
+import { inject, onMounted } from "vue"
 import type {EditClient} from '@/models/EditClient.ts'
-
+import { toTypedSchema } from '@vee-validate/yup'
+import type { Ref } from 'vue'
 const {handleSubmit, errors,defineField} = useForm<FormValues>({
   validationSchema:toTypedSchema(schema),
   initialValues: {
-    celular:'',
-    direccion:'',
-    fechaNac:undefined,
-    sede:undefined
+    phone:'',
+    address:'',
+    birthdate:undefined,
+    headquarterId:undefined
   }
 })
 
-//headquarkers
+//headquarterIds
 const headquarkers = [
   { name: 'Ica', value: 1},
   { name: 'Parcona', value: 2 },
   { name: 'Tinguiña', value: 3 }
 ]
 
-const [direccion, direccionAttrs] = defineField('direccion')
-const [fechaNac, fechaNacAttrs] = defineField('fechaNac')
-const [sede, sedeAttrs] = defineField('sede')
-const [celular, celularAttrs] = defineField('celular')
+const [address, addressAttrs] = defineField('address')
+const [birthdate, birthdateAttrs] = defineField('birthdate')
+const [headquarterId, headquarterIdAttrs] = defineField('headquarterId')
+const [phone, phoneAttrs] = defineField('phone')
 
 const onSubmit = handleSubmit((values) => {
-  emit('save', values)
+  dialogRef.value.close(values as EditClient);
 })
 
 //for dynamicDialog
-const dialogRef = inject('dialogRef');
+const dialogRef = inject('dialogRef') as Ref<{ close: (data?: EditClient) => void; data: EditClient }>;
+
 
 onMounted(() => {
-  const params:{editClient:EditClient} = dialogRef.value.data;
+  const params = dialogRef.value.data;
   //change default values
-  direccion.value(params.direccion);
-  fechaNac.value(params.fechanNac);
-  sede.value(params.sede);
-  celular.value(params.celular);
+  address.value=params.address
+  birthdate.value=params.birthdate
+  headquarterId.value=params.headquarterId
+  phone.value=params.phone
 })
 
 //emit for edit
 
-const emit = defineEmits<{
-  (e: 'save', editClient:EditClient): void
-}>()
 
 </script>
 
 
 <template>
   <Card
-    class="h-auto w-[90%] sm:w-xl flex flex-col items-center justify-center dark:bg-surface-800"
+    class="h-auto w-full sm:w-xl flex flex-col items-center justify-center bg-transparent shadow-none"
   >
     <template #title>
       <h3 class="h3 text-center">Editar Datos</h3>
@@ -81,16 +80,16 @@ const emit = defineEmits<{
             <i class="pi pi-mobile"></i>
           </InputGroupAddon>
           <InputText
-            v-bind="celularAttrs"
-            v-model="celular"
+            v-bind="phoneAttrs"
+            v-model="phone"
             type="tel"
             placeholder="Celular"
 
           />
         </InputGroup>
 
-        <Message v-if="errors.celular" severity="error" size="small" variant="simple">
-          {{ errors.celular }}
+        <Message v-if="errors.phone" severity="error" size="small" variant="simple">
+          {{ errors.phone }}
         </Message>
 
 
@@ -102,32 +101,32 @@ const emit = defineEmits<{
             <i class="pi pi-home"></i>
           </InputGroupAddon>
           <InputText
-            v-bind="direccionAttrs"
-            v-model="direccion"
+            v-bind="addressAttrs"
+            v-model="address"
             type="text"
             placeholder="Dirección"
 
           />
         </InputGroup>
 
-        <Message v-if="errors.direccion" severity="error" size="small" variant="simple">
-          {{ errors.direccion }}
+        <Message v-if="errors.address" severity="error" size="small" variant="simple">
+          {{ errors.address }}
         </Message>
 
         <!-- birthDate -->
         <label>Fecha Nacimiento</label>
 
-        <DatePicker v-bind="fechaNacAttrs" v-model="fechaNac" showIcon fluid iconDisplay="input" />
-        <Message v-if="errors.fechaNac" severity="error" size="small" variant="simple">
-          {{ errors.fechaNac }}
+        <DatePicker v-bind="birthdateAttrs" v-model="birthdate" showIcon fluid iconDisplay="input" />
+        <Message v-if="errors.birthdate" severity="error" size="small" variant="simple">
+          {{ errors.birthdate }}
         </Message>
 
-        <!--sede-->
+        <!--for headquarte-->
         <label>Sede</label>
-        <Select v-bind="sedeAttrs" v-model="sede" :options="headquarkers" optionLabel="name" optionValue="value" placeholder="Selecciona Sede"  />
+        <Select v-bind="headquarterIdAttrs" v-model="headquarterId" :options="headquarkers" optionLabel="name" optionValue="value" placeholder="Selecciona Sede"  />
 
-        <Message v-if="errors.sede" severity="error" size="small" variant="simple">
-          {{ errors.sede }}
+        <Message v-if="errors.headquarterId " severity="error" size="small" variant="simple">
+          {{ errors.headquarterId  }}
         </Message>
 
         <!-- button -->

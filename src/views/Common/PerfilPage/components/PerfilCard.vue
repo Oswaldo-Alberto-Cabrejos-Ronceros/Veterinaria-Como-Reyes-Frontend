@@ -82,6 +82,15 @@ const clientData = isClient(props.userData) ? props.userData : null
 const employeeData = !isClient(props.userData) ? props.userData : null
 
 const profileImageDefault:string="https://img.freepik.com/vector-gratis/circulo-azul-usuario-blanco_78370-4707.jpg?semt=ais_hybrid&w=740"
+//emit
+const emit = defineEmits(['edit:user'])
+
+//for send emit edit user
+
+const handleEditUser = ()=>{
+  emit('edit:user')
+}
+
 </script>
 
 <template>
@@ -151,7 +160,7 @@ const profileImageDefault:string="https://img.freepik.com/vector-gratis/circulo-
           </div>
           <!-- Botón guardar/editar -->
           <div class="pt-4">
-            <Button class="w-full" label="Editar" iconPos="right"  icon="pi pi-pencil"/>
+            <Button class="w-full" label="Editar" iconPos="right"  icon="pi pi-pencil" @click="handleEditUser"/>
           </div>
         </div>
       </div>

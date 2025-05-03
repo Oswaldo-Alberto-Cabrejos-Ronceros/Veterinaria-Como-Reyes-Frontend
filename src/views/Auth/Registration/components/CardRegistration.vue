@@ -24,16 +24,16 @@ const { handleSubmit, errors, defineField } = useForm<FormValues>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
     dni: '',
-    nombres: '',
-    apellidos: '',
+    names: '',
+    lastnames: '',
     email: '',
-    direccion: '',
-    celular: '',
-    fechaNac:undefined,
-    sede:undefined,
+    address: '',
+    phone: '',
+    birthdate:undefined,
+    headquarker:undefined,
     password: '',
-    confirmarPassword: '',
-    terminos: false,
+    confirmPassword: '',
+    term: false,
   },
 })
 
@@ -48,16 +48,16 @@ const headquarkers = [
 // binding
 
 const [dni, dniAttrs] = defineField('dni')
-const [nombres, nombresAttrs] = defineField('nombres')
-const [apellidos, apellidosAttrs] = defineField('apellidos')
+const [names, namesAttrs] = defineField('names')
+const [lastnames, lastnamesAttrs] = defineField('lastnames')
 const [email, emailAttrs] = defineField('email')
-const [direccion, direccionAttrs] = defineField('direccion')
-const [fechaNac, fechaNacAttrs] = defineField('fechaNac')
-const [sede, sedeAttrs] = defineField('sede')
-const [celular, celularAttrs] = defineField('celular')
+const [address, addressAttrs] = defineField('address')
+const [birthdate, birthdateAttrs] = defineField('birthdate')
+const [headquarker, headquarkerAttrs] = defineField('headquarker')
+const [phone, phoneAttrs] = defineField('phone')
 const [password, passwordAttrs] = defineField('password')
-const [confirmarPassword, confirmarPasswordAttrs] = defineField('confirmarPassword')
-const [terminos, terminosAttrs] = defineField('terminos')
+const [confirmPassword, confirmPasswordAttrs] = defineField('confirmPassword')
+const [term, termAttrs] = defineField('term')
 
 //for send
 
@@ -110,16 +110,16 @@ const imageLogo=computed(()=>(
             <i class="pi pi-user"></i>
           </InputGroupAddon>
           <InputText
-            v-bind="nombresAttrs"
-            v-model="nombres"
+            v-bind="namesAttrs"
+            v-model="names"
             type="text"
-            placeholder="Nombres"
+            placeholder="names"
 
           />
         </InputGroup>
 
-        <Message v-if="errors.nombres" severity="error" size="small" variant="simple">
-          {{ errors.nombres }}
+        <Message v-if="errors.names" severity="error" size="small" variant="simple">
+          {{ errors.names }}
         </Message>
 
         <!-- last names -->
@@ -130,16 +130,16 @@ const imageLogo=computed(()=>(
             <i class="pi pi-user"></i>
           </InputGroupAddon>
           <InputText
-            v-bind="apellidosAttrs"
-            v-model="apellidos"
+            v-bind="lastnamesAttrs"
+            v-model="lastnames"
             type="text"
-            placeholder="Apellidos"
+            placeholder="lastnames"
 
           />
         </InputGroup>
 
-        <Message v-if="errors.apellidos" severity="error" size="small" variant="simple">
-          {{ errors.apellidos }}
+        <Message v-if="errors.lastnames" severity="error" size="small" variant="simple">
+          {{ errors.lastnames }}
         </Message>
 
         <!-- email -->
@@ -170,16 +170,16 @@ const imageLogo=computed(()=>(
             <i class="pi pi-home"></i>
           </InputGroupAddon>
           <InputText
-            v-bind="direccionAttrs"
-            v-model="direccion"
+            v-bind="addressAttrs"
+            v-model="address"
             type="text"
             placeholder="Dirección"
 
           />
         </InputGroup>
 
-        <Message v-if="errors.direccion" severity="error" size="small" variant="simple">
-          {{ errors.direccion }}
+        <Message v-if="errors.address" severity="error" size="small" variant="simple">
+          {{ errors.address }}
         </Message>
 
         <!-- cell phone -->
@@ -190,32 +190,32 @@ const imageLogo=computed(()=>(
             <i class="pi pi-mobile"></i>
           </InputGroupAddon>
           <InputText
-            v-bind="celularAttrs"
-            v-model="celular"
+            v-bind="phoneAttrs"
+            v-model="phone"
             type="tel"
-            placeholder="Celular"
+            placeholder="phone"
 
           />
         </InputGroup>
 
-        <Message v-if="errors.celular" severity="error" size="small" variant="simple">
-          {{ errors.celular }}
+        <Message v-if="errors.phone" severity="error" size="small" variant="simple">
+          {{ errors.phone }}
         </Message>
 
         <!-- birthDate -->
         <label>Fecha Nacimiento</label>
 
-        <DatePicker v-bind="fechaNacAttrs" v-model="fechaNac" showIcon fluid iconDisplay="input" />
-        <Message v-if="errors.fechaNac" severity="error" size="small" variant="simple">
-          {{ errors.fechaNac }}
+        <DatePicker v-bind="birthdateAttrs" v-model="birthdate" showIcon fluid iconDisplay="input" />
+        <Message v-if="errors.birthdate" severity="error" size="small" variant="simple">
+          {{ errors.birthdate }}
         </Message>
 
-        <!--sede-->
+        <!--headquarker-->
         <label>Sede</label>
-        <Select v-bind="sedeAttrs" v-model="sede" :options="headquarkers" optionLabel="name" optionValue="value" placeholder="Selecciona Sede"  />
+        <Select v-bind="headquarkerAttrs" v-model="headquarker" :options="headquarkers" optionLabel="name" optionValue="value" placeholder="Selecciona headquarker"  />
 
-        <Message v-if="errors.sede" severity="error" size="small" variant="simple">
-          {{ errors.sede }}
+        <Message v-if="errors.headquarker" severity="error" size="small" variant="simple">
+          {{ errors.headquarker }}
         </Message>
 
 
@@ -245,24 +245,24 @@ const imageLogo=computed(()=>(
             <i class="pi pi-lock"></i>
           </InputGroupAddon>
           <Password
-            v-bind="confirmarPasswordAttrs"
-            v-model="confirmarPassword"
+            v-bind="confirmPasswordAttrs"
+            v-model="confirmPassword"
             toggleMask
             placeholder="Confirmar contraseña"
           />
         </InputGroup>
 
-        <Message v-if="errors.confirmarPassword" severity="error" size="small" variant="simple">
-          {{ errors.confirmarPassword }}
+        <Message v-if="errors.confirmPassword" severity="error" size="small" variant="simple">
+          {{ errors.confirmPassword }}
         </Message>
 
         <!-- terms -->
         <div class="col-span-2 flex items-center gap-2">
-          <Checkbox v-bind="terminosAttrs" v-model="terminos" binary inputId="terminos" />
-          <label for="terminos">Acepto los términos y condiciones</label>
+          <Checkbox v-bind="termAttrs" v-model="term" binary inputId="term" />
+          <label for="term">Acepto los términos y condiciones</label>
         </div>
-        <Message v-if="errors.terminos" severity="error" size="small" variant="simple">
-          {{ errors.terminos }}
+        <Message v-if="errors.term" severity="error" size="small" variant="simple">
+          {{ errors.term }}
         </Message>
         <!-- button -->
 

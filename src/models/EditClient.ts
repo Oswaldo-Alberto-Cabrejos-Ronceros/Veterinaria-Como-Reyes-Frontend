@@ -1,6 +1,6 @@
 export interface EditClient {
-  direccion:string,
-  fechanNac:Date,
-  sede:string,
-  celular:string
+  address:string,
+  birthdate:Date,
+  headquarterId :number,
+  phone:string
 }
