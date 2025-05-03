@@ -109,7 +109,7 @@ const profileImageDefault:string="https://img.freepik.com/vector-gratis/circulo-
               />
 
             </div>
-            <Button v-if="employeeData" icon="pi pi-camera" severity="info" rounded aria-label="Foto" class="absolute bottom-2 right-2 z-20"  />
+            <Button v-if="employeeData" icon="pi pi-camera" rounded aria-label="Foto" class="absolute bottom-2 right-2 z-20"  />
           </div>
 
             <div class="flex flex-col items-center mt-4">
