@@ -164,8 +164,8 @@ const handleEditUser = ()=>{
             </div>
           </div>
           <!-- Botón guardar/editar -->
-          <div class="pt-4">
-            <Button class="w-full" label="Editar" iconPos="right"  icon="pi pi-pencil" @click="handleEditUser"/>
+          <div class="pt-4 flex justify-center">
+            <Button class="w-full max-w-md" label="Editar" iconPos="right"  icon="pi pi-pencil" @click="handleEditUser"/>
           </div>
         </div>
       </div>
