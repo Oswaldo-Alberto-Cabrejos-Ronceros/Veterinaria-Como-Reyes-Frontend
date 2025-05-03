@@ -74,7 +74,7 @@ onBeforeUnmount(() => {
 
 <aside
   ref="asideRef"
-  :class="['transition-all duration-200 ease-out fixed sm:relative h-screen z-40 top-0 left-0 backdrop-blur-xs', showMenu ? ' w-screen sm:w-52 md:w-64' : 'w-0']"
+  :class="['transition-all duration-200 ease-out fixed sm:relative h-screen sm:h-auto z-40 top-0 left-0 backdrop-blur-xs', showMenu ? ' w-screen sm:w-52 md:w-64' : 'w-0']"
   class="overflow-hidden"
 >
   <div class="w-2/3 sm:w-auto " ref="menuWrapperRef">
