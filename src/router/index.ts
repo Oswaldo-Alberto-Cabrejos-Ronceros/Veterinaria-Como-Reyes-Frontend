@@ -9,6 +9,7 @@ import HomePageManager from '@/views/Employee/Manager/HomePage/HomePage.vue'
 import HomePageReceptionist from '@/views/Employee/Receptionist/HomePage/HomePage.vue'
 import HomePageVeterinary from '@/views/Employee/Veterinary/HomePage/HomePage.vue'
 import PerfilPage from '@/views/Common/PerfilPage/PerfilPage.vue'
+import EmployeeManagementPage from '@/views/Employee/Administrator/EmployeeManagementPage/EmployeeManagementPage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -67,6 +68,11 @@ const router = createRouter({
               path: 'perfil',
               name: 'administrator-perfil',
               component: PerfilPage,
+            },
+            {
+              path:'employee-management',
+              name:'administrator-employee-management',
+              component:EmployeeManagementPage
             }
           ],
         },

@@ -3,7 +3,7 @@ import { subYears } from 'date-fns'
 const fechaLimite = subYears(new Date(), 18)
 
 export const schema = yup.object({
-    phone: yup.string().required('El celular es obligatorio').matches(/^9\d{8}$/, 'Celular inválido (debe empezar con 9 y tener 9 dígitos)'),
+    phone: yup.string().required('El celular es obligatorio').matches(/^9\d{9}$/, 'Celular inválido (debe empezar con 9 y tener 9 dígitos)'),
     address: yup.string().required('La dirección es obligatoria'),
     birthdate: yup.date().required('La fecha es obligatorio').max(fechaLimite),
     headquarterId :yup.number().required('La sede es obligatorio')

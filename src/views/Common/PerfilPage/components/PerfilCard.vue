@@ -104,8 +104,8 @@ const handleEditUser = ()=>{
   >
     <template #header>
       <div class="flex gap-4 items-center w-full">
-        <p class="text-2xl font-medium"> Mi Perfil </p>
-        <p v-if="employeeData" class="text-md text-gray-400">{{employeeData.role}}</p>
+        <h3 class="h3 font-medium"> Mi Perfil </h3>
+        <p v-if="employeeData" class="textLg text-gray-400">{{employeeData.role}}</p>
       </div>
     </template>
 
