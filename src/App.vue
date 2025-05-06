@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import { RouterView } from 'vue-router'
-import { useThemeStore } from './stores/themeStore';
+import { useThemeStore } from './stores/themeStore'
 import DynamicDialog from 'primevue/dynamicdialog'
+import ConfirmPopup from 'primevue/confirmpopup';
 
 const themeStore = useThemeStore();
 onMounted(()=>{
@@ -13,5 +14,6 @@ themeStore.initTheme();
 <template>
   <RouterView />
   <DynamicDialog />
+  <ConfirmPopup/>
 </template>
 

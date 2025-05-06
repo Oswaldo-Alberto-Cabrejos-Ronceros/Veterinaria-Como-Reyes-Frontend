@@ -1,4 +1,4 @@
-export interface EditEmployee{
+export interface AddEmployee{
   dni: string
   cmvp?: string
   names: string
@@ -9,4 +9,7 @@ export interface EditEmployee{
   birthdate: Date|string
   dirImage: string
   roleId: number
+  email:string
+  password:string
+  confirmPassword:string
 }

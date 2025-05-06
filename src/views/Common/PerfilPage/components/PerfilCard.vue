@@ -104,8 +104,8 @@ const handleEditUser = ()=>{
   >
     <template #header>
       <div class="flex gap-4 items-center w-full">
-        <p class="text-2xl font-medium"> Mi Perfil </p>
-        <p v-if="employeeData" class="text-md text-gray-400">{{employeeData.role}}</p>
+        <h3 class="h3 font-medium"> Mi Perfil </h3>
+        <p v-if="employeeData" class="textLg text-gray-400">{{employeeData.role}}</p>
       </div>
     </template>
 
@@ -121,11 +121,9 @@ const handleEditUser = ()=>{
                 class=" w-full h-full object-cover z-10"
                 preview
               />
-
             </div>
             <Button v-if="employeeData" icon="pi pi-camera" rounded aria-label="Foto" class="absolute bottom-2 right-2 z-20"  />
           </div>
-
             <div class="flex flex-col items-center mt-4">
               <h2 class="text-2xl font-bold">{{ firstName }} {{ firstLastName }}</h2>
               <div class="text-gray-600 mt-1">

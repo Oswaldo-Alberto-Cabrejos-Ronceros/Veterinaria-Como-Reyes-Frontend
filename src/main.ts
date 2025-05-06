@@ -7,7 +7,7 @@ import { createPinia } from 'pinia'
 import PrimeVue from 'primevue/config'
 import Aura from '@primeuix/themes/aura'
 import DialogService from 'primevue/dialogservice';
-import DynamicDialog from 'primevue/dynamicdialog';
+import ConfirmationService from 'primevue/confirmationservice';
 
 import App from './App.vue'
 import router from './router'
@@ -89,7 +89,7 @@ app.use(PrimeVue, {
 
 //user dialog service
 app.use(DialogService)
-app.component('DynamicDialog', DynamicDialog);
+app.use(ConfirmationService)
 app.use(router)
 
 app.mount('#app')

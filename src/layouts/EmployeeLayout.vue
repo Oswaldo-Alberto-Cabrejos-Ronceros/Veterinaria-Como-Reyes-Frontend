@@ -26,7 +26,7 @@ const items = ref<MenuItem[][]>([
     {
       label: 'Empleados',
       icon: 'pi pi-users',
-      to: '/',
+      to: 'employee-management',
     },
     {
       label: 'Clientes',
@@ -53,7 +53,7 @@ const items = ref<MenuItem[][]>([
     {
       label: 'Empleados',
       icon: 'pi pi-users',
-      to: '/',
+      to: 'employee-management',
     },
     {
       label: 'Clientes',
