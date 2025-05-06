@@ -6,12 +6,12 @@ import Select from 'primevue/select'
 import Message from 'primevue/message'
 import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
-import { schema } from '@/validation-schemas-forms/schema-edit-client'
-import type { FormValues } from '@/validation-schemas-forms/schema-edit-client'
+import { schema } from '@/validation-schemas-forms/schema-edit-self-client'
+import type { FormValues } from '@/validation-schemas-forms//schema-edit-self-client'
 import { useForm } from 'vee-validate'
 import Button from 'primevue/button'
 import { inject, onMounted } from 'vue'
-import type { EditClient } from '@/models/EditClient.ts'
+import type { EditSelfClient } from '@/models/EditSelfClient'
 import { toTypedSchema } from '@vee-validate/yup'
 import type { Ref } from 'vue'
 
@@ -38,13 +38,13 @@ const [headquarterId, headquarterIdAttrs] = defineField('headquarterId')
 const [phone, phoneAttrs] = defineField('phone')
 
 const onSubmit = handleSubmit((values) => {
-  dialogRef.value.close(values as EditClient)
+  dialogRef.value.close(values as EditSelfClient)
 })
 
 //for dynamicDialog
 const dialogRef = inject('dialogRef') as Ref<{
-  close: (data?: EditClient) => void
-  data: EditClient
+  close: (data?: EditSelfClient) => void
+  data: EditSelfClient
 }>
 
 onMounted(() => {

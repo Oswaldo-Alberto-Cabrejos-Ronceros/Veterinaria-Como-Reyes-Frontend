@@ -18,6 +18,8 @@ import { ref } from 'vue'
 import { useDialog } from 'primevue/usedialog';
 import ViewEmployeeCard from './components/ViewEmployeeCard.vue'
 import { useConfirm } from 'primevue'
+import EditEmployeeCard from './components/EditEmployeeCard.vue'
+import type { EditEmployee } from '@/models/EditEmployee'
 //form
 
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
@@ -72,7 +74,13 @@ const roles = [
   { name: 'Veterinario', value: 1 },
   { name: 'Recepcionista', value: 2 },
   { name: 'Jefe de sede', value: 3 },
-]
+];
+
+const rolesMap: Record<string,number> ={
+  'VETERINARIO':1,
+  "RECEPCIONISTA":2,
+  "JEFESEDE" : 3
+}
 
 //for dialog
 const dialog = useDialog();
@@ -90,8 +98,31 @@ employeeData:employeeData
 }
 
 //for edit
-const editEmployee = (employee: Employee) => {
-  console.log('Editar', employee)
+const editEmployee = (employeeData:Employee)=>{
+  dialog.open(EditEmployeeCard,{
+    data:{
+employeeData:{
+  dni:employeeData.dni,
+  cmvp:employeeData.cmvp,
+  names:employeeData.names,
+  lastnames:employeeData.lastnames,
+  address: employeeData.address,
+  phone:employeeData.phone,
+  headquarterId:employeeData.headquarterId,
+  birthdate:new Date(employeeData.birthDate),
+  dirImage:employeeData.dirImage,
+  roleId:rolesMap[employeeData.role]
+} as EditEmployee
+    },
+    props:{
+      modal: true
+    },
+    onClose: (data) => { 
+      if (data) {
+        console.log('Datos recibidos del diálogo:',data);
+      }
+    }
+  });
 }
 
 //for confirm

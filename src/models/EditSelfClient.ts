@@ -1,4 +1,4 @@
-export interface EditClient {
+export interface EditSelfClient {
   address:string,
   birthdate:Date,
   headquarterId :number,

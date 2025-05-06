@@ -5,12 +5,12 @@ import Select from 'primevue/select'
 import Message from 'primevue/message'
 import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
-import {schema} from '@/validation-schemas-forms/schema-edit-employee'
-import type {FormValues} from '@/validation-schemas-forms/schema-edit-employee'
+import {schema} from '@/validation-schemas-forms/schema-edit-self-employee'
+import type {FormValues} from '@/validation-schemas-forms/schema-edit-self-employee'
 import { useForm } from 'vee-validate'
 import Button from 'primevue/button'
 import { inject, onMounted } from "vue"
-import type { EditEmployee } from '@/models/EditEmployee'
+import type { EditSelfEmployee } from '@/models/EditSelfEmployee'
 import { toTypedSchema } from '@vee-validate/yup'
 import type { Ref } from 'vue'
 
@@ -37,11 +37,11 @@ const [phone, phoneAttrs] = defineField('phone')
 const [dirImage, dirImageAttrs] = defineField('dirImage')
 
 const onSubmit = handleSubmit((values) => {
-  dialogRef.value.close(values as EditEmployee);
+  dialogRef.value.close(values as EditSelfEmployee);
 })
 
 //for dynamicDialog
-const dialogRef = inject('dialogRef') as Ref<{ close: (data?: EditEmployee) => void; data: EditEmployee }>;
+const dialogRef = inject('dialogRef') as Ref<{ close: (data?: EditSelfEmployee) => void; data: EditSelfEmployee }>;
 
 onMounted(() => {
   const params = dialogRef.value.data;
