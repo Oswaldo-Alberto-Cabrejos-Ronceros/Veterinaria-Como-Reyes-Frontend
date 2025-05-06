@@ -13,7 +13,7 @@ const roleMap: Record<string, number> = {
   MANAGER: 0,
   ADMINISTRATOR: 1,
   VETERINARY: 2,
-  RECEPTIONIST: 3,
+  RECEPTIONIST: 3
 }
 
 const items = ref<MenuItem[][]>([
