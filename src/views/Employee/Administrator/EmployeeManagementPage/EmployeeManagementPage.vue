@@ -20,6 +20,7 @@ import ViewEmployeeCard from './components/ViewEmployeeCard.vue'
 import { useConfirm } from 'primevue'
 import EditEmployeeCard from './components/EditEmployeeCard.vue'
 import type { EditEmployee } from '@/models/EditEmployee'
+import AddEmployeeCard from './components/AddEmployeeCard.vue'
 //form
 
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
@@ -84,6 +85,21 @@ const rolesMap: Record<string,number> ={
 
 //for dialog
 const dialog = useDialog();
+
+//for add
+const addEmployee = ()=>{
+  dialog.open(AddEmployeeCard,{
+    props:{
+      modal: true
+    },
+    onClose: (data) => { 
+      if (data) {
+        console.log('Datos recibidos del diálogo:',data);
+      }
+    }
+  });
+}
+
 
 //for view
 const viewEmployee = (employeeData:Employee)=>{
@@ -226,7 +242,7 @@ const exportCSV = () => {
           >
             <template #header>
               <div class="w-full flex flex-col xs:flex-row justify-between gap-2 pb-4">
-                <Button icon="pi pi-user-plus" iconPos="right" severity="success" label="Agregar Empleado" @click="exportCSV" />
+                <Button icon="pi pi-user-plus" iconPos="right" severity="success" label="Agregar Empleado" @click="addEmployee" />
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
             </template>
