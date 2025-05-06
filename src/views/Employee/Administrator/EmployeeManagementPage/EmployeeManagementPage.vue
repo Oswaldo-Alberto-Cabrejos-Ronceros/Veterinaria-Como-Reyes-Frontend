@@ -17,6 +17,7 @@ import type { Employee } from '@/models/Employee'
 import { ref } from 'vue'
 import { useDialog } from 'primevue/usedialog';
 import ViewEmployeeCard from './components/ViewEmployeeCard.vue'
+import { useConfirm } from 'primevue'
 //form
 
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
@@ -93,9 +94,31 @@ const editEmployee = (employee: Employee) => {
   console.log('Editar', employee)
 }
 
-//for delete
-const deleteEmployee = (employee: Employee) => {
-  console.log('Eliminar', employee)
+//for confirm
+const confirm = useConfirm();
+
+//for delete with confirm popup
+const deleteEmployee = (event:MouseEvent|KeyboardEvent,employee:Employee) => {
+  confirm.require({
+    target:event.currentTarget as HTMLElement,
+    message:'¿Seguro que quiere eliminar a este empleado?',
+    icon: 'pi pi-exclamation-triangle',
+    rejectProps:{
+      label:'Cancelar',
+      severity:'secondary',
+      outlined: true
+    },
+    acceptProps:{
+      label:'Eliminar',
+      severity:'danger'
+    },
+    accept:()=>{
+      console.log('Eliminando Empleado ', employee.employeeId)
+    },
+    reject:()=>{
+      console.log('Cancelando')
+    }
+  })
 }
 
 //for export
@@ -206,7 +229,7 @@ const exportCSV = () => {
                     variant="outlined"
                     aria-label="Filter"
                     rounded
-                    @click="deleteEmployee(data)"
+                    @click="deleteEmployee($event,data)"
                   ></Button>
                 </div>
               </template>
