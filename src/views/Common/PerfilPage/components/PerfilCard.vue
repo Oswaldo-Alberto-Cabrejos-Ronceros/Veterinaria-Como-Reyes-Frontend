@@ -121,11 +121,9 @@ const handleEditUser = ()=>{
                 class=" w-full h-full object-cover z-10"
                 preview
               />
-
             </div>
             <Button v-if="employeeData" icon="pi pi-camera" rounded aria-label="Foto" class="absolute bottom-2 right-2 z-20"  />
           </div>
-
             <div class="flex flex-col items-center mt-4">
               <h2 class="text-2xl font-bold">{{ firstName }} {{ firstLastName }}</h2>
               <div class="text-gray-600 mt-1">

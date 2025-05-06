@@ -15,6 +15,8 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import type { Employee } from '@/models/Employee'
 import { ref } from 'vue'
+import { useDialog } from 'primevue/usedialog';
+import ViewEmployeeCard from './components/ViewEmployeeCard.vue'
 //form
 
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
@@ -71,9 +73,19 @@ const roles = [
   { name: 'Jefe de sede', value: 3 },
 ]
 
+//for dialog
+const dialog = useDialog();
+
 //for view
-const viewEmployee = (employee: Employee) => {
-  console.log('Ver', employee)
+const viewEmployee = (employeeData:Employee)=>{
+  dialog.open(ViewEmployeeCard,{
+    data:{
+employeeData:employeeData
+    },
+    props:{
+      modal: true
+    }
+  });
 }
 
 //for edit
