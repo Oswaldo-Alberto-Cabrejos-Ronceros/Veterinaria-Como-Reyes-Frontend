@@ -192,7 +192,7 @@ onMounted(()=>{
                 :options="headquarkers"
                 optionLabel="name"
                 optionValue="value"
-                placeholder="Selecciona Rol"
+                placeholder="Selecciona Sede"
               />
 
               <Message v-if="errors.headquarterId" severity="error" size="small" variant="simple">

@@ -14,7 +14,7 @@ import Button from 'primevue/button'
 import DatePicker from 'primevue/datepicker'
 import type { Ref } from 'vue'
 import type { AddEmployee } from '@/models/AddEmployee'
-import { inject, onMounted } from 'vue'
+import { inject } from 'vue'
 //form
 
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
@@ -188,7 +188,7 @@ const headquarkers = [
             :options="headquarkers"
             optionLabel="name"
             optionValue="value"
-            placeholder="Selecciona Rol"
+            placeholder="Selecciona Sede"
           />
 
           <Message v-if="errors.headquarterId" severity="error" size="small" variant="simple">
@@ -217,46 +217,44 @@ const headquarkers = [
         </div>
         <!-- for password -->
         <div>
-            <label class="block mb-2">Contraseña</label>
-        <InputGroup>
-          <InputGroupAddon class="text-neutral-400">
-            <i class="pi pi-lock"></i>
-          </InputGroupAddon>
-          <Password
-            v-bind="passwordAttrs"
-            v-model="password"
-            toggleMask
-            :feedback="false"
-            placeholder="Contraseña"
-          />
-        </InputGroup>
-        <Message v-if="errors.password" severity="error" size="small" variant="simple">
-          {{ errors.password }}
-        </Message>
-
+          <label class="block mb-2">Contraseña</label>
+          <InputGroup>
+            <InputGroupAddon class="text-neutral-400">
+              <i class="pi pi-lock"></i>
+            </InputGroupAddon>
+            <Password
+              v-bind="passwordAttrs"
+              v-model="password"
+              toggleMask
+              :feedback="false"
+              placeholder="Contraseña"
+            />
+          </InputGroup>
+          <Message v-if="errors.password" severity="error" size="small" variant="simple">
+            {{ errors.password }}
+          </Message>
         </div>
 
         <!-- for confirm password -->
-         <div>
-            <label class="block mb-2">Confirmar Contraseña</label>
+        <div>
+          <label class="block mb-2">Confirmar Contraseña</label>
 
-<InputGroup>
-  <InputGroupAddon class="text-neutral-400">
-    <i class="pi pi-lock"></i>
-  </InputGroupAddon>
-  <Password
-    v-bind="confirmPasswordAttrs"
-    v-model="confirmPassword"
-    toggleMask
-    placeholder="Confirmar contraseña"
-  />
-</InputGroup>
+          <InputGroup>
+            <InputGroupAddon class="text-neutral-400">
+              <i class="pi pi-lock"></i>
+            </InputGroupAddon>
+            <Password
+              v-bind="confirmPasswordAttrs"
+              v-model="confirmPassword"
+              toggleMask
+              placeholder="Confirmar contraseña"
+            />
+          </InputGroup>
 
-<Message v-if="errors.confirmPassword" severity="error" size="small" variant="simple">
-  {{ errors.confirmPassword }}
-</Message>
-
-         </div>
+          <Message v-if="errors.confirmPassword" severity="error" size="small" variant="simple">
+            {{ errors.confirmPassword }}
+          </Message>
+        </div>
         <Button label="Editar" type="submit" severity="success" icon="pi pi-save" iconPos="right" />
       </form>
     </template>
