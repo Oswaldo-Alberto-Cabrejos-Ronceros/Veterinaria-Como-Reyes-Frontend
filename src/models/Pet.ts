@@ -1,6 +1,6 @@
 export interface Pet{
   id:number,
-  nombre:string,
+  name:string,
   gender:string,
   weight:number,
   birthdate:string |Date

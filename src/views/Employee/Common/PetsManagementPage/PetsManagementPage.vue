@@ -10,7 +10,12 @@ import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/yup'
 import Button from 'primevue/button'
 import Select from 'primevue/select'
-
+import Pets from '@/assets/data/pets.json'
+import { useConfirm } from 'primevue'
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
+import type { Pet } from '@/models/Pet'
+import { ref } from 'vue'
 //form
 
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
@@ -72,6 +77,41 @@ const onSubmit = handleSubmit((values)=>{
   console.log(values)
 })
 
+
+//for confirm
+const confirm = useConfirm();
+
+//for delete with confirm popup
+const deleteClient = (event:MouseEvent|KeyboardEvent,pet:Pet) => {
+  confirm.require({
+    target:event.currentTarget as HTMLElement,
+    message:'¿Seguro que quiere eliminar a este empleado?',
+    icon: 'pi pi-exclamation-triangle',
+    rejectProps:{
+      label:'Cancelar',
+      severity:'secondary',
+      outlined: true
+    },
+    acceptProps:{
+      label:'Eliminar',
+      severity:'danger'
+    },
+    accept:()=>{
+      console.log('Eliminando Empleado ', pet.id)
+    },
+    reject:()=>{
+      console.log('Cancelando')
+    }
+  })
+}
+
+
+//for export
+
+const dt = ref()
+const exportCSV = () => {
+  dt.value.exportCSV()
+}
 </script>
 
 <template>
@@ -109,7 +149,7 @@ const onSubmit = handleSubmit((values)=>{
                 :options="species"
                 optionLabel="name"
                 optionValue="value"
-                placeholder="Selecciona Rol"
+                placeholder="Selecciona Especie"
               />
 
               <Message v-if="errors.specieId" severity="error" size="small" variant="simple">
@@ -125,7 +165,7 @@ const onSubmit = handleSubmit((values)=>{
                 :options="breeds"
                 optionLabel="name"
                 optionValue="value"
-                placeholder="Selecciona Rol"
+                placeholder="Selecciona Raza"
               />
 
               <Message v-if="errors.breedId" severity="error" size="small" variant="simple">
@@ -141,7 +181,7 @@ const onSubmit = handleSubmit((values)=>{
                 :options="genders"
                 optionLabel="name"
                 optionValue="value"
-                placeholder="Selecciona Rol"
+                placeholder="Selecciona Sexo"
               />
 
               <Message v-if="errors.gender" severity="error" size="small" variant="simple">
@@ -161,6 +201,56 @@ const onSubmit = handleSubmit((values)=>{
               />
             </div>
           </form>
+               <!-- table -->
+               <DataTable
+            :value="Pets"
+            paginator
+            :rows="10"
+            :rows-per-page-options="[10, 15, 20, 25, 30]"
+            ref="dt"
+          >
+            <template #header>
+              <div class="w-full flex flex-col xs:flex-row justify-between gap-2 pb-4">
+                <Button icon="pi pi-user-plus" iconPos="right" severity="success" label="Agregar Mascota"  />
+                <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
+              </div>
+            </template>
+            <Column field="name" sortable header="Nombre" class=" hidden lg:table-cell" style="width: 18%"></Column>
+            <Column field="ownerDni" sortable header="Dueño" style="width: 18%"></Column>
+            <Column field="specie" class=" hidden lg:table-cell" header="Especie" sortable style="width: 15%"></Column>
+            <Column field="breed" class=" hidden lg:table-cell" header="Raza" sortable style="width: 15%"></Column>
+            <Column field="gender" class=" hidden md:table-cell" header="Sexo" sortable style="width: 15%"></Column>
+            <Column >
+              <template #body="{ data }">
+                <div class="flex justify-between items-center flex-row lg:flex-col xl:flex-row gap-1">
+                  <Button
+                    icon="pi pi-eye"
+                    severity="info"
+                    variant="outlined"
+                    aria-label="Filter"
+                    rounded
+
+                  ></Button>
+                  <Button
+                    icon="pi pi-pencil"
+                    severity="warn"
+                    variant="outlined"
+                    aria-label="Filter"
+                    rounded
+
+                  ></Button>
+                  <Button
+                    icon="pi pi-trash"
+                    severity="danger"
+                    variant="outlined"
+                    aria-label="Filter"
+                    rounded
+@click="deleteClient($event,data)"
+                  ></Button>
+                </div>
+              </template>
+            </Column>
+          </DataTable>
         </div>
       </template>
 </Card>
