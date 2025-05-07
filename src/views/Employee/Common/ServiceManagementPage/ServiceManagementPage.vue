@@ -94,7 +94,7 @@ const exportCSV = () => {
       </template>
       <template #content>
         <div class="flex flex-col gap-6">
-          <form @submit.prevent="onSubmit" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <form @submit.prevent="onSubmit" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
             <div>
               <label class="block mb-2">Nombre</label>
               <InputGroup>
