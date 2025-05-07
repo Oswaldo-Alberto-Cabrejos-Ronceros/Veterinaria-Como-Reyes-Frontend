@@ -9,6 +9,6 @@ export interface Client {
   birthday: string, // format: (dd/mm/yyyy)
   headquarterName: string,
   headquarterId: number,
-  role: string,
-
+  role?: string,
+  email?:string
 }
