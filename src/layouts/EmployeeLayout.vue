@@ -10,8 +10,8 @@ const route = useRoute()
 const role = ref(route.meta.role as string)
 
 const roleMap: Record<string, number> = {
-  MANAGER: 0,
-  ADMINISTRATOR: 1,
+  ADMINISTRATOR: 0,
+  MANAGER: 1,
   VETERINARY: 2,
   RECEPTIONIST: 3
 }
@@ -31,7 +31,7 @@ const items = ref<MenuItem[][]>([
     {
       label: 'Clientes',
       icon: 'pi pi-users',
-      to: '/',
+      to: 'client-management',
     },
     {
       label: 'Administradores',
@@ -58,7 +58,7 @@ const items = ref<MenuItem[][]>([
     {
       label: 'Clientes',
       icon: 'pi pi-users',
-      to: '/',
+      to: 'client-management',
     },
   ],
   [
