@@ -2,7 +2,6 @@ export interface Pet{
   id:number,
   nombre:string,
   gender:string,
-  genderId:number,
   weight:number,
   birthdate:string |Date
   comment:string,
