@@ -9,6 +9,9 @@ import Message from 'primevue/message'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/yup'
 import Button from 'primevue/button'
+import Clients from '@/assets/data/clients.json'
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
 //form
 
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
@@ -104,6 +107,13 @@ const onSubmit = handleSubmit((values) => {
               />
             </div>
           </form>
+          <DataTable :value="Clients"
+          paginator
+            :rows="10"
+            :rows-per-page-options="[10, 15, 20, 25, 30]"
+            ref="dt">
+
+          </DataTable>
         </div>
       </template>
     </Card>
