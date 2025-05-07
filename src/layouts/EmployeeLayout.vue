@@ -43,6 +43,12 @@ const items = ref<MenuItem[][]>([
       icon: 'pi pi-github',
       to: '/',
     },
+    {
+      label: 'Servicios',
+      icon: 'pi pi-calendar-plus',
+      to: 'services-management',
+    }
+    
   ],
   [
     {
