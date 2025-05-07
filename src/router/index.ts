@@ -49,7 +49,7 @@ const router = createRouter({
           path: 'perfil',
           name: 'client-perfil',
           component: PerfilPage,
-        }
+        },
       ],
     },
     {
@@ -72,20 +72,20 @@ const router = createRouter({
               component: PerfilPage,
             },
             {
-              path:'employee-management',
-              name:'administrator-employee-management',
-              component:EmployeeManagementPage
+              path: 'employee-management',
+              name: 'administrator-employee-management',
+              component: EmployeeManagementPage,
             },
             {
-              path:'client-management',
-              name:'administrator-client-management',
-              component:ClientManagementPage
+              path: 'client-management',
+              name: 'administrator-client-management',
+              component: ClientManagementPage,
             },
             {
-              path:'pets-management',
-              name:'administrator-pets-management',
-              component:PetsManagementPage
-            }
+              path: 'pets-management',
+              name: 'administrator-pets-management',
+              component: PetsManagementPage,
+            },
           ],
         },
         {
@@ -104,21 +104,20 @@ const router = createRouter({
               component: PerfilPage,
             },
             {
-              path:'employee-management',
-              name:'manager-employee-management',
-              component:EmployeeManagementPage
-            }
-            ,
-            {
-              path:'client-management',
-              name:'manager-client-management',
-              component:ClientManagementPage
+              path: 'employee-management',
+              name: 'manager-employee-management',
+              component: EmployeeManagementPage,
             },
             {
-              path:'pets-management',
-              name:'manager-pets-management',
-              component:PetsManagementPage
-            }
+              path: 'client-management',
+              name: 'manager-client-management',
+              component: ClientManagementPage,
+            },
+            {
+              path: 'pets-management',
+              name: 'manager-pets-management',
+              component: PetsManagementPage,
+            },
           ],
         },
         {
@@ -136,6 +135,11 @@ const router = createRouter({
               name: 'receptionist-perfil',
               component: PerfilPage,
             },
+            {
+              path: 'pets-management',
+              name: 'receptionist-pets-management',
+              component: PetsManagementPage,
+            },
           ],
         },
         {
@@ -152,7 +156,7 @@ const router = createRouter({
               path: 'perfil',
               name: 'veterinary-perfil',
               component: PerfilPage,
-            }
+            },
           ],
         },
       ],
