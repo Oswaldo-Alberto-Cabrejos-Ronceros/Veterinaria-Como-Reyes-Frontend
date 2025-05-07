@@ -11,6 +11,7 @@ import HomePageVeterinary from '@/views/Employee/Veterinary/HomePage/HomePage.vu
 import PerfilPage from '@/views/Common/PerfilPage/PerfilPage.vue'
 import EmployeeManagementPage from '@/views/Employee/Common/EmployeeManagementPage/EmployeeManagementPage.vue'
 import ClientManagementPage from '@/views/Employee/Common/ClientManagement/ClientManagementPage.vue'
+import ServiceManagementPage from '@/views/Employee/Common/ServiceManagementPage/ServiceManagementPage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -79,6 +80,11 @@ const router = createRouter({
               path:'client-management',
               name:'administrator-client-management',
               component:ClientManagementPage
+            },
+            {
+              path:'services-management',
+              name:'administrator-services-management',
+              component:ServiceManagementPage
             }
           ],
         },

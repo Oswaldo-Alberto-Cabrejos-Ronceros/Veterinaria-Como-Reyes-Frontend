@@ -94,6 +94,34 @@ const categories = [
                 {{ errors.specieId }}
               </Message>
             </div>
+<!-- category -->
+<div>
+              <label class="block mb-2">Categoria</label>
+              <Select
+                class="w-full"
+                v-bind="categoryIdAttrs"
+                v-model="categoryId"
+                :options="categories"
+                optionLabel="name"
+                optionValue="value"
+                placeholder="Selecciona Categoria"
+              />
+              <Message v-if="errors.specieId" severity="error" size="small" variant="simple">
+                {{ errors.specieId }}
+              </Message>
+            </div>
+            <div class="flex items-end justify-center">
+              <!-- button -->
+
+              <Button
+                label="Buscar"
+                type="submit"
+                severity="info"
+                icon="pi pi-search"
+                iconPos="right"
+                class="w-full"
+              />
+            </div>
             </form>
         </div>
       </template>
