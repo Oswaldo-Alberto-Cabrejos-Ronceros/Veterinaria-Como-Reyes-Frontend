@@ -15,6 +15,8 @@ import Column from 'primevue/column'
 import { ref } from 'vue'
 import type { Client } from '@/models/Client'
 import { useConfirm } from 'primevue'
+import ViewClientCard from './components/ViewClientCard.vue'
+import { useDialog } from 'primevue'
 //form
 
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
@@ -36,14 +38,27 @@ const fieldMap = {
   email: defineField('email'),
 }
 
+
+
 //for dialog
+const dialog = useDialog();
+
+const viewClient=(clientData:Client)=>{
+dialog.open(ViewClientCard,{
+  data:{
+    clientData:clientData
+  },
+  props:{
+    modal:true
+  }
+})
+}
 
 const addClient = ()=>{
 
 }
-
 const editClient = ()=>{
-
+  
 }
 
 
@@ -183,7 +198,7 @@ const exportCSV = () => {
                     variant="outlined"
                     aria-label="Filter"
                     rounded
-                    @click="addClient"
+                    @click="viewClient(data)"
                   ></Button>
                   <Button
                     icon="pi pi-pencil"
