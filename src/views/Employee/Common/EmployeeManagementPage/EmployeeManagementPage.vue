@@ -92,7 +92,7 @@ const addEmployee = ()=>{
     props:{
       modal: true
     },
-    onClose: (data) => { 
+    onClose: (data) => {
       if (data) {
         console.log('Datos recibidos del diálogo:',data);
       }
@@ -133,7 +133,7 @@ employeeData:{
     props:{
       modal: true
     },
-    onClose: (data) => { 
+    onClose: (data) => {
       if (data) {
         console.log('Datos recibidos del diálogo:',data);
       }
