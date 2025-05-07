@@ -41,7 +41,7 @@ const items = ref<MenuItem[][]>([
     {
       label: 'Mascotas',
       icon: 'pi pi-github',
-      to: '/',
+      to: 'pets-management',
     },
   ],
   [
@@ -87,7 +87,7 @@ const items = ref<MenuItem[][]>([
     {
       label: 'Mascotas',
       icon: 'pi pi-github',
-      to: '/',
+      to: 'pets-management',
     },
   ],
 ])
