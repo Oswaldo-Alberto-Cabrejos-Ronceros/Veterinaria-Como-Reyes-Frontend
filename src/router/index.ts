@@ -11,6 +11,7 @@ import HomePageVeterinary from '@/views/Employee/Veterinary/HomePage/HomePage.vu
 import PerfilPage from '@/views/Common/PerfilPage/PerfilPage.vue'
 import EmployeeManagementPage from '@/views/Employee/Common/EmployeeManagementPage/EmployeeManagementPage.vue'
 import ClientManagementPage from '@/views/Employee/Common/ClientManagement/ClientManagementPage.vue'
+import PetsManagementPage from '@/views/Employee/Common/PetsManagementPage/PetsManagementPage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -79,6 +80,11 @@ const router = createRouter({
               path:'client-management',
               name:'administrator-client-management',
               component:ClientManagementPage
+            },
+            {
+              path:'pets-management',
+              name:'administrator-pets-management',
+              component:PetsManagementPage
             }
           ],
         },
@@ -107,6 +113,11 @@ const router = createRouter({
               path:'client-management',
               name:'manager-client-management',
               component:ClientManagementPage
+            },
+            {
+              path:'pets-management',
+              name:'manager-pets-management',
+              component:PetsManagementPage
             }
           ],
         },
