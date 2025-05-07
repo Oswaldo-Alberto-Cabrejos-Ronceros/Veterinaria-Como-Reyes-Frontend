@@ -171,9 +171,9 @@ const exportCSV = () => {
             </template>
             <Column field="dni" sortable header="DNI" class=" hidden lg:table-cell" style="width: 18%"></Column>
             <Column field="names" sortable header="Nombres" style="width: 18%"></Column>
-            <Column field="lastnames" class=" hidden lg:table-cell" header="Apellidos" sortable style="width: 15%"></Column>
-            <Column field="phone" class=" hidden lg:table-cell" header="Celular" sortable style="width: 15%"></Column>
-            <Column field="email" class=" hidden md:table-cell" header="Correo" sortable style="width: 15%"></Column>
+            <Column field="lastnames" class=" hidden md:table-cell" header="Apellidos" sortable style="width: 15%"></Column>
+            <Column field="phone" class=" hidden xl:table-cell" header="Celular" sortable style="width: 15%"></Column>
+            <Column field="email" class=" hidden lg:table-cell" header="Correo" sortable style="width: 15%"></Column>
             <Column >
               <template #body="{ data }">
                 <div class="flex justify-between items-center flex-row lg:flex-col xl:flex-row gap-1">
