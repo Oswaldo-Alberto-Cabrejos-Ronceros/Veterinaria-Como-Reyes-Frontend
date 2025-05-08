@@ -17,6 +17,7 @@ import type { Client } from '@/models/Client'
 import { useConfirm } from 'primevue'
 import ViewClientCard from './components/ViewClientCard.vue'
 import { useDialog } from 'primevue'
+import AddClientCard from './components/AddClientCard.vue'
 //form
 
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
@@ -55,8 +56,19 @@ dialog.open(ViewClientCard,{
 }
 
 const addClient = ()=>{
-
+  dialog.open(AddClientCard,{
+    props:{
+      modal: true
+    },
+    onClose: (data) => {
+      if (data) {
+        console.log('Datos recibidos del diálogo:',data);
+      }
+    }
+  });
 }
+
+
 const editClient = ()=>{
   
 }
@@ -180,7 +192,7 @@ const exportCSV = () => {
             ref="dt">
             <template #header>
               <div class="w-full flex flex-col xs:flex-row justify-between gap-2 pb-4">
-                <Button icon="pi pi-user-plus" iconPos="right" severity="success" label="Agregar Cliente"  />
+                <Button icon="pi pi-user-plus" iconPos="right" severity="success" label="Agregar Cliente" @click="addClient"  />
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
             </template>
