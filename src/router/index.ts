@@ -10,7 +10,7 @@ import HomePageReceptionist from '@/views/Employee/Receptionist/HomePage/HomePag
 import HomePageVeterinary from '@/views/Employee/Veterinary/HomePage/HomePage.vue'
 import PerfilPage from '@/views/Common/PerfilPage/PerfilPage.vue'
 import EmployeeManagementPage from '@/views/Employee/Common/EmployeeManagementPage/EmployeeManagementPage.vue'
-import ClientManagementPage from '@/views/Employee/Common/ClientManagement/ClientManagementPage.vue'
+import ClientManagementPage from '@/views/Employee/Common/ClientManagementPage/ClientManagementPage.vue'
 import PetsManagementPage from '@/views/Employee/Common/PetsManagementPage/PetsManagementPage.vue'
 
 const router = createRouter({
