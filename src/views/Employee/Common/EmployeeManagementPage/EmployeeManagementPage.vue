@@ -125,7 +125,7 @@ employeeData:{
   address: employeeData.address,
   phone:employeeData.phone,
   headquarterId:employeeData.headquarterId,
-  birthdate:new Date(employeeData.birthDate),
+  birthdate:new Date(), // for now
   dirImage:employeeData.dirImage,
   roleId:rolesMap[employeeData.role]
 } as EditEmployee

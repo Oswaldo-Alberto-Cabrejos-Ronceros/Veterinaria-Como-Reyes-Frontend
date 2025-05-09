@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Card from 'primevue/card'
 import { schema } from '@/validation-schemas-forms/schema-search-client'
-import type { FormValues } from '@/validation-schemas-forms/schema-search-client'
+import type { FormValues as SchemaSearchClient } from '@/validation-schemas-forms/schema-search-client'
 import InputText from 'primevue/inputtext'
 import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
@@ -20,8 +20,8 @@ import { useDialog } from 'primevue'
 import AddClientCard from './components/AddClientCard.vue'
 import EditClientCard from './components/EditClientCard.vue'
 //form
-
-const { handleSubmit, errors, defineField } = useForm<FormValues>({
+import type { FormValues as SchemaEditClient } from '@/validation-schemas-forms/schema-edit-client'
+const { handleSubmit, errors, defineField } = useForm< SchemaSearchClient>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
     dni: '',
@@ -79,9 +79,9 @@ dialog.open(EditClientCard,{
       lastnames:clientData.lastnames,
       phone:clientData.phone,
       address:clientData.phone,
-      birthdate:clientData.birthdate,
+      birthdate:new Date(), //for now
       headquarterId:clientData.headquarterId
-    } as FormValues
+    } as SchemaEditClient
   },
   props:{
     modal:true

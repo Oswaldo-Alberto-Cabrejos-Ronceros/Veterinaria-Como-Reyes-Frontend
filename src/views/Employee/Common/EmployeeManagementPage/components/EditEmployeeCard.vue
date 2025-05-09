@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import Card from 'primevue/card';
-import {schema} from '@/validation-schemas-forms/schema-edit.employee'
-import type {FormValues} from '@/validation-schemas-forms/schema-edit.employee'
+import Card from 'primevue/card'
+import { schema } from '@/validation-schemas-forms/schema-edit.employee'
+import type { FormValues } from '@/validation-schemas-forms/schema-edit.employee'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/yup'
 import InputText from 'primevue/inputtext'
@@ -12,36 +12,36 @@ import Select from 'primevue/select'
 import Button from 'primevue/button'
 import DatePicker from 'primevue/datepicker'
 import type { Ref } from 'vue'
-import type { EditEmployee } from '@/models/EditEmployee';
-import { inject, onMounted } from 'vue';
+import type { EditEmployee } from '@/models/EditEmployee'
+import { inject, onMounted } from 'vue'
 //form
 
-const {handleSubmit,errors, defineField} = useForm<FormValues>({
-  validationSchema:toTypedSchema(schema),
-  initialValues:{
+const { handleSubmit, errors, defineField } = useForm<FormValues>({
+  validationSchema: toTypedSchema(schema),
+  initialValues: {
     dni: '',
     cmvp: '',
     names: '',
     lastnames: '',
-    address:'',
-    phone:'',
-    dirImage:'',
-    headquarterId:undefined,
-    birthdate:undefined,
-    roleId:undefined
-  }
-});
+    address: '',
+    phone: '',
+    dirImage: '',
+    headquarterId: undefined,
+    birthdate: undefined,
+    roleId: undefined,
+  },
+})
 
 //first field
 
-const fieldMap ={
+const fieldMap = {
   dni: defineField('dni'),
-  cmvp:defineField('cmvp'),
-  names:defineField('names'),
-  lastnames:defineField('lastnames'),
-  address:defineField('address'),
-  phone:defineField('phone'),
-  dirImage:defineField('dirImage')
+  cmvp: defineField('cmvp'),
+  names: defineField('names'),
+  lastnames: defineField('lastnames'),
+  address: defineField('address'),
+  phone: defineField('phone'),
+  dirImage: defineField('dirImage'),
 }
 
 //fields additionals
@@ -52,8 +52,8 @@ const [roleId, roleIdAttrs] = defineField('roleId')
 
 //first elements
 
-const textFields : {title:string, key: keyof  typeof fieldMap;icon:string}[]=[
-{
+const textFields: { title: string; key: keyof typeof fieldMap; icon: string }[] = [
+  {
     title: 'DNI',
     key: 'dni',
     icon: 'pi-id-card',
@@ -87,12 +87,12 @@ const textFields : {title:string, key: keyof  typeof fieldMap;icon:string}[]=[
     title: 'Imagen',
     key: 'dirImage',
     icon: 'pi-image',
-  }
+  },
 ]
 
 //for submit
 
-const onSubmit = handleSubmit((values)=>{
+const onSubmit = handleSubmit((values) => {
   console.log(values)
   dialogRef.value.close(values as EditEmployee)
 })
@@ -115,106 +115,103 @@ const headquarkers = [
 const dialogRef = inject('dialogRef') as Ref<{
   close: (data?: EditEmployee) => void
   data: {
-    employeeData:EditEmployee
+    employeeData: EditEmployee
   }
 }>
-onMounted(()=>{
+onMounted(() => {
   const params = dialogRef.value.data
-  Object.entries(fieldMap).forEach(([key,[value]])=>{
-    value.value=String(params.employeeData[key as keyof typeof params.employeeData])??''
+  Object.entries(fieldMap).forEach(([key, [value]]) => {
+    value.value = String(params.employeeData[key as keyof typeof params.employeeData]) ?? ''
   })
-  headquarterId.value=params.employeeData.headquarterId
-  if(params.employeeData.birthdate instanceof Date) birthdate.value=params.employeeData.birthdate
-  roleId.value=params.employeeData.roleId
+  headquarterId.value = params.employeeData.headquarterId
+  if (params.employeeData.birthdate instanceof Date) birthdate.value = params.employeeData.birthdate
+  roleId.value = params.employeeData.roleId
 })
-
-
 </script>
 
-
 <template>
-<Card class="card-dialog-form-layout">
-  <template #title>
+  <Card class="card-dialog-form-layout">
+    <template #title>
       <h3 class="h3 text-center">Editar Datos</h3>
     </template>
     <template #content>
-      <form
-        @submit.prevent="onSubmit"
-        class="form-dialog-layout"
-      >
-      <div v-for="element in textFields" :key="element.key">
-              <label class="block mb-2">{{ element.title }}</label>
-              <InputGroup>
-                <InputGroupAddon class="text-neutral-400">
-                  <i :class="`pi ${element.icon}`"></i>
-                </InputGroupAddon>
-                <InputText
-                  v-model="fieldMap[element.key][0].value"
-                  v-bind="fieldMap[element.key][1]"
-                  class="w-full"
-                  :placeholder="element.title"
-                />
-              </InputGroup>
-              <Message v-if="errors[element.key]" severity="error" size="small" variant="simple">
-                {{ errors[element.key] }}
-              </Message>
-            </div>
-            <div>
-              <label class="block mb-2">Fecha de nacimiento</label>
-              <DatePicker v-bind="birthdateAttrs" v-model="birthdate" showIcon fluid iconDisplay="input" />
+      <form @submit.prevent="onSubmit" class="form-dialog-layout">
+        <div v-for="element in textFields" :key="element.key">
+          <label class="block mb-2">{{ element.title }}</label>
+          <InputGroup>
+            <InputGroupAddon class="text-neutral-400">
+              <i :class="`pi ${element.icon}`"></i>
+            </InputGroupAddon>
+            <InputText
+              v-model="fieldMap[element.key][0].value"
+              v-bind="fieldMap[element.key][1]"
+              class="w-full"
+              :placeholder="element.title"
+            />
+          </InputGroup>
+          <Message v-if="errors[element.key]" severity="error" size="small" variant="simple">
+            {{ errors[element.key] }}
+          </Message>
+        </div>
+        <div>
+          <label class="block mb-2">Fecha de nacimiento</label>
+          <DatePicker
+            v-bind="birthdateAttrs"
+            v-model="birthdate"
+            showIcon
+            fluid
+            iconDisplay="input"
+          />
 
-              <Message v-if="errors.birthdate" severity="error" size="small" variant="simple">
-                {{ errors.birthdate }}
-              </Message>
-            </div>
-            <div>
-              <label class="block mb-2">Sede</label>
-              <Select
-                class="w-full"
-                v-bind="roleIdAttrs"
-                v-model="roleId"
-                :options="roles"
-                optionLabel="name"
-                optionValue="value"
-                placeholder="Selecciona Rol"
-              />
+          <Message v-if="errors.birthdate" severity="error" size="small" variant="simple">
+            {{ errors.birthdate }}
+          </Message>
+        </div>
+        <div>
+          <label class="block mb-2">Sede</label>
+          <Select
+            class="w-full"
+            v-bind="roleIdAttrs"
+            v-model="roleId"
+            :options="roles"
+            optionLabel="name"
+            optionValue="value"
+            placeholder="Selecciona Rol"
+          />
 
-              <Message v-if="errors.roleId" severity="error" size="small" variant="simple">
-                {{ errors.roleId }}
-              </Message>
-            </div>
-            <div>
-              <label class="block mb-2">Sede</label>
-              <Select
-                class="w-full"
-                v-bind="headquarterIdAttrs"
-                v-model="headquarterId"
-                :options="headquarkers"
-                optionLabel="name"
-                optionValue="value"
-                placeholder="Selecciona Sede"
-              />
+          <Message v-if="errors.roleId" severity="error" size="small" variant="simple">
+            {{ errors.roleId }}
+          </Message>
+        </div>
+        <div>
+          <label class="block mb-2">Sede</label>
+          <Select
+            class="w-full"
+            v-bind="headquarterIdAttrs"
+            v-model="headquarterId"
+            :options="headquarkers"
+            optionLabel="name"
+            optionValue="value"
+            placeholder="Selecciona Sede"
+          />
 
-              <Message v-if="errors.headquarterId" severity="error" size="small" variant="simple">
-                {{ errors.headquarterId }}
-              </Message>
-            </div>
-                    <!-- button -->
+          <Message v-if="errors.headquarterId" severity="error" size="small" variant="simple">
+            {{ errors.headquarterId }}
+          </Message>
+        </div>
+        <!-- button -->
 
-                    <div class="button-form-container-grid-end">
-
-        <Button
-        class="w-full max-w-md"
-          label="Editar"
-          type="submit"
-          severity="success"
-          icon="pi pi-save"
-          iconPos="right"
-        />
-                    </div>
-
-    </form>
+        <div class="button-form-container-grid-end">
+          <Button
+            class="w-full max-w-md"
+            label="Editar"
+            type="submit"
+            severity="success"
+            icon="pi pi-save"
+            iconPos="right"
+          />
+        </div>
+      </form>
     </template>
-
-</Card>
+  </Card>
 </template>
