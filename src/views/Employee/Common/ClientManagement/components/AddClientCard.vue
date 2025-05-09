@@ -96,9 +96,7 @@ const headquarkers = [
 </script>
 
 <template>
-  <Card
-    class="h-auto w-full sm:w-xl flex flex-col items-center justify-center bg-transparent shadow-none"
-  >
+  <Card class="h-auto w-[80vw] md:w-auto lg:w-[80vw] xl:w-auto bg-transparent shadow-none">
     <template #title>
       <h3 class="h3 text-center">Agregar Cliente</h3>
     </template>
@@ -106,7 +104,7 @@ const headquarkers = [
     <template #content>
       <form
         @submit.prevent="onSubmit"
-        class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-3xl mx-auto text-neutral-950 dark:text-surface-0"
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-neutral-950 dark:text-surface-0"
       >
         <div v-for="element in textFields" :key="element.key">
           <label class="block mb-2">{{ element.title }}</label>
@@ -214,7 +212,16 @@ const headquarkers = [
             {{ errors.confirmPassword }}
           </Message>
         </div>
-        <Button class="col-span-2" label="Editar" type="submit" severity="success" icon="pi pi-save" iconPos="right" />
+        <div class="flex items-center justify-center col-span-full">
+          <Button
+            class="w-full max-w-md"
+            label="Editar"
+            type="submit"
+            severity="success"
+            icon="pi pi-save"
+            iconPos="right"
+          />
+        </div>
       </form>
     </template>
   </Card>
