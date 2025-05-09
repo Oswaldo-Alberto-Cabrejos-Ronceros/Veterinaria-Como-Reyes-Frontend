@@ -18,6 +18,7 @@ import { useConfirm } from 'primevue'
 import ViewClientCard from './components/ViewClientCard.vue'
 import { useDialog } from 'primevue'
 import AddClientCard from './components/AddClientCard.vue'
+import EditClientCard from './components/EditClientCard.vue'
 //form
 
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
@@ -69,8 +70,28 @@ const addClient = ()=>{
 }
 
 
-const editClient = ()=>{
-  
+const editClient = (clientData:Client)=>{
+dialog.open(EditClientCard,{
+  data:{
+    clientData:{
+      dni:clientData.dni,
+      name:clientData.names,
+      lastnames:clientData.lastnames,
+      phone:clientData.phone,
+      address:clientData.phone,
+      birthdate:clientData.birthdate,
+      headquarterId:clientData.headquarterId
+    } as FormValues
+  },
+  props:{
+    modal:true
+  },
+  onClose:(data)=>{
+    if(data){
+      console.log("Datos recibidos del dialogo:",data)
+    }
+  }
+})
 }
 
 
@@ -218,7 +239,7 @@ const exportCSV = () => {
                     variant="outlined"
                     aria-label="Filter"
                     rounded
-                    @click="editClient"
+                    @click="editClient(data)"
                   ></Button>
                   <Button
                     icon="pi pi-trash"
