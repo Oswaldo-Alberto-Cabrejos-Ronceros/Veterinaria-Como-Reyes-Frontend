@@ -1,94 +1,63 @@
 <script setup lang="ts">
 import Card from 'primevue/card'
-import { schema } from '@/validation-schemas-forms/schema-search-employee'
-import type { FormValues } from '@/validation-schemas-forms/schema-search-employee'
-import { useForm } from 'vee-validate'
-import { toTypedSchema } from '@vee-validate/yup'
+import { schema } from '@/validation-schemas-forms/schema-search-client'
+import type { FormValues as SchemaSearchClient } from '@/validation-schemas-forms/schema-search-client'
 import InputText from 'primevue/inputtext'
 import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
 import Message from 'primevue/message'
-import Select from 'primevue/select'
+import { useForm } from 'vee-validate'
+import { toTypedSchema } from '@vee-validate/yup'
 import Button from 'primevue/button'
-import Employees from '@/assets/data/employees.json'
+import Clients from '@/assets/data/clients.json'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import type { Employee } from '@/models/Employee'
 import { ref } from 'vue'
-import { useDialog } from 'primevue/usedialog';
-import ViewEmployeeCard from './components/ViewEmployeeCard.vue'
+import type { Client } from '@/models/Client'
 import { useConfirm } from 'primevue'
-import EditEmployeeCard from './components/EditEmployeeCard.vue'
-import type { EditEmployee } from '@/models/EditEmployee'
-import AddEmployeeCard from './components/AddEmployeeCard.vue'
+import ViewClientCard from './components/ViewClientCard.vue'
+import { useDialog } from 'primevue'
+import AddClientCard from './components/AddClientCard.vue'
+import EditClientCard from './components/EditClientCard.vue'
 //form
-
-const { handleSubmit, errors, defineField } = useForm<FormValues>({
+import type { FormValues as SchemaEditClient } from '@/validation-schemas-forms/schema-edit-client'
+const { handleSubmit, errors, defineField } = useForm< SchemaSearchClient>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
     dni: '',
-    cmvp: '',
     names: '',
     lastnames: '',
-    rol: undefined,
+    phone: '',
+    email: '',
   },
 })
 
 const fieldMap = {
   dni: defineField('dni'),
-  cmvp: defineField('cmvp'),
   names: defineField('names'),
   lastnames: defineField('lastnames'),
+  phone: defineField('phone'),
+  email: defineField('email'),
 }
 
-const [rol, rolAttrs] = defineField('rol')
 
-const searchElementsEmployee: { title: string; key: keyof typeof fieldMap; icon: string }[] = [
-  {
-    title: 'DNI',
-    key: 'dni',
-    icon: 'pi-id-card',
-  },
-  {
-    title: 'CMVP',
-    key: 'cmvp',
-    icon: 'pi-id-card',
-  },
-  {
-    title: 'Nombres',
-    key: 'names',
-    icon: 'pi-user',
-  },
-  {
-    title: 'Apellidos',
-    key: 'lastnames',
-    icon: 'pi-user',
-  },
-]
-
-const onSubmit = handleSubmit((values) => {
-  console.log(values)
-})
-
-//roles
-const roles = [
-  { name: 'Veterinario', value: 1 },
-  { name: 'Recepcionista', value: 2 },
-  { name: 'Jefe de sede', value: 3 },
-];
-
-const rolesMap: Record<string,number> ={
-  'VETERINARIO':1,
-  "RECEPCIONISTA":2,
-  "JEFESEDE" : 3
-}
 
 //for dialog
 const dialog = useDialog();
 
-//for add
-const addEmployee = ()=>{
-  dialog.open(AddEmployeeCard,{
+const viewClient=(clientData:Client)=>{
+dialog.open(ViewClientCard,{
+  data:{
+    clientData:clientData
+  },
+  props:{
+    modal:true
+  }
+})
+}
+
+const addClient = ()=>{
+  dialog.open(AddClientCard,{
     props:{
       modal: true
     },
@@ -101,51 +70,37 @@ const addEmployee = ()=>{
 }
 
 
-//for view
-const viewEmployee = (employeeData:Employee)=>{
-  dialog.open(ViewEmployeeCard,{
-    data:{
-employeeData:employeeData
-    },
-    props:{
-      modal: true
+const editClient = (clientData:Client)=>{
+dialog.open(EditClientCard,{
+  data:{
+    clientData:{
+      dni:clientData.dni,
+      names:clientData.names,
+      lastnames:clientData.lastnames,
+      phone:clientData.phone,
+      address:clientData.phone,
+      birthdate:new Date(), //for now
+      headquarterId:clientData.headquarterId
+    } as SchemaEditClient
+  },
+  props:{
+    modal:true
+  },
+  onClose:(data)=>{
+    if(data){
+      console.log("Datos recibidos del dialogo:",data)
     }
-  });
+  }
+})
 }
 
-//for edit
-const editEmployee = (employeeData:Employee)=>{
-  dialog.open(EditEmployeeCard,{
-    data:{
-employeeData:{
-  dni:employeeData.dni,
-  cmvp:employeeData.cmvp,
-  names:employeeData.names,
-  lastnames:employeeData.lastnames,
-  address: employeeData.address,
-  phone:employeeData.phone,
-  headquarterId:employeeData.headquarterId,
-  birthdate:new Date(), // for now
-  dirImage:employeeData.dirImage,
-  roleId:rolesMap[employeeData.role]
-} as EditEmployee
-    },
-    props:{
-      modal: true
-    },
-    onClose: (data) => {
-      if (data) {
-        console.log('Datos recibidos del diálogo:',data);
-      }
-    }
-  });
-}
 
 //for confirm
 const confirm = useConfirm();
 
+
 //for delete with confirm popup
-const deleteEmployee = (event:MouseEvent|KeyboardEvent,employee:Employee) => {
+const deleteClient = (event:MouseEvent|KeyboardEvent,client:Client) => {
   confirm.require({
     target:event.currentTarget as HTMLElement,
     message:'¿Seguro que quiere eliminar a este empleado?',
@@ -160,13 +115,48 @@ const deleteEmployee = (event:MouseEvent|KeyboardEvent,employee:Employee) => {
       severity:'danger'
     },
     accept:()=>{
-      console.log('Eliminando Empleado ', employee.employeeId)
+      console.log('Eliminando Empleado ', client.clientId)
     },
     reject:()=>{
       console.log('Cancelando')
     }
   })
 }
+
+
+const searchElementsClient: { title: string; key: keyof typeof fieldMap; icon: string }[] = [
+  {
+    title: 'DNI',
+    key: 'dni',
+    icon: 'pi-id-card',
+  },
+  {
+    title: 'Nombres',
+    key: 'names',
+    icon: 'pi-user',
+  },
+  {
+    title: 'Apellidos',
+    key: 'lastnames',
+    icon: 'pi-user',
+  },
+  {
+    title: 'Celular',
+    key: 'phone',
+    icon: 'pi-mobile',
+  },
+  {
+    title: 'Email',
+    key: 'email',
+    icon: 'pi-envelope',
+  },
+]
+
+//for submit
+const onSubmit = handleSubmit((values) => {
+  console.log(values)
+})
+
 
 //for export
 
@@ -180,12 +170,13 @@ const exportCSV = () => {
   <div class="layout-principal-flex">
     <Card class="card-principal-color-neutral">
       <template #title>
-        <h3 class="h3">Gestión de empleados</h3>
+        <h3 class="h3">Gestión de Clientes</h3>
       </template>
       <template #content>
         <div class="flex flex-col gap-6">
+          <!-- form -->
           <form @submit.prevent="onSubmit" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
-            <div v-for="element in searchElementsEmployee" :key="element.key">
+            <div v-for="element in searchElementsClient" :key="element.key">
               <label class="block mb-2">{{ element.title }}</label>
               <InputGroup>
                 <InputGroupAddon class="text-neutral-400">
@@ -202,24 +193,9 @@ const exportCSV = () => {
                 {{ errors[element.key] }}
               </Message>
             </div>
-            <div>
-              <label class="block mb-2">Sede</label>
-              <Select
-                class="w-full"
-                v-bind="rolAttrs"
-                v-model="rol"
-                :options="roles"
-                optionLabel="name"
-                optionValue="value"
-                placeholder="Selecciona Rol"
-              />
-
-              <Message v-if="errors.rol" severity="error" size="small" variant="simple">
-                {{ errors.rol }}
-              </Message>
-            </div>
             <div class="flex items-end justify-center md:col-start-2 lg:col-start-3 xl:col-start-4 2xl:col-start-5">
               <!-- button -->
+
               <Button
                 label="Buscar"
                 type="submit"
@@ -230,26 +206,22 @@ const exportCSV = () => {
               />
             </div>
           </form>
-          <!-- imporve design responsive -->
-          <!-- table -->
-          <DataTable
-            :value="Employees"
-            paginator
+          <DataTable :value="Clients"
+          paginator
             :rows="10"
             :rows-per-page-options="[10, 15, 20, 25, 30]"
-            ref="dt"
-          >
+            ref="dt">
             <template #header>
               <div class="w-full flex flex-col xs:flex-row justify-between gap-2 pb-4">
-                <Button icon="pi pi-user-plus" iconPos="right" severity="success" label="Agregar Empleado" @click="addEmployee" />
+                <Button icon="pi pi-user-plus" iconPos="right" severity="success" label="Agregar Cliente" @click="addClient"  />
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
             </template>
-            <Column field="names" sortable header="Nombres" class=" hidden lg:table-cell" style="width: 18%"></Column>
-            <Column field="lastnames" sortable header="Apellidos" style="width: 18%"></Column>
-            <Column field="dni" class=" hidden lg:table-cell" header="DNI" sortable style="width: 15%"></Column>
-            <Column field="cmvp" class=" hidden lg:table-cell" header="CMVP" sortable style="width: 15%"></Column>
-            <Column field="role" class=" hidden md:table-cell" header="Rol" sortable style="width: 15%"></Column>
+            <Column field="dni" sortable header="DNI" class=" hidden lg:table-cell" style="width: 18%"></Column>
+            <Column field="names" sortable header="Nombres" style="width: 18%"></Column>
+            <Column field="lastnames" class=" hidden md:table-cell" header="Apellidos" sortable style="width: 15%"></Column>
+            <Column field="phone" class=" hidden xl:table-cell" header="Celular" sortable style="width: 15%"></Column>
+            <Column field="email" class=" hidden lg:table-cell" header="Correo" sortable style="width: 15%"></Column>
             <Column >
               <template #body="{ data }">
                 <div class="flex justify-between items-center flex-row lg:flex-col xl:flex-row gap-1">
@@ -259,7 +231,7 @@ const exportCSV = () => {
                     variant="outlined"
                     aria-label="Filter"
                     rounded
-                    @click="viewEmployee(data)"
+                    @click="viewClient(data)"
                   ></Button>
                   <Button
                     icon="pi pi-pencil"
@@ -267,7 +239,7 @@ const exportCSV = () => {
                     variant="outlined"
                     aria-label="Filter"
                     rounded
-                    @click="editEmployee(data)"
+                    @click="editClient(data)"
                   ></Button>
                   <Button
                     icon="pi pi-trash"
@@ -275,7 +247,7 @@ const exportCSV = () => {
                     variant="outlined"
                     aria-label="Filter"
                     rounded
-                    @click="deleteEmployee($event,data)"
+                    @click="deleteClient($event,data)"
                   ></Button>
                 </div>
               </template>

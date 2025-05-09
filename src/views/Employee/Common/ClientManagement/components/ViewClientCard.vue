@@ -1,37 +1,43 @@
 <script setup lang="ts">
+import { ref, onMounted,inject } from 'vue'
 import Card from 'primevue/card'
-import type { Employee } from '@/models/Employee'
+import InputText from 'primevue/inputtext'
 import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
-import InputText from 'primevue/inputtext'
-import { inject,onMounted } from 'vue'
 import type { Ref } from 'vue'
-import { ref } from 'vue'
+import type { Client } from '@/models/Client'
+
+
 
 //props for working with dynamicdialog
 const dialogRef = inject('dialogRef') as Ref<{
   data: {
-    employeeData:Employee
+    clientData:Client
   }
 }>
 
-const employeeData=ref<Employee|null>(null)
+
+const clientData=ref<Client|null>(null)
 const firstName=ref<string>('')
   const firstLastName=ref<string>('')
 
-onMounted(()=>{
-  employeeData.value = dialogRef.value.data.employeeData
-    firstName.value = employeeData.value.names.split(' ')[0]
-    firstLastName.value = employeeData.value.lastnames.split(' ')[0]
+
+
+
+onMounted(() => {
+ clientData.value= dialogRef.value.data.clientData
+ firstName.value = clientData.value.names.split(' ')[0]
+ firstLastName.value = clientData.value.lastnames.split(' ')[0]
 })
-
-//separe name and lastnames
-
-
 
 //for elements to see
 
-const elements: { title: string; key: keyof Employee; icon: string }[] = [
+const elements: { title: string; key: keyof Client; icon: string }[] = [
+  {
+    title: 'Dni',
+    key: 'dni',
+    icon: 'pi-id-card',
+  },
   {
     title: 'Nombres',
     key: 'names',
@@ -43,14 +49,9 @@ const elements: { title: string; key: keyof Employee; icon: string }[] = [
     icon: 'pi-user',
   },
   {
-    title: 'DNI',
-    key: 'dni',
-    icon: 'pi-id-card',
-  },
-  {
-    title: 'CMVP',
-    key: 'cmvp',
-    icon: 'pi-id-card',
+    title: 'Celular',
+    key: 'phone',
+    icon: 'pi-mobile',
   },
   {
     title: 'Dirección',
@@ -69,28 +70,24 @@ const elements: { title: string; key: keyof Employee; icon: string }[] = [
   },
   {
     title: 'Fecha Nacimiento',
-    key: 'birthDate',
+    key: 'birthdate',
     icon: 'pi-calendar',
   },
   {
-    title: 'Rol',
-    key: 'role',
-    icon: 'pi-address-book',
+    title: 'Email',
+    key: 'email',
+    icon: 'pi-envelope',
   },
 ]
 </script>
 
 <template>
-  <Card
-    class="card-dialog-form-layout"
-  >
-    <template v-if="employeeData" #title>
-      <div class="flex gap-1 justify-center items-center">
-        <h3 v-if="employeeData.role === 'VETERINARIO'" class="h3">Dr.</h3>
-        <h3 class="h3">{{ `${firstName} ${firstLastName}` }}</h3>
-      </div>
+  <Card class="card-dialog-form-layout">
+    <template #title>
+      <h3 class="h3 text-center">Cliente: {{`${firstName} ${firstLastName}`}}</h3>
     </template>
-    <template v-if="employeeData" #content>
+
+    <template v-if="clientData" #content>
       <div class="flex-1 space-y-6">
         <div class="form-dialog-layout">
           <div v-for="(element, id) in elements" :key="id">
@@ -99,7 +96,7 @@ const elements: { title: string; key: keyof Employee; icon: string }[] = [
               <InputGroupAddon class="text-neutral-400">
                 <i :class="`pi ${element.icon}`"></i>
               </InputGroupAddon>
-              <InputText :value="employeeData[element.key]" disabled class="w-full" />
+              <InputText :value="clientData[element.key]" disabled class="w-full" />
             </InputGroup>
           </div>
         </div>
