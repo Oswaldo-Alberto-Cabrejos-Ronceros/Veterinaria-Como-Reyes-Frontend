@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref, onMounted, defineEmits, defineProps } from 'vue'
 import Card from 'primevue/card'
 import { schema } from '@/validation-schemas-forms/schema-add-client'
 import type { FormValues } from '@/validation-schemas-forms/schema-add-client'
@@ -11,7 +10,6 @@ import InputGroupAddon from 'primevue/inputgroupaddon'
 import Password from 'primevue/password'
 import Message from 'primevue/message'
 import Select from 'primevue/select'
-import Button from 'primevue/button'
 import DatePicker from 'primevue/datepicker'
 import type { Ref } from 'vue'
 import { inject } from 'vue'

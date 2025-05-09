@@ -9,7 +9,7 @@
 }
 
 body {
-  @apply font-inter text-sm;
+  @apply font-inter;
 }
 
 .textSm {
