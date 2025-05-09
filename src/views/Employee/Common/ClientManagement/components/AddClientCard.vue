@@ -106,7 +106,7 @@ const headquarkers = [
     <template #content>
       <form
         @submit.prevent="onSubmit"
-        class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-3xl mx-auto"
+        class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-3xl mx-auto text-neutral-950 dark:text-surface-0"
       >
         <div v-for="element in textFields" :key="element.key">
           <label class="block mb-2">{{ element.title }}</label>
