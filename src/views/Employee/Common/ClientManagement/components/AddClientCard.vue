@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Card from 'primevue/card'
-import { schema } from '@/validation-schemas-forms/schema-add-employee'
-import type { FormValues } from '@/validation-schemas-forms/schema-add-employee'
+import { schema } from '@/validation-schemas-forms/schema-add-client'
+import type { FormValues } from '@/validation-schemas-forms/schema-add-client'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/yup'
 import InputText from 'primevue/inputtext'
@@ -10,50 +10,42 @@ import InputGroupAddon from 'primevue/inputgroupaddon'
 import Password from 'primevue/password'
 import Message from 'primevue/message'
 import Select from 'primevue/select'
-import Button from 'primevue/button'
 import DatePicker from 'primevue/datepicker'
 import type { Ref } from 'vue'
-import type { AddEmployee } from '@/models/AddEmployee'
 import { inject } from 'vue'
-//form
+import Button from 'primevue/button'
 
+//form
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
     dni: '',
-    cmvp: '',
     names: '',
     lastnames: '',
-    address: '',
     phone: '',
-    dirImage: '',
-    headquarterId: undefined,
+    address: '',
     birthdate: undefined,
-    roleId: undefined,
+    headquarterId: undefined,
+    email: '',
+    password: '',
+    confirmPassword: '',
   },
 })
 
-//first field
-
 const fieldMap = {
   dni: defineField('dni'),
-  cmvp: defineField('cmvp'),
   names: defineField('names'),
   lastnames: defineField('lastnames'),
-  address: defineField('address'),
   phone: defineField('phone'),
-  dirImage: defineField('dirImage'),
+  address: defineField('address'),
 }
 
-//fields additionals
-
-const [headquarterId, headquarterIdAttrs] = defineField('headquarterId')
+//for adittionals
 const [birthdate, birthdateAttrs] = defineField('birthdate')
-const [roleId, roleIdAttrs] = defineField('roleId')
+const [headquarterId, headquarterIdAttrs] = defineField('headquarterId')
 const [email, emailAttrs] = defineField('email')
 const [password, passwordAttrs] = defineField('password')
 const [confirmPassword, confirmPasswordAttrs] = defineField('confirmPassword')
-//first elements
 
 const textFields: { title: string; key: keyof typeof fieldMap; icon: string }[] = [
   {
@@ -62,14 +54,14 @@ const textFields: { title: string; key: keyof typeof fieldMap; icon: string }[] 
     icon: 'pi-id-card',
   },
   {
-    title: 'CMVP',
-    key: 'cmvp',
-    icon: 'pi-id-card',
-  },
-  {
     title: 'Nombres',
     key: 'names',
     icon: 'pi-user',
+  },
+  {
+    title: 'Phone',
+    key: 'phone',
+    icon: 'pi-mobile',
   },
   {
     title: 'Apellidos',
@@ -81,36 +73,19 @@ const textFields: { title: string; key: keyof typeof fieldMap; icon: string }[] 
     key: 'address',
     icon: 'pi-home',
   },
-  {
-    title: 'Phone',
-    key: 'phone',
-    icon: 'pi-mobile',
-  },
-  {
-    title: 'Imagen',
-    key: 'dirImage',
-    icon: 'pi-image',
-  },
 ]
 
 //for submit
 
 const onSubmit = handleSubmit((values) => {
   console.log(values)
-  dialogRef.value.close(values as AddEmployee)
+  dialogRef.value.close(values as FormValues)
 })
 
 //for dynamicDialog
 const dialogRef = inject('dialogRef') as Ref<{
-  close: (data?: AddEmployee) => void
+  close: (data?: FormValues) => void
 }>
-
-//for roles
-const roles = [
-  { name: 'Veterinario', value: 1 },
-  { name: 'Recepcionista', value: 2 },
-  { name: 'Jefe de sede', value: 3 },
-]
 
 //headquarterIds
 const headquarkers = [
@@ -121,12 +96,11 @@ const headquarkers = [
 </script>
 
 <template>
-  <Card
-    class="card-dialog-form-layout"
-  >
+  <Card class="card-dialog-form-layout">
     <template #title>
-      <h3 class="h3 text-center">Agregar Empleado</h3>
+      <h3 class="h3 text-center">Agregar Cliente</h3>
     </template>
+
     <template #content>
       <form
         @submit.prevent="onSubmit"
@@ -164,22 +138,6 @@ const headquarkers = [
           </Message>
         </div>
         <div>
-          <label class="block mb-2">Rol</label>
-          <Select
-            class="w-full"
-            v-bind="roleIdAttrs"
-            v-model="roleId"
-            :options="roles"
-            optionLabel="name"
-            optionValue="value"
-            placeholder="Selecciona Rol"
-          />
-
-          <Message v-if="errors.roleId" severity="error" size="small" variant="simple">
-            {{ errors.roleId }}
-          </Message>
-        </div>
-        <div>
           <label class="block mb-2">Sede</label>
           <Select
             class="w-full"
@@ -195,7 +153,7 @@ const headquarkers = [
             {{ errors.headquarterId }}
           </Message>
         </div>
-        <!-- button -->
+
         <div>
           <label class="block mb-2">Email</label>
 
@@ -215,7 +173,7 @@ const headquarkers = [
             {{ errors.email }}
           </Message>
         </div>
-        <!-- for password -->
+
         <div>
           <label class="block mb-2">Contraseña</label>
           <InputGroup>
@@ -235,9 +193,8 @@ const headquarkers = [
           </Message>
         </div>
 
-        <!-- for confirm password -->
         <div>
-          <label class="block mb-2">Confirmar Contraseña</label>
+          <label class="block mb-2">Confirmar contraseña</label>
 
           <InputGroup>
             <InputGroupAddon class="text-neutral-400">
@@ -256,9 +213,15 @@ const headquarkers = [
           </Message>
         </div>
         <div class="button-form-container-grid-end">
-<Button class="w-full max-w-md" label="Editar" type="submit" severity="success" icon="pi pi-save" iconPos="right" />
+          <Button
+            class="w-full max-w-md"
+            label="Editar"
+            type="submit"
+            severity="success"
+            icon="pi pi-save"
+            iconPos="right"
+          />
         </div>
-
       </form>
     </template>
   </Card>
