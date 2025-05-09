@@ -82,7 +82,7 @@ const elements: { title: string; key: keyof Employee; icon: string }[] = [
 
 <template>
   <Card
-    class="h-auto w-full sm:w-xl flex flex-col items-center justify-center bg-transparent shadow-none"
+    class="card-dialog-form-layout"
   >
     <template v-if="employeeData" #title>
       <div class="flex gap-1 justify-center items-center">
@@ -92,7 +92,7 @@ const elements: { title: string; key: keyof Employee; icon: string }[] = [
     </template>
     <template v-if="employeeData" #content>
       <div class="flex-1 space-y-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="form-dialog-layout">
           <div v-for="(element, id) in elements" :key="id">
             <label class="block mb-2">{{ element.title }}</label>
             <InputGroup>

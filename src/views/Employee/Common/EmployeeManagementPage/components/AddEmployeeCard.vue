@@ -122,7 +122,7 @@ const headquarkers = [
 
 <template>
   <Card
-    class="h-auto w-full sm:w-xl flex flex-col items-center justify-center bg-transparent shadow-none"
+    class="card-dialog-form-layout"
   >
     <template #title>
       <h3 class="h3 text-center">Agregar Empleado</h3>
@@ -130,7 +130,7 @@ const headquarkers = [
     <template #content>
       <form
         @submit.prevent="onSubmit"
-        class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-3xl mx-auto text-neutral-950 dark:text-surface-0"
+        class="form-dialog-layout"
       >
         <div v-for="element in textFields" :key="element.key">
           <label class="block mb-2">{{ element.title }}</label>
@@ -255,7 +255,10 @@ const headquarkers = [
             {{ errors.confirmPassword }}
           </Message>
         </div>
-        <Button class="col-span-2" label="Editar" type="submit" severity="success" icon="pi pi-save" iconPos="right" />
+        <div class="button-form-container-grid-end">
+<Button class="w-full max-w-md" label="Editar" type="submit" severity="success" icon="pi pi-save" iconPos="right" />
+        </div>
+
       </form>
     </template>
   </Card>

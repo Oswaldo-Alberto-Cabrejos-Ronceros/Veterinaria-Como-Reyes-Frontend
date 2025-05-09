@@ -133,14 +133,14 @@ onMounted(()=>{
 
 
 <template>
-<Card class="h-auto w-full sm:w-xl flex flex-col items-center justify-center bg-transparent shadow-none">
+<Card class="card-dialog-form-layout">
   <template #title>
       <h3 class="h3 text-center">Editar Datos</h3>
     </template>
     <template #content>
       <form
         @submit.prevent="onSubmit"
-        class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-3xl mx-auto text-neutral-950 dark:text-surface-0"
+        class="form-dialog-layout"
       >
       <div v-for="element in textFields" :key="element.key">
               <label class="block mb-2">{{ element.title }}</label>
@@ -201,14 +201,18 @@ onMounted(()=>{
             </div>
                     <!-- button -->
 
+                    <div class="button-form-container-grid-end">
+
         <Button
-        class="col-span-2"
+        class="w-full max-w-md"
           label="Editar"
           type="submit"
           severity="success"
           icon="pi pi-save"
           iconPos="right"
         />
+                    </div>
+
     </form>
     </template>
 
