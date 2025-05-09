@@ -122,7 +122,7 @@ const exportCSV = () => {
       </template>
       <template #content>
         <div class="flex flex-col gap-6">
-          <form @submit.prevent="onSubmit" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <form @submit.prevent="onSubmit" class="form-search-grid-col-5">
             <div v-for="element in searchTextElementsClient" :key="element.key">
               <label class="block mb-2">{{ element.title }}</label>
               <InputGroup>
@@ -188,7 +188,7 @@ const exportCSV = () => {
                 {{ errors.gender }}
               </Message>
             </div>
-            <div class="flex items-end justify-center">
+            <div class="form-button-search-container-grid-col-5">
               <!-- button -->
 
               <Button
