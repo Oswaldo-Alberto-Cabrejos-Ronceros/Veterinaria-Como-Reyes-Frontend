@@ -108,7 +108,7 @@ onMounted(() => {
 
 <template>
   <Card
-    class="h-auto w-[80vw] md:w-auto lg:w-[80vw] xl:w-auto bg-transparent shadow-none"
+    class="card-dialog-form-layout"
   >
     <template #title>
       <h3 class="h3 text-center">Editar Datos</h3>
@@ -117,7 +117,7 @@ onMounted(() => {
     <template #content>
       <form
         @submit.prevent="onSubmit"
-        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-neutral-950 dark:text-surface-0"
+        class="form-dialog-layout"
       >
         <div v-for="element in textFields" :key="element.key">
           <label class="block mb-2">{{ element.title }}</label>
@@ -166,7 +166,7 @@ onMounted(() => {
             {{ errors.headquarterId }}
           </Message>
         </div>
-        <div class="flex items-center justify-center col-span-full">
+        <div class="button-form-container-grid-end">
 <Button class="w-full max-w-md" label="Editar" type="submit" severity="success" icon="pi pi-save" iconPos="right" />
         </div>
 

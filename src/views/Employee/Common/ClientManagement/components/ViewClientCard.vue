@@ -82,14 +82,14 @@ const elements: { title: string; key: keyof Client; icon: string }[] = [
 </script>
 
 <template>
-  <Card class="h-auto w-[80vw] md:w-auto lg:w-[80vw] xl:w-auto bg-transparent shadow-none">
+  <Card class="card-dialog-form-layout">
     <template #title>
       <h3 class="h3 text-center">Cliente: {{`${firstName} ${firstLastName}`}}</h3>
     </template>
 
     <template v-if="clientData" #content>
       <div class="flex-1 space-y-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-neutral-950 dark:text-surface-0">
+        <div class="form-dialog-layout">
           <div v-for="(element, id) in elements" :key="id">
             <label class="block mb-2">{{ element.title }}</label>
             <InputGroup>
