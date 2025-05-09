@@ -13,6 +13,7 @@ import Select from 'primevue/select'
 import DatePicker from 'primevue/datepicker'
 import type { Ref } from 'vue'
 import { inject } from 'vue'
+import Button from 'primevue/button'
 
 //form
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
@@ -213,6 +214,7 @@ const headquarkers = [
             {{ errors.confirmPassword }}
           </Message>
         </div>
+        <Button class="col-span-2" label="Editar" type="submit" severity="success" icon="pi pi-save" iconPos="right" />
       </form>
     </template>
   </Card>
