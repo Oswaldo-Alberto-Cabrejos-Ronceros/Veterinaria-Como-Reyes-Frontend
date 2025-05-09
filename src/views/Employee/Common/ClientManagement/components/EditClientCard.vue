@@ -108,7 +108,7 @@ onMounted(() => {
 
 <template>
   <Card
-    class="h-auto w-full sm:w-xl flex flex-col items-center justify-center bg-transparent shadow-none"
+    class="h-auto w-[80vw] md:w-auto bg-transparent shadow-none"
   >
     <template #title>
       <h3 class="h3 text-center">Editar Datos</h3>
@@ -117,7 +117,7 @@ onMounted(() => {
     <template #content>
       <form
         @submit.prevent="onSubmit"
-        class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-3xl mx-auto text-neutral-950 dark:text-surface-0"
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 text-neutral-950 dark:text-surface-0"
       >
         <div v-for="element in textFields" :key="element.key">
           <label class="block mb-2">{{ element.title }}</label>
@@ -166,7 +166,10 @@ onMounted(() => {
             {{ errors.headquarterId }}
           </Message>
         </div>
-        <Button class="col-span-2" label="Editar" type="submit" severity="success" icon="pi pi-save" iconPos="right" />
+        <div class="flex items-center justify-center col-span-full">
+<Button class="w-full max-w-md" label="Editar" type="submit" severity="success" icon="pi pi-save" iconPos="right" />
+        </div>
+
       </form>
     </template>
   </Card>

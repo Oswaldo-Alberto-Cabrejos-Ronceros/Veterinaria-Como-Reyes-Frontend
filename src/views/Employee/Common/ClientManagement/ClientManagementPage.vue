@@ -75,7 +75,7 @@ dialog.open(EditClientCard,{
   data:{
     clientData:{
       dni:clientData.dni,
-      name:clientData.names,
+      names:clientData.names,
       lastnames:clientData.lastnames,
       phone:clientData.phone,
       address:clientData.phone,
