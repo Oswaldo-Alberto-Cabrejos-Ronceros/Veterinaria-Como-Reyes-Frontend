@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, defineEmits, defineProps,inject } from 'vue'
+import { ref, onMounted,inject } from 'vue'
 import Card from 'primevue/card'
 import InputText from 'primevue/inputtext'
 import InputGroup from 'primevue/inputgroup'
@@ -7,18 +7,7 @@ import InputGroupAddon from 'primevue/inputgroupaddon'
 import type { Ref } from 'vue'
 import type { Client } from '@/models/Client'
 
-const props = defineProps<{
-  client: {
-    firstName: string
-    secondName: string
-    lastName: string
-    secondLastName: string
-    dni: string
-    phone: string
-    address: string
-    email: string
-  }
-}>()
+
 
 //props for working with dynamicdialog
 const dialogRef = inject('dialogRef') as Ref<{
@@ -33,7 +22,7 @@ const firstName=ref<string>('')
   const firstLastName=ref<string>('')
 
 
-const emit = defineEmits(['submit'])
+
 
 onMounted(() => {
  clientData.value= dialogRef.value.data.clientData
@@ -95,7 +84,7 @@ const elements: { title: string; key: keyof Client; icon: string }[] = [
 <template>
   <Card class="h-auto w-full sm:w-xl bg-transparent shadow-none">
     <template #title>
-      <h3 class="h3 text-center">Cliente: Nombre Apellido</h3>
+      <h3 class="h3 text-center">Cliente: {{`${firstName} ${firstLastName}`}}</h3>
     </template>
 
     <template v-if="clientData" #content>
