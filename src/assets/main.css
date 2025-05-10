@@ -62,3 +62,22 @@ body {
   @apply h-min min-w-full flex dark:text-surface-0 dark:bg-surface-800 px-4 py-4
 }
 
+.card-dialog-form-layout{
+  @apply h-auto w-[80vw] md:w-auto lg:w-[80vw] xl:w-auto bg-transparent shadow-none
+}
+
+.form-dialog-layout{
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-neutral-950 dark:text-surface-0
+}
+
+.button-form-container-grid-end{
+  @apply flex items-center justify-center col-span-full
+}
+
+.form-search-grid-col-5{
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4
+}
+
+.form-button-search-container-grid-col-5{
+  @apply flex items-end justify-center md:col-start-2 lg:col-start-3 xl:col-start-4 2xl:col-start-5
+}

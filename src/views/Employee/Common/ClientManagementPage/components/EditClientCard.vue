@@ -1,7 +1,7 @@
-<script lang="ts" setup>
+<script setup lang="ts">
 import Card from 'primevue/card'
-import { schema } from '@/validation-schemas-forms/schema-edit.employee'
-import type { FormValues } from '@/validation-schemas-forms/schema-edit.employee'
+import { schema } from '@/validation-schemas-forms/schema-edit-client'
+import type { FormValues } from '@/validation-schemas-forms/schema-edit-client'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/yup'
 import InputText from 'primevue/inputtext'
@@ -12,55 +12,44 @@ import Select from 'primevue/select'
 import Button from 'primevue/button'
 import DatePicker from 'primevue/datepicker'
 import type { Ref } from 'vue'
-import type { EditEmployee } from '@/models/EditEmployee'
 import { inject, onMounted } from 'vue'
+
 //form
 
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
     dni: '',
-    cmvp: '',
     names: '',
     lastnames: '',
-    address: '',
     phone: '',
-    dirImage: '',
-    headquarterId: undefined,
+    address: '',
     birthdate: undefined,
-    roleId: undefined,
+    headquarterId: undefined,
   },
 })
 
-//first field
+//first fields
 
 const fieldMap = {
   dni: defineField('dni'),
-  cmvp: defineField('cmvp'),
   names: defineField('names'),
   lastnames: defineField('lastnames'),
-  address: defineField('address'),
   phone: defineField('phone'),
-  dirImage: defineField('dirImage'),
+  address: defineField('address'),
 }
 
-//fields additionals
+//for additinal fields
 
-const [headquarterId, headquarterIdAttrs] = defineField('headquarterId')
 const [birthdate, birthdateAttrs] = defineField('birthdate')
-const [roleId, roleIdAttrs] = defineField('roleId')
+const [headquarterId, headquarterIdAttrs] = defineField('headquarterId')
 
-//first elements
+//textfields
 
 const textFields: { title: string; key: keyof typeof fieldMap; icon: string }[] = [
   {
     title: 'DNI',
     key: 'dni',
-    icon: 'pi-id-card',
-  },
-  {
-    title: 'CMVP',
-    key: 'cmvp',
     icon: 'pi-id-card',
   },
   {
@@ -74,35 +63,21 @@ const textFields: { title: string; key: keyof typeof fieldMap; icon: string }[] 
     icon: 'pi-user',
   },
   {
-    title: 'Dirección',
-    key: 'address',
-    icon: 'pi-home',
-  },
-  {
-    title: 'Phone',
+    title: 'Celular',
     key: 'phone',
     icon: 'pi-mobile',
   },
   {
-    title: 'Imagen',
-    key: 'dirImage',
-    icon: 'pi-image',
+    title: 'Dirección',
+    key: 'address',
+    icon: 'pi-home',
   },
 ]
 
 //for submit
-
 const onSubmit = handleSubmit((values) => {
   console.log(values)
-  dialogRef.value.close(values as EditEmployee)
 })
-
-//for roles
-const roles = [
-  { name: 'Veterinario', value: 1 },
-  { name: 'Recepcionista', value: 2 },
-  { name: 'Jefe de sede', value: 3 },
-]
 
 //headquarterIds
 const headquarkers = [
@@ -111,31 +86,39 @@ const headquarkers = [
   { name: 'Tinguiña', value: 3 },
 ]
 
+//for dialog
+
 //for dynamicDialog
 const dialogRef = inject('dialogRef') as Ref<{
-  close: (data?: EditEmployee) => void
+  close: (data?: FormValues) => void
   data: {
-    employeeData: EditEmployee
+    clientData: FormValues
   }
 }>
+
 onMounted(() => {
   const params = dialogRef.value.data
   Object.entries(fieldMap).forEach(([key, [value]]) => {
-    value.value = String(params.employeeData[key as keyof typeof params.employeeData]) ?? ''
+    value.value = String(params.clientData[key as keyof typeof params.clientData])
   })
-  headquarterId.value = params.employeeData.headquarterId
-  if (params.employeeData.birthdate instanceof Date) birthdate.value = params.employeeData.birthdate
-  roleId.value = params.employeeData.roleId
+  headquarterId.value = params.clientData.headquarterId
+  if (params.clientData.birthdate instanceof Date) birthdate.value = params.clientData.birthdate
 })
 </script>
 
 <template>
-  <Card class="card-dialog-form-layout">
+  <Card
+    class="card-dialog-form-layout"
+  >
     <template #title>
       <h3 class="h3 text-center">Editar Datos</h3>
     </template>
+
     <template #content>
-      <form @submit.prevent="onSubmit" class="form-dialog-layout">
+      <form
+        @submit.prevent="onSubmit"
+        class="form-dialog-layout"
+      >
         <div v-for="element in textFields" :key="element.key">
           <label class="block mb-2">{{ element.title }}</label>
           <InputGroup>
@@ -171,22 +154,6 @@ onMounted(() => {
           <label class="block mb-2">Sede</label>
           <Select
             class="w-full"
-            v-bind="roleIdAttrs"
-            v-model="roleId"
-            :options="roles"
-            optionLabel="name"
-            optionValue="value"
-            placeholder="Selecciona Rol"
-          />
-
-          <Message v-if="errors.roleId" severity="error" size="small" variant="simple">
-            {{ errors.roleId }}
-          </Message>
-        </div>
-        <div>
-          <label class="block mb-2">Sede</label>
-          <Select
-            class="w-full"
             v-bind="headquarterIdAttrs"
             v-model="headquarterId"
             :options="headquarkers"
@@ -199,18 +166,10 @@ onMounted(() => {
             {{ errors.headquarterId }}
           </Message>
         </div>
-        <!-- button -->
-
         <div class="button-form-container-grid-end">
-          <Button
-            class="w-full max-w-md"
-            label="Editar"
-            type="submit"
-            severity="success"
-            icon="pi pi-save"
-            iconPos="right"
-          />
+<Button class="w-full max-w-md" label="Editar" type="submit" severity="success" icon="pi pi-save" iconPos="right" />
         </div>
+
       </form>
     </template>
   </Card>

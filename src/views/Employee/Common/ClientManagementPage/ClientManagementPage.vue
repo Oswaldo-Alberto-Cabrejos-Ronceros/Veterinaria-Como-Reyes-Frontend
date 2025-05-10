@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Card from 'primevue/card'
 import { schema } from '@/validation-schemas-forms/schema-search-client'
-import type { FormValues } from '@/validation-schemas-forms/schema-search-client'
+import type { FormValues as SchemaSearchClient } from '@/validation-schemas-forms/schema-search-client'
 import InputText from 'primevue/inputtext'
 import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
@@ -15,9 +15,13 @@ import Column from 'primevue/column'
 import { ref } from 'vue'
 import type { Client } from '@/models/Client'
 import { useConfirm } from 'primevue'
+import ViewClientCard from './components/ViewClientCard.vue'
+import { useDialog } from 'primevue'
+import AddClientCard from './components/AddClientCard.vue'
+import EditClientCard from './components/EditClientCard.vue'
 //form
-
-const { handleSubmit, errors, defineField } = useForm<FormValues>({
+import type { FormValues as SchemaEditClient } from '@/validation-schemas-forms/schema-edit-client'
+const { handleSubmit, errors, defineField } = useForm< SchemaSearchClient>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
     dni: '',
@@ -36,14 +40,58 @@ const fieldMap = {
   email: defineField('email'),
 }
 
+
+
 //for dialog
+const dialog = useDialog();
 
-const addClient = ()=>{
-
+const viewClient=(clientData:Client)=>{
+dialog.open(ViewClientCard,{
+  data:{
+    clientData:clientData
+  },
+  props:{
+    modal:true
+  }
+})
 }
 
-const editClient = ()=>{
+const addClient = ()=>{
+  dialog.open(AddClientCard,{
+    props:{
+      modal: true
+    },
+    onClose: (data) => {
+      if (data) {
+        console.log('Datos recibidos del diálogo:',data);
+      }
+    }
+  });
+}
 
+
+const editClient = (clientData:Client)=>{
+dialog.open(EditClientCard,{
+  data:{
+    clientData:{
+      dni:clientData.dni,
+      names:clientData.names,
+      lastnames:clientData.lastnames,
+      phone:clientData.phone,
+      address:clientData.phone,
+      birthdate:new Date(), //for now
+      headquarterId:clientData.headquarterId
+    } as SchemaEditClient
+  },
+  props:{
+    modal:true
+  },
+  onClose:(data)=>{
+    if(data){
+      console.log("Datos recibidos del dialogo:",data)
+    }
+  }
+})
 }
 
 
@@ -127,7 +175,7 @@ const exportCSV = () => {
       <template #content>
         <div class="flex flex-col gap-6">
           <!-- form -->
-          <form @submit.prevent="onSubmit" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <form @submit.prevent="onSubmit" class="form-search-grid-col-5">
             <div v-for="element in searchElementsClient" :key="element.key">
               <label class="block mb-2">{{ element.title }}</label>
               <InputGroup>
@@ -145,9 +193,8 @@ const exportCSV = () => {
                 {{ errors[element.key] }}
               </Message>
             </div>
-            <div class="flex items-end justify-center">
+            <div class="form-button-search-container-grid-col-5">
               <!-- button -->
-
               <Button
                 label="Buscar"
                 type="submit"
@@ -165,7 +212,7 @@ const exportCSV = () => {
             ref="dt">
             <template #header>
               <div class="w-full flex flex-col xs:flex-row justify-between gap-2 pb-4">
-                <Button icon="pi pi-user-plus" iconPos="right" severity="success" label="Agregar Cliente"  />
+                <Button icon="pi pi-user-plus" iconPos="right" severity="success" label="Agregar Cliente" @click="addClient"  />
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
             </template>
@@ -183,7 +230,7 @@ const exportCSV = () => {
                     variant="outlined"
                     aria-label="Filter"
                     rounded
-                    @click="addClient"
+                    @click="viewClient(data)"
                   ></Button>
                   <Button
                     icon="pi pi-pencil"
@@ -191,7 +238,7 @@ const exportCSV = () => {
                     variant="outlined"
                     aria-label="Filter"
                     rounded
-                    @click="editClient"
+                    @click="editClient(data)"
                   ></Button>
                   <Button
                     icon="pi pi-trash"
