@@ -18,6 +18,7 @@ import type { Pet } from '@/models/Pet'
 import { ref } from 'vue'
 import { useDialog } from 'primevue'
 import AddPetCard from './components/AddPetCard.vue'
+import ViewPetCard from './components/ViewPetCard.vue'
 //form
 
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
@@ -93,6 +94,18 @@ const addPet=()=>{
       if(data){
         console.log('Datos recibidos del dialogo:',data)
       }
+    }
+  })
+}
+
+//for view
+const viewPet=(petData:Pet)=>{
+  dialog.open(ViewPetCard,{
+    props:{
+      modal:true
+    },
+    data:{
+      petData:petData
     }
   })
 }
@@ -248,7 +261,7 @@ const exportCSV = () => {
                     variant="outlined"
                     aria-label="Filter"
                     rounded
-
+                    @click="viewPet(data)"
                   ></Button>
                   <Button
                     icon="pi pi-pencil"
