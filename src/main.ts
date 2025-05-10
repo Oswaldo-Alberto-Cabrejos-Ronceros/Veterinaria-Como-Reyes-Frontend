@@ -6,8 +6,10 @@ import { createPinia } from 'pinia'
 //importamos prime vue
 import PrimeVue from 'primevue/config'
 import Aura from '@primeuix/themes/aura'
-import DialogService from 'primevue/dialogservice';
-import ConfirmationService from 'primevue/confirmationservice';
+import DialogService from 'primevue/dialogservice'
+import ConfirmationService from 'primevue/confirmationservice'
+//import esLocale
+import esLocale from '@/assets/locale/es.json'
 
 import App from './App.vue'
 import router from './router'
@@ -49,7 +51,7 @@ const MyPreset = definePreset(Aura, {
         },
         formField: {
           borderColor: '{neutral-400}',
-          placeholderColor:'{neutral-500}'
+          placeholderColor: '{neutral-500}',
         },
       },
       dark: {
@@ -85,6 +87,8 @@ app.use(PrimeVue, {
       },
     },
   },
+  locale: esLocale
+
 })
 
 //user dialog service

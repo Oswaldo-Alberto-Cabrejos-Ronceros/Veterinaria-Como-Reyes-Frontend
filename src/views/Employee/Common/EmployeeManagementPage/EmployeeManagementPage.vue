@@ -125,7 +125,7 @@ employeeData:{
   address: employeeData.address,
   phone:employeeData.phone,
   headquarterId:employeeData.headquarterId,
-  birthdate:new Date(employeeData.birthDate),
+  birthdate:new Date(), // for now
   dirImage:employeeData.dirImage,
   roleId:rolesMap[employeeData.role]
 } as EditEmployee
@@ -184,7 +184,7 @@ const exportCSV = () => {
       </template>
       <template #content>
         <div class="flex flex-col gap-6">
-          <form @submit.prevent="onSubmit" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <form @submit.prevent="onSubmit" class="form-search-grid-col-5">
             <div v-for="element in searchElementsEmployee" :key="element.key">
               <label class="block mb-2">{{ element.title }}</label>
               <InputGroup>
@@ -218,9 +218,8 @@ const exportCSV = () => {
                 {{ errors.rol }}
               </Message>
             </div>
-            <div class="flex items-end justify-center">
+            <div class="form-button-search-container-grid-col-5">
               <!-- button -->
-
               <Button
                 label="Buscar"
                 type="submit"
