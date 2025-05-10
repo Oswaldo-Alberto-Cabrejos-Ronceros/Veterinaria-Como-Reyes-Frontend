@@ -16,6 +16,8 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import type { Pet } from '@/models/Pet'
 import { ref } from 'vue'
+import { useDialog } from 'primevue'
+import AddPetCard from './components/AddPetCard.vue'
 //form
 
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
@@ -77,6 +79,23 @@ const onSubmit = handleSubmit((values)=>{
   console.log(values)
 })
 
+
+//for dialog
+const dialog = useDialog();
+
+//for add
+const addPet=()=>{
+  dialog.open(AddPetCard,{
+    props:{
+      modal:true
+    },
+    onClose:(data)=>{
+      if(data){
+        console.log('Datos recibidos del dialogo:',data)
+      }
+    }
+  })
+}
 
 //for confirm
 const confirm = useConfirm();
@@ -211,7 +230,7 @@ const exportCSV = () => {
           >
             <template #header>
               <div class="w-full flex flex-col xs:flex-row justify-between gap-2 pb-4">
-                <Button icon="pi pi-user-plus" iconPos="right" severity="success" label="Agregar Mascota"  />
+                <Button icon="pi pi-user-plus" iconPos="right" severity="success" label="Agregar Mascota" @click="addPet"  />
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
             </template>
