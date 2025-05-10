@@ -14,8 +14,9 @@ import Button from 'primevue/button'
 import Message from 'primevue/message'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/yup'
-import { inject } from 'vue'
+import { inject, onMounted } from 'vue'
 import type { Ref } from 'vue'
+import { ref } from 'vue'
 //form
 
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
@@ -52,6 +53,9 @@ const onSubmit = handleSubmit((values) => {
 
 const dialogRef = inject('dialogRef') as Ref<{
   close: (data?: FormValues) => void
+  data:{
+    serviceData?:FormValues
+  }
 }>
 
 const species = [
@@ -63,12 +67,32 @@ const categories = [
   { name: 'Cuidado', value: 1 },
   { name: 'Médico', value: 1 },
 ]
+
+//title reactive
+const title = ref<string>('Agregar')
+
+//for edit
+onMounted(()=>{
+  if(dialogRef.value.data){
+    const params = dialogRef.value.data.serviceData
+    if(params){
+      title.value='Editar'
+      name.value=params.name
+      description.value=params.description
+      price.value=params.price
+      duration.value=params.duration
+      dirImage.value=params.dirImage
+      specieId.value = params.specieId
+      categoryId.value= params.categoryId
+    }
+  }
+})
 </script>
 
 <template>
   <Card class="card-dialog-form-layout">
     <template #title>
-      <h3 class="h3 text-center">Agregar Servicio</h3>
+      <h3 class="h3 text-center">{{title}} Servicio</h3>
     </template>
     <template #content>
       <form @submit.prevent="onSubmit" class="form-dialog-layout">
@@ -198,7 +222,7 @@ const categories = [
         <div class="button-form-container-grid-end">
           <Button
             class="w-full max-w-md"
-            label="Editar"
+            :label="title"
             type="submit"
             severity="success"
             icon="pi pi-save"

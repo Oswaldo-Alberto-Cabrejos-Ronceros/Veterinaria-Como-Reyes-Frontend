@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Card from 'primevue/card'
 import { schema } from '@/validation-schemas-forms/schema-search-service'
-import type { FormValues } from '@/validation-schemas-forms/schema-search-service'
+import type { FormValues as SearchServiceSchema } from '@/validation-schemas-forms/schema-search-service'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/yup'
 import InputText from 'primevue/inputtext'
@@ -17,9 +17,10 @@ import type { Service } from '@/models/Service'
 import { useConfirm, useDialog } from 'primevue'
 import { ref } from 'vue'
 import AddEditServiceCard from './components/AddEditServiceCard.vue'
+import type { FormValues as AddEditServiceSchema } from '@/validation-schemas-forms/schema-add-edit-service'
 
 //form
-const { handleSubmit, errors, defineField } = useForm<FormValues>({
+const { handleSubmit, errors, defineField } = useForm<SearchServiceSchema>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
     name: '',
@@ -66,6 +67,27 @@ const addService = ()=>{
       if(data){
         console.log('Datos recibidos del dialogo', data)
       }
+    }
+  })
+}
+
+//for edit
+
+const editService = (serviceData:Service)=>{
+  dialog.open(AddEditServiceCard,{
+    props:{
+      modal:true
+    },
+    data:{
+      serviceData:{
+        name:serviceData.name,
+        description:serviceData.description,
+        price:serviceData.price,
+        duration:new Date (),
+        dirImage:serviceData.dirImage,
+        specieId:serviceData.specieId,
+        categoryId:serviceData.categoryId
+      } as AddEditServiceSchema
     }
   })
 }
@@ -240,6 +262,7 @@ const exportCSV = () => {
                     variant="outlined"
                     aria-label="Filter"
                     rounded
+                    @click="editService(data)"
                   ></Button>
                   <Button
                     icon="pi pi-trash"
