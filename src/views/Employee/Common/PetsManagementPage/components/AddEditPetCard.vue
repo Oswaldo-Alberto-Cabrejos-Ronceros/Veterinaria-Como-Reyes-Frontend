@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { inject, type Ref } from 'vue'
+import { inject, onMounted, type Ref } from 'vue'
 import Card from 'primevue/card'
 import InputText from 'primevue/inputtext'
 import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
-import { schema } from '@/validation-schemas-forms/schema-add-pet'
-import type { FormValues } from '@/validation-schemas-forms/schema-add-pet'
+import { schema } from '@/validation-schemas-forms/schema-add-edit-pet'
+import type { FormValues } from '@/validation-schemas-forms/schema-add-edit-pet'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/yup'
 import DatePicker from 'primevue/datepicker'
@@ -52,6 +52,9 @@ const onSubmit = handleSubmit((values) => {
 //for dynamicDialog
 const dialogRef = inject('dialogRef') as Ref<{
   close: (data?: FormValues) => void
+  data: {
+    petData?: FormValues
+  }
 }>
 
 //genders
@@ -67,9 +70,29 @@ const species = [
 
 //breeds
 const breeds = [
+  { name: 'Pastor Chiribaya', value: 0 },
   { name: 'Pastor Alemán', value: 1 },
   { name: 'Salchicha', value: 2 },
 ]
+
+onMounted(() => {
+  if (dialogRef.value.data) {
+    console.log(dialogRef.value.data)
+    const params = dialogRef.value.data.petData
+    //set data if edit
+    if (params) {
+      name.value = params.name
+      gender.value = params.gender
+      weight.value = params.weight
+      birthdate.value = params.birthdate
+      comment.value = params.comment
+      specieId.value = params.specieId
+      breedId.value = params.breedId
+      urlImage.value = params.urlImage
+      ownerDni.value = params.ownerDni
+    }
+  }
+})
 </script>
 
 <template>

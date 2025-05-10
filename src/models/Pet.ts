@@ -9,6 +9,6 @@ export interface Pet{
   specie:string,
   specieId:number
   breed:string,
-  breedId:string,
+  breedId:number,
   ownerDni:string
 }

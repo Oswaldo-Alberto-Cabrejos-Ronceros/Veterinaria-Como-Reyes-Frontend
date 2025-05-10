@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Card from 'primevue/card'
 import { schema } from '@/validation-schemas-forms/schema-search-pet'
-import type { FormValues } from '@/validation-schemas-forms/schema-search-pet'
+import type { FormValues as SearchEmployeeSchema } from '@/validation-schemas-forms/schema-search-pet'
 import InputText from 'primevue/inputtext'
 import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
@@ -17,11 +17,12 @@ import Column from 'primevue/column'
 import type { Pet } from '@/models/Pet'
 import { ref } from 'vue'
 import { useDialog } from 'primevue'
-import AddPetCard from './components/AddPetCard.vue'
+import AddEditPetCard from './components/AddEditPetCard.vue'
 import ViewPetCard from './components/ViewPetCard.vue'
+import type { FormValues as AddEditPetSchema } from '@/validation-schemas-forms/schema-add-edit-pet'
 //form
 
-const { handleSubmit, errors, defineField } = useForm<FormValues>({
+const { handleSubmit, errors, defineField } = useForm<SearchEmployeeSchema>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
     name: '',
@@ -86,7 +87,7 @@ const dialog = useDialog();
 
 //for add
 const addPet=()=>{
-  dialog.open(AddPetCard,{
+  dialog.open(AddEditPetCard,{
     props:{
       modal:true
     },
@@ -106,6 +107,17 @@ const viewPet=(petData:Pet)=>{
     },
     data:{
       petData:petData
+    }
+  })
+}
+
+const editPet=(petData:Pet)=>{
+  dialog.open(AddEditPetCard,{
+    props:{
+      modal:true
+    },
+    data:{
+      petData:petData as AddEditPetSchema
     }
   })
 }
@@ -269,7 +281,7 @@ const exportCSV = () => {
                     variant="outlined"
                     aria-label="Filter"
                     rounded
-
+                    @click="editPet(data)"
                   ></Button>
                   <Button
                     icon="pi pi-trash"
