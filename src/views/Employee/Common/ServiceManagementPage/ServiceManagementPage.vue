@@ -14,8 +14,9 @@ import Services from '@/assets/data/services.json'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import type { Service } from '@/models/Service'
-import { useConfirm } from 'primevue'
+import { useConfirm, useDialog } from 'primevue'
 import { ref } from 'vue'
+import AddEditServiceCard from './components/AddEditServiceCard.vue'
 
 //form
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
@@ -50,6 +51,26 @@ const categories = [
   { name: 'Cuidado', value: 1 },
   { name: 'Médico', value: 1 },
 ]
+
+//for dialog
+const dialog = useDialog()
+
+//for add
+
+const addService = ()=>{
+  dialog.open(AddEditServiceCard,{
+    props:{
+      modal:true
+    },
+    onClose:(data)=>{
+      if(data){
+        console.log('Datos recibidos del dialogo', data)
+      }
+    }
+  })
+}
+
+
 
 //for confirm
 const confirm = useConfirm()
@@ -167,6 +188,7 @@ const exportCSV = () => {
                   iconPos="right"
                   severity="success"
                   label="Agregar Servicio"
+                  @click="addService"
                 />
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
