@@ -47,8 +47,13 @@ const items = ref<MenuItem[][]>([
       label: 'Servicios',
       icon: 'pi pi-calendar-plus',
       to: 'services-management',
+    },
+        {
+      label: 'Métodos de Pago',
+      icon: 'pi pi-wallet',
+      to: 'payment-method-management',
     }
-    
+
   ],
   [
     {
