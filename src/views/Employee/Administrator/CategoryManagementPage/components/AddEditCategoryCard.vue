@@ -59,7 +59,7 @@ onMounted(() => {
 <template>
   <Card class="card-dialog-form-layout">
     <template #title>
-      <h3 class="h3 text-center">Agregar Categoria</h3>
+      <h3 class="h3 text-center">{{title}} Categoria</h3>
     </template>
     <template #content>
       <form @submit.prevent="onSubmit" class="form-dialog-layout-col-2">
@@ -98,7 +98,7 @@ onMounted(() => {
         <div class="button-form-container-grid-end">
           <Button
             class="w-full max-w-md"
-            label="Guardar"
+            :label="title"
             type="submit"
             severity="success"
             icon="pi pi-save"
