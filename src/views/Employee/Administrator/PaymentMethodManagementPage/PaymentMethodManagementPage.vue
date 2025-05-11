@@ -18,6 +18,7 @@ import { useConfirm } from 'primevue'
 import AddEditPaymentMethodCard from './components/AddEditPaymentMethodCard.vue'
 import { useDialog } from 'primevue'
 import type { FormValues as AddEditPaymentMethodSchema} from '@/validation-schemas-forms/schema-add-edit-payment-method'
+import ViewPaymentMethodCard from './components/ViewPaymentMethodCard.vue'
 
 //form
 const { handleSubmit, errors, defineField } = useForm<SearchPaymentMethotSchema>({
@@ -51,6 +52,17 @@ const addPaymentMethod = ()=>{
   })
 }
 
+const viewPaymentMethod=(paymentMethodData:PaymentMethod)=>{
+  dialog.open(ViewPaymentMethodCard,{
+    props:{
+      modal:true
+    },
+    data:{
+      paymentMethodData:paymentMethodData
+    }
+  })
+}
+
 const editPaymentMethod = (paymentMethodData:PaymentMethod)=>{
   dialog.open(AddEditPaymentMethodCard,{
     props:{
@@ -61,6 +73,7 @@ const editPaymentMethod = (paymentMethodData:PaymentMethod)=>{
     }
   })
 }
+
 
 //for confirm
 const confirm = useConfirm()
@@ -179,6 +192,7 @@ const exportCSV = () => {
                     variant="outlined"
                     aria-label="Filter"
                     rounded
+                    @click="viewPaymentMethod(data)"
                   ></Button>
                   <Button
                     icon="pi pi-pencil"
