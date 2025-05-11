@@ -14,7 +14,7 @@ import ClientManagementPage from '@/views/Employee/Common/ClientManagementPage/C
 import PetsManagementPage from '@/views/Employee/Common/PetsManagementPage/PetsManagementPage.vue'
 import ServiceManagementPage from '@/views/Employee/Common/ServiceManagementPage/ServiceManagementPage.vue'
 import PaymentMethodManagementPage from '@/views/Employee/Administrator/PaymentMethodManagementPage/PaymentMethodManagementPage.vue'
-import HeadquartersMagamentPage from '@/views/Employee/Administrator/HeadquartersManagementPage/HeadquartersMagamentPage.vue'
+import HeadquartersManagementPage from '@/views/Employee/Administrator/HeadquartersManagementPage/HeadquartersManagementPage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -102,7 +102,7 @@ const router = createRouter({
             {
               path: 'headquarter-management',
               name: 'administrator-headquarter-management',
-              component: HeadquartersMagamentPage,
+              component: HeadquartersManagementPage,
             }
           ],
         },
