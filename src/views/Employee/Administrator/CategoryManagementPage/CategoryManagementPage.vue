@@ -18,6 +18,7 @@ import { useDialog } from 'primevue'
 import type { Category } from '@/models/Category'
 import type { FormValues as AddEditCategorySchema } from '@/validation-schemas-forms/schema-add-edit-category'
 import ViewCategoryCard from './components/ViewCategoryCard.vue'
+import { useConfirm } from 'primevue'
 
 const { handleSubmit, errors, defineField } = useForm<SearchCategorySchema>({
   validationSchema: toTypedSchema(schema),
@@ -72,6 +73,34 @@ const viewCategory = (categoryData: Category) => {
     },
     data: {
       categoryData: categoryData,
+    },
+  })
+}
+
+//for confirm
+const confirm = useConfirm()
+
+//for delete with confirm popup
+
+const deleteCategory = (event: MouseEvent | KeyboardEvent, category: Category) => {
+  confirm.require({
+    target: event.currentTarget as HTMLElement,
+    message: '¿Seguro que quiere eliminar esta categoria?',
+    icon: 'pi pi-exclamation-triangle',
+    rejectProps: {
+      label: 'Cancelar',
+      severity: 'secondary',
+      outlined: true,
+    },
+    acceptProps: {
+      label: 'Eliminar',
+      severity: 'danger',
+    },
+    accept: () => {
+      console.log('Eliminando método ', category.id)
+    },
+    reject: () => {
+      console.log('Cancelando')
     },
   })
 }
@@ -172,6 +201,7 @@ const exportCSV = () => {
                     variant="outlined"
                     aria-label="Filter"
                     rounded
+                    @click="deleteCategory($event,data)"
                   ></Button>
                 </div>
               </template>
