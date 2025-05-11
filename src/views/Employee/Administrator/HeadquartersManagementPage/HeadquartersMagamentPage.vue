@@ -14,8 +14,10 @@ import { ref } from 'vue'
 import Headquarters from '@/assets/data/headquarters.json'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import { useConfirm } from 'primevue'
+import { useConfirm, useDialog } from 'primevue'
 import type { Headquarter } from '@/models/Headquarter'
+import AddEditHeadquarter from './components/AddEditHeadquarter.vue'
+import type { FormValues as AddEditHeadquarterSchema } from '@/validation-schemas-forms/schema-add-edit-headquarter'
 
 //form
 const { handleSubmit, errors, defineField } = useForm<SearchHeadquarterSchema>({
@@ -57,7 +59,7 @@ const textFields: { title: string; key: keyof typeof fieldMap; type: string; ico
     icon: 'pi-mobile',
   },
   {
-    title: 'Teléfono',
+    title: 'Email',
     key: 'email',
     type: 'email',
     icon: 'pi-envelope',
@@ -83,6 +85,38 @@ const districts = [
   { name: 'Pisco', value: 'Pisco' },
   { name: 'Nazca', value: 'Nazca' },
 ]
+
+//for dialog
+const dialog = useDialog()
+
+//for add
+const addHeadquarter = ()=>{
+  dialog.open(AddEditHeadquarter,{
+    props:{
+      modal:true
+    },
+    onClose:(data)=>{
+      if(data){
+        console.log('Datos recibidos del dialogo', data)
+      }
+    }
+  })
+}
+
+//for edit
+
+const editHeadquarter =(headquarterData:Headquarter)=>{
+dialog.open(AddEditHeadquarter,{
+  props:{
+    modal:true
+  },
+  data:{
+    headquarterData:headquarterData as AddEditHeadquarterSchema
+  }
+})
+}
+
+
 
 //for confirm
 const confirm = useConfirm()
@@ -210,6 +244,7 @@ const exportCSV = () => {
                   iconPos="right"
                   severity="success"
                   label="Agregar Sede"
+                  @click="addHeadquarter"
                 />
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
@@ -254,6 +289,7 @@ const exportCSV = () => {
                     variant="outlined"
                     aria-label="Filter"
                     rounded
+                    @click="editHeadquarter(data)"
                   ></Button>
                   <Button
                     icon="pi pi-trash"
