@@ -43,6 +43,11 @@ const items = ref<MenuItem[][]>([
       icon: 'pi pi-github',
       to: 'pets-management',
     },
+        {
+      label: 'Categorias',
+      icon: 'pi pi-sort-amount-up-alt',
+      to: 'category-management',
+    },
     {
       label: 'Servicios',
       icon: 'pi pi-calendar-plus',
