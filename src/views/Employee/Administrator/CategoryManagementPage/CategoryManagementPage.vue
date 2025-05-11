@@ -15,6 +15,9 @@ import Column from 'primevue/column'
 import Categories from '@/assets/data/categories.json'
 import AddEditCategoryCard from './components/AddEditCategoryCard.vue'
 import { useDialog } from 'primevue'
+import type { Category } from '@/models/Category'
+import type { FormValues as AddEditCategorySchema } from '@/validation-schemas-forms/schema-add-edit-category'
+
 
 const { handleSubmit, errors, defineField } = useForm<SearchCategorySchema>({
   validationSchema: toTypedSchema(schema),
@@ -36,7 +39,7 @@ const onSubmit = handleSubmit((values) => {
 const dialog = useDialog()
 
 
-const addPaymentMethod = ()=>{
+const addCategory = ()=>{
   dialog.open(AddEditCategoryCard,{
     props:{
       modal:true
@@ -48,6 +51,22 @@ const addPaymentMethod = ()=>{
     }
   })
 }
+
+
+//edit
+
+const editCategory = (categoryData:Category)=>{
+  dialog.open(AddEditCategoryCard,{
+    props:{
+      modal:true
+    },
+    data:{
+      categoryData: categoryData as AddEditCategorySchema
+    }
+  })
+}
+
+
 
 //for export
 
@@ -106,7 +125,7 @@ const exportCSV = () => {
                   iconPos="right"
                   severity="success"
                   label="Agregar Categoria"
-                  @click="addPaymentMethod"
+                  @click="addCategory"
                 />
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
@@ -121,7 +140,7 @@ const exportCSV = () => {
               style="width: 60%"
             ></Column>
             <Column>
-              <template #body="{}">
+              <template #body="{data }">
                 <div class="flex justify-between items-center flex-col sm:flex-row gap-1">
                   <Button
                     icon="pi pi-eye"
@@ -136,6 +155,7 @@ const exportCSV = () => {
                     variant="outlined"
                     aria-label="Filter"
                     rounded
+                    @click="editCategory(data)"
                   ></Button>
                   <Button
                     icon="pi pi-trash"

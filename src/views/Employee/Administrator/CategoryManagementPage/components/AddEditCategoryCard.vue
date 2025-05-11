@@ -12,7 +12,8 @@ import Textarea from 'primevue/textarea'
 import IftaLabel from 'primevue/iftalabel'
 import Button from 'primevue/button'
 import Message from 'primevue/message'
-
+import { ref } from 'vue'
+import { onMounted } from 'vue'
 //form
 
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
@@ -33,15 +34,30 @@ const onSubmit = handleSubmit((values) => {
 })
 
 const dialogRef = inject('dialogRef') as Ref<{
-  close: (data?: FormValues) => void,
+  close: (data?: FormValues) => void
+  data: {
+    categoryData?: FormValues
+  }
 }>
 
+const title = ref<string>('Agregar')
 
+onMounted(() => {
+  if (dialogRef.value.data) {
+    console.log(dialogRef.value.data)
+    const params = dialogRef.value.data.categoryData
+    //set data if edit
+    if (params) {
+      title.value = 'Editar'
+      name.value = params.name
+      description.value = params.description
+    }
+  }
+})
 </script>
 
-
 <template>
-    <Card class="card-dialog-form-layout">
+  <Card class="card-dialog-form-layout">
     <template #title>
       <h3 class="h3 text-center">Agregar Categoria</h3>
     </template>
