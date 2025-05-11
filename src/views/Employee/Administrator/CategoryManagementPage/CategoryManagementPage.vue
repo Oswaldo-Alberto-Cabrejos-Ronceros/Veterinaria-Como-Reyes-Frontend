@@ -17,7 +17,7 @@ import AddEditCategoryCard from './components/AddEditCategoryCard.vue'
 import { useDialog } from 'primevue'
 import type { Category } from '@/models/Category'
 import type { FormValues as AddEditCategorySchema } from '@/validation-schemas-forms/schema-add-edit-category'
-
+import ViewCategoryCard from './components/ViewCategoryCard.vue'
 
 const { handleSubmit, errors, defineField } = useForm<SearchCategorySchema>({
   validationSchema: toTypedSchema(schema),
@@ -34,39 +34,47 @@ const onSubmit = handleSubmit((values) => {
 
 //for add
 
-
 //for dialog
 const dialog = useDialog()
 
-
-const addCategory = ()=>{
-  dialog.open(AddEditCategoryCard,{
-    props:{
-      modal:true
+const addCategory = () => {
+  dialog.open(AddEditCategoryCard, {
+    props: {
+      modal: true,
     },
-    onClose:(data)=>{
-      if(data){
-        console.log('Datos recibidos',data)
+    onClose: (data) => {
+      if (data) {
+        console.log('Datos recibidos', data)
       }
-    }
+    },
   })
 }
-
 
 //edit
 
-const editCategory = (categoryData:Category)=>{
-  dialog.open(AddEditCategoryCard,{
-    props:{
-      modal:true
+const editCategory = (categoryData: Category) => {
+  dialog.open(AddEditCategoryCard, {
+    props: {
+      modal: true,
     },
-    data:{
-      categoryData: categoryData as AddEditCategorySchema
-    }
+    data: {
+      categoryData: categoryData as AddEditCategorySchema,
+    },
   })
 }
 
+//for view
 
+const viewCategory = (categoryData: Category) => {
+  dialog.open(ViewCategoryCard, {
+    props: {
+      modal: true,
+    },
+    data: {
+      categoryData: categoryData,
+    },
+  })
+}
 
 //for export
 
@@ -140,7 +148,7 @@ const exportCSV = () => {
               style="width: 60%"
             ></Column>
             <Column>
-              <template #body="{data }">
+              <template #body="{ data }">
                 <div class="flex justify-between items-center flex-col sm:flex-row gap-1">
                   <Button
                     icon="pi pi-eye"
@@ -148,6 +156,7 @@ const exportCSV = () => {
                     variant="outlined"
                     aria-label="Filter"
                     rounded
+                    @click="viewCategory(data)"
                   ></Button>
                   <Button
                     icon="pi pi-pencil"
