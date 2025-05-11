@@ -176,7 +176,7 @@ const exportCSV = () => {
             ></Column>
                         <Column
               field="description"
-              class="hidden sm:table-cell"
+              class="hidden md:table-cell"
               header="Descripción"
               sortable
               style="width: 60%"
@@ -184,7 +184,7 @@ const exportCSV = () => {
             <Column>
               <template #body="{ data }">
                 <div
-                  class="flex justify-between items-center flex-row gap-1"
+                  class="flex justify-between items-center flex-col sm:flex-row gap-1"
                 >
                   <Button
                     icon="pi pi-eye"
