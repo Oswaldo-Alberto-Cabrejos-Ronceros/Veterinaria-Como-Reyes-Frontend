@@ -18,6 +18,7 @@ import { useConfirm, useDialog } from 'primevue'
 import type { Headquarter } from '@/models/Headquarter'
 import AddEditHeadquarterCard from './components/AddEditHeadquarterCard.vue'
 import type { FormValues as AddEditHeadquarterSchema } from '@/validation-schemas-forms/schema-add-edit-headquarter'
+import ViewHeadquaterCard from './components/ViewHeadquaterCard.vue'
 
 //form
 const { handleSubmit, errors, defineField } = useForm<SearchHeadquarterSchema>({
@@ -99,6 +100,18 @@ const addHeadquarter = ()=>{
       if(data){
         console.log('Datos recibidos del dialogo', data)
       }
+    }
+  })
+}
+
+//for view
+const viewHeadquarter = (headquarterData:Headquarter)=>{
+  dialog.open(ViewHeadquaterCard,{
+    props:{
+      modal:true
+    },
+    data:{
+headquarterData:headquarterData
     }
   })
 }
@@ -282,6 +295,7 @@ const exportCSV = () => {
                     variant="outlined"
                     aria-label="Filter"
                     rounded
+                    @click="viewHeadquarter(data)"
                   ></Button>
                   <Button
                     icon="pi pi-pencil"
