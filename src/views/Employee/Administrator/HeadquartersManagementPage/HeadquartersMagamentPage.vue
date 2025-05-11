@@ -10,6 +10,12 @@ import Select from 'primevue/select'
 import Button from 'primevue/button'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/yup'
+import { ref } from 'vue'
+import Headquarters from '@/assets/data/headquarters.json'
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
+import { useConfirm } from 'primevue'
+import type { Headquarter } from '@/models/Headquarter'
 
 //form
 const { handleSubmit, errors, defineField } = useForm<SearchHeadquarterSchema>({
@@ -77,6 +83,41 @@ const districts = [
   { name: 'Pisco', value: 'Pisco' },
   { name: 'Nazca', value: 'Nazca' },
 ]
+
+//for confirm
+const confirm = useConfirm()
+
+//for delete with confirm popup
+
+const deleteHeadquarter = (event: MouseEvent | KeyboardEvent, headquarter: Headquarter) => {
+  confirm.require({
+    target: event.currentTarget as HTMLElement,
+    message: '¿Seguro que quiere eliminar esta sede?',
+    icon: 'pi pi-exclamation-triangle',
+    rejectProps: {
+      label: 'Cancelar',
+      severity: 'secondary',
+      outlined: true,
+    },
+    acceptProps: {
+      label: 'Eliminar',
+      severity: 'danger',
+    },
+    accept: () => {
+      console.log('Eliminando Sede ', headquarter.id)
+    },
+    reject: () => {
+      console.log('Cancelando')
+    },
+  })
+}
+
+//for export
+
+const dt = ref()
+const exportCSV = () => {
+  dt.value.exportCSV()
+}
 </script>
 
 <template>
@@ -153,6 +194,79 @@ const districts = [
               />
             </div>
           </form>
+
+          <!-- table -->
+          <DataTable
+            :value="Headquarters"
+            paginator
+            :rows="10"
+            :rows-per-page-options="[5, 10]"
+            ref="dt"
+          >
+            <template #header>
+              <div class="w-full flex flex-col xs:flex-row justify-between gap-2 pb-4">
+                <Button
+                  icon="pi pi-user-plus"
+                  iconPos="right"
+                  severity="success"
+                  label="Agregar Sede"
+                />
+                <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
+              </div>
+            </template>
+            <Column field="location" sortable header="Dirección" style="width: 25%"></Column>
+            <Column
+              field="district"
+              class="hidden lg:table-cell"
+              sortable
+              header="Distrito"
+              style="width: 15%"
+            ></Column>
+            <Column
+              field="phone"
+              class="hidden md:table-cell"
+              header="Teléfono"
+              sortable
+              style="width: 15%"
+            ></Column>
+            <Column
+              field="email"
+              class="hidden lg:table-cell"
+              header="Email"
+              sortable
+              style="width: 25%"
+            ></Column>
+            <Column>
+              <template #body="{ data }">
+                <div
+                  class="flex justify-between items-center flex-row lg:flex-col xl:flex-row gap-1"
+                >
+                  <Button
+                    icon="pi pi-eye"
+                    severity="info"
+                    variant="outlined"
+                    aria-label="Filter"
+                    rounded
+                  ></Button>
+                  <Button
+                    icon="pi pi-pencil"
+                    severity="warn"
+                    variant="outlined"
+                    aria-label="Filter"
+                    rounded
+                  ></Button>
+                  <Button
+                    icon="pi pi-trash"
+                    severity="danger"
+                    variant="outlined"
+                    aria-label="Filter"
+                    rounded
+                    @click="deleteHeadquarter($event,data)"
+                  ></Button>
+                </div>
+              </template>
+            </Column>
+          </DataTable>
         </div>
       </template>
     </Card>
