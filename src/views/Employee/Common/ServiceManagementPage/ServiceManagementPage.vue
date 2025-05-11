@@ -18,6 +18,7 @@ import { useConfirm, useDialog } from 'primevue'
 import { ref } from 'vue'
 import AddEditServiceCard from './components/AddEditServiceCard.vue'
 import type { FormValues as AddEditServiceSchema } from '@/validation-schemas-forms/schema-add-edit-service'
+import ViewServiceCard from './components/ViewServiceCard.vue'
 
 //form
 const { handleSubmit, errors, defineField } = useForm<SearchServiceSchema>({
@@ -57,6 +58,17 @@ const categories = [
 const dialog = useDialog()
 
 //for add
+
+const viewService = (serviceData: Service)=>{
+  dialog.open(ViewServiceCard,{
+    props:{
+      modal:true
+    },
+    data:{
+      serviceData: serviceData
+    }
+  })
+}
 
 const addService = ()=>{
   dialog.open(AddEditServiceCard,{
@@ -255,6 +267,7 @@ const exportCSV = () => {
                     variant="outlined"
                     aria-label="Filter"
                     rounded
+                    @click="viewService(data)"
                   ></Button>
                   <Button
                     icon="pi pi-pencil"
