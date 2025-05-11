@@ -16,7 +16,7 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import { useConfirm, useDialog } from 'primevue'
 import type { Headquarter } from '@/models/Headquarter'
-import AddEditHeadquarter from './components/AddEditHeadquarter.vue'
+import AddEditHeadquarterCard from './components/AddEditHeadquarterCard.vue'
 import type { FormValues as AddEditHeadquarterSchema } from '@/validation-schemas-forms/schema-add-edit-headquarter'
 
 //form
@@ -91,7 +91,7 @@ const dialog = useDialog()
 
 //for add
 const addHeadquarter = ()=>{
-  dialog.open(AddEditHeadquarter,{
+  dialog.open(AddEditHeadquarterCard,{
     props:{
       modal:true
     },
@@ -106,7 +106,7 @@ const addHeadquarter = ()=>{
 //for edit
 
 const editHeadquarter =(headquarterData:Headquarter)=>{
-dialog.open(AddEditHeadquarter,{
+dialog.open(AddEditHeadquarterCard,{
   props:{
     modal:true
   },
