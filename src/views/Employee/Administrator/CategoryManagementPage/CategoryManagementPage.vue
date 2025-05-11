@@ -13,6 +13,8 @@ import { ref } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Categories from '@/assets/data/categories.json'
+import AddEditCategoryCard from './components/AddEditCategoryCard.vue'
+import { useDialog } from 'primevue'
 
 const { handleSubmit, errors, defineField } = useForm<SearchCategorySchema>({
   validationSchema: toTypedSchema(schema),
@@ -27,13 +29,32 @@ const onSubmit = handleSubmit((values) => {
   console.log(values)
 })
 
+//for add
+
+
+//for dialog
+const dialog = useDialog()
+
+
+const addPaymentMethod = ()=>{
+  dialog.open(AddEditCategoryCard,{
+    props:{
+      modal:true
+    },
+    onClose:(data)=>{
+      if(data){
+        console.log('Datos recibidos',data)
+      }
+    }
+  })
+}
+
 //for export
 
 const dt = ref()
 const exportCSV = () => {
   dt.value.exportCSV()
 }
-
 </script>
 
 <template>
@@ -70,35 +91,29 @@ const exportCSV = () => {
             </div>
           </form>
 
-           <!-- table -->
-                     <DataTable
+          <!-- table -->
+          <DataTable
             :value="Categories"
             paginator
             :rows="10"
-            :rows-per-page-options="[5,10]"
+            :rows-per-page-options="[5, 10]"
             ref="dt"
           >
-
-                    <template #header>
+            <template #header>
               <div class="w-full flex flex-col xs:flex-row justify-between gap-2 pb-4">
                 <Button
                   icon="pi pi-user-plus"
                   iconPos="right"
                   severity="success"
                   label="Agregar Categoria"
-
+                  @click="addPaymentMethod"
                 />
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
             </template>
 
-                        <Column
-              field="name"
-              sortable
-              header="Nombre"
-              style="width: 20%"
-            ></Column>
-                        <Column
+            <Column field="name" sortable header="Nombre" style="width: 20%"></Column>
+            <Column
               field="description"
               class="hidden md:table-cell"
               header="Descripción"
@@ -106,17 +121,14 @@ const exportCSV = () => {
               style="width: 60%"
             ></Column>
             <Column>
-              <template #body="{  }">
-                <div
-                  class="flex justify-between items-center flex-col sm:flex-row gap-1"
-                >
+              <template #body="{}">
+                <div class="flex justify-between items-center flex-col sm:flex-row gap-1">
                   <Button
                     icon="pi pi-eye"
                     severity="info"
                     variant="outlined"
                     aria-label="Filter"
                     rounded
-
                   ></Button>
                   <Button
                     icon="pi pi-pencil"
@@ -124,7 +136,6 @@ const exportCSV = () => {
                     variant="outlined"
                     aria-label="Filter"
                     rounded
-
                   ></Button>
                   <Button
                     icon="pi pi-trash"
@@ -132,13 +143,11 @@ const exportCSV = () => {
                     variant="outlined"
                     aria-label="Filter"
                     rounded
-
                   ></Button>
                 </div>
               </template>
             </Column>
-        </DataTable>
-
+          </DataTable>
         </div>
       </template>
     </Card>
