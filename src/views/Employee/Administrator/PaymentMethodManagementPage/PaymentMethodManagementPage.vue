@@ -15,6 +15,10 @@ import Column from 'primevue/column'
 import { ref } from 'vue'
 import type { PaymentMethod } from '@/models/PaymentMethod'
 import { useConfirm } from 'primevue'
+import AddEditPaymentMethodCard from './components/AddEditPaymentMethodCard.vue'
+import { useDialog } from 'primevue'
+import type { FormValues as AddEditPaymentMethodSchema} from '@/validation-schemas-forms/schema-add-edit-payment-method'
+
 //form
 const { handleSubmit, errors, defineField } = useForm<SearchPaymentMethotSchema>({
   validationSchema: toTypedSchema(schema),
@@ -30,6 +34,33 @@ const onSubmit = handleSubmit((values) => {
 })
 
 
+//for dialog
+const dialog = useDialog()
+
+
+const addPaymentMethod = ()=>{
+  dialog.open(AddEditPaymentMethodCard,{
+    props:{
+      modal:true
+    },
+    onClose:(data)=>{
+      if(data){
+        console.log('Datos recibidos',data)
+      }
+    }
+  })
+}
+
+const editPaymentMethod = (paymentMethodData:PaymentMethod)=>{
+  dialog.open(AddEditPaymentMethodCard,{
+    props:{
+      modal:true
+    },
+    data:{
+      paymentMethodData: paymentMethodData as AddEditPaymentMethodSchema
+    }
+  })
+}
 
 //for confirm
 const confirm = useConfirm()
@@ -117,7 +148,8 @@ const exportCSV = () => {
                   icon="pi pi-user-plus"
                   iconPos="right"
                   severity="success"
-                  label="Agregar Servicio"
+                  label="Agregar Método"
+                  @click="addPaymentMethod"
                 />
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
@@ -154,6 +186,7 @@ const exportCSV = () => {
                     variant="outlined"
                     aria-label="Filter"
                     rounded
+                    @click="editPaymentMethod(data)"
                   ></Button>
                   <Button
                     icon="pi pi-trash"
