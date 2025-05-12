@@ -9,6 +9,8 @@ import { onMounted, ref } from 'vue'
 import Roles from '@/assets/data/roles.json'
 import type { Role } from '@/models/Role'
 import { watch } from 'vue'
+import { useDialog } from 'primevue'
+import AddEditRoleCard from './components/AddEditRoleCard.vue'
 //for roles
 
 const roles = [
@@ -19,31 +21,40 @@ const roles = [
 
 //roles information
 
-const rolesInfo:Role[] = Roles;
+const rolesInfo: Role[] = Roles
 
-const roleSelect = (ref<number>(1))
+const roleSelect = ref<number>(1)
 
 const description = ref<string>(rolesInfo[roleSelect.value].description)
 
 const position = ref<string>(String(rolesInfo[roleSelect.value].position))
 
-watch(roleSelect,(newValue)=>{
-const selectedRole = rolesInfo[newValue]
-if(selectedRole){
-  description.value = selectedRole.description
-  position.value= String(selectedRole.position)
-}
+watch(roleSelect, (newValue) => {
+  const selectedRole = rolesInfo[newValue]
+  if (selectedRole) {
+    description.value = selectedRole.description
+    position.value = String(selectedRole.position)
+  }
 })
 
+const dialog = useDialog()
 
-onMounted(()=>{
+const addRole = () => {
+  dialog.open(AddEditRoleCard, {
+    props: {
+      modal: true,
+    },
+    onClose: (values) => {
+      if (values) {
+        console.log(values)
+      }
+    },
+  })
+}
+
+onMounted(() => {
   console.log(rolesInfo)
 })
-
-//for select role
-
-
-
 </script>
 
 <template>
@@ -55,7 +66,6 @@ onMounted(()=>{
       <template #content>
         <div class="flex flex-col gap-6">
           <div class="form-search-grid-col-5">
-
             <!-- specie -->
             <div>
               <label class="block mb-2">Role</label>
@@ -76,14 +86,18 @@ onMounted(()=>{
                 <InputGroupAddon class="text-neutral-400">
                   <i class="pi pi-info"></i>
                 </InputGroupAddon>
-                <InputText class="w-full" v-model="description" placeholder="Descripción" disabled />
+                <InputText
+                  class="w-full"
+                  v-model="description"
+                  placeholder="Descripción"
+                  disabled
+                />
               </InputGroup>
             </div>
 
             <!-- position -->
 
-
-                        <div>
+            <div>
               <label class="block mb-2">Posición</label>
               <InputGroup>
                 <InputGroupAddon class="text-neutral-400">
@@ -93,7 +107,7 @@ onMounted(()=>{
               </InputGroup>
             </div>
 
-                        <div class="form-button-search-container-grid-col-5">
+            <div class="form-button-search-container-grid-col-5">
               <!-- button -->
               <Button
                 label="Editar"
@@ -104,9 +118,27 @@ onMounted(()=>{
                 class="w-full"
               />
             </div>
-
           </div>
         </div>
+      </template>
+      <template #footer>
+        <div class="form-search-grid-col-5">
+        <div class="form-button-search-container-grid-col-5">
+            <!-- button -->
+              <Button
+                label="Agregar Role"
+                type="submit"
+                severity="success"
+                icon="pi pi-user-plus"
+                iconPos="right"
+                class="w-full"
+                @click="addRole"
+              />
+        </div>
+
+        </div>
+
+
       </template>
     </Card>
   </div>
