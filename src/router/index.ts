@@ -14,6 +14,7 @@ import PaymentMethodManagementPage from '@/views/Employee/PaymentMethodManagemen
 import HeadquartersManagementPage from '@/views/Employee/HeadquartersManagementPage/HeadquartersManagementPage.vue'
 import CategoryManagementPage from '@/views/Employee/CategoryManagementPage/CategoryManagementPage.vue'
 import PetUnitaryPage from '@/views/Common/PetUnitaryPage/PetUnitaryPage.vue'
+import RolePermissionManagementPage from '@/views/Employee/RolePermissionManagementPage/RolePermissionManagementPage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -108,13 +109,17 @@ const router = createRouter({
               name: 'administrator-category-management',
               component: CategoryManagementPage,
             },
-
             {
               path: 'pet/:id',
-              name: 'administrator-pets-management-pet',
+              name: 'administrator-pets-unitary-pet',
               component: PetUnitaryPage,
               props: true,
             },
+                        {
+              path: 'roles_permission',
+              name: 'administrator-roles-permission-management',
+              component: RolePermissionManagementPage,
+            }
           ],
         },
         {
