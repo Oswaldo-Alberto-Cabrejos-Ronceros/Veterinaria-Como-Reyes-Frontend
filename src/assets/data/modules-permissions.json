@@ -1,0 +1,266 @@
+[
+  {
+    "name": "Cliente",
+    "permission": [
+      {
+        "id": 1,
+        "actionCode": "create_cliente",
+        "name": "CREAR CLIENTE",
+        "description": "Permiso para crear un nuevo cliente en el sistema",
+        "module": "Cliente"
+      },
+      {
+        "id": 2,
+        "actionCode": "read_cliente",
+        "name": "LISTAR CLIENTES",
+        "description": "Permiso para ver la lista de clientes",
+        "module": "Cliente"
+      },
+      {
+        "id": 3,
+        "actionCode": "update_cliente",
+        "name": "ACTUALIZAR CLIENTE",
+        "description": "Permiso para modificar los datos de un cliente",
+        "module": "Cliente"
+      },
+      {
+        "id": 4,
+        "actionCode": "delete_cliente",
+        "name": "ELIMINAR CLIENTE",
+        "description": "Permiso para eliminar un cliente del sistema",
+        "module": "Cliente"
+      }
+    ]
+  },
+  {
+    "name": "Empleado",
+    "permission": [
+      {
+        "id": 5,
+        "actionCode": "create_empleado",
+        "name": "CREAR EMPLEADO",
+        "description": "Permiso para crear un nuevo empleado en el sistema",
+        "module": "Empleado"
+      },
+      {
+        "id": 6,
+        "actionCode": "read_empleado",
+        "name": "LISTAR EMPLEADOS",
+        "description": "Permiso para ver la lista de empleados",
+        "module": "Empleado"
+      },
+      {
+        "id": 7,
+        "actionCode": "update_empleado",
+        "name": "ACTUALIZAR EMPLEADO",
+        "description": "Permiso para modificar los datos de un empleado",
+        "module": "Empleado"
+      },
+      {
+        "id": 8,
+        "actionCode": "delete_empleado",
+        "name": "ELIMINAR EMPLEADO",
+        "description": "Permiso para eliminar un empleado del sistema",
+        "module": "Empleado"
+      }
+    ]
+  },
+  {
+    "name": "Mascota",
+    "permission": [
+      {
+        "id": 9,
+        "actionCode": "create_mascota",
+        "name": "CREAR MASCOTA",
+        "description": "Permiso para registrar una nueva mascota",
+        "module": "Mascota"
+      },
+      {
+        "id": 10,
+        "actionCode": "read_mascota",
+        "name": "LISTAR MASCOTAS",
+        "description": "Permiso para ver la lista de mascotas",
+        "module": "Mascota"
+      },
+      {
+        "id": 11,
+        "actionCode": "update_mascota",
+        "name": "ACTUALIZAR MASCOTA",
+        "description": "Permiso para modificar los datos de una mascota",
+        "module": "Mascota"
+      },
+      {
+        "id": 12,
+        "actionCode": "delete_mascota",
+        "name": "ELIMINAR MASCOTA",
+        "description": "Permiso para eliminar una mascota del sistema",
+        "module": "Mascota"
+      }
+    ]
+  },
+  {
+    "name": "Cita",
+    "permission": [
+      {
+        "id": 13,
+        "actionCode": "create_cita",
+        "name": "CREAR CITA",
+        "description": "Permiso para agendar una nueva cita",
+        "module": "Cita"
+      },
+      {
+        "id": 14,
+        "actionCode": "read_cita",
+        "name": "LISTAR CITAS",
+        "description": "Permiso para ver las citas registradas",
+        "module": "Cita"
+      },
+      {
+        "id": 15,
+        "actionCode": "update_cita",
+        "name": "ACTUALIZAR CITA",
+        "description": "Permiso para modificar una cita",
+        "module": "Cita"
+      },
+      {
+        "id": 16,
+        "actionCode": "delete_cita",
+        "name": "ELIMINAR CITA",
+        "description": "Permiso para eliminar una cita",
+        "module": "Cita"
+      }
+    ]
+  },
+  {
+    "name": "Categoria",
+    "permission": [
+      {
+        "id": 17,
+        "actionCode": "create_categoria",
+        "name": "CREAR CATEGORÍA",
+        "description": "Permiso para crear una nueva categoría",
+        "module": "Categoria"
+      },
+      {
+        "id": 18,
+        "actionCode": "read_categoria",
+        "name": "LISTAR CATEGORÍAS",
+        "description": "Permiso para ver las categorías registradas",
+        "module": "Categoria"
+      },
+      {
+        "id": 19,
+        "actionCode": "update_categoria",
+        "name": "ACTUALIZAR CATEGORÍA",
+        "description": "Permiso para modificar una categoría",
+        "module": "Categoria"
+      },
+      {
+        "id": 20,
+        "actionCode": "delete_categoria",
+        "name": "ELIMINAR CATEGORÍA",
+        "description": "Permiso para eliminar una categoría",
+        "module": "Categoria"
+      }
+    ]
+  },
+  {
+    "name": "Servicio",
+    "permission": [
+      {
+        "id": 21,
+        "actionCode": "create_servicio",
+        "name": "CREAR SERVICIO",
+        "description": "Permiso para registrar un nuevo servicio",
+        "module": "Servicio"
+      },
+      {
+        "id": 22,
+        "actionCode": "read_servicio",
+        "name": "LISTAR SERVICIOS",
+        "description": "Permiso para ver los servicios disponibles",
+        "module": "Servicio"
+      },
+      {
+        "id": 23,
+        "actionCode": "update_servicio",
+        "name": "ACTUALIZAR SERVICIO",
+        "description": "Permiso para modificar un servicio",
+        "module": "Servicio"
+      },
+      {
+        "id": 24,
+        "actionCode": "delete_servicio",
+        "name": "ELIMINAR SERVICIO",
+        "description": "Permiso para eliminar un servicio",
+        "module": "Servicio"
+      }
+    ]
+  },
+  {
+    "name": "Metodo Pago",
+    "permission": [
+      {
+        "id": 25,
+        "actionCode": "create_metodo_pago",
+        "name": "CREAR MÉTODO DE PAGO",
+        "description": "Permiso para registrar un nuevo método de pago",
+        "module": "Metodo Pago"
+      },
+      {
+        "id": 26,
+        "actionCode": "read_metodo_pago",
+        "name": "LISTAR MÉTODOS DE PAGO",
+        "description": "Permiso para ver los métodos de pago disponibles",
+        "module": "Metodo Pago"
+      },
+      {
+        "id": 27,
+        "actionCode": "update_metodo_pago",
+        "name": "ACTUALIZAR MÉTODO DE PAGO",
+        "description": "Permiso para modificar un método de pago",
+        "module": "Metodo Pago"
+      },
+      {
+        "id": 28,
+        "actionCode": "delete_metodo_pago",
+        "name": "ELIMINAR MÉTODO DE PAGO",
+        "description": "Permiso para eliminar un método de pago",
+        "module": "Metodo Pago"
+      }
+    ]
+  },
+  {
+    "name": "Sede",
+    "permission": [
+      {
+        "id": 29,
+        "actionCode": "create_sede",
+        "name": "CREAR SEDE",
+        "description": "Permiso para registrar una nueva sede",
+        "module": "Sede"
+      },
+      {
+        "id": 30,
+        "actionCode": "read_sede",
+        "name": "LISTAR SEDES",
+        "description": "Permiso para ver las sedes registradas",
+        "module": "Sede"
+      },
+      {
+        "id": 31,
+        "actionCode": "update_sede",
+        "name": "ACTUALIZAR SEDE",
+        "description": "Permiso para modificar los datos de una sede",
+        "module": "Sede"
+      },
+      {
+        "id": 32,
+        "actionCode": "delete_sede",
+        "name": "ELIMINAR SEDE",
+        "description": "Permiso para eliminar una sede del sistema",
+        "module": "Sede"
+      }
+    ]
+  }
+]
