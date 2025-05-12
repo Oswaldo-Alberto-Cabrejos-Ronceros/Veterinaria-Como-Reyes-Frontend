@@ -7,7 +7,7 @@ import Textarea from 'primevue/textarea'
 import IftaLabel from 'primevue/iftalabel'
 import Button from 'primevue/button'
 import Message from 'primevue/message'
-import { inject, type Ref } from 'vue'
+import { inject, onMounted, type Ref, ref } from 'vue'
 import { schema } from '@/validation-schemas-forms/schema-add-edit-roles'
 import type { FormValues } from '@/validation-schemas-forms/schema-add-edit-roles'
 import { useForm } from 'vee-validate'
@@ -32,24 +32,42 @@ const [description, descriptionAttrs] = defineField('description')
 //for position
 const positions = [
   { name: '1', value: 1 },
-  { name: '2', value: 1 },
+  { name: '2', value: 2 },
   { name: '3', value: 3 },
 ]
 
 const dialogRef = inject('dialogRef') as Ref<{
   close: (data?: FormValues) => void
+  data: {
+    roleData?: FormValues
+  }
 }>
 
 const onSubmit = handleSubmit((values) => {
   console.log(values)
   dialogRef.value.close(values as FormValues)
 })
+
+//title reactive
+const title = ref<string>('Agregar')
+
+onMounted(() => {
+  if (dialogRef.value.data) {
+    const params = dialogRef.value.data.roleData
+    if (params) {
+      title.value = 'Editar'
+      name.value = params.name
+      position.value = params.position
+      description.value = params.description
+    }
+  }
+})
 </script>
 
 <template>
   <Card class="card-dialog-form-layout">
     <template #title>
-      <h3 class="h3 text-center">Agregar Rol</h3>
+      <h3 class="h3 text-center">{{title}} Rol</h3>
     </template>
     <template #content>
       <form @submit.prevent="onSubmit" class="form-dialog-layout-col-2">
@@ -107,7 +125,7 @@ const onSubmit = handleSubmit((values) => {
         <div class="button-form-container-grid-end">
           <Button
             class="w-full max-w-md"
-            label="Agregar"
+            :label="title"
             type="submit"
             severity="success"
             icon="pi pi-save"

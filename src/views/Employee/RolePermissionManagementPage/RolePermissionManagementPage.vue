@@ -11,6 +11,7 @@ import type { Role } from '@/models/Role'
 import { watch } from 'vue'
 import { useDialog } from 'primevue'
 import AddEditRoleCard from './components/AddEditRoleCard.vue'
+import type { FormValues as AddEditRoleSchema } from '@/validation-schemas-forms/schema-add-edit-roles'
 //for roles
 
 const roles = [
@@ -25,15 +26,17 @@ const rolesInfo: Role[] = Roles
 
 const roleSelect = ref<number>(1)
 
-const description = ref<string>(rolesInfo[roleSelect.value].description)
+const roleSelectInf = ref<Role>(rolesInfo[roleSelect.value])
 
-const position = ref<string>(String(rolesInfo[roleSelect.value].position))
+const description = ref<string>(roleSelectInf.value.description)
+
+const position = ref<string>(String(roleSelectInf.value.position))
 
 watch(roleSelect, (newValue) => {
-  const selectedRole = rolesInfo[newValue]
-  if (selectedRole) {
-    description.value = selectedRole.description
-    position.value = String(selectedRole.position)
+  roleSelectInf.value = rolesInfo[newValue]
+  if (roleSelectInf.value) {
+    description.value = roleSelectInf.value.description
+    position.value = String(roleSelectInf.value.position)
   }
 })
 
@@ -49,6 +52,18 @@ const addRole = () => {
         console.log(values)
       }
     },
+  })
+}
+
+//for edit
+const editRole = (roleData:Role)=>{
+  dialog.open(AddEditRoleCard,{
+    props:{
+      modal:true
+    },
+    data:{
+      roleData: roleData as AddEditRoleSchema
+    }
   })
 }
 
@@ -116,6 +131,7 @@ onMounted(() => {
                 icon="pi pi-pencil"
                 iconPos="right"
                 class="w-full"
+                @click="editRole(roleSelectInf)"
               />
             </div>
           </div>
