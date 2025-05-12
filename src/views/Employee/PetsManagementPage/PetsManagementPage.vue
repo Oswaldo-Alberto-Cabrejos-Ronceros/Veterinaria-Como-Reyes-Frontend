@@ -18,8 +18,8 @@ import type { Pet } from '@/models/Pet'
 import { ref } from 'vue'
 import { useDialog } from 'primevue'
 import AddEditPetCard from './components/AddEditPetCard.vue'
-import ViewPetCard from './components/ViewPetCard.vue'
 import type { FormValues as AddEditPetSchema } from '@/validation-schemas-forms/schema-add-edit-pet'
+import { useRouter } from 'vue-router'
 //form
 
 const { handleSubmit, errors, defineField } = useForm<SearchEmployeeSchema>({
@@ -99,16 +99,11 @@ const addPet=()=>{
   })
 }
 
+const router = useRouter()
+
 //for view
 const viewPet=(petData:Pet)=>{
-  dialog.open(ViewPetCard,{
-    props:{
-      modal:true
-    },
-    data:{
-      petData:petData
-    }
-  })
+    router.push({name:'administrator-pets-management-pet', params:{id:petData.id}});
 }
 
 const editPet=(petData:Pet)=>{
