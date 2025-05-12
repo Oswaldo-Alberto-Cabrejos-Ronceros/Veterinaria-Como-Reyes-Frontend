@@ -7,6 +7,9 @@ import { onMounted, ref } from 'vue'
 import type { Pet } from '@/models/Pet'
 import Textarea from 'primevue/textarea'
 import Button from 'primevue/button'
+import { useDialog } from 'primevue'
+import type { FormValues as AddEditPetSchema } from '@/validation-schemas-forms/schema-add-edit-pet'
+import AddEditPetCard from '@/views/Employee/PetsManagementPage/components/AddEditPetCard.vue'
 
 const props = defineProps<{
   id: string
@@ -72,8 +75,24 @@ onMounted(() => {
     breedId: 0,
     ownerDni: '77901977',
   }
+  console.log(props.id)
 })
-console.log(props.id)
+
+//for dialog
+const dialog = useDialog();
+
+const editPet=(petData:Pet)=>{
+  dialog.open(AddEditPetCard,{
+    props:{
+      modal:true
+    },
+    data:{
+      petData:petData as AddEditPetSchema
+    }
+  })
+}
+
+
 </script>
 
 <template>
@@ -113,7 +132,8 @@ console.log(props.id)
                 severity="info"
                 icon="pi pi-pencil"
                 iconPos="right"
-                class="w-full self-ceny"
+                class="w-full"
+                @click="editPet(petData)"
               />
             </div>
           </div>

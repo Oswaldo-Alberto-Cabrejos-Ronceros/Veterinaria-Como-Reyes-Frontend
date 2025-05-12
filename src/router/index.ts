@@ -103,11 +103,18 @@ const router = createRouter({
               name: 'administrator-headquarter-management',
               component: HeadquartersManagementPage,
             },
-                        {
+            {
               path: 'category-management',
               name: 'administrator-category-management',
               component: CategoryManagementPage,
-            }
+            },
+
+            {
+              path: 'pet/:id',
+              name: 'administrator-pets-management-pet',
+              component: PetUnitaryPage,
+              props: true,
+            },
           ],
         },
         {
@@ -139,12 +146,6 @@ const router = createRouter({
               path: 'pets-management',
               name: 'manager-pets-management',
               component: PetsManagementPage,
-            },
-                        {
-              path: 'pet/:id',
-              name: 'administrator-pets-management-pet',
-              component: PetUnitaryPage,
-              props: true,
             },
           ],
         },
