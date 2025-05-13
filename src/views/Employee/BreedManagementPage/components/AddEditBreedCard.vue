@@ -11,7 +11,7 @@ import { schema } from '@/validation-schemas-forms/schema-add-edit-breed'
 import type { FormValues } from '@/validation-schemas-forms/schema-add-edit-breed'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/yup'
-
+import { ref } from 'vue'
 //form
 
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
@@ -19,18 +19,24 @@ const { handleSubmit, errors, defineField } = useForm<FormValues>({
   initialValues: {
     name: '',
     specieId: undefined,
-    dirImagen: '',
+    dirImage: '',
   },
 })
 
 //fields
 const [name, nameAttrs] = defineField('name')
 const [specieId, specieIdAttrs] = defineField('specieId')
-const [dirImagen, dirImagenAttrs] = defineField('dirImagen')
+const [dirImage, dirImageAttrs] = defineField('dirImage')
 
 const dialogRef = inject('dialogRef') as Ref<{
   close: (data?: FormValues) => void
+  data: {
+    breedData?: FormValues
+  }
 }>
+
+//title
+const title = ref<string>('Agregar')
 
 //roles
 const species = [
@@ -42,12 +48,26 @@ const onSubmit = handleSubmit((values) => {
   console.log(values)
   dialogRef.value.close(values as FormValues)
 })
+
+onMounted(() => {
+  if (dialogRef.value.data) {
+    console.log(dialogRef.value.data)
+    const params = dialogRef.value.data.breedData
+    //set data if edit
+    if (params) {
+      title.value = 'Editar'
+      name.value = params.name
+      specieId.value = params.specieId
+      dirImage.value = params.dirImage
+    }
+  }
+})
 </script>
 
 <template>
   <Card class="card-dialog-form-layout">
     <template #header>
-      <h3 class="h3 text-center">Agregar Raza</h3>
+      <h3 class="h3 text-center">{{ title }} Raza</h3>
     </template>
     <template #content>
       <form @submit.prevent="onSubmit" class="form-dialog-layout">
@@ -82,23 +102,28 @@ const onSubmit = handleSubmit((values) => {
           </Message>
         </div>
 
-                <!-- name -->
+        <!-- name -->
         <div>
           <label class="block mb-2">Imagen</label>
           <InputGroup>
             <InputGroupAddon class="text-neutral-400">
               <i class="pi pi-image"></i>
             </InputGroupAddon>
-            <InputText v-model="dirImagen" v-bind="dirImagenAttrs" class="w-full" placeholder="Imagen" />
+            <InputText
+              v-model="dirImage"
+              v-bind="dirImageAttrs"
+              class="w-full"
+              placeholder="Imagen"
+            />
           </InputGroup>
-          <Message v-if="errors.dirImagen" severity="error" size="small" variant="simple">
-            {{ errors.dirImagen }}
+          <Message v-if="errors.dirImage" severity="error" size="small" variant="simple">
+            {{ errors.dirImage }}
           </Message>
         </div>
         <div class="button-form-container-grid-end">
           <Button
             class="w-full max-w-md"
-            label="Agregar"
+            :label="title"
             type="submit"
             severity="success"
             icon="pi pi-save"

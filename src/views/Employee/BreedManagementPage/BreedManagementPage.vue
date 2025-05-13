@@ -16,6 +16,8 @@ import Column from 'primevue/column'
 import Breeds from '@/assets/data/breeds.json'
 import AddEditBreedCard from './components/AddEditBreedCard.vue'
 import { useDialog } from 'primevue'
+import type { Breed } from '@/models/Breed'
+import type { FormValues as AddEditBreedSchema } from '@/validation-schemas-forms/schema-add-edit-breed'
 //form
 const { handleSubmit, errors, defineField } = useForm<SearchBreedSchema>({
   validationSchema: toTypedSchema(schema),
@@ -40,7 +42,7 @@ const onSubmit = handleSubmit((values) => {
 //for dialog
 const dialog = useDialog()
 
-const addSpecie = ()=>{
+const addBreed = ()=>{
   dialog.open(AddEditBreedCard,{
     props:{
       modal:true
@@ -49,6 +51,17 @@ const addSpecie = ()=>{
       if(data){
         console.log('Datps recibidos', data )
       }
+    }
+  })
+}
+
+const editPaymentMethod = (breedData:Breed)=>{
+  dialog.open(AddEditBreedCard,{
+    props:{
+      modal:true
+    },
+    data:{
+      breedData: breedData as AddEditBreedSchema
     }
   })
 }
@@ -127,7 +140,7 @@ const exportCSV = () => {
                   iconPos="right"
                   severity="success"
                   label="Agregar Raza"
-                  @click="addSpecie"
+                  @click="addBreed"
                 />
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
                 </div>
@@ -150,6 +163,7 @@ const exportCSV = () => {
                         variant="outlined"
                         aria-label="Filter"
                         rounded
+                        @click="editPaymentMethod(data)"
                       ></Button>
                       <Button
                         icon="pi pi-trash"
