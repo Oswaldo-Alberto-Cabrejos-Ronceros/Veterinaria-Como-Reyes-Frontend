@@ -9,7 +9,10 @@ import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
 import Message from 'primevue/message'
 import Button from 'primevue/button'
-
+import { ref } from 'vue'
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
+import Species from '@/assets/data/species.json'
 //form
 const { handleSubmit, errors, defineField } = useForm<SearchSpecieSchema>({
   validationSchema: toTypedSchema(schema),
@@ -23,6 +26,14 @@ const [name, nameAttrs] = defineField('name')
 const onSubmit = handleSubmit((values) => {
   console.log(values)
 })
+//for export
+
+const dt = ref()
+const exportCSV = () => {
+  dt.value.exportCSV()
+}
+
+
 </script>
 
 <template>
@@ -58,6 +69,56 @@ const onSubmit = handleSubmit((values) => {
               />
             </div>
           </form>
+                    <!-- table -->
+                    <DataTable
+            :value="Species"
+            paginator
+            :rows="10"
+            :rows-per-page-options="[5,10]"
+            ref="dt"
+          >
+          <template #header>
+              <div class="w-full flex flex-col xs:flex-row justify-between gap-2 pb-4">
+                <Button
+                  icon="pi pi-user-plus"
+                  iconPos="right"
+                  severity="success"
+                  label="Agregar Método"
+                />
+                <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
+              </div>
+            </template>
+            <Column
+              field="name"
+              sortable
+              header="Nombre"
+              style="width: 80%"
+            ></Column>
+
+            <Column>
+              <template #body="{ data }">
+                <div
+                  class="flex justify-between items-center flex-col sm:flex-row gap-1"
+                >
+                  <Button
+                    icon="pi pi-pencil"
+                    severity="warn"
+                    variant="outlined"
+                    aria-label="Filter"
+                    rounded
+                  ></Button>
+                  <Button
+                    icon="pi pi-trash"
+                    severity="danger"
+                    variant="outlined"
+                    aria-label="Filter"
+                    rounded
+                  ></Button>
+                </div>
+              </template>
+            </Column>
+
+        </DataTable>
         </div>
       </template>
     </Card>
