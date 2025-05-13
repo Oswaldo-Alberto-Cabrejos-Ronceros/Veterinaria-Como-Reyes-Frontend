@@ -15,8 +15,9 @@ import Column from 'primevue/column'
 import Species from '@/assets/data/species.json'
 import type { Specie } from '@/models/Specie'
 import { useConfirm } from 'primevue'
-import { useDialog} from 'primevue'
+import { useDialog } from 'primevue'
 import AddEditSpecie from './components/AddEditSpecieCard.vue'
+import type {FormValues as AddEditSpecieSchema} from '@/validation-schemas-forms/schema-add-edit-specie'
 //form
 const { handleSubmit, errors, defineField } = useForm<SearchSpecieSchema>({
   validationSchema: toTypedSchema(schema),
@@ -54,6 +55,18 @@ const addSpecie = ()=>{
   })
 }
 
+const editPaymentMethod = (specieData:Specie)=>{
+  dialog.open(AddEditSpecie,{
+    props:{
+      modal:true
+    },
+    data:{
+      specieData: specieData as AddEditSpecieSchema
+    }
+  })
+}
+
+
 //for confirm
 const confirm = useConfirm()
 
@@ -81,7 +94,6 @@ const deleteSpecie = (event: MouseEvent | KeyboardEvent, specieData: Specie) => 
     },
   })
 }
-
 </script>
 
 <template>
@@ -117,15 +129,15 @@ const deleteSpecie = (event: MouseEvent | KeyboardEvent, specieData: Specie) => 
               />
             </div>
           </form>
-                    <!-- table -->
-                    <DataTable
+          <!-- table -->
+          <DataTable
             :value="Species"
             paginator
             :rows="10"
-            :rows-per-page-options="[5,10]"
+            :rows-per-page-options="[5, 10]"
             ref="dt"
           >
-          <template #header>
+            <template #header>
               <div class="w-full flex flex-col xs:flex-row justify-between gap-2 pb-4">
                 <Button
                   icon="pi pi-user-plus"
@@ -137,24 +149,18 @@ const deleteSpecie = (event: MouseEvent | KeyboardEvent, specieData: Specie) => 
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
             </template>
-            <Column
-              field="name"
-              sortable
-              header="Nombre"
-              style="width: 80%"
-            ></Column>
+            <Column field="name" sortable header="Nombre" style="width: 80%"></Column>
 
             <Column>
               <template #body="{ data }">
-                <div
-                  class="flex justify-between items-center flex-col sm:flex-row gap-1"
-                >
+                <div class="flex justify-between items-center flex-col sm:flex-row gap-1">
                   <Button
                     icon="pi pi-pencil"
                     severity="warn"
                     variant="outlined"
                     aria-label="Filter"
                     rounded
+                    @click="editPaymentMethod(data)"
                   ></Button>
                   <Button
                     icon="pi pi-trash"
@@ -162,13 +168,12 @@ const deleteSpecie = (event: MouseEvent | KeyboardEvent, specieData: Specie) => 
                     variant="outlined"
                     aria-label="Filter"
                     rounded
-                    @click="deleteSpecie($event,data)"
+                    @click="deleteSpecie($event, data)"
                   ></Button>
                 </div>
               </template>
             </Column>
-
-        </DataTable>
+          </DataTable>
         </div>
       </template>
     </Card>

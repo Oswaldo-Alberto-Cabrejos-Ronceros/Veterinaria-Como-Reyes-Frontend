@@ -25,19 +25,39 @@ const { handleSubmit, errors, defineField } = useForm<FormValues>({
 const [name, nameAttrs] = defineField('name')
 
 const dialogRef = inject('dialogRef') as Ref<{
-  close: (data?: FormValues) => void
+  close: (data?: FormValues) => void,
+  data:{
+    specieData?:FormValues
+  }
 }>
 
 const onSubmit = handleSubmit((values) => {
   console.log(values)
   dialogRef.value.close(values as FormValues)
 })
+
+const title = ref<string>('Agregar')
+
+
+onMounted(()=>{
+  if(dialogRef.value.data){
+    console.log(dialogRef.value.data)
+    const params = dialogRef.value.data.specieData
+    //set data if edit
+    if(params){
+      title.value='Editar'
+      name.value = params.name
+    }
+  }
+})
+
+
 </script>
 
 <template>
   <Card class="card-dialog-form-layout">
     <template #header>
-      <h3 class="h3 text-center">Agregar Especie</h3>
+      <h3 class="h3 text-center">{{title}} Especie</h3>
     </template>
     <template #content>
       <form @submit.prevent="onSubmit" class="form-dialog-layout-flex-col">
@@ -57,7 +77,7 @@ const onSubmit = handleSubmit((values) => {
 
         <Button
           class="w-full max-w-md"
-          label="Agregar"
+          :label="title"
           type="submit"
           severity="success"
           icon="pi pi-save"
