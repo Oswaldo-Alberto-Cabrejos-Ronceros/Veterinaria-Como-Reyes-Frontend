@@ -14,6 +14,8 @@ import Select from 'primevue/select'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Breeds from '@/assets/data/breeds.json'
+import AddEditBreedCard from './components/AddEditBreedCard.vue'
+import { useDialog } from 'primevue'
 //form
 const { handleSubmit, errors, defineField } = useForm<SearchBreedSchema>({
   validationSchema: toTypedSchema(schema),
@@ -34,6 +36,22 @@ const species = [
 const onSubmit = handleSubmit((values) => {
   console.log(values)
 })
+
+//for dialog
+const dialog = useDialog()
+
+const addSpecie = ()=>{
+  dialog.open(AddEditBreedCard,{
+    props:{
+      modal:true
+    },
+    onClose:(data)=>{
+      if(data){
+        console.log('Datps recibidos', data )
+      }
+    }
+  })
+}
 
 //for export
 
@@ -109,6 +127,7 @@ const exportCSV = () => {
                   iconPos="right"
                   severity="success"
                   label="Agregar Raza"
+                  @click="addSpecie"
                 />
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
                 </div>
