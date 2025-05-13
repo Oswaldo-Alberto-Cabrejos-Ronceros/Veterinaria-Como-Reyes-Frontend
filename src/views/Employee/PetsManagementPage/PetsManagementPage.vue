@@ -103,7 +103,7 @@ const router = useRouter()
 
 //for view
 const viewPet=(petData:Pet)=>{
-    router.push({name:'administrator-pets-management-pet', params:{id:petData.id}});
+    router.push({name:'administrator-pets-unitary-pet', params:{id:petData.id}});
 }
 
 const editPet=(petData:Pet)=>{
