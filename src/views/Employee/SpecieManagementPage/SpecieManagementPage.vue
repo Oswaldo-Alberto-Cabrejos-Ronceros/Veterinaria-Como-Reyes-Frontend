@@ -142,7 +142,7 @@ const deleteSpecie = (event: MouseEvent | KeyboardEvent, specieData: Specie) => 
                     variant="outlined"
                     aria-label="Filter"
                     rounded
-                    @click="deleteSpecie(data)"
+                    @click="deleteSpecie($event,data)"
                   ></Button>
                 </div>
               </template>
