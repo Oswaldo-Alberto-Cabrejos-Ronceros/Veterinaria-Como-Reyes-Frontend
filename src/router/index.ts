@@ -122,7 +122,7 @@ const router = createRouter({
               component: RolePermissionManagementPage,
             },
             {
-              path: 'species',
+              path: 'species-management',
               name: 'administrator-species-management',
               component: SpecieManagementPage,
             }
