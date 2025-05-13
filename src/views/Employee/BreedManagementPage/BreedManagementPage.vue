@@ -18,6 +18,7 @@ import AddEditBreedCard from './components/AddEditBreedCard.vue'
 import { useDialog } from 'primevue'
 import type { Breed } from '@/models/Breed'
 import type { FormValues as AddEditBreedSchema } from '@/validation-schemas-forms/schema-add-edit-breed'
+import { useConfirm } from 'primevue'
 //form
 const { handleSubmit, errors, defineField } = useForm<SearchBreedSchema>({
   validationSchema: toTypedSchema(schema),
@@ -63,6 +64,35 @@ const editPaymentMethod = (breedData:Breed)=>{
     data:{
       breedData: breedData as AddEditBreedSchema
     }
+  })
+}
+
+
+//for confirm
+const confirm = useConfirm()
+
+//for delete with confirm popup
+
+const deleteBreed = (event: MouseEvent | KeyboardEvent, breedData: Breed) => {
+  confirm.require({
+    target: event.currentTarget as HTMLElement,
+    message: '¿Seguro que quiere eliminar esta raza?',
+    icon: 'pi pi-exclamation-triangle',
+    rejectProps: {
+      label: 'Cancelar',
+      severity: 'secondary',
+      outlined: true,
+    },
+    acceptProps: {
+      label: 'Eliminar',
+      severity: 'danger',
+    },
+    accept: () => {
+      console.log('Eliminando método ', breedData.id)
+    },
+    reject: () => {
+      console.log('Cancelando')
+    },
   })
 }
 
@@ -171,6 +201,7 @@ const exportCSV = () => {
                         variant="outlined"
                         aria-label="Filter"
                         rounded
+                        @click="deleteBreed($event,data)"
                       ></Button>
                     </div>
                   </template>
