@@ -74,6 +74,10 @@ body {
    @apply grid grid-cols-1 md:grid-cols-2 gap-4 text-neutral-950 dark:text-surface-0
 }
 
+.form-dialog-layout-flex-col{
+  @apply flex flex-col items-center gap-4 justify-center text-neutral-950 dark:text-surface-0
+}
+
 .button-form-container-grid-end{
   @apply flex items-center justify-center col-span-full
 }

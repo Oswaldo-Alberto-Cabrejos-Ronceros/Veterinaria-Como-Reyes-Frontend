@@ -15,6 +15,8 @@ import Column from 'primevue/column'
 import Species from '@/assets/data/species.json'
 import type { Specie } from '@/models/Specie'
 import { useConfirm } from 'primevue'
+import { useDialog} from 'primevue'
+import AddEditSpecie from './components/AddEditSpecieCard.vue'
 //form
 const { handleSubmit, errors, defineField } = useForm<SearchSpecieSchema>({
   validationSchema: toTypedSchema(schema),
@@ -33,6 +35,23 @@ const onSubmit = handleSubmit((values) => {
 const dt = ref()
 const exportCSV = () => {
   dt.value.exportCSV()
+}
+
+//for dialof
+
+const dialog = useDialog()
+
+const addSpecie = ()=>{
+  dialog.open(AddEditSpecie,{
+    props:{
+      modal:true
+    },
+    onClose:(data)=>{
+      if(data){
+        console.log('Datps recibidos', data )
+      }
+    }
+  })
 }
 
 //for confirm
@@ -112,7 +131,8 @@ const deleteSpecie = (event: MouseEvent | KeyboardEvent, specieData: Specie) => 
                   icon="pi pi-user-plus"
                   iconPos="right"
                   severity="success"
-                  label="Agregar Método"
+                  label="Agregar Especie"
+                  @click="addSpecie"
                 />
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
