@@ -108,7 +108,7 @@ const exportCSV = () => {
                   icon="pi pi-user-plus"
                   iconPos="right"
                   severity="success"
-                  label="Agregar Especie"
+                  label="Agregar Raza"
                 />
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
                 </div>
