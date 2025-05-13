@@ -11,7 +11,9 @@ import Message from 'primevue/message'
 import Button from 'primevue/button'
 import { ref } from 'vue'
 import Select from 'primevue/select'
-
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
+import Breeds from '@/assets/data/breeds.json'
 //form
 const { handleSubmit, errors, defineField } = useForm<SearchBreedSchema>({
   validationSchema: toTypedSchema(schema),
@@ -32,6 +34,13 @@ const species = [
 const onSubmit = handleSubmit((values) => {
   console.log(values)
 })
+
+//for export
+
+const dt = ref()
+const exportCSV = () => {
+  dt.value.exportCSV()
+}
 </script>
 
 <template>
@@ -85,6 +94,56 @@ const onSubmit = handleSubmit((values) => {
               />
             </div>
           </form>
+          <!-- table -->
+          <DataTable
+            :value="Breeds"
+            paginator
+            :rows="10"
+            :rows-per-page-options="[5, 10, 15, 20]"
+            ref="dt"
+          >
+            <template #header>
+              <div class="w-full flex flex-col xs:flex-row justify-between gap-2 pb-4">
+                <Button
+                  icon="pi pi-user-plus"
+                  iconPos="right"
+                  severity="success"
+                  label="Agregar Especie"
+                />
+                <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
+                </div>
+              </template>
+                <Column field="name" sortable header="Nombre" style="width: 40%"></Column>
+                <Column field="specie" sortable header="Especie" style="width: 30%" class=" hidden xs:table-cell"></Column>
+                <Column>
+                  <template #body="{ data }">
+                    <div class="flex justify-between items-center flex-row xs:flex-col lg:flex-row gap-1">
+                                      <Button
+                    icon="pi pi-eye"
+                    severity="info"
+                    variant="outlined"
+                    aria-label="Filter"
+                    rounded
+ ></Button>
+                      <Button
+                        icon="pi pi-pencil"
+                        severity="warn"
+                        variant="outlined"
+                        aria-label="Filter"
+                        rounded
+                      ></Button>
+                      <Button
+                        icon="pi pi-trash"
+                        severity="danger"
+                        variant="outlined"
+                        aria-label="Filter"
+                        rounded
+                      ></Button>
+                    </div>
+                  </template>
+                </Column>
+            
+          </DataTable>
         </div>
       </template>
     </Card>
