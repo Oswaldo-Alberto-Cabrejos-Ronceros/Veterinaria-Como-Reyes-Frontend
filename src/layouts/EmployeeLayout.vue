@@ -34,11 +34,6 @@ const items = ref<MenuItem[][]>([
       to: '/employee/administrador/client-management',
     },
     {
-      label: 'Administradores',
-      icon: 'pi pi-users',
-      to: '/employee/administrador/home',
-    },
-    {
       label: 'Mascotas',
       icon: 'pi pi-github',
       to: '/employee/administrador/pets-management',
@@ -62,7 +57,12 @@ const items = ref<MenuItem[][]>([
       label: 'Sedes',
       icon: 'pi pi-map-marker',
       to: '/employee/administrador/headquarter-management',
-    }
+    },
+        {
+      label: 'Roles y Permisos',
+      icon: 'pi pi-user-plus',
+      to: '/employee/administrador/roles-permission',
+    },
 
   ],
   [

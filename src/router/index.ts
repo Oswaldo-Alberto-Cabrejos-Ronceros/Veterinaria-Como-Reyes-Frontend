@@ -116,7 +116,7 @@ const router = createRouter({
               props: true,
             },
                         {
-              path: 'roles_permission',
+              path: 'roles-permission',
               name: 'administrator-roles-permission-management',
               component: RolePermissionManagementPage,
             }
