@@ -13,6 +13,8 @@ import { ref } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Species from '@/assets/data/species.json'
+import type { Specie } from '@/models/Specie'
+import { useConfirm } from 'primevue'
 //form
 const { handleSubmit, errors, defineField } = useForm<SearchSpecieSchema>({
   validationSchema: toTypedSchema(schema),
@@ -33,6 +35,33 @@ const exportCSV = () => {
   dt.value.exportCSV()
 }
 
+//for confirm
+const confirm = useConfirm()
+
+//for delete with confirm popup
+
+const deleteSpecie = (event: MouseEvent | KeyboardEvent, specieData: Specie) => {
+  confirm.require({
+    target: event.currentTarget as HTMLElement,
+    message: '¿Seguro que quiere eliminar esta especie?',
+    icon: 'pi pi-exclamation-triangle',
+    rejectProps: {
+      label: 'Cancelar',
+      severity: 'secondary',
+      outlined: true,
+    },
+    acceptProps: {
+      label: 'Eliminar',
+      severity: 'danger',
+    },
+    accept: () => {
+      console.log('Eliminando método ', specieData.id)
+    },
+    reject: () => {
+      console.log('Cancelando')
+    },
+  })
+}
 
 </script>
 
@@ -113,6 +142,7 @@ const exportCSV = () => {
                     variant="outlined"
                     aria-label="Filter"
                     rounded
+                    @click="deleteSpecie(data)"
                   ></Button>
                 </div>
               </template>
