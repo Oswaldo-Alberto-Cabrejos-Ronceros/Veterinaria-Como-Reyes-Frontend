@@ -1,7 +1,7 @@
 [
   {
     "name": "Cliente",
-    "permission": [
+    "permissions": [
       {
         "id": 1,
         "actionCode": "create_cliente",
@@ -30,11 +30,12 @@
         "description": "Permiso para eliminar un cliente del sistema",
         "module": "Cliente"
       }
-    ]
+    ],
+    "authorizedPermissions": [2, 3]
   },
   {
     "name": "Empleado",
-    "permission": [
+    "permissions": [
       {
         "id": 5,
         "actionCode": "create_empleado",
@@ -63,11 +64,12 @@
         "description": "Permiso para eliminar un empleado del sistema",
         "module": "Empleado"
       }
-    ]
+    ],
+    "authorizedPermissions": [5, 6, 7]
   },
   {
     "name": "Mascota",
-    "permission": [
+    "permissions": [
       {
         "id": 9,
         "actionCode": "create_mascota",
@@ -96,11 +98,12 @@
         "description": "Permiso para eliminar una mascota del sistema",
         "module": "Mascota"
       }
-    ]
+    ],
+    "authorizedPermissions": [9, 10, 11, 12]
   },
   {
     "name": "Cita",
-    "permission": [
+    "permissions": [
       {
         "id": 13,
         "actionCode": "create_cita",
@@ -129,138 +132,7 @@
         "description": "Permiso para eliminar una cita",
         "module": "Cita"
       }
-    ]
-  },
-  {
-    "name": "Categoria",
-    "permission": [
-      {
-        "id": 17,
-        "actionCode": "create_categoria",
-        "name": "CREAR CATEGORÍA",
-        "description": "Permiso para crear una nueva categoría",
-        "module": "Categoria"
-      },
-      {
-        "id": 18,
-        "actionCode": "read_categoria",
-        "name": "LISTAR CATEGORÍAS",
-        "description": "Permiso para ver las categorías registradas",
-        "module": "Categoria"
-      },
-      {
-        "id": 19,
-        "actionCode": "update_categoria",
-        "name": "ACTUALIZAR CATEGORÍA",
-        "description": "Permiso para modificar una categoría",
-        "module": "Categoria"
-      },
-      {
-        "id": 20,
-        "actionCode": "delete_categoria",
-        "name": "ELIMINAR CATEGORÍA",
-        "description": "Permiso para eliminar una categoría",
-        "module": "Categoria"
-      }
-    ]
-  },
-  {
-    "name": "Servicio",
-    "permission": [
-      {
-        "id": 21,
-        "actionCode": "create_servicio",
-        "name": "CREAR SERVICIO",
-        "description": "Permiso para registrar un nuevo servicio",
-        "module": "Servicio"
-      },
-      {
-        "id": 22,
-        "actionCode": "read_servicio",
-        "name": "LISTAR SERVICIOS",
-        "description": "Permiso para ver los servicios disponibles",
-        "module": "Servicio"
-      },
-      {
-        "id": 23,
-        "actionCode": "update_servicio",
-        "name": "ACTUALIZAR SERVICIO",
-        "description": "Permiso para modificar un servicio",
-        "module": "Servicio"
-      },
-      {
-        "id": 24,
-        "actionCode": "delete_servicio",
-        "name": "ELIMINAR SERVICIO",
-        "description": "Permiso para eliminar un servicio",
-        "module": "Servicio"
-      }
-    ]
-  },
-  {
-    "name": "Metodo Pago",
-    "permission": [
-      {
-        "id": 25,
-        "actionCode": "create_metodo_pago",
-        "name": "CREAR MÉTODO DE PAGO",
-        "description": "Permiso para registrar un nuevo método de pago",
-        "module": "Metodo Pago"
-      },
-      {
-        "id": 26,
-        "actionCode": "read_metodo_pago",
-        "name": "LISTAR MÉTODOS DE PAGO",
-        "description": "Permiso para ver los métodos de pago disponibles",
-        "module": "Metodo Pago"
-      },
-      {
-        "id": 27,
-        "actionCode": "update_metodo_pago",
-        "name": "ACTUALIZAR MÉTODO DE PAGO",
-        "description": "Permiso para modificar un método de pago",
-        "module": "Metodo Pago"
-      },
-      {
-        "id": 28,
-        "actionCode": "delete_metodo_pago",
-        "name": "ELIMINAR MÉTODO DE PAGO",
-        "description": "Permiso para eliminar un método de pago",
-        "module": "Metodo Pago"
-      }
-    ]
-  },
-  {
-    "name": "Sede",
-    "permission": [
-      {
-        "id": 29,
-        "actionCode": "create_sede",
-        "name": "CREAR SEDE",
-        "description": "Permiso para registrar una nueva sede",
-        "module": "Sede"
-      },
-      {
-        "id": 30,
-        "actionCode": "read_sede",
-        "name": "LISTAR SEDES",
-        "description": "Permiso para ver las sedes registradas",
-        "module": "Sede"
-      },
-      {
-        "id": 31,
-        "actionCode": "update_sede",
-        "name": "ACTUALIZAR SEDE",
-        "description": "Permiso para modificar los datos de una sede",
-        "module": "Sede"
-      },
-      {
-        "id": 32,
-        "actionCode": "delete_sede",
-        "name": "ELIMINAR SEDE",
-        "description": "Permiso para eliminar una sede del sistema",
-        "module": "Sede"
-      }
-    ]
+    ],
+    "authorizedPermissions": [13, 14]
   }
 ]

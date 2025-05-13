@@ -12,6 +12,8 @@ import { watch } from 'vue'
 import { useDialog } from 'primevue'
 import AddEditRoleCard from './components/AddEditRoleCard.vue'
 import type { FormValues as AddEditRoleSchema } from '@/validation-schemas-forms/schema-add-edit-roles'
+import ModulesPermissions from '@/assets/data/modules-permissions.json'
+import ModulePermissionCard from './components/ModulePermissionCard.vue'
 //for roles
 
 const roles = [
@@ -56,20 +58,24 @@ const addRole = () => {
 }
 
 //for edit
-const editRole = (roleData:Role)=>{
-  dialog.open(AddEditRoleCard,{
-    props:{
-      modal:true
+const editRole = (roleData: Role) => {
+  dialog.open(AddEditRoleCard, {
+    props: {
+      modal: true,
     },
-    data:{
-      roleData: roleData as AddEditRoleSchema
-    }
+    data: {
+      roleData: roleData as AddEditRoleSchema,
+    },
   })
 }
 
 onMounted(() => {
   console.log(rolesInfo)
 })
+
+const editPermissions = (permissions: { name: string; code: number }[]) => {
+  console.log(permissions)
+}
 </script>
 
 <template>
@@ -135,26 +141,34 @@ onMounted(() => {
               />
             </div>
           </div>
+          <!-- for cards -->
+          <div class="form-search-grid-col-5">
+            <div v-for="modulePermission in ModulesPermissions" :key="modulePermission.name">
+              <ModulePermissionCard
+                :name="modulePermission.name"
+                :permisions="modulePermission.permissions"
+                :authorized-permissions="modulePermission.authorizedPermissions"
+                @edit-permissions="editPermissions($event)"
+              />
+            </div>
+          </div>
         </div>
       </template>
       <template #footer>
         <div class="form-search-grid-col-5">
-        <div class="form-button-search-container-grid-col-5">
+          <div class="form-button-search-container-grid-col-5">
             <!-- button -->
-              <Button
-                label="Agregar Role"
-                type="submit"
-                severity="success"
-                icon="pi pi-user-plus"
-                iconPos="right"
-                class="w-full"
-                @click="addRole"
-              />
+            <Button
+              label="Agregar Role"
+              type="submit"
+              severity="success"
+              icon="pi pi-user-plus"
+              iconPos="right"
+              class="w-full"
+              @click="addRole"
+            />
+          </div>
         </div>
-
-        </div>
-
-
       </template>
     </Card>
   </div>
