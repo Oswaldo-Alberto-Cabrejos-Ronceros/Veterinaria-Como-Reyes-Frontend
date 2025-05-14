@@ -6,6 +6,7 @@ import ServiceHeadquarterSets from '@/assets/data/services-headquarters-sets.jso
 import type { ServiceHeadquarterSet } from '@/models/ServiceHeadquarterSet'
 import { watch } from 'vue'
 import PickList from 'primevue/picklist'
+import Button from 'primevue/button'
 
 //headquarters
 const headquarters = [
@@ -37,12 +38,69 @@ const unassignedServices = ref(serviceHeadquarterSetSelected.value.unassignedSer
 //for PickList
 const selectedsServices = ref([unassignedServices.value, assignedServices.value])
 
+const isDisabled = ref<boolean>(true)
+
+const selectedsServicesAuxiliary = ref()
+
+const buttonInfoEdit = {
+  icon: 'pi-pencil',
+  severity: 'warn',
+  ariaLabel: 'Editar',
+  rounded: false,
+  iconPos: 'right',
+  size: '',
+  label: 'Editar',
+}
+
+const buttonInfoCancel = {
+  icon: 'pi-times',
+  severity: 'danger',
+  ariaLabel: 'Cancelar',
+  rounded: true,
+  iconPos: '',
+  size: 'small',
+  label: '',
+}
+
+const buttonInfo = ref<{
+  icon: string
+  severity: string
+  ariaLabel: string
+  rounded: boolean
+  iconPos: string
+  size: string
+  label: string
+}>(buttonInfoEdit)
+
+const edit = () => {
+  if (!isDisabled.value) {
+    selectedsServices.value = selectedsServicesAuxiliary.value
+    selectedsServicesAuxiliary.value = null
+    buttonInfo.value = buttonInfoEdit
+    isDisabled.value = true
+  } else {
+    buttonInfo.value = buttonInfoCancel
+    isDisabled.value = false
+    selectedsServicesAuxiliary.value = selectedsServices.value
+  }
+}
+
+//for submit
+
+const onSubmit = () => {
+  isDisabled.value = true
+  console.log(serviceHeadquarterSetSelected.value)
+  selectedsServicesAuxiliary.value = null
+  buttonInfo.value = buttonInfoEdit
+  isDisabled.value = true
+}
+
 watch(headquarterSelected, (newValue) => {
   serviceHeadquarterSetSelected.value = serviceHeadquartersSets[newValue - 1]
   console.log(serviceHeadquarterSetSelected.value)
-  assignedServices.value=serviceHeadquarterSetSelected.value.assignedServices
-  unassignedServices.value=serviceHeadquarterSetSelected.value.unassignedServices
-  selectedsServices.value=[unassignedServices.value,assignedServices.value]
+  assignedServices.value = serviceHeadquarterSetSelected.value.assignedServices
+  unassignedServices.value = serviceHeadquarterSetSelected.value.unassignedServices
+  selectedsServices.value = [unassignedServices.value, assignedServices.value]
 })
 </script>
 
@@ -68,13 +126,41 @@ watch(headquarterSelected, (newValue) => {
               />
             </div>
           </div>
-          <div class="w-full flex flex-col items-center justify-center">
-            <PickList v-model="selectedsServices" dataKey="id" breakpoint="1400px">
+          <form @submit.prevent="onSubmit" class="w-full flex flex-col items-center justify-center">
+            <PickList
+              v-model="selectedsServices"
+              dataKey="id"
+              breakpoint="1400px"
+              :disabled="isDisabled"
+            >
               <template #option="{ option }">
                 {{ option.serviceName }}
               </template>
             </PickList>
-          </div>
+            <div class="w-full flex gap-6 justify-end">
+              <Button
+                v-if="!isDisabled"
+                class="w-full max-w-xs"
+                label="Guardar"
+                type="submit"
+                severity="success"
+                icon="pi pi-save"
+                iconPos="right"
+              />
+
+              <Button
+                :icon="`pi ${buttonInfo.icon}`"
+                :severity="buttonInfo.severity"
+                :rounded="buttonInfo.rounded"
+                :icon-pos="buttonInfo.iconPos"
+                :aria-label="buttonInfo.ariaLabel"
+                :size="buttonInfo.size"
+                :label="buttonInfo.label"
+                class="self-center"
+                @click="edit"
+              />
+            </div>
+          </form>
         </div>
       </template>
     </Card>
