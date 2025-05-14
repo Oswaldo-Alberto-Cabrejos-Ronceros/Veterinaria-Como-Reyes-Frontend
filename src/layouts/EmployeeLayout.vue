@@ -72,6 +72,11 @@ const items = ref<MenuItem[][]>([
       icon: 'pi pi-github',
       to: '/employee/administrador/breeds-management',
     },
+     {
+      label: 'Servicios por Sede',
+      icon: 'pi pi-arrow-right-arrow-left',
+      to: '/employee/administrador/services-headquarters-management',
+    },
 
   ],
   [
