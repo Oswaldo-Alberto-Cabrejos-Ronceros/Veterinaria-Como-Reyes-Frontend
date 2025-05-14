@@ -63,6 +63,15 @@ const items = ref<MenuItem[][]>([
       icon: 'pi pi-user-plus',
       to: '/employee/administrador/roles-permission',
     },
+    {
+      label: 'Especies',
+      icon: 'pi pi-github',
+      to: '/employee/administrador/species-management',
+    },    {
+      label: 'Razas',
+      icon: 'pi pi-github',
+      to: '/employee/administrador/breeds-management',
+    },
 
   ],
   [
