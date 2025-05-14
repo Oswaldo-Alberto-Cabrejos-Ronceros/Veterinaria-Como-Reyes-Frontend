@@ -17,6 +17,7 @@ import PetUnitaryPage from '@/views/Common/PetUnitaryPage/PetUnitaryPage.vue'
 import RolePermissionManagementPage from '@/views/Employee/RolePermissionManagementPage/RolePermissionManagementPage.vue'
 import SpecieManagementPage from '@/views/Employee/SpecieManagementPage/SpecieManagementPage.vue'
 import BreedManagementPage from '@/views/Employee/BreedManagementPage/BreedManagementPage.vue'
+import ServicesHeadquarterManagementPage from '@/views/Employee/ServicesHeadquarterManagementPage/ServicesHeadquarterManagementPage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -131,6 +132,11 @@ const router = createRouter({
               path: 'breeds-management',
               name: 'administrator-breeds-management',
               component: BreedManagementPage,
+            },
+                        {
+              path: 'services-headquarters-management',
+              name: 'administrator-services-headquarters-management',
+              component: ServicesHeadquarterManagementPage,
             }
           ],
         },
