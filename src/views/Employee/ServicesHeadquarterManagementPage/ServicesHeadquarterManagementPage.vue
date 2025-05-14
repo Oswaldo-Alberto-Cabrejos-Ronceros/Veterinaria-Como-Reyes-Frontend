@@ -5,6 +5,7 @@ import { ref } from 'vue'
 import ServiceHeadquarterSets from '@/assets/data/services-headquarters-sets.json'
 import type { ServiceHeadquarterSet } from '@/models/ServiceHeadquarterSet'
 import { watch } from 'vue'
+import PickList from 'primevue/picklist'
 
 //headquarters
 const headquarters = [
@@ -28,9 +29,20 @@ const headquarterSelected = ref<number>(1)
 const serviceHeadquarterSetSelected = ref<ServiceHeadquarterSet>(
   serviceHeadquartersSets[headquarterSelected.value - 1],
 )
+//for assignedServices
+const assignedServices = ref(serviceHeadquarterSetSelected.value.assignedServices)
+//for unassignedServices
+const unassignedServices = ref(serviceHeadquarterSetSelected.value.unassignedServices)
+
+//for PickList
+const selectedsServices = ref([unassignedServices.value, assignedServices.value])
+
 watch(headquarterSelected, (newValue) => {
   serviceHeadquarterSetSelected.value = serviceHeadquartersSets[newValue - 1]
   console.log(serviceHeadquarterSetSelected.value)
+  assignedServices.value=serviceHeadquarterSetSelected.value.assignedServices
+  unassignedServices.value=serviceHeadquarterSetSelected.value.unassignedServices
+  selectedsServices.value=[unassignedServices.value,assignedServices.value]
 })
 </script>
 
@@ -55,6 +67,13 @@ watch(headquarterSelected, (newValue) => {
                 placeholder="Selecciona Rol"
               />
             </div>
+          </div>
+          <div class="w-full flex flex-col items-center justify-center">
+            <PickList v-model="selectedsServices" dataKey="id" breakpoint="1400px">
+              <template #option="{ option }">
+                {{ option.serviceName }}
+              </template>
+            </PickList>
           </div>
         </div>
       </template>
