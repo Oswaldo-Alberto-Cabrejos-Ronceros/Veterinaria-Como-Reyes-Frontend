@@ -78,6 +78,11 @@ const items = ref<MenuItem[][]>([
       icon: 'pi pi-arrow-right-arrow-left',
       to: '/employee/administrador/services-headquarters-management',
     },
+    {
+      label: 'Pagos',
+      icon: 'pi pi-receipt',
+      to: '/employee/administrador/payment-management',
+    },
   ],
   [
     {
