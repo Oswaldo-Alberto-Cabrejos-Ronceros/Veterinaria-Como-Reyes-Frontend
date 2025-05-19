@@ -220,8 +220,8 @@ const exportCSV = () => {
                     rounded
                   ></Button>
                   <Button
-                    icon="pi pi-trash"
-                    severity="danger"
+                    icon="pi pi-file"
+                    severity="success"
                     variant="outlined"
                     aria-label="Filter"
                     rounded
