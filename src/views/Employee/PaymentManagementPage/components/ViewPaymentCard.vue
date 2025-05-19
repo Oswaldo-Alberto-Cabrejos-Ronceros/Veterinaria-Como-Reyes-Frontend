@@ -74,7 +74,7 @@ const elements: { title: string; key: keyof Payment; icon: string }[] = [
 <template>
   <Card class="card-dialog-form-layout">
     <template #title>
-      <h3 class="h3 text-center">Pago:{{ paymentData?.id }}</h3>
+      <h3 class="h3 text-center">Pago: {{ paymentData?.id }}</h3>
     </template>
     <template v-if="paymentData" #content>
       <div class="flex-1 space-y-6">

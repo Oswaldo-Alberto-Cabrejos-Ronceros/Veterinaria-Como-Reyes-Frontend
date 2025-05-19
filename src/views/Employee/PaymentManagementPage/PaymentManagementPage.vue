@@ -15,6 +15,9 @@ import Payments from '@/assets/data/payments.json'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import { ref } from 'vue'
+import { useDialog } from 'primevue'
+import ViewPaymentCard from './components/ViewPaymentCard.vue'
+import type { Payment } from '@/models/Payment'
 
 //form
 const { handleSubmit, errors, defineField } = useForm<SearchPaymentMethodSchema>({
@@ -49,6 +52,24 @@ const services = [
   { name: 'Cirugía', value: 2 },
   { name: 'Radiografía', value: 3 },
 ]
+
+
+
+//for dialog
+const dialog = useDialog()
+
+
+const viewPayment=(paymentData:Payment)=>{
+  dialog.open(ViewPaymentCard,{
+    props:{
+      modal:true
+    },
+    data:{
+      paymentData:paymentData
+    }
+  })
+}
+
 
 //for export
 
@@ -201,7 +222,7 @@ const exportCSV = () => {
               style="width: 12%"
             ></Column>
             <Column>
-              <template #body="{}">
+              <template #body="{data}">
                 <div
                   class="flex justify-between items-center flex-col sm:flex-row lg:flex-row gap-1"
                 >
@@ -211,6 +232,7 @@ const exportCSV = () => {
                     variant="outlined"
                     aria-label="Filter"
                     rounded
+                    @click="viewPayment(data)"
                   ></Button>
                   <Button
                     icon="pi pi-pencil"
