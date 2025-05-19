@@ -8,9 +8,13 @@ import InputGroupAddon from 'primevue/inputgroupaddon'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/yup'
 import Message from 'primevue/message'
-import Button from 'primevue/button'
 import Select from 'primevue/select'
 import DatePicker from 'primevue/datepicker'
+import Button from 'primevue/button'
+import Payments from '@/assets/data/payments.json'
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
+import { ref } from 'vue'
 
 //form
 const { handleSubmit, errors, defineField } = useForm<SearchPaymentMethodSchema>({
@@ -45,13 +49,20 @@ const services = [
   { name: 'Cirugía', value: 2 },
   { name: 'Radiografía', value: 3 },
 ]
+
+//for export
+
+const dt = ref()
+const exportCSV = () => {
+  dt.value.exportCSV()
+}
 </script>
 
 <template>
   <div class="layout-principal-flex">
     <Card class="card-principal-color-neutral">
       <template #title>
-        <h3 class="h3">Gestión de metodos de pago</h3>
+        <h3 class="h3">Pagos</h3>
       </template>
       <template #content>
         <div class="flex flex-col gap-6">
@@ -125,6 +136,100 @@ const services = [
               />
             </div>
           </form>
+
+          <!-- tabla -->
+
+          <DataTable
+            :value="Payments"
+            paginator
+            :rows="10"
+            :rows-per-page-options="[10, 15, 20, 25, 30]"
+            ref="dt"
+          >
+            <template #header>
+              <div class="w-full flex flex-col xs:flex-row justify-between gap-2 pb-4">
+                <Button
+                  icon="pi pi-user-plus"
+                  iconPos="right"
+                  severity="success"
+                  label="Agregar Pago"
+                />
+                <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
+              </div>
+            </template>
+            <Column field="clientDni" sortable header="Cliente" style="width: 10%"></Column>
+            <Column
+              field="headquarter"
+              sortable
+              header="Sede"
+              class="hidden lg:table-cell"
+              style="width: 12%"
+            ></Column>
+            <Column
+              field="service"
+              class="hidden xl:table-cell"
+              header="Servicio"
+              sortable
+              style="width: 15%"
+            ></Column>
+            <Column
+              field="amount"
+              class="hidden xs:table-cell sm:hidden lg:table-cell"
+              header="Monto"
+              sortable
+              style="width: 10%"
+            ></Column>
+            <Column
+              field="paymentMethod"
+              class="hidden xl:table-cell"
+              header="M.Pago"
+              sortable
+              style="width: 10%"
+            ></Column>
+            <Column
+              field="date"
+              class="table-cell sm:hidden lg:table-cell"
+              header="Fecha"
+              sortable
+              style="width: 10%"
+            ></Column>
+            <Column
+              field="state"
+              class="hidden md:table-cell"
+              header="Estado"
+              sortable
+              style="width: 12%"
+            ></Column>
+            <Column>
+              <template #body="{}">
+                <div
+                  class="flex justify-between items-center flex-col sm:flex-row lg:flex-row gap-1"
+                >
+                  <Button
+                    icon="pi pi-eye"
+                    severity="info"
+                    variant="outlined"
+                    aria-label="Filter"
+                    rounded
+                  ></Button>
+                  <Button
+                    icon="pi pi-pencil"
+                    severity="warn"
+                    variant="outlined"
+                    aria-label="Filter"
+                    rounded
+                  ></Button>
+                  <Button
+                    icon="pi pi-trash"
+                    severity="danger"
+                    variant="outlined"
+                    aria-label="Filter"
+                    rounded
+                  ></Button>
+                </div>
+              </template>
+            </Column>
+          </DataTable>
         </div>
       </template>
     </Card>
