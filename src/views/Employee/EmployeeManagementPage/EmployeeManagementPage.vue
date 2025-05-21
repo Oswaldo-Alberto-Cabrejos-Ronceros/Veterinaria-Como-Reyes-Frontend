@@ -194,7 +194,7 @@ const exportCSV = () => {
                 <InputText
                   v-model="fieldMap[element.key][0].value"
                   v-bind="fieldMap[element.key][1]"
-                  class="w-full textSm"
+                  class="w-full"
                   :placeholder="element.title"
                 />
               </InputGroup>
@@ -226,7 +226,7 @@ const exportCSV = () => {
                 severity="info"
                 icon="pi pi-search"
                 iconPos="right"
-                class="w-full text-sm"
+                class="w-full"
               />
             </div>
           </form>
@@ -241,8 +241,8 @@ const exportCSV = () => {
           >
             <template #header>
               <div class="w-full flex flex-col xs:flex-row justify-between gap-2 pb-4">
-                <Button class="textSm" icon="pi pi-user-plus" iconPos="right" severity="success" label="Agregar Empleado" @click="addEmployee" />
-                <Button class="textSm" icon="pi pi-external-link" label="Export" @click="exportCSV" />
+                <Button icon="pi pi-user-plus" iconPos="right" severity="success" label="Agregar Empleado" @click="addEmployee" />
+                <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
             </template>
             <Column field="names" sortable header="Nombres" class=" hidden lg:table-cell" style="width: 18%"></Column>
