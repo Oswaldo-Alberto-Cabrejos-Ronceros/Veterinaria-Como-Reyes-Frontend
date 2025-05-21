@@ -1,5 +1,4 @@
 import './assets/main.css'
-import './assets/main.css'
 import 'primeicons/primeicons.css'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
@@ -49,10 +48,7 @@ const MyPreset = definePreset(Aura, {
           900: '{neutral.900}',
           950: '{neutral.950}',
         },
-        formField: {
-          borderColor: '{neutral-400}',
-          placeholderColor: '{neutral-500}',
-        },
+
       },
       dark: {
         surface: {
@@ -71,7 +67,7 @@ const MyPreset = definePreset(Aura, {
         },
       },
     },
-  },
+  }
 })
 
 app.use(createPinia())
@@ -87,8 +83,7 @@ app.use(PrimeVue, {
       },
     },
   },
-  locale: esLocale
-
+  locale: esLocale,
 })
 
 //user dialog service

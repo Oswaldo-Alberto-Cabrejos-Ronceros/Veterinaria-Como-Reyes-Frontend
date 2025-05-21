@@ -194,7 +194,7 @@ const exportCSV = () => {
                 <InputText
                   v-model="fieldMap[element.key][0].value"
                   v-bind="fieldMap[element.key][1]"
-                  class="w-full"
+                  class="w-full textSm"
                   :placeholder="element.title"
                 />
               </InputGroup>
@@ -226,7 +226,7 @@ const exportCSV = () => {
                 severity="info"
                 icon="pi pi-search"
                 iconPos="right"
-                class="w-full"
+                class="w-full text-sm"
               />
             </div>
           </form>
@@ -241,8 +241,8 @@ const exportCSV = () => {
           >
             <template #header>
               <div class="w-full flex flex-col xs:flex-row justify-between gap-2 pb-4">
-                <Button icon="pi pi-user-plus" iconPos="right" severity="success" label="Agregar Empleado" @click="addEmployee" />
-                <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
+                <Button class="textSm" icon="pi pi-user-plus" iconPos="right" severity="success" label="Agregar Empleado" @click="addEmployee" />
+                <Button class="textSm" icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
             </template>
             <Column field="names" sortable header="Nombres" class=" hidden lg:table-cell" style="width: 18%"></Column>
@@ -258,6 +258,7 @@ const exportCSV = () => {
                     severity="info"
                     variant="outlined"
                     aria-label="Filter"
+                    size="small"
                     rounded
                     @click="viewEmployee(data)"
                   ></Button>
@@ -266,6 +267,7 @@ const exportCSV = () => {
                     severity="warn"
                     variant="outlined"
                     aria-label="Filter"
+                    size="small"
                     rounded
                     @click="editEmployee(data)"
                   ></Button>
@@ -274,6 +276,7 @@ const exportCSV = () => {
                     severity="danger"
                     variant="outlined"
                     aria-label="Filter"
+                    size="small"
                     rounded
                     @click="deleteEmployee($event,data)"
                   ></Button>

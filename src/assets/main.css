@@ -9,32 +9,32 @@
 }
 
 body {
-  @apply font-inter;
+  @apply font-inter text-xs sm:text-sm;
 
 }
 
 .textSm {
-  @apply text-sm;
+  @apply text-xs sm:text-sm;
 }
 
 .textBase {
-  @apply text-base;
+  @apply text-sm sm:text-base;
 }
 
 .textLg {
-  @apply text-xl;
+  @apply text-base sm:text-lg;
 }
 
 .h3 {
-  @apply text-2xl;
+  @apply text-lg sm:text-xl;
 }
 
 .h2 {
-  @apply text-3xl;
+  @apply text-xl sm:text-2xl;
 }
 
 .h1 {
-  @apply text-4xl;
+  @apply text-2xl sm:text-3xl;
 }
 
 .button-the-header {
