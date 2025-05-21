@@ -158,7 +158,7 @@ const exportCSV = () => {
                     <template #header>
               <div class="w-full flex flex-col xs:flex-row justify-between gap-2 pb-4">
                 <Button
-                  icon="pi pi-user-plus"
+                  icon="pi pi-plus-circle"
                   iconPos="right"
                   severity="success"
                   label="Agregar Método"
