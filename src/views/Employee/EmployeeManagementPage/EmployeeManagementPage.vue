@@ -258,7 +258,6 @@ const exportCSV = () => {
                     severity="info"
                     variant="outlined"
                     aria-label="Filter"
-                    size="small"
                     rounded
                     @click="viewEmployee(data)"
                   ></Button>
@@ -267,7 +266,6 @@ const exportCSV = () => {
                     severity="warn"
                     variant="outlined"
                     aria-label="Filter"
-                    size="small"
                     rounded
                     @click="editEmployee(data)"
                   ></Button>
@@ -276,7 +274,6 @@ const exportCSV = () => {
                     severity="danger"
                     variant="outlined"
                     aria-label="Filter"
-                    size="small"
                     rounded
                     @click="deleteEmployee($event,data)"
                   ></Button>
