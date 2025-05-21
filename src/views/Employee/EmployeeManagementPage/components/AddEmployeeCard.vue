@@ -141,7 +141,7 @@ const headquarkers = [
             <InputText
               v-model="fieldMap[element.key][0].value"
               v-bind="fieldMap[element.key][1]"
-              class="w-full"
+              class="w-full textSm"
               :placeholder="element.title"
             />
           </InputGroup>
@@ -226,7 +226,6 @@ const headquarkers = [
               v-bind="passwordAttrs"
               v-model="password"
               toggleMask
-              :feedback="false"
               placeholder="Contraseña"
             />
           </InputGroup>
@@ -256,7 +255,7 @@ const headquarkers = [
           </Message>
         </div>
         <div class="button-form-container-grid-end">
-<Button class="w-full max-w-md" label="Editar" type="submit" severity="success" icon="pi pi-save" iconPos="right" />
+<Button class="w-full max-w-md" label="Agregar" type="submit" severity="success" icon="pi pi-save" iconPos="right" />
         </div>
 
       </form>

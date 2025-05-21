@@ -9,7 +9,7 @@
 }
 
 body {
-  @apply font-inter;
+  @apply font-inter ;
 
 }
 
@@ -22,19 +22,19 @@ body {
 }
 
 .textLg {
-  @apply text-xl;
+  @apply text-lg;
 }
 
 .h3 {
-  @apply text-2xl;
+  @apply text-xl;
 }
 
 .h2 {
-  @apply text-3xl;
+  @apply text-2xl;
 }
 
 .h1 {
-  @apply text-4xl;
+  @apply text-3xl;
 }
 
 .button-the-header {
@@ -55,7 +55,7 @@ body {
 }
 
 .card-principal-color-neutral{
- @apply h-min min-w-full flex text-neutral-950 dark:text-surface-0 dark:bg-surface-800 px-4 py-4
+ @apply h-min min-w-full flex dark:bg-surface-800 px-4 py-4
 }
 
 .card-principal-color-inherit{
@@ -67,15 +67,15 @@ body {
 }
 
 .form-dialog-layout{
-  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-neutral-950 dark:text-surface-0
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4
 }
 
 .form-dialog-layout-col-2{
-   @apply grid grid-cols-1 md:grid-cols-2 gap-4 text-neutral-950 dark:text-surface-0
+   @apply grid grid-cols-1 md:grid-cols-2 gap-4
 }
 
 .form-dialog-layout-flex-col{
-  @apply flex flex-col items-center gap-4 justify-center text-neutral-950 dark:text-surface-0
+  @apply flex flex-col items-center gap-4 justify-center
 }
 
 .button-form-container-grid-end{
