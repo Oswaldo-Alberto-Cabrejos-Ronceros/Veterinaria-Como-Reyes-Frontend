@@ -255,7 +255,7 @@ const headquarkers = [
           </Message>
         </div>
         <div class="button-form-container-grid-end">
-<Button class="w-full max-w-md" label="Editar" type="submit" severity="success" icon="pi pi-save" iconPos="right" />
+<Button class="w-full max-w-md" label="Agregar" type="submit" severity="success" icon="pi pi-save" iconPos="right" />
         </div>
 
       </form>

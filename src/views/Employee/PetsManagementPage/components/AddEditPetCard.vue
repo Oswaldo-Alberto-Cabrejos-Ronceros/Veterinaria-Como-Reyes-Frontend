@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject, onMounted, type Ref } from 'vue'
+import { inject, onMounted, ref, type Ref } from 'vue'
 import Card from 'primevue/card'
 import InputText from 'primevue/inputtext'
 import InputGroup from 'primevue/inputgroup'
@@ -75,12 +75,15 @@ const breeds = [
   { name: 'Salchicha', value: 2 },
 ]
 
+const title = ref<string>('Agregar')
+
 onMounted(() => {
   if (dialogRef.value.data) {
     console.log(dialogRef.value.data)
     const params = dialogRef.value.data.petData
     //set data if edit
     if (params) {
+      title.value='Editar'
       name.value = params.name
       gender.value = params.gender
       weight.value = params.weight
@@ -98,7 +101,7 @@ onMounted(() => {
 <template>
   <Card class="card-dialog-form-layout">
     <template #title>
-      <h3 class="h3 text-center">Agregar Mascota</h3>
+      <h3 class="h3 text-center">{{title}} Mascota</h3>
     </template>
 
     <template #content>
@@ -261,7 +264,7 @@ onMounted(() => {
         <div class="button-form-container-grid-end">
           <Button
             class="w-full max-w-md"
-            label="Editar"
+            :label="title"
             type="submit"
             severity="success"
             icon="pi pi-save"
