@@ -17,7 +17,7 @@ const exampleClient: Client = {
   address:"Av. Canto Grande",
   headquarterName: "Sucursal Lima Centro",
   headquarterId:1,
-  birthday:"05/10/2004",
+  birthdate:"05/10/2004",
   role: "Cliente"
 }
 
@@ -47,7 +47,7 @@ const showEditClient = ()=>{
   dialog.open(EditClientCard,{
     data:{
       address:exampleClient.address,
-      birthdate: new Date (exampleClient.birthday),
+      birthdate: new Date (exampleClient.birthdate),
       headquarterId: exampleClient.headquarterId,
       phone:exampleClient.phone
     },
