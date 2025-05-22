@@ -60,83 +60,92 @@ onMounted(() => {
 </script>
 
 <template>
-  <Card
-    class="h-auto w-full sm:w-xl flex flex-col items-center justify-center bg-transparent shadow-none"
-  >
+  <Card class="card-dialog-form-layout">
     <template #title>
       <h3 class="h3 text-center">Editar Datos</h3>
     </template>
     <template #content>
-      <form
-        @submit.prevent="onSubmit"
-        class="flex flex-col gap-4 w-full max-w-xl xs:min-w-96 sm:min-w-md text-neutral-950 dark:text-surface-0"
-      >
+      <form @submit.prevent="onSubmit" class="form-dialog-layout">
         <!-- cell phone -->
-        <label>Celular</label>
+        <div>
+          <label class="block mb-2">Celular</label>
 
-        <InputGroup>
-          <InputGroupAddon class="text-neutral-400">
-            <i class="pi pi-mobile"></i>
-          </InputGroupAddon>
-          <InputText v-bind="phoneAttrs" v-model="phone" type="tel" placeholder="Celular" />
-        </InputGroup>
+          <InputGroup>
+            <InputGroupAddon class="text-neutral-400">
+              <i class="pi pi-mobile"></i>
+            </InputGroupAddon>
+            <InputText v-bind="phoneAttrs" v-model="phone" type="tel" placeholder="Celular" />
+          </InputGroup>
 
-        <Message v-if="errors.phone" severity="error" size="small" variant="simple">
-          {{ errors.phone }}
-        </Message>
-
+          <Message v-if="errors.phone" severity="error" size="small" variant="simple">
+            {{ errors.phone }}
+          </Message>
+        </div>
         <!-- address -->
-        <label>Dirección</label>
+        <div>
+          <label class="block mb-2">Dirección</label>
 
-        <InputGroup>
-          <InputGroupAddon class="text-neutral-400">
-            <i class="pi pi-home"></i>
-          </InputGroupAddon>
-          <InputText v-bind="addressAttrs" v-model="address" type="text" placeholder="Dirección" />
-        </InputGroup>
+          <InputGroup>
+            <InputGroupAddon class="text-neutral-400">
+              <i class="pi pi-home"></i>
+            </InputGroupAddon>
+            <InputText
+              v-bind="addressAttrs"
+              v-model="address"
+              type="text"
+              placeholder="Dirección"
+            />
+          </InputGroup>
 
-        <Message v-if="errors.address" severity="error" size="small" variant="simple">
-          {{ errors.address }}
-        </Message>
+          <Message v-if="errors.address" severity="error" size="small" variant="simple">
+            {{ errors.address }}
+          </Message>
+        </div>
 
         <!-- birthDate -->
-        <label>Fecha Nacimiento</label>
+        <div>
+          <label class="block mb-2">Fecha Nacimiento</label>
 
-        <DatePicker
-          v-bind="birthdateAttrs"
-          v-model="birthdate"
-          showIcon
-          fluid
-          iconDisplay="input"
-        />
-        <Message v-if="errors.birthdate" severity="error" size="small" variant="simple">
-          {{ errors.birthdate }}
-        </Message>
-
+          <DatePicker
+            v-bind="birthdateAttrs"
+            v-model="birthdate"
+            showIcon
+            fluid
+            iconDisplay="input"
+          />
+          <Message v-if="errors.birthdate" severity="error" size="small" variant="simple">
+            {{ errors.birthdate }}
+          </Message>
+        </div>
         <!--for headquarte-->
-        <label>Sede</label>
-        <Select
-          v-bind="headquarterIdAttrs"
-          v-model="headquarterId"
-          :options="headquarkers"
-          optionLabel="name"
-          optionValue="value"
-          placeholder="Selecciona Sede"
-        />
+        <div>
+          <label class="block mb-2">Sede</label>
+          <Select
+            v-bind="headquarterIdAttrs"
+            v-model="headquarterId"
+            :options="headquarkers"
+            optionLabel="name"
+            optionValue="value"
+            placeholder="Selecciona Sede"
+          />
 
-        <Message v-if="errors.headquarterId" severity="error" size="small" variant="simple">
-          {{ errors.headquarterId }}
-        </Message>
+          <Message v-if="errors.headquarterId" severity="error" size="small" variant="simple">
+            {{ errors.headquarterId }}
+          </Message>
+        </div>
 
         <!-- button -->
 
-        <Button
-          label="Registrar"
-          type="submit"
-          severity="success"
-          icon="pi pi-save"
-          iconPos="right"
-        />
+        <div class="button-form-container-grid-end">
+          <Button
+            label="Editar"
+            type="submit"
+            severity="success"
+            icon="pi pi-save"
+            iconPos="right"
+            class="w-full max-w-md"
+          />
+        </div>
       </form>
     </template>
   </Card>

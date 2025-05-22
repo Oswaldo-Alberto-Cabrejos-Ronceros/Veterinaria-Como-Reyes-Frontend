@@ -138,7 +138,7 @@ const handleEditUser = ()=>{
         <!-- Formulario -->
         <div class="flex-1 space-y-6">
           <!-- for Client -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-if="clientData">
+          <div class="form-search-grid-col-5" v-if="clientData">
             <div v-for="(element, id) in elementsClient" :key="id">
               <label class="block mb-2">{{ element.title }}</label>
               <InputGroup>
@@ -150,7 +150,7 @@ const handleEditUser = ()=>{
             </div>
           </div>
           <!-- for Employee -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-if="employeeData">
+          <div class="form-search-grid-col-5" v-if="employeeData">
             <div v-for="(element, id) in elementsEmployee" :key="id">
               <label class="block mb-2">{{ element.title }}</label>
               <InputGroup>
