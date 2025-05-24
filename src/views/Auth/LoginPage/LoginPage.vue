@@ -2,10 +2,18 @@
 import CardLogin from './components/CardLogin.vue'
 import SwitchTheme from '@/components/SwitchTheme.vue'
 import type { FormValues as LoginSchema } from '@/validation-schemas-forms/schema-login'
+import { useAuthentication } from '@/composables/useAuthentication'
 
+//get methods for use
+const {loading,error,loginClient,loginEmployee} = useAuthentication()
 //fuction for get info for cardLogin
-const login = (loginRequest: { loginRequest: LoginSchema; isEmployee: boolean }) => {
-  console.log('recibido', loginRequest)
+const login = async (loginRequest: { loginRequest: LoginSchema; isEmployee: boolean }) => {
+    console.log('recibido', loginRequest)
+    if(loginRequest.isEmployee){
+      await loginEmployee(loginRequest.loginRequest.email,loginRequest.loginRequest.password);
+    } else{
+      await loginClient(loginRequest.loginRequest.email,loginRequest.loginRequest.password)
+    }
 }
 </script>
 <template>
@@ -14,5 +22,7 @@ const login = (loginRequest: { loginRequest: LoginSchema; isEmployee: boolean })
       <SwitchTheme />
     </div>
     <CardLogin @login="login($event)" class="self-center" />
+    <p v-if="loading.loginClient||loading.loginEmployee">Cargando ...</p>
+    <p v-if="error.loginClient||error.loginEmployee">Error al iniciar session</p>
   </div>
 </template>
