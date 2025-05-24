@@ -1,7 +1,7 @@
 import type { AuthenticationService } from '../domain/services/AuthenticationService'
 import type { User, UserClientRequest } from '../domain/models/User'
 
-export class AuthApi implements AuthenticationService {
+export class AuthenticationServiceImpl implements AuthenticationService {
   async loginEmployee(email: string, password: string): Promise<User> {
     const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/login/employee`, {
       method: 'POST',
