@@ -6,7 +6,7 @@ export const useAuthenticationStore = defineStore('authentication', {
     user: null as null | User,
   }),
   getters: {
-    userRole: (state) => state.user?.rol || null,
+    userRole: (state) => state.user?.mainRole || null,
   },
   actions: {
     setUser(user: User) {
