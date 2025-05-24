@@ -1,4 +1,4 @@
-import type { GroupedPermissions } from "./GrupedPermissions";
+import type { GroupedPermissions } from "./GroupedPermissions";
 
 export interface UserSession{
     userId: number,

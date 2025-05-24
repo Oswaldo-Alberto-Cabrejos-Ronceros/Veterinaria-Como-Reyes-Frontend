@@ -18,8 +18,8 @@ export interface GroupedPermissions{
     permission?:string[],
     role?:string[],
     specie?:string[],
-    veterinaryService:string[],
-    payment:string[]
+    veterinaryService?:string[],
+    payment?:string[]
 }
 
 

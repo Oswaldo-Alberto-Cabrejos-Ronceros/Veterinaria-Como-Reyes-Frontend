@@ -1,5 +1,5 @@
 export interface GroupedPermissions{
-    pets?:string[],
+    pet?:string[],
     breed?:string[],
     categorie?:string[],
     client?:string[],
@@ -9,6 +9,6 @@ export interface GroupedPermissions{
     permission?:string[],
     role?:string[],
     specie?:string[],
-    veterinaryService:string[],
-    payment:string[]
+    veterinaryService?:string[],
+    payment?:string[]
 }
