@@ -9,7 +9,7 @@ export function useAsyncHandler() {
   //for error state
   const error = reactive<ErrorState>({})
   //higher orden fuction for run use case
-  async function runUseCase<T>(name: string, fn: () => Promise<T>) {
+  async function runUseCase<T>(name: string, fn: () => Promise<T>):Promise<T> {
     loading[name] = true
     error[name] = null
     try {
@@ -17,6 +17,7 @@ export function useAsyncHandler() {
       return result
     } catch (e) {
       error[name] = e
+      throw e
     } finally {
       loading[name] = false
     }

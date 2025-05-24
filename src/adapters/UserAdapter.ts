@@ -1,8 +1,10 @@
 import type { UserSession } from '@/models/UserSession'
-import type { User } from '@/services/Authentication/domain/models/User'
+import type { User, UserClientRequest } from '@/services/Authentication/domain/models/User'
 import { GroupedPermissionsAdapter } from './GroupedPermissionsAdapter'
+import type { UserClientRegister } from '@/models/UserClientRegister'
 
 export class UserAdapter {
+  //for adapt user to userSession
   static toUserSession(user: User): UserSession {
     return {
       userId: user.userId,
@@ -13,5 +15,10 @@ export class UserAdapter {
         user.groupedPermissions,
       ),
     }
+  }
+  static userClientRegisterToUserClientRequest(
+    userClientRegister: UserClientRegister,
+  ): UserClientRequest {
+    return userClientRegister as UserClientRequest //because properties equals
   }
 }
