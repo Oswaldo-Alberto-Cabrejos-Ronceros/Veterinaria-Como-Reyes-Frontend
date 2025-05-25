@@ -1,7 +1,7 @@
 import type { Employee } from '@/models/Employee'
 import type { EmployeeService } from '../domain/services/EmployeeService'
 
-export class updateEmployee {
+export class UpdateEmployee {
   constructor(private readonly employeeService: EmployeeService) {}
 
   async execute(employee: Employee, employeeId: number): Promise<Employee> {
