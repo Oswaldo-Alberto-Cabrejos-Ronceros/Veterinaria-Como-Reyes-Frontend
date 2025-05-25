@@ -250,7 +250,10 @@ const exportCSV = () => {
             <Column field="lastnames" sortable header="Apellidos" style="width: 18%"></Column>
             <Column field="dni" class=" hidden lg:table-cell" header="DNI" sortable style="width: 15%"></Column>
             <Column field="cmvp" class=" hidden lg:table-cell" header="CMVP" sortable style="width: 15%"></Column>
-            <Column field="role" class=" hidden md:table-cell" header="Rol" sortable style="width: 15%"></Column>
+            <Column  class=" hidden md:table-cell" header="Rol" sortable style="width: 15%">
+            <template #body="{ data }">
+              {{ data.roles[0].name }}
+            </template></Column>
             <Column >
               <template #body="{ data }">
                 <div class="flex justify-between items-center flex-row lg:flex-col xl:flex-row gap-1">
