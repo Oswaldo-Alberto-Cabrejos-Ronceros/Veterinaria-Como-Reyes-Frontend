@@ -1,8 +1,8 @@
 export interface Employee {
-  userId: number
+  userId?: number
   employeeId: number
   dni: string
-  cmvp: string
+  cmvp?: string
   names: string
   lastnames: string
   address: string
@@ -11,5 +11,5 @@ export interface Employee {
   headquarterId:number
   birthDate: string
   dirImage: string
-  role: string
+  roles: {roleId:number,name:string}[]
 }
