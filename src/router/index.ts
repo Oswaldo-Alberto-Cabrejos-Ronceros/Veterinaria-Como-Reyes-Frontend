@@ -198,6 +198,11 @@ const router = createRouter({
               name: 'receptionist-pets-management',
               component: PetsManagementPage,
             },
+            {
+              path: 'payment-management',
+              name: 'receptionist-payment-management',
+              component: PaymentManagementPage,
+            },
           ],
         },
         {
@@ -214,6 +219,11 @@ const router = createRouter({
               path: 'perfil',
               name: 'veterinary-perfil',
               component: PerfilPage,
+            },
+            {
+              path: 'pets-management',
+              name: 'veterinary-pets-management',
+              component: PetsManagementPage,
             },
           ],
         },

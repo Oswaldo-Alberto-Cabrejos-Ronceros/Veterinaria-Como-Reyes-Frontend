@@ -88,36 +88,29 @@ const items = ref<MenuItem[][]>([
     {
       label: 'Inicio',
       icon: 'pi pi-home',
-      to: 'home',
+      to: '/employee/manager/home',
     },
     {
       label: 'Empleados',
       icon: 'pi pi-users',
-      to: 'employee-management',
+      to: '/employee/manager/employee-management',
     },
     {
       label: 'Clientes',
       icon: 'pi pi-users',
-      to: 'client-management',
+      to: '/employee/manager/client-management',
+    },
+    {
+      label: 'Mascotas',
+      icon: 'pi pi-github',
+      to: '/employee/manager/pets-management',
     },
   ],
   [
     {
       label: 'Inicio',
       icon: 'pi pi-home',
-      to: '/',
-    },
-    {
-      label: 'Citas',
-      icon: 'pi pi-clipboard',
-      to: '/',
-    },
-  ],
-  [
-    {
-      label: 'Inicio',
-      icon: 'pi pi-home',
-      to: 'home',
+      to: '/employee/veterinary/home',
     },
     {
       label: 'Citas',
@@ -127,7 +120,29 @@ const items = ref<MenuItem[][]>([
     {
       label: 'Mascotas',
       icon: 'pi pi-github',
-      to: 'pets-management',
+      to: '/employee/veterinary/pets-management',
+    },
+  ],
+  [
+    {
+      label: 'Inicio',
+      icon: 'pi pi-home',
+      to: '/employee/receptionist/home',
+    },
+    {
+      label: 'Citas',
+      icon: 'pi pi-clipboard',
+      to: '/',
+    },
+    {
+      label: 'Mascotas',
+      icon: 'pi pi-github',
+      to: '/employee/receptionist/pets-management',
+    },
+    {
+      label: 'Pagos',
+      icon: 'pi pi-receipt',
+      to: '/employee/receptionist/payment-management',
     },
   ],
 ])

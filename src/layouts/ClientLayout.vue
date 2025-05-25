@@ -15,7 +15,7 @@ const items = ref<MenuItem[]>([
   {
     label:'Citas',
     icon:'pi pi-clipboard',
-    to:'/'
+    to:'perfil'
   }
 ])
 
