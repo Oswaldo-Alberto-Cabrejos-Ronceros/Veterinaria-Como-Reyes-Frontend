@@ -30,7 +30,7 @@ const { handleSubmit, errors, defineField } = useForm<FormValues>({
     address: '',
     phone: '',
     birthdate:undefined,
-    headquarker:undefined,
+    headquarter:undefined,
     password: '',
     confirmPassword: '',
     term: false,
@@ -53,7 +53,7 @@ const [lastnames, lastnamesAttrs] = defineField('lastnames')
 const [email, emailAttrs] = defineField('email')
 const [address, addressAttrs] = defineField('address')
 const [birthdate, birthdateAttrs] = defineField('birthdate')
-const [headquarker, headquarkerAttrs] = defineField('headquarker')
+const [headquarter, headquarterAttrs] = defineField('headquarter')
 const [phone, phoneAttrs] = defineField('phone')
 const [password, passwordAttrs] = defineField('password')
 const [confirmPassword, confirmPasswordAttrs] = defineField('confirmPassword')
@@ -64,7 +64,6 @@ const emit = defineEmits(['register'])
 
 //for send
 const onSubmit = handleSubmit((values) => {
-  console.log(values)
   emit('register',values)
 })
 
@@ -215,10 +214,10 @@ const imageLogo=computed(()=>(
 
         <!--headquarker-->
         <label>Sede</label>
-        <Select v-bind="headquarkerAttrs" v-model="headquarker" :options="headquarkers" optionLabel="name" optionValue="value" placeholder="Selecciona headquarker"  />
+        <Select v-bind="headquarterAttrs" v-model="headquarter" :options="headquarkers" optionLabel="name" optionValue="value" placeholder="Selecciona headquarker"  />
 
-        <Message v-if="errors.headquarker" severity="error" size="small" variant="simple">
-          {{ errors.headquarker }}
+        <Message v-if="errors.headquarter" severity="error" size="small" variant="simple">
+          {{ errors.headquarter }}
         </Message>
 
 

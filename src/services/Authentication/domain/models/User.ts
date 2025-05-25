@@ -22,13 +22,13 @@ export interface GroupedPermissions {
 
 export interface UserClientRequest {
   dni: string
-  names: string
-  lastnames: string
+  name: string
+  lastName: string
   address: string
   phone: string
-  birthdate: string
-  headquarker: {
-    headquarkerId: number
+  birthDate: string
+  headquarter: {
+    headquarterId: number
   }
   user: {
     email: string
