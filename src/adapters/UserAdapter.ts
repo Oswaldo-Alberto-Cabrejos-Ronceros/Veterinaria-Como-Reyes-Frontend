@@ -25,7 +25,7 @@ export class UserAdapter {
       lastnames:userClientRegister.lastnames,
       address:userClientRegister.address,
       phone:userClientRegister.phone,
-      birthdate:userClientRegister.birthdate,
+      birthdate:userClientRegister.birthdate.toLocaleString(),
       headquarker:{
         headquarkerId:userClientRegister.headquarker
       },
@@ -33,6 +33,6 @@ export class UserAdapter {
         email:userClientRegister.email,
         password:userClientRegister.password
       }
-    } 
+    }
   }
 }

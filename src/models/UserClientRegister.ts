@@ -5,7 +5,7 @@ export interface UserClientRegister {
   email: string
   address: string
   phone: string
-  birthdate: string
+  birthdate: string|Date
   headquarker: number
   password: string
 }

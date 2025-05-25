@@ -59,10 +59,13 @@ const [password, passwordAttrs] = defineField('password')
 const [confirmPassword, confirmPasswordAttrs] = defineField('confirmPassword')
 const [term, termAttrs] = defineField('term')
 
-//for send
+//for emit register
+const emit = defineEmits(['register'])
 
+//for send
 const onSubmit = handleSubmit((values) => {
   console.log(values)
+  emit('register',values)
 })
 
 
