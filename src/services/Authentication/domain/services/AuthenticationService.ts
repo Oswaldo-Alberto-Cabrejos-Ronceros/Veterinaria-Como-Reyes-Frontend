@@ -1,7 +1,8 @@
-import type { User,UserRequest } from "../models/User";
+import type { User,UserClientRequest } from "../models/User";
 
 export interface AuthenticationService{
-  login(email:string,password:string):Promise<User>;
-  register(user:UserRequest):Promise<User>;
+  loginClient(email:string,password:string):Promise<User>;
+  loginEmployee(email:string,password:string):Promise<User>;
+  register(user:UserClientRequest):Promise<User>;
   logout():Promise<void>
 }

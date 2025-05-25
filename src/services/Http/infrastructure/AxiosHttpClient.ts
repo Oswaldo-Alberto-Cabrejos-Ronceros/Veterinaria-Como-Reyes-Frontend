@@ -1,46 +1,102 @@
-import axios from 'axios'
+import axios, { type AxiosInstance } from 'axios'
 import { LogoutUser } from '@/services/Authentication/aplication/LogoutUser'
-import { AuthApi } from '@/services/Authentication/infrastructure/AuthenticationApi'
+import { AuthenticationServiceImpl } from '@/services/Authentication/infrastructure/AuthenticationServiceImpl'
 import type { HttpClient } from '../model/HttpClient'
-const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
-  timeout: 5000,
-  headers: { 'Content-Type': 'application/json' },
-  withCredentials: true,
-})
 
-//interceptor for response
-axios.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const originalRequest = error.config
+export class AxiosHttpClient implements HttpClient {
+  private axiosInstance: AxiosInstance
 
-    if (error.response && error.response.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true
-      if (!originalRequest.url.includes('/auth/refresh')) {
-        try {
-          //try refresh token
-          await axiosInstance.post('/auth/refresh')
-          return axiosInstance(originalRequest)
-        } catch (refreshError) {
-          //if resfresh fails, logout
-          const logoutUser = new LogoutUser(new AuthApi())
-          logoutUser.execute()
-          // redirige to login
-          window.location.href = '/auth/login'
-          return Promise.reject(refreshError)
+  constructor() {
+    this.axiosInstance = axios.create({
+      baseURL: import.meta.env.VITE_API_URL,
+      timeout: 5000,
+      headers: { 'Content-Type': 'application/json' },
+      withCredentials: true,
+    })
+    //interceptor for response
+    this.axiosInstance.interceptors.response.use(
+      (response) => response,
+      async (error) => {
+        const originalRequest = error.config
+
+        if (error.response && error.response.status === 401 && !originalRequest._retry) {
+          originalRequest._retry = true
+          if (!originalRequest.url.includes('/auth/refresh')) {
+            try {
+              //try refresh token
+              await this.axiosInstance.post('/auth/refresh')
+              return this.axiosInstance(originalRequest)
+            } catch (refreshError) {
+              //if resfresh fails, logout
+              const logoutUser = new LogoutUser(new AuthenticationServiceImpl())
+              logoutUser.execute()
+              // redirige to login
+              window.location.href = '/auth/login'
+              return Promise.reject(refreshError)
+            }
+          }
         }
-      }
-    }
-    return Promise.reject(error)
-  },
-)
-//export default httpClient implement
-const axiosHttpClient: HttpClient = {
-  get: (url) => axiosInstance.get(url),
-  post: (url, body) => axiosInstance.post(url, body),
-  put: (url, body) => axiosInstance.put(url, body),
-  delete: (url) => axiosInstance.delete(url),
-}
+        return Promise.reject(error)
+      },
+    )
+  }
 
-export default axiosHttpClient
+  async get<T>(url: string): Promise<{ data: T }> {
+    try {
+      const response = await this.axiosInstance.get<T>(url)
+      return { data: response.data }
+    } catch (e) {
+      this.handleError(e as Error)
+      throw e
+    }
+  }
+  async post<T>(url: string, body: unknown): Promise<{ data: T }> {
+    try {
+      const response = await this.axiosInstance.post<T>(url, body)
+      return { data: response.data }
+    } catch (e) {
+      this.handleError(e as Error)
+      throw e
+    }
+  }
+  async put<T>(url: string, body: unknown): Promise<{ data: T }> {
+    try {
+      const response = await this.axiosInstance.put(url, body)
+      return { data: response.data }
+    } catch (e) {
+      this.handleError(e as Error)
+      throw e
+    }
+  }
+  async patch<T>(url: string, body?: unknown): Promise<{ data: T }> {
+    try {
+      const response = await this.axiosInstance.patch(url, body)
+      return { data: response.data }
+    } catch (e) {
+      this.handleError(e as Error)
+      throw e
+    }
+  }
+  async delete<T>(url: string): Promise<{ data: T }> {
+    try {
+      const response = await this.axiosInstance.delete(url)
+      return { data: response.data }
+    } catch (e) {
+      this.handleError(e as Error)
+      throw e
+    }
+  }
+
+  private handleError(error: Error) {
+    if (axios.isAxiosError(error)) {
+      console.error(
+        'HTTP error:',
+        error.response?.status,
+        error.response?.statusText,
+        error.response?.data,
+      )
+    } else {
+      console.error('Unexpected error:', error)
+    }
+  }
+}

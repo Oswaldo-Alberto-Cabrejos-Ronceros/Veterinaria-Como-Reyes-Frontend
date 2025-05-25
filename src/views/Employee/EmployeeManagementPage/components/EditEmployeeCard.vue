@@ -126,6 +126,7 @@ onMounted(() => {
   headquarterId.value = params.employeeData.headquarterId
   if (params.employeeData.birthdate instanceof Date) birthdate.value = params.employeeData.birthdate
   roleId.value = params.employeeData.roleId
+  console.log(params.employeeData.birthdate)
 })
 </script>
 

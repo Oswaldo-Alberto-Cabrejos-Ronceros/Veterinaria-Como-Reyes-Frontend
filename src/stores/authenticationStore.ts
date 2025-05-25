@@ -1,15 +1,15 @@
 import { defineStore } from 'pinia'
-import type { User } from '@/services/Authentication/domain/models/User'
+import type { UserSession } from '@/models/UserSession'
 
 export const useAuthenticationStore = defineStore('authentication', {
   state: () => ({
-    user: null as null | User,
+    user: null as null | UserSession,
   }),
   getters: {
-    userRole: (state) => state.user?.rol || null,
+    userRole: (state) => state.user?.mainRole || null,
   },
   actions: {
-    setUser(user: User) {
+    setUser(user: UserSession) {
       this.user = user
       localStorage.setItem('user', JSON.stringify(this.user))
     },

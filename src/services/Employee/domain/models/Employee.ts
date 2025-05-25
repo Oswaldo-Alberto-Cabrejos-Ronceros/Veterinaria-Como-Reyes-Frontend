@@ -1,17 +1,21 @@
 export interface Employee {
-  userId?: number
   employeeId: number
   dni: string
-  cmvp?: string
-  names: string
-  lastnames: string
+  cmvp: string
+  name: string
+  lastName: string
   address: string
   phone: string
+  birthDate: string
+  dirImage: string
   headquarter: {
     headquarterId: number
     name: string
   }
-  birthdate: string
-  dirImage: string
+  user?: {
+    userId?: number
+    email: string
+    password?: string
+  }
   roles: { roleId: number; name: string }[]
 }
