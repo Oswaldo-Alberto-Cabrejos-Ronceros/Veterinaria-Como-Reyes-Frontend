@@ -65,7 +65,7 @@ const router = createRouter({
       redirect: '/',
       children: [
         {
-          path: 'administrador',
+          path: 'administrator',
           meta: { role: 'ADMINISTRATOR' },
           children: [
             {
