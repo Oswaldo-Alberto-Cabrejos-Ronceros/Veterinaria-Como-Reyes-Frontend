@@ -138,7 +138,7 @@ const editEmployee = (employeeData: Employee) => {
         address: employeeData.address,
         phone: employeeData.phone,
         headquarterId: employeeData.headquarter.headquarterId,
-        birthdate: new Date(), // for now
+        birthdate:new Date(employeeData.birthdate),
         dirImage: employeeData.dirImage,
         roleId: rolesMap[employeeData.roles[0].name],
       } as EditEmployee,
