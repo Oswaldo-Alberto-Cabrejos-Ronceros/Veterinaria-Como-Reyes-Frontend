@@ -40,7 +40,7 @@ const axiosHttpClient: HttpClient = {
   get: (url) => axiosInstance.get(url),
   post: (url, body) => axiosInstance.post(url, body),
   put: (url, body) => axiosInstance.put(url, body),
-  patch:(url,body)=>axiosInstance.patch(url,body),
+  patch:(url,body?)=>axiosInstance.patch(url,body?),
   delete: (url) => axiosInstance.delete(url),
 }
 
