@@ -78,9 +78,10 @@ const roles = [
 ];
 
 const rolesMap: Record<string,number> ={
-  'VETERINARIO':1,
-  "RECEPCIONISTA":2,
-  "JEFESEDE" : 3
+  'Recepcionista':1,
+  "Veterinario":2,
+  "Encargado Sede" : 3,
+  "Administrador":4
 }
 
 //for dialog
@@ -127,7 +128,7 @@ employeeData:{
   headquarterId:employeeData.headquarterId,
   birthdate:new Date(), // for now
   dirImage:employeeData.dirImage,
-  roleId:rolesMap[employeeData.role]
+  roleId:rolesMap[employeeData.roles[0].name]
 } as EditEmployee
     },
     props:{

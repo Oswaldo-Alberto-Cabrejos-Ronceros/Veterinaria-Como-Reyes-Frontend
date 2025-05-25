@@ -2,751 +2,1001 @@
   {
     "userId": 1,
     "employeeId": 1001,
-    "dni": "54107260",
-    "cmvp": "78178910",
-    "names": "María",
-    "lastnames": "Rojas Quispe",
-    "address": "Avenida Quispe 691",
-    "phone": "984677212",
-    "headquarterName": "Sucursal Sur",
-    "headquarterId": 2,
-    "birthDate": "24/07/1980",
+    "dni": "95822412",
+    "cmvp": "24942603",
+    "names": "Amador",
+    "lastnames": "Llopis Hierro",
+    "address": "Paseo Chucho Roca 1, Castellón, 89083",
+    "phone": "+34738 63 79 40",
+    "headquarterName": "Sucursal Norte",
+    "headquarterId": 3,
+    "birthDate": "06/04/1975",
     "dirImage": "/images/employees/1.jpg",
-    "role": "RECEPCIONISTA"
+    "roles": [
+      {
+        "roleId": 1,
+        "name": "Recepcionista"
+      }
+    ]
   },
   {
     "userId": 2,
     "employeeId": 1002,
-    "dni": "70154579",
-    "cmvp": "72677484",
-    "names": "María",
-    "lastnames": "Lopez Jimenez",
-    "address": "Avenida Vargas 227",
-    "phone": "984333003",
-    "headquarterName": "Sucursal Este",
-    "headquarterId": 4,
-    "birthDate": "15/10/1984",
+    "dni": "66722344",
+    "cmvp": "55667651",
+    "names": "Leopoldo",
+    "lastnames": "Cortés Garrido",
+    "address": "C. Cleto Palomar 59, Toledo, 81618",
+    "phone": "+34 709 59 31 03",
+    "headquarterName": "Sucursal Sur",
+    "headquarterId": 2,
+    "birthDate": "02/02/1984",
     "dirImage": "/images/employees/2.jpg",
-    "role": "VETERINARIO"
+    "roles": [
+      {
+        "roleId": 2,
+        "name": "Veterinario"
+      }
+    ]
   },
   {
     "userId": 3,
     "employeeId": 1003,
-    "dni": "63317987",
-    "cmvp": "62929688",
-    "names": "Carlos",
-    "lastnames": "Quispe Lopez",
-    "address": "Avenida Torres 538",
-    "phone": "984842383",
-    "headquarterName": "Sucursal Este",
+    "dni": "20709497",
+    "cmvp": "41244663",
+    "names": "Roxana",
+    "lastnames": "Cabrero Pinto",
+    "address": "Rambla de Raimundo Padilla 24 Puerta 2 , Cáceres, 64835",
+    "phone": "+34 713 056 413",
+    "headquarterName": "Sucursal Norte",
     "headquarterId": 4,
-    "birthDate": "19/11/1995",
+    "birthDate": "29/12/2002",
     "dirImage": "/images/employees/3.jpg",
-    "role": "RECEPCIONISTA"
+    "roles": [
+      {
+        "roleId": 1,
+        "name": "Recepcionista"
+      }
+    ]
   },
   {
     "userId": 4,
     "employeeId": 1004,
-    "dni": "46352632",
-    "cmvp": "25978624",
-    "names": "José",
-    "lastnames": "Fernández Fernández",
-    "address": "Avenida Gómez 133",
-    "phone": "984459968",
-    "headquarterName": "Sucursal Sur",
-    "headquarterId": 2,
-    "birthDate": "22/03/1987",
+    "dni": "52235350",
+    "cmvp": "38538251",
+    "names": "Gabriela",
+    "lastnames": "Valera Priego",
+    "address": "Vial de Jose Manuel Jódar 769, Ceuta, 87101",
+    "phone": "+34 826916697",
+    "headquarterName": "Sucursal Norte",
+    "headquarterId": 1,
+    "birthDate": "27/05/2000",
     "dirImage": "/images/employees/4.jpg",
-    "role": "VETERINARIO"
+    "roles": [
+      {
+        "roleId": 1,
+        "name": "Recepcionista"
+      }
+    ]
   },
   {
     "userId": 5,
     "employeeId": 1005,
-    "dni": "68434267",
-    "cmvp": "40724480",
-    "names": "José",
-    "lastnames": "Jimenez Gómez",
-    "address": "Avenida Torres 967",
-    "phone": "984894241",
-    "headquarterName": "Sucursal Norte",
-    "headquarterId": 3,
-    "birthDate": "01/10/1984",
+    "dni": "43744231",
+    "cmvp": "84252722",
+    "names": "Rosalinda",
+    "lastnames": "Alberdi Carbó",
+    "address": "Cañada Trinidad Cruz 50 Puerta 2 , Santa Cruz de Tenerife, 89325",
+    "phone": "+34 708809570",
+    "headquarterName": "Sucursal Sur",
+    "headquarterId": 1,
+    "birthDate": "04/01/1972",
     "dirImage": "/images/employees/5.jpg",
-    "role": "RECEPCIONISTA"
+    "roles": [
+      {
+        "roleId": 2,
+        "name": "Veterinario"
+      }
+    ]
   },
   {
     "userId": 6,
     "employeeId": 1006,
-    "dni": "75358137",
-    "cmvp": "40104023",
-    "names": "Ana",
-    "lastnames": "Vargas Gómez",
-    "address": "Avenida Vargas 943",
-    "phone": "984446054",
-    "headquarterName": "Sucursal Sur",
+    "dni": "58718453",
+    "cmvp": "51273847",
+    "names": "Jose",
+    "lastnames": "Barco Hernando",
+    "address": "Avenida de Martirio Casas 97, Córdoba, 38346",
+    "phone": "+34705 78 71 33",
+    "headquarterName": "Sucursal Oeste",
     "headquarterId": 2,
-    "birthDate": "01/12/1979",
+    "birthDate": "02/10/1968",
     "dirImage": "/images/employees/6.jpg",
-    "role": "RECEPCIONISTA"
+    "roles": [
+      {
+        "roleId": 2,
+        "name": "Veterinario"
+      }
+    ]
   },
   {
     "userId": 7,
     "employeeId": 1007,
-    "dni": "79729031",
-    "cmvp": "40704332",
-    "names": "Lucía",
-    "lastnames": "Rojas Gómez",
-    "address": "Avenida Vargas 569",
-    "phone": "984269302",
+    "dni": "55377076",
+    "cmvp": "12823170",
+    "names": "Dionisia",
+    "lastnames": "Grau Giménez",
+    "address": "Urbanización Borja Angulo 91, Cuenca, 38299",
+    "phone": "+34743 763 116",
     "headquarterName": "Sucursal Este",
-    "headquarterId": 4,
-    "birthDate": "21/07/1996",
+    "headquarterId": 1,
+    "birthDate": "04/07/1988",
     "dirImage": "/images/employees/7.jpg",
-    "role": "ADMINISTRADOR"
+    "roles": [
+      {
+        "roleId": 4,
+        "name": "Administrador"
+      }
+    ]
   },
   {
     "userId": 8,
     "employeeId": 1008,
-    "dni": "78527375",
-    "cmvp": "92278005",
-    "names": "María",
-    "lastnames": "Ramirez Pérez",
-    "address": "Avenida Lopez 781",
-    "phone": "984771389",
-    "headquarterName": "Sucursal Este",
-    "headquarterId": 4,
-    "birthDate": "15/02/1986",
+    "dni": "66851760",
+    "cmvp": "65177213",
+    "names": "Adelia",
+    "lastnames": "Balaguer Cabello",
+    "address": "Via de Jose Ramón Feliu 88 Apt. 62 , Lleida, 17810",
+    "phone": "+34880 13 26 77",
+    "headquarterName": "Sucursal Oeste",
+    "headquarterId": 3,
+    "birthDate": "10/12/1978",
     "dirImage": "/images/employees/8.jpg",
-    "role": "RECEPCIONISTA"
+    "roles": [
+      {
+        "roleId": 2,
+        "name": "Veterinario"
+      }
+    ]
   },
   {
     "userId": 9,
     "employeeId": 1009,
-    "dni": "61461775",
-    "cmvp": "99282430",
-    "names": "Ana",
-    "lastnames": "Fernández Pérez",
-    "address": "Avenida Pérez 982",
-    "phone": "984906821",
-    "headquarterName": "Sucursal Norte",
-    "headquarterId": 3,
-    "birthDate": "26/10/1976",
+    "dni": "63826716",
+    "cmvp": "17869910",
+    "names": "Fidel",
+    "lastnames": "Pinilla Abril",
+    "address": "Cañada de Teo Torrecilla 53 Apt. 09 , Valencia, 00978",
+    "phone": "+34820812191",
+    "headquarterName": "Sucursal Sur",
+    "headquarterId": 2,
+    "birthDate": "27/05/1980",
     "dirImage": "/images/employees/9.jpg",
-    "role": "RECEPCIONISTA"
+    "roles": [
+      {
+        "roleId": 3,
+        "name": "Encargado Sede"
+      }
+    ]
   },
   {
     "userId": 10,
     "employeeId": 1010,
-    "dni": "48261673",
-    "cmvp": "99642835",
-    "names": "Carlos",
-    "lastnames": "Fernández Jimenez",
-    "address": "Avenida Pérez 940",
-    "phone": "984565390",
-    "headquarterName": "Sucursal Este",
-    "headquarterId": 4,
-    "birthDate": "06/12/1977",
+    "dni": "64193837",
+    "cmvp": "26090908",
+    "names": "Tania",
+    "lastnames": "Hoz Ariño",
+    "address": "Callejón de Hernando Miralles 74 Apt. 47 , Valladolid, 07991",
+    "phone": "+34 728 384 251",
+    "headquarterName": "Sucursal Norte",
+    "headquarterId": 1,
+    "birthDate": "07/01/1981",
     "dirImage": "/images/employees/10.jpg",
-    "role": "VETERINARIO"
+    "roles": [
+      {
+        "roleId": 3,
+        "name": "Encargado Sede"
+      }
+    ]
   },
   {
     "userId": 11,
     "employeeId": 1011,
-    "dni": "66599146",
-    "cmvp": "57363220",
-    "names": "Ana",
-    "lastnames": "Jimenez Jimenez",
-    "address": "Avenida Ramirez 756",
-    "phone": "984989024",
-    "headquarterName": "Sede Central",
-    "headquarterId": 1,
-    "birthDate": "12/03/1995",
+    "dni": "59597086",
+    "cmvp": "48250360",
+    "names": "Fausto",
+    "lastnames": "Ríos Mate",
+    "address": "Vial Juan Luis Carlos 9 Apt. 44 , Teruel, 34874",
+    "phone": "+34 711 640 052",
+    "headquarterName": "Sucursal Norte",
+    "headquarterId": 3,
+    "birthDate": "22/03/1982",
     "dirImage": "/images/employees/11.jpg",
-    "role": "ADMINISTRADOR"
+    "roles": [
+      {
+        "roleId": 4,
+        "name": "Administrador"
+      }
+    ]
   },
   {
     "userId": 12,
     "employeeId": 1012,
-    "dni": "54729996",
-    "cmvp": "76238362",
-    "names": "Claudia",
-    "lastnames": "Lopez Pérez",
-    "address": "Avenida Torres 649",
-    "phone": "984392712",
+    "dni": "31687165",
+    "cmvp": "69302158",
+    "names": "Carmen",
+    "lastnames": "Roma Agustí",
+    "address": "Paseo Andrés Felipe Peiró 782, Alicante, 50533",
+    "phone": "+34701 58 69 23",
     "headquarterName": "Sucursal Este",
-    "headquarterId": 4,
-    "birthDate": "09/11/1996",
+    "headquarterId": 1,
+    "birthDate": "16/06/1975",
     "dirImage": "/images/employees/12.jpg",
-    "role": "RECEPCIONISTA"
+    "roles": [
+      {
+        "roleId": 3,
+        "name": "Encargado Sede"
+      }
+    ]
   },
   {
     "userId": 13,
     "employeeId": 1013,
-    "dni": "41375112",
-    "cmvp": "40482361",
-    "names": "Diego",
-    "lastnames": "Lopez Ramirez",
-    "address": "Avenida Quispe 821",
-    "phone": "984262557",
-    "headquarterName": "Sucursal Este",
+    "dni": "33763566",
+    "cmvp": "65337219",
+    "names": "Amador",
+    "lastnames": "Escobar Márquez",
+    "address": "Rambla de Mirta Campoy 80, Cantabria, 54330",
+    "phone": "+34703 65 41 45",
+    "headquarterName": "Sucursal Norte",
     "headquarterId": 4,
-    "birthDate": "23/09/1993",
+    "birthDate": "23/01/1999",
     "dirImage": "/images/employees/13.jpg",
-    "role": "VETERINARIO"
+    "roles": [
+      {
+        "roleId": 4,
+        "name": "Administrador"
+      }
+    ]
   },
   {
     "userId": 14,
     "employeeId": 1014,
-    "dni": "69156721",
-    "cmvp": "77485389",
-    "names": "Lucía",
-    "lastnames": "Ramirez Gómez",
-    "address": "Avenida Torres 920",
-    "phone": "984341611",
-    "headquarterName": "Sede Central",
-    "headquarterId": 1,
-    "birthDate": "16/03/1997",
+    "dni": "63643924",
+    "cmvp": "81969657",
+    "names": "Natanael",
+    "lastnames": "Amorós Carlos",
+    "address": "Calle de César Rovira 75, Jaén, 40608",
+    "phone": "+34703561595",
+    "headquarterName": "Sucursal Este",
+    "headquarterId": 3,
+    "birthDate": "16/11/1972",
     "dirImage": "/images/employees/14.jpg",
-    "role": "RECEPCIONISTA"
+    "roles": [
+      {
+        "roleId": 1,
+        "name": "Recepcionista"
+      }
+    ]
   },
   {
     "userId": 15,
     "employeeId": 1015,
-    "dni": "45888294",
-    "cmvp": "83704035",
-    "names": "José",
-    "lastnames": "Vargas Fernández",
-    "address": "Avenida Gómez 382",
-    "phone": "984765010",
-    "headquarterName": "Sucursal Sur",
-    "headquarterId": 2,
-    "birthDate": "16/02/1994",
+    "dni": "50308572",
+    "cmvp": "78064830",
+    "names": "Martin",
+    "lastnames": "Real Morera",
+    "address": "Glorieta Sosimo Pinilla 59 Piso 8 , Granada, 36995",
+    "phone": "+34737 738 721",
+    "headquarterName": "Sucursal Norte",
+    "headquarterId": 1,
+    "birthDate": "16/09/1983",
     "dirImage": "/images/employees/15.jpg",
-    "role": "ADMINISTRADOR"
+    "roles": [
+      {
+        "roleId": 2,
+        "name": "Veterinario"
+      }
+    ]
   },
   {
     "userId": 16,
     "employeeId": 1016,
-    "dni": "53693120",
-    "cmvp": "58128037",
-    "names": "Diego",
-    "lastnames": "Gómez Gómez",
-    "address": "Avenida Gómez 631",
-    "phone": "984589419",
+    "dni": "79182797",
+    "cmvp": "99100953",
+    "names": "Evita",
+    "lastnames": "Naranjo Bueno",
+    "address": "Glorieta Eugenio Amat 4 Piso 9 , Lleida, 93676",
+    "phone": "+34 620163287",
     "headquarterName": "Sucursal Este",
-    "headquarterId": 4,
-    "birthDate": "01/01/1979",
+    "headquarterId": 1,
+    "birthDate": "25/10/1967",
     "dirImage": "/images/employees/16.jpg",
-    "role": "ADMINISTRADOR"
+    "roles": [
+      {
+        "roleId": 2,
+        "name": "Veterinario"
+      }
+    ]
   },
   {
     "userId": 17,
     "employeeId": 1017,
-    "dni": "43459725",
-    "cmvp": "48856759",
-    "names": "Lucía",
-    "lastnames": "Fernández Vargas",
-    "address": "Avenida Pérez 162",
-    "phone": "984594482",
-    "headquarterName": "Sucursal Sur",
-    "headquarterId": 2,
-    "birthDate": "12/06/1982",
+    "dni": "84813739",
+    "cmvp": "43446826",
+    "names": "Yéssica",
+    "lastnames": "Carrión Sastre",
+    "address": "Pasaje de Emperatriz Vargas 88 Apt. 77 , Valladolid, 48734",
+    "phone": "+34721 434 558",
+    "headquarterName": "Sucursal Norte",
+    "headquarterId": 4,
+    "birthDate": "17/11/1969",
     "dirImage": "/images/employees/17.jpg",
-    "role": "VETERINARIO"
+    "roles": [
+      {
+        "roleId": 2,
+        "name": "Veterinario"
+      }
+    ]
   },
   {
     "userId": 18,
     "employeeId": 1018,
-    "dni": "50447822",
-    "cmvp": "53360917",
-    "names": "Claudia",
-    "lastnames": "Ramirez Quispe",
-    "address": "Avenida Vargas 219",
-    "phone": "984375705",
-    "headquarterName": "Sucursal Norte",
+    "dni": "28572252",
+    "cmvp": "30244148",
+    "names": "Jerónimo",
+    "lastnames": "Piñol Corominas",
+    "address": "Ronda de Natalio Solano 40, Jaén, 96705",
+    "phone": "+34 716 68 89 37",
+    "headquarterName": "Sucursal Oeste",
     "headquarterId": 3,
-    "birthDate": "14/08/2000",
+    "birthDate": "30/04/1979",
     "dirImage": "/images/employees/18.jpg",
-    "role": "RECEPCIONISTA"
+    "roles": [
+      {
+        "roleId": 3,
+        "name": "Encargado Sede"
+      }
+    ]
   },
   {
     "userId": 19,
     "employeeId": 1019,
-    "dni": "76680215",
-    "cmvp": "92843806",
-    "names": "José",
-    "lastnames": "Quispe Rojas",
-    "address": "Avenida Vargas 528",
-    "phone": "984704443",
-    "headquarterName": "Sucursal Sur",
-    "headquarterId": 2,
-    "birthDate": "23/03/1993",
+    "dni": "46632757",
+    "cmvp": "68496914",
+    "names": "Amalia",
+    "lastnames": "Andres Porcel",
+    "address": "Pasaje Zaira Castell 780 Puerta 9 , Ávila, 27204",
+    "phone": "+34953 755 646",
+    "headquarterName": "Sucursal Este",
+    "headquarterId": 3,
+    "birthDate": "25/07/1981",
     "dirImage": "/images/employees/19.jpg",
-    "role": "ADMINISTRADOR"
+    "roles": [
+      {
+        "roleId": 2,
+        "name": "Veterinario"
+      }
+    ]
   },
   {
     "userId": 20,
     "employeeId": 1020,
-    "dni": "56759227",
-    "cmvp": "38251561",
-    "names": "José",
-    "lastnames": "Pérez Fernández",
-    "address": "Avenida Jimenez 854",
-    "phone": "984893092",
-    "headquarterName": "Sucursal Norte",
-    "headquarterId": 3,
-    "birthDate": "23/10/1999",
+    "dni": "20993268",
+    "cmvp": "73123515",
+    "names": "Alejo",
+    "lastnames": "Azorin Olmo",
+    "address": "Plaza Jose Miguel Flores 3, Barcelona, 19374",
+    "phone": "+34 629 91 24 19",
+    "headquarterName": "Sucursal Este",
+    "headquarterId": 1,
+    "birthDate": "22/02/1966",
     "dirImage": "/images/employees/20.jpg",
-    "role": "RECEPCIONISTA"
+    "roles": [
+      {
+        "roleId": 2,
+        "name": "Veterinario"
+      }
+    ]
   },
   {
     "userId": 21,
     "employeeId": 1021,
-    "dni": "41677494",
-    "cmvp": "60687009",
-    "names": "Luis",
-    "lastnames": "Gómez Lopez",
-    "address": "Avenida Rojas 174",
-    "phone": "984334583",
+    "dni": "51870192",
+    "cmvp": "87282128",
+    "names": "Inés",
+    "lastnames": "Perez Puente",
+    "address": "Via Josefina Mata 119, Murcia, 51850",
+    "phone": "+34707 165 726",
     "headquarterName": "Sucursal Sur",
     "headquarterId": 2,
-    "birthDate": "14/09/1983",
+    "birthDate": "19/05/1976",
     "dirImage": "/images/employees/21.jpg",
-    "role": "RECEPCIONISTA"
+    "roles": [
+      {
+        "roleId": 2,
+        "name": "Veterinario"
+      }
+    ]
   },
   {
     "userId": 22,
     "employeeId": 1022,
-    "dni": "64229786",
-    "cmvp": "14467829",
-    "names": "Ana",
-    "lastnames": "Vargas Vargas",
-    "address": "Avenida Rojas 623",
-    "phone": "984291396",
-    "headquarterName": "Sucursal Sur",
-    "headquarterId": 2,
-    "birthDate": "09/07/1994",
+    "dni": "80027662",
+    "cmvp": "97302916",
+    "names": "Julián",
+    "lastnames": "Tomás Sola",
+    "address": "Urbanización de Paulina Bolaños 47 Piso 9 , Guipúzcoa, 75273",
+    "phone": "+34 744 54 94 80",
+    "headquarterName": "Sucursal Oeste",
+    "headquarterId": 3,
+    "birthDate": "21/07/1999",
     "dirImage": "/images/employees/22.jpg",
-    "role": "ADMINISTRADOR"
+    "roles": [
+      {
+        "roleId": 4,
+        "name": "Administrador"
+      }
+    ]
   },
   {
     "userId": 23,
     "employeeId": 1023,
-    "dni": "53094931",
-    "cmvp": "87153735",
-    "names": "María",
-    "lastnames": "Lopez Fernández",
-    "address": "Avenida Pérez 290",
-    "phone": "984152252",
-    "headquarterName": "Sucursal Sur",
-    "headquarterId": 2,
-    "birthDate": "06/04/1980",
+    "dni": "35643159",
+    "cmvp": "21490777",
+    "names": "Jose Antonio",
+    "lastnames": "Ramos Torres",
+    "address": "Pasaje de Mónica Alemany 5 Apt. 63 , Sevilla, 78856",
+    "phone": "+34685 57 44 43",
+    "headquarterName": "Sucursal Este",
+    "headquarterId": 1,
+    "birthDate": "09/08/1972",
     "dirImage": "/images/employees/23.jpg",
-    "role": "VETERINARIO"
+    "roles": [
+      {
+        "roleId": 2,
+        "name": "Veterinario"
+      }
+    ]
   },
   {
     "userId": 24,
     "employeeId": 1024,
-    "dni": "78799267",
-    "cmvp": "63494804",
-    "names": "Luis",
-    "lastnames": "Fernández Vargas",
-    "address": "Avenida Vargas 334",
-    "phone": "984522988",
+    "dni": "35848226",
+    "cmvp": "52352128",
+    "names": "Dimas",
+    "lastnames": "Esteve Feliu",
+    "address": "Camino de Martirio Zamorano 441 Piso 3 , Cádiz, 08240",
+    "phone": "+34 718 427 109",
     "headquarterName": "Sucursal Norte",
     "headquarterId": 3,
-    "birthDate": "05/02/2000",
+    "birthDate": "30/09/1983",
     "dirImage": "/images/employees/24.jpg",
-    "role": "ADMINISTRADOR"
+    "roles": [
+      {
+        "roleId": 2,
+        "name": "Veterinario"
+      }
+    ]
   },
   {
     "userId": 25,
     "employeeId": 1025,
-    "dni": "44347946",
-    "cmvp": "61883880",
-    "names": "Luis",
-    "lastnames": "Quispe Vargas",
-    "address": "Avenida Torres 814",
-    "phone": "984538268",
-    "headquarterName": "Sucursal Norte",
-    "headquarterId": 3,
-    "birthDate": "25/02/1987",
+    "dni": "73001391",
+    "cmvp": "74251933",
+    "names": "Valero",
+    "lastnames": "Niño Espinosa",
+    "address": "Via de Paca Bas 27 Puerta 0 , Burgos, 13186",
+    "phone": "+34749938677",
+    "headquarterName": "Sucursal Este",
+    "headquarterId": 1,
+    "birthDate": "18/08/1984",
     "dirImage": "/images/employees/25.jpg",
-    "role": "RECEPCIONISTA"
+    "roles": [
+      {
+        "roleId": 4,
+        "name": "Administrador"
+      }
+    ]
   },
   {
     "userId": 26,
     "employeeId": 1026,
-    "dni": "52517558",
-    "cmvp": "41216380",
-    "names": "Diego",
-    "lastnames": "Fernández Vargas",
-    "address": "Avenida Quispe 505",
-    "phone": "984375373",
-    "headquarterName": "Sede Central",
-    "headquarterId": 1,
-    "birthDate": "30/12/1998",
+    "dni": "88990506",
+    "cmvp": "67556566",
+    "names": "Marcos",
+    "lastnames": "Barrena Cabezas",
+    "address": "Avenida de Faustino Heredia 28, Álava, 79740",
+    "phone": "+34 744471349",
+    "headquarterName": "Sucursal Este",
+    "headquarterId": 2,
+    "birthDate": "09/11/1977",
     "dirImage": "/images/employees/26.jpg",
-    "role": "VETERINARIO"
+    "roles": [
+      {
+        "roleId": 2,
+        "name": "Veterinario"
+      }
+    ]
   },
   {
     "userId": 27,
     "employeeId": 1027,
-    "dni": "66377893",
-    "cmvp": "98930982",
-    "names": "Claudia",
-    "lastnames": "Torres Pérez",
-    "address": "Avenida Lopez 520",
-    "phone": "984843109",
-    "headquarterName": "Sucursal Este",
+    "dni": "67061186",
+    "cmvp": "25405014",
+    "names": "Candelas",
+    "lastnames": "Gomila Company",
+    "address": "Calle Fito Meléndez 894, Lleida, 64887",
+    "phone": "+34721 906 594",
+    "headquarterName": "Sucursal Oeste",
     "headquarterId": 4,
-    "birthDate": "26/02/1975",
+    "birthDate": "26/02/1966",
     "dirImage": "/images/employees/27.jpg",
-    "role": "VETERINARIO"
+    "roles": [
+      {
+        "roleId": 4,
+        "name": "Administrador"
+      }
+    ]
   },
   {
     "userId": 28,
     "employeeId": 1028,
-    "dni": "67693666",
-    "cmvp": "62442143",
-    "names": "Diego",
-    "lastnames": "Rojas Torres",
-    "address": "Avenida Fernández 190",
-    "phone": "984868003",
-    "headquarterName": "Sucursal Norte",
-    "headquarterId": 3,
-    "birthDate": "26/03/1977",
+    "dni": "22257687",
+    "cmvp": "40725714",
+    "names": "Ileana",
+    "lastnames": "Almansa Leon",
+    "address": "Pasadizo de Florinda Salamanca 72, Ávila, 56551",
+    "phone": "+34 705674680",
+    "headquarterName": "Sucursal Este",
+    "headquarterId": 2,
+    "birthDate": "07/05/1995",
     "dirImage": "/images/employees/28.jpg",
-    "role": "RECEPCIONISTA"
+    "roles": [
+      {
+        "roleId": 2,
+        "name": "Veterinario"
+      }
+    ]
   },
   {
     "userId": 29,
     "employeeId": 1029,
-    "dni": "69117334",
-    "cmvp": "67924961",
-    "names": "Fernanda",
-    "lastnames": "Lopez Fernández",
-    "address": "Avenida Rojas 763",
-    "phone": "984525653",
-    "headquarterName": "Sede Central",
-    "headquarterId": 1,
-    "birthDate": "04/12/1979",
+    "dni": "21819185",
+    "cmvp": "52213778",
+    "names": "José Antonio",
+    "lastnames": "Morales Carmona",
+    "address": "Ronda de Baltasar Expósito 859, Valladolid, 34824",
+    "phone": "+34727 109 324",
+    "headquarterName": "Sucursal Este",
+    "headquarterId": 4,
+    "birthDate": "18/11/2001",
     "dirImage": "/images/employees/29.jpg",
-    "role": "ADMINISTRADOR"
+    "roles": [
+      {
+        "roleId": 2,
+        "name": "Veterinario"
+      }
+    ]
   },
   {
     "userId": 30,
     "employeeId": 1030,
-    "dni": "72700337",
-    "cmvp": "32232277",
-    "names": "Luis",
-    "lastnames": "Vargas Rojas",
-    "address": "Avenida Pérez 498",
-    "phone": "984551081",
-    "headquarterName": "Sede Central",
-    "headquarterId": 1,
-    "birthDate": "20/04/1983",
+    "dni": "11835355",
+    "cmvp": "84121929",
+    "names": "Saturnino",
+    "lastnames": "Buendía Gomila",
+    "address": "Vial Andrea Manzanares 846 Piso 3 , Navarra, 63982",
+    "phone": "+34 724 658 404",
+    "headquarterName": "Sucursal Este",
+    "headquarterId": 2,
+    "birthDate": "17/09/1984",
     "dirImage": "/images/employees/30.jpg",
-    "role": "VETERINARIO"
+    "roles": [
+      {
+        "roleId": 4,
+        "name": "Administrador"
+      }
+    ]
   },
   {
     "userId": 31,
     "employeeId": 1031,
-    "dni": "43908336",
-    "cmvp": "36884532",
-    "names": "Diego",
-    "lastnames": "Fernández Gómez",
-    "address": "Avenida Ramirez 459",
-    "phone": "984870475",
-    "headquarterName": "Sucursal Norte",
-    "headquarterId": 3,
-    "birthDate": "10/11/1998",
+    "dni": "88777447",
+    "cmvp": "87835998",
+    "names": "Georgina",
+    "lastnames": "Tovar Comas",
+    "address": "Alameda de Carmina Pi 45 Puerta 3 , Ceuta, 05766",
+    "phone": "+34702 70 28 95",
+    "headquarterName": "Sucursal Oeste",
+    "headquarterId": 1,
+    "birthDate": "24/03/1971",
     "dirImage": "/images/employees/31.jpg",
-    "role": "VETERINARIO"
+    "roles": [
+      {
+        "roleId": 2,
+        "name": "Veterinario"
+      }
+    ]
   },
   {
     "userId": 32,
     "employeeId": 1032,
-    "dni": "47020011",
-    "cmvp": "19777961",
-    "names": "Miguel",
-    "lastnames": "Fernández Lopez",
-    "address": "Avenida Fernández 187",
-    "phone": "984913646",
-    "headquarterName": "Sucursal Este",
-    "headquarterId": 4,
-    "birthDate": "17/04/1978",
+    "dni": "69096899",
+    "cmvp": "23383077",
+    "names": "Begoña",
+    "lastnames": "Saura Alcántara",
+    "address": "Avenida Adora Landa 79 Puerta 1 , Soria, 57809",
+    "phone": "+34 723 431 611",
+    "headquarterName": "Sucursal Norte",
+    "headquarterId": 2,
+    "birthDate": "03/08/1994",
     "dirImage": "/images/employees/32.jpg",
-    "role": "RECEPCIONISTA"
+    "roles": [
+      {
+        "roleId": 1,
+        "name": "Recepcionista"
+      }
+    ]
   },
   {
     "userId": 33,
     "employeeId": 1033,
-    "dni": "66005690",
-    "cmvp": "91304416",
-    "names": "Ana",
-    "lastnames": "Ramirez Fernández",
-    "address": "Avenida Ramirez 193",
-    "phone": "984403543",
-    "headquarterName": "Sede Central",
+    "dni": "32329103",
+    "cmvp": "50193656",
+    "names": "Vera",
+    "lastnames": "Andres Arteaga",
+    "address": "Acceso de Reinaldo Rosa 93, Ourense, 22196",
+    "phone": "+34637923747",
+    "headquarterName": "Sucursal Oeste",
     "headquarterId": 1,
-    "birthDate": "17/10/1997",
+    "birthDate": "09/10/1981",
     "dirImage": "/images/employees/33.jpg",
-    "role": "ADMINISTRADOR"
+    "roles": [
+      {
+        "roleId": 2,
+        "name": "Veterinario"
+      }
+    ]
   },
   {
     "userId": 34,
     "employeeId": 1034,
-    "dni": "44298813",
-    "cmvp": "70469078",
-    "names": "Claudia",
-    "lastnames": "Rojas Lopez",
-    "address": "Avenida Jimenez 595",
-    "phone": "984822812",
-    "headquarterName": "Sucursal Norte",
-    "headquarterId": 3,
-    "birthDate": "22/12/1976",
+    "dni": "99501846",
+    "cmvp": "11261301",
+    "names": "Trini",
+    "lastnames": "Sola Maestre",
+    "address": "Acceso de Diana Martínez 84, Cantabria, 71369",
+    "phone": "+34 749 44 06 40",
+    "headquarterName": "Sucursal Oeste",
+    "headquarterId": 4,
+    "birthDate": "28/11/2002",
     "dirImage": "/images/employees/34.jpg",
-    "role": "RECEPCIONISTA"
+    "roles": [
+      {
+        "roleId": 4,
+        "name": "Administrador"
+      }
+    ]
   },
   {
     "userId": 35,
     "employeeId": 1035,
-    "dni": "51031080",
-    "cmvp": "63039060",
-    "names": "Luis",
-    "lastnames": "Lopez Vargas",
-    "address": "Avenida Fernández 885",
-    "phone": "984606839",
-    "headquarterName": "Sucursal Este",
-    "headquarterId": 4,
-    "birthDate": "10/07/1982",
+    "dni": "16582607",
+    "cmvp": "91390501",
+    "names": "Marcia",
+    "lastnames": "Valdés Macías",
+    "address": "Glorieta Estela Iglesia 11 Piso 7 , Palencia, 21456",
+    "phone": "+34 713285884",
+    "headquarterName": "Sucursal Norte",
+    "headquarterId": 1,
+    "birthDate": "05/08/1975",
     "dirImage": "/images/employees/35.jpg",
-    "role": "VETERINARIO"
+    "roles": [
+      {
+        "roleId": 3,
+        "name": "Encargado Sede"
+      }
+    ]
   },
   {
     "userId": 36,
     "employeeId": 1036,
-    "dni": "77272960",
-    "cmvp": "39192810",
-    "names": "Diego",
-    "lastnames": "Pérez Fernández",
-    "address": "Avenida Gómez 568",
-    "phone": "984337083",
-    "headquarterName": "Sucursal Norte",
-    "headquarterId": 3,
-    "birthDate": "28/09/1980",
+    "dni": "44489940",
+    "cmvp": "74672520",
+    "names": "Noelia",
+    "lastnames": "Marquez Nevado",
+    "address": "Vial Marisela Gonzalez 68 Apt. 60 , Murcia, 75496",
+    "phone": "+34951 37 09 85",
+    "headquarterName": "Sucursal Este",
+    "headquarterId": 1,
+    "birthDate": "18/06/1979",
     "dirImage": "/images/employees/36.jpg",
-    "role": "VETERINARIO"
+    "roles": [
+      {
+        "roleId": 3,
+        "name": "Encargado Sede"
+      }
+    ]
   },
   {
     "userId": 37,
     "employeeId": 1037,
-    "dni": "61226812",
-    "cmvp": "33833731",
-    "names": "Diego",
-    "lastnames": "Vargas Ramirez",
-    "address": "Avenida Vargas 660",
-    "phone": "984597679",
-    "headquarterName": "Sucursal Norte",
-    "headquarterId": 3,
-    "birthDate": "09/10/1990",
+    "dni": "96926431",
+    "cmvp": "18484847",
+    "names": "Fabiola",
+    "lastnames": "Simó Matas",
+    "address": "Calle Anselmo Mayo 21, Murcia, 67586",
+    "phone": "+34732617964",
+    "headquarterName": "Sucursal Oeste",
+    "headquarterId": 2,
+    "birthDate": "16/08/1966",
     "dirImage": "/images/employees/37.jpg",
-    "role": "RECEPCIONISTA"
+    "roles": [
+      {
+        "roleId": 3,
+        "name": "Encargado Sede"
+      }
+    ]
   },
   {
     "userId": 38,
     "employeeId": 1038,
-    "dni": "63268281",
-    "cmvp": "44241790",
-    "names": "María",
-    "lastnames": "Rojas Ramirez",
-    "address": "Avenida Pérez 717",
-    "phone": "984313341",
-    "headquarterName": "Sucursal Este",
-    "headquarterId": 4,
-    "birthDate": "25/06/1987",
+    "dni": "59731689",
+    "cmvp": "39161443",
+    "names": "Vicente",
+    "lastnames": "Sales Guzman",
+    "address": "Paseo de Valeria Palmer 7, Cantabria, 71390",
+    "phone": "+34 715 329 318",
+    "headquarterName": "Sucursal Norte",
+    "headquarterId": 3,
+    "birthDate": "29/06/1978",
     "dirImage": "/images/employees/38.jpg",
-    "role": "ADMINISTRADOR"
+    "roles": [
+      {
+        "roleId": 4,
+        "name": "Administrador"
+      }
+    ]
   },
   {
     "userId": 39,
     "employeeId": 1039,
-    "dni": "73694654",
-    "cmvp": "17306900",
-    "names": "Lucía",
-    "lastnames": "Gómez Torres",
-    "address": "Avenida Quispe 400",
-    "phone": "984633201",
-    "headquarterName": "Sede Central",
-    "headquarterId": 1,
-    "birthDate": "03/01/1977",
+    "dni": "88703005",
+    "cmvp": "38984499",
+    "names": "Odalis",
+    "lastnames": "Guijarro Moya",
+    "address": "Vial de Eladio Iglesia 11, Álava, 39502",
+    "phone": "+34 902 68 11 77",
+    "headquarterName": "Sucursal Norte",
+    "headquarterId": 3,
+    "birthDate": "12/01/1989",
     "dirImage": "/images/employees/39.jpg",
-    "role": "VETERINARIO"
+    "roles": [
+      {
+        "roleId": 2,
+        "name": "Veterinario"
+      }
+    ]
   },
   {
     "userId": 40,
     "employeeId": 1040,
-    "dni": "47017752",
-    "cmvp": "92138812",
-    "names": "María",
-    "lastnames": "Gómez Pérez",
-    "address": "Avenida Jimenez 880",
-    "phone": "984316492",
-    "headquarterName": "Sede Central",
-    "headquarterId": 1,
-    "birthDate": "15/02/1979",
+    "dni": "78885632",
+    "cmvp": "89680504",
+    "names": "César",
+    "lastnames": "Sans Vara",
+    "address": "Pasaje de Fernanda Anguita 8, Las Palmas, 77115",
+    "phone": "+34742124998",
+    "headquarterName": "Sucursal Sur",
+    "headquarterId": 3,
+    "birthDate": "11/07/1986",
     "dirImage": "/images/employees/40.jpg",
-    "role": "VETERINARIO"
+    "roles": [
+      {
+        "roleId": 2,
+        "name": "Veterinario"
+      }
+    ]
   },
   {
     "userId": 41,
     "employeeId": 1041,
-    "dni": "61065548",
-    "cmvp": "20717348",
-    "names": "Fernanda",
-    "lastnames": "Lopez Jimenez",
-    "address": "Avenida Rojas 947",
-    "phone": "984299274",
+    "dni": "61124122",
+    "cmvp": "90180577",
+    "names": "Bernarda",
+    "lastnames": "Mariño Santiago",
+    "address": "Paseo Lorena Garrido 47, Guipúzcoa, 66156",
+    "phone": "+34 724 52 71 11",
     "headquarterName": "Sucursal Norte",
     "headquarterId": 3,
-    "birthDate": "26/11/1983",
+    "birthDate": "28/09/1970",
     "dirImage": "/images/employees/41.jpg",
-    "role": "RECEPCIONISTA"
+    "roles": [
+      {
+        "roleId": 2,
+        "name": "Veterinario"
+      }
+    ]
   },
   {
     "userId": 42,
     "employeeId": 1042,
-    "dni": "43061417",
-    "cmvp": "82571296",
-    "names": "Luis",
-    "lastnames": "Vargas Torres",
-    "address": "Avenida Rojas 409",
-    "phone": "984611076",
-    "headquarterName": "Sucursal Este",
-    "headquarterId": 4,
-    "birthDate": "20/07/1987",
+    "dni": "67965485",
+    "cmvp": "22960658",
+    "names": "Marcela",
+    "lastnames": "Peralta Castillo",
+    "address": "Ronda Paulino Rocha 5 Puerta 4 , Badajoz, 27315",
+    "phone": "+34715149368",
+    "headquarterName": "Sucursal Norte",
+    "headquarterId": 1,
+    "birthDate": "13/04/2002",
     "dirImage": "/images/employees/42.jpg",
-    "role": "VETERINARIO"
+    "roles": [
+      {
+        "roleId": 4,
+        "name": "Administrador"
+      }
+    ]
   },
   {
     "userId": 43,
     "employeeId": 1043,
-    "dni": "74804976",
-    "cmvp": "73023942",
-    "names": "Luis",
-    "lastnames": "Vargas Torres",
-    "address": "Avenida Lopez 973",
-    "phone": "984301400",
-    "headquarterName": "Sede Central",
-    "headquarterId": 1,
-    "birthDate": "20/02/1988",
+    "dni": "13523729",
+    "cmvp": "91737913",
+    "names": "Úrsula",
+    "lastnames": "Lastra Andres",
+    "address": "Alameda de Pascual Aguado 72 Apt. 20 , Valencia, 66752",
+    "phone": "+34 645 99 10 22",
+    "headquarterName": "Sucursal Este",
+    "headquarterId": 2,
+    "birthDate": "13/10/1967",
     "dirImage": "/images/employees/43.jpg",
-    "role": "VETERINARIO"
+    "roles": [
+      {
+        "roleId": 3,
+        "name": "Encargado Sede"
+      }
+    ]
   },
   {
     "userId": 44,
     "employeeId": 1044,
-    "dni": "76105467",
-    "cmvp": "31789356",
-    "names": "José",
-    "lastnames": "Rojas Jimenez",
-    "address": "Avenida Fernández 927",
-    "phone": "984854866",
+    "dni": "20949687",
+    "cmvp": "46521025",
+    "names": "Venceslás",
+    "lastnames": "Rodrigo Torralba",
+    "address": "Glorieta de Marisol Vila 6 Piso 1 , Soria, 84036",
+    "phone": "+34740034324",
     "headquarterName": "Sucursal Sur",
-    "headquarterId": 2,
-    "birthDate": "23/06/1986",
+    "headquarterId": 1,
+    "birthDate": "04/02/1984",
     "dirImage": "/images/employees/44.jpg",
-    "role": "ADMINISTRADOR"
+    "roles": [
+      {
+        "roleId": 1,
+        "name": "Recepcionista"
+      }
+    ]
   },
   {
     "userId": 45,
     "employeeId": 1045,
-    "dni": "71340873",
-    "cmvp": "49641831",
-    "names": "María",
-    "lastnames": "Ramirez Rojas",
-    "address": "Avenida Pérez 805",
-    "phone": "984756088",
-    "headquarterName": "Sucursal Norte",
-    "headquarterId": 3,
-    "birthDate": "21/08/1998",
+    "dni": "54039837",
+    "cmvp": "26104026",
+    "names": "Adrián",
+    "lastnames": "Valencia Ros",
+    "address": "Paseo de Juliana Grau 285, Valencia, 60715",
+    "phone": "+34726966416",
+    "headquarterName": "Sucursal Oeste",
+    "headquarterId": 1,
+    "birthDate": "25/10/1965",
     "dirImage": "/images/employees/45.jpg",
-    "role": "RECEPCIONISTA"
+    "roles": [
+      {
+        "roleId": 1,
+        "name": "Recepcionista"
+      }
+    ]
   },
   {
     "userId": 46,
     "employeeId": 1046,
-    "dni": "55009429",
-    "cmvp": "56040068",
-    "names": "Diego",
-    "lastnames": "Pérez Rojas",
-    "address": "Avenida Gómez 113",
-    "phone": "984617385",
-    "headquarterName": "Sucursal Norte",
-    "headquarterId": 3,
-    "birthDate": "25/01/1985",
+    "dni": "53589647",
+    "cmvp": "33068427",
+    "names": "Nicolasa",
+    "lastnames": "Seguí Paredes",
+    "address": "Urbanización Tristán Pérez 516 Puerta 5 , Guipúzcoa, 18188",
+    "phone": "+34 725523124",
+    "headquarterName": "Sucursal Sur",
+    "headquarterId": 4,
+    "birthDate": "27/10/1977",
     "dirImage": "/images/employees/46.jpg",
-    "role": "RECEPCIONISTA"
+    "roles": [
+      {
+        "roleId": 2,
+        "name": "Veterinario"
+      }
+    ]
   },
   {
     "userId": 47,
     "employeeId": 1047,
-    "dni": "76508943",
-    "cmvp": "45011001",
-    "names": "Lucía",
-    "lastnames": "Jimenez Rojas",
-    "address": "Avenida Gómez 122",
-    "phone": "984401046",
-    "headquarterName": "Sucursal Norte",
-    "headquarterId": 3,
-    "birthDate": "20/03/1982",
+    "dni": "33286644",
+    "cmvp": "90852623",
+    "names": "Ezequiel",
+    "lastnames": "Benet Elorza",
+    "address": "Camino de Fernanda Moraleda 82 Apt. 77 , Zamora, 90581",
+    "phone": "+34 717 70 05 41",
+    "headquarterName": "Sucursal Este",
+    "headquarterId": 4,
+    "birthDate": "17/07/1970",
     "dirImage": "/images/employees/47.jpg",
-    "role": "VETERINARIO"
+    "roles": [
+      {
+        "roleId": 2,
+        "name": "Veterinario"
+      }
+    ]
   },
   {
     "userId": 48,
     "employeeId": 1048,
-    "dni": "68532041",
-    "cmvp": "26048369",
-    "names": "José",
-    "lastnames": "Vargas Fernández",
-    "address": "Avenida Pérez 529",
-    "phone": "984618092",
-    "headquarterName": "Sede Central",
-    "headquarterId": 1,
-    "birthDate": "24/08/1990",
+    "dni": "92545028",
+    "cmvp": "89736043",
+    "names": "Anunciación",
+    "lastnames": "Planas Sevillano",
+    "address": "Alameda Elodia Tamarit 820 Apt. 51 , Alicante, 77889",
+    "phone": "+34 705546659",
+    "headquarterName": "Sucursal Sur",
+    "headquarterId": 3,
+    "birthDate": "17/12/1967",
     "dirImage": "/images/employees/48.jpg",
-    "role": "RECEPCIONISTA"
+    "roles": [
+      {
+        "roleId": 2,
+        "name": "Veterinario"
+      }
+    ]
   },
   {
     "userId": 49,
     "employeeId": 1049,
-    "dni": "60500561",
-    "cmvp": "90830431",
-    "names": "María",
-    "lastnames": "Pérez Quispe",
-    "address": "Avenida Vargas 555",
-    "phone": "984339782",
-    "headquarterName": "Sucursal Sur",
-    "headquarterId": 2,
-    "birthDate": "20/05/1992",
+    "dni": "94676162",
+    "cmvp": "96879854",
+    "names": "Nicanor",
+    "lastnames": "Bastida Murcia",
+    "address": "Callejón de Lourdes Conesa 31 Piso 4 , Barcelona, 48652",
+    "phone": "+34708 16 85 05",
+    "headquarterName": "Sucursal Este",
+    "headquarterId": 4,
+    "birthDate": "31/05/1985",
     "dirImage": "/images/employees/49.jpg",
-    "role": "RECEPCIONISTA"
+    "roles": [
+      {
+        "roleId": 4,
+        "name": "Administrador"
+      }
+    ]
   },
   {
     "userId": 50,
     "employeeId": 1050,
-    "dni": "70396078",
-    "cmvp": "38871335",
-    "names": "Carlos",
-    "lastnames": "Jimenez Lopez",
-    "address": "Avenida Jimenez 902",
-    "phone": "984644255",
-    "headquarterName": "Sucursal Sur",
+    "dni": "34194479",
+    "cmvp": "38748452",
+    "names": "Néstor",
+    "lastnames": "Torre Fernandez",
+    "address": "Avenida Manolo Cadenas 188, Vizcaya, 96222",
+    "phone": "+34729 27 06 53",
+    "headquarterName": "Sucursal Norte",
     "headquarterId": 2,
-    "birthDate": "17/05/1978",
+    "birthDate": "16/08/1994",
     "dirImage": "/images/employees/50.jpg",
-    "role": "VETERINARIO"
+    "roles": [
+      {
+        "roleId": 4,
+        "name": "Administrador"
+      }
+    ]
   }
 ]
