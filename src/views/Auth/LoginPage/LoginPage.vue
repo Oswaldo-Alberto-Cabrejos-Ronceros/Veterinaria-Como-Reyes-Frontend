@@ -10,9 +10,11 @@ const {loading,error,loginClient,loginEmployee} = useAuthentication()
 const login = async (loginRequest: { loginRequest: LoginSchema; isEmployee: boolean }) => {
     console.log('recibido', loginRequest)
     if(loginRequest.isEmployee){
-      await loginEmployee(loginRequest.loginRequest.email,loginRequest.loginRequest.password);
+      const user= await loginEmployee(loginRequest.loginRequest.email,loginRequest.loginRequest.password);
+      console.log('Inicio de session correcto como empleado',user)
     } else{
-      await loginClient(loginRequest.loginRequest.email,loginRequest.loginRequest.password)
+      const user= await loginClient(loginRequest.loginRequest.email,loginRequest.loginRequest.password)
+       console.log('Inicio de session correcto como client',user)
     }
 }
 </script>

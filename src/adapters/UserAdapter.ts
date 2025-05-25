@@ -19,6 +19,20 @@ export class UserAdapter {
   static userClientRegisterToUserClientRequest(
     userClientRegister: UserClientRegister,
   ): UserClientRequest {
-    return userClientRegister as UserClientRequest //because properties equals
+    return {
+      dni:userClientRegister.dni,
+      names:userClientRegister.names,
+      lastnames:userClientRegister.lastnames,
+      address:userClientRegister.address,
+      phone:userClientRegister.phone,
+      birthdate:userClientRegister.birthdate,
+      headquarker:{
+        headquarkerId:userClientRegister.headquarker
+      },
+      user:{
+        email:userClientRegister.email,
+        password:userClientRegister.password
+      }
+    } 
   }
 }

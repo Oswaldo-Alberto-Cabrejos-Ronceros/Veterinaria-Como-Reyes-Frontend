@@ -25,10 +25,14 @@ export interface UserClientRequest {
   dni: string
   names: string
   lastnames: string
-  email: string
   address: string
   phone: string
   birthdate: string
-  headquarker: number
-  password: string
+  headquarker: {
+    headquarkerId: number
+  }
+  user: {
+    email: string
+    password: string
+  }
 }
