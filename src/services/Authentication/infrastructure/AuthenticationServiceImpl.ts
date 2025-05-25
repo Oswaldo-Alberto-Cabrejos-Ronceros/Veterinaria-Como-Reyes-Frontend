@@ -9,13 +9,12 @@ export class AuthenticationServiceImpl implements AuthenticationService {
       body: JSON.stringify({ email, password }),
       credentials: 'include',
     })
-    const data = await response.json()
+    const data: User = await response.json()
     return {
-      userId: data.user.id,
-      entityId: data.user.entityId,
-      type: data.user.type,
-      mainRole: data.user.rol,
-      groupedPermissions: data.user.groupedPermissions,
+      userId: data.userId,
+      entityId: data.entityId,
+      mainRole: data.mainRole,
+      groupedPermissions: data.groupedPermissions,
     }
   }
   async loginClient(email: string, password: string): Promise<User> {
@@ -25,13 +24,12 @@ export class AuthenticationServiceImpl implements AuthenticationService {
       body: JSON.stringify({ email, password }),
       credentials: 'include',
     })
-    const data = await response.json()
+    const data: User = await response.json()
     return {
-      userId: data.user.id,
-      entityId: data.user.entityId,
-      type: data.user.type,
-      mainRole: data.user.rol,
-      groupedPermissions: data.user.groupedPermissions,
+      userId: data.userId,
+      entityId: data.entityId,
+      mainRole: data.mainRole,
+      groupedPermissions: data.groupedPermissions,
     }
   }
   async register(user: UserClientRequest): Promise<User> {
@@ -41,13 +39,12 @@ export class AuthenticationServiceImpl implements AuthenticationService {
       body: JSON.stringify(user),
       credentials: 'include',
     })
-    const data = await response.json()
+    const data: User = await response.json()
     return {
-      userId: data.user.id,
-      entityId: data.user.entityId,
-      type: data.user.type,
-      mainRole: data.user.rol,
-      groupedPermissions: data.user.groupedPermissions,
+      userId: data.userId,
+      entityId: data.entityId,
+      mainRole: data.mainRole,
+      groupedPermissions: data.groupedPermissions,
     }
   }
   async logout(): Promise<void> {

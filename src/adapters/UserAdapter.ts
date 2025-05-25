@@ -9,30 +9,29 @@ export class UserAdapter {
     return {
       userId: user.userId,
       entityId: user.entityId,
-      type: user.type,
       mainRole: user.mainRole,
-      groupedPermissions: GroupedPermissionsAdapter.toGroupedPermissionView(
-        user.groupedPermissions,
-      ),
+      groupedPermissions: user.groupedPermissions
+        ? GroupedPermissionsAdapter.toGroupedPermissionView(user.groupedPermissions)
+        : {},
     }
   }
   static userClientRegisterToUserClientRequest(
     userClientRegister: UserClientRegister,
   ): UserClientRequest {
     return {
-      dni:userClientRegister.dni,
-      names:userClientRegister.names,
-      lastnames:userClientRegister.lastnames,
-      address:userClientRegister.address,
-      phone:userClientRegister.phone,
-      birthdate:userClientRegister.birthdate.toLocaleString(),
-      headquarker:{
-        headquarkerId:userClientRegister.headquarker
+      dni: userClientRegister.dni,
+      names: userClientRegister.names,
+      lastnames: userClientRegister.lastnames,
+      address: userClientRegister.address,
+      phone: userClientRegister.phone,
+      birthdate: userClientRegister.birthdate.toLocaleString(),
+      headquarker: {
+        headquarkerId: userClientRegister.headquarker,
       },
-      user:{
-        email:userClientRegister.email,
-        password:userClientRegister.password
-      }
+      user: {
+        email: userClientRegister.email,
+        password: userClientRegister.password,
+      },
     }
   }
 }

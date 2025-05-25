@@ -42,7 +42,6 @@ const options = ref(['Cliente', 'Empleado'])
 const emit = defineEmits(['login'])
 // Al enviar
 const onSubmit = handleSubmit((values) => {
-  console.log('Valores enviados:', values)
   emit('login', {
     loginRequest: {
       email: values.email,

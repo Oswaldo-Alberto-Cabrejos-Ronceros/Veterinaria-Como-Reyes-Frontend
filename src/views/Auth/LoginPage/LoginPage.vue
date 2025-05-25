@@ -8,13 +8,10 @@ import { useAuthentication } from '@/composables/useAuthentication'
 const {loading,error,loginClient,loginEmployee} = useAuthentication()
 //fuction for get info for cardLogin
 const login = async (loginRequest: { loginRequest: LoginSchema; isEmployee: boolean }) => {
-    console.log('recibido', loginRequest)
     if(loginRequest.isEmployee){
-      const user= await loginEmployee(loginRequest.loginRequest.email,loginRequest.loginRequest.password);
-      console.log('Inicio de session correcto como empleado',user)
+      await loginEmployee(loginRequest.loginRequest.email,loginRequest.loginRequest.password);
     } else{
-      const user= await loginClient(loginRequest.loginRequest.email,loginRequest.loginRequest.password)
-       console.log('Inicio de session correcto como client',user)
+      await loginClient(loginRequest.loginRequest.email,loginRequest.loginRequest.password)
     }
 }
 </script>

@@ -1,7 +1,6 @@
 export interface User {
   userId: number
   entityId: number
-  type: string
   mainRole: string
   groupedPermissions: GroupedPermissions
 }
