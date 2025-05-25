@@ -1,5 +1,6 @@
 import type { Employee } from '@/models/Employee'
 import type { EmployeeService } from '../domain/services/EmployeeService'
+import type { PageResponse } from '@/services/models/PageResponse'
 
 export class EmployeeServiceImpl implements EmployeeService {
   getAllEmployees(): Promise<Employee[]> {
@@ -33,7 +34,7 @@ export class EmployeeServiceImpl implements EmployeeService {
     headquarterId?: number,
     page?: number,
     size?: number,
-  ): Promise<Employee[]> {
+  ): Promise<PageResponse<Employee>> {
     console.log(dni, name, lastName, status, headquarterId, page, size)
     throw new Error('Method not implemented.')
   }

@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { LogoutUser } from '@/services/Authentication/aplication/LogoutUser'
-import { AuthApi } from '@/services/Authentication/infrastructure/AuthenticationApi'
+import { AuthenticationServiceImpl } from '@/services/Authentication/infrastructure/AuthenticationServiceImpl'
 import type { HttpClient } from '../model/HttpClient'
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -24,7 +24,7 @@ axios.interceptors.response.use(
           return axiosInstance(originalRequest)
         } catch (refreshError) {
           //if resfresh fails, logout
-          const logoutUser = new LogoutUser(new AuthApi())
+          const logoutUser = new LogoutUser(new AuthenticationServiceImpl())
           logoutUser.execute()
           // redirige to login
           window.location.href = '/auth/login'
@@ -40,6 +40,7 @@ const axiosHttpClient: HttpClient = {
   get: (url) => axiosInstance.get(url),
   post: (url, body) => axiosInstance.post(url, body),
   put: (url, body) => axiosInstance.put(url, body),
+  patch:(url,body)=>axiosInstance.patch(url,body),
   delete: (url) => axiosInstance.delete(url),
 }
 
