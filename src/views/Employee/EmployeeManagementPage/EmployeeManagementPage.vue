@@ -10,17 +10,30 @@ import InputGroupAddon from 'primevue/inputgroupaddon'
 import Message from 'primevue/message'
 import Select from 'primevue/select'
 import Button from 'primevue/button'
-import Employees from '@/assets/data/employees.json'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import type { Employee } from '@/models/Employee'
-import { ref } from 'vue'
-import { useDialog } from 'primevue/usedialog';
+import { onMounted, ref } from 'vue'
+import { useDialog } from 'primevue/usedialog'
 import ViewEmployeeCard from './components/ViewEmployeeCard.vue'
 import { useConfirm } from 'primevue'
 import EditEmployeeCard from './components/EditEmployeeCard.vue'
 import type { EditEmployee } from '@/models/EditEmployee'
 import AddEmployeeCard from './components/AddEmployeeCard.vue'
+import { useEmployee } from '@/composables/useEmployee'
+
+//methotds
+
+const { loading, error, getAllEmployees } = useEmployee()
+
+//employees
+
+const employees = ref<Employee[]>([])
+
+onMounted(async () => {
+  employees.value = await getAllEmployees()
+})
+
 //form
 
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
@@ -75,97 +88,96 @@ const roles = [
   { name: 'Veterinario', value: 1 },
   { name: 'Recepcionista', value: 2 },
   { name: 'Jefe de sede', value: 3 },
-];
+]
 
-const rolesMap: Record<string,number> ={
-  'Recepcionista':1,
-  "Veterinario":2,
-  "Encargado Sede" : 3,
-  "Administrador":4
+const rolesMap: Record<string, number> = {
+  Recepcionista: 1,
+  Veterinario: 2,
+  'Encargado Sede': 3,
+  Administrador: 4,
 }
 
 //for dialog
-const dialog = useDialog();
+const dialog = useDialog()
 
 //for add
-const addEmployee = ()=>{
-  dialog.open(AddEmployeeCard,{
-    props:{
-      modal: true
+const addEmployee = () => {
+  dialog.open(AddEmployeeCard, {
+    props: {
+      modal: true,
     },
     onClose: (data) => {
       if (data) {
-        console.log('Datos recibidos del diálogo:',data);
+        console.log('Datos recibidos del diálogo:', data)
       }
-    }
-  });
+    },
+  })
 }
 
-
 //for view
-const viewEmployee = (employeeData:Employee)=>{
-  dialog.open(ViewEmployeeCard,{
-    data:{
-employeeData:employeeData
+const viewEmployee = (employeeData: Employee) => {
+  dialog.open(ViewEmployeeCard, {
+    data: {
+      employeeData: employeeData,
     },
-    props:{
-      modal: true
-    }
-  });
+    props: {
+      modal: true,
+    },
+  })
 }
 
 //for edit
-const editEmployee = (employeeData:Employee)=>{
-  dialog.open(EditEmployeeCard,{
-    data:{
-employeeData:{
-  dni:employeeData.dni,
-  cmvp:employeeData.cmvp,
-  names:employeeData.names,
-  lastnames:employeeData.lastnames,
-  address: employeeData.address,
-  phone:employeeData.phone,
-  headquarterId:employeeData.headquarter.headquarterId,
-  birthdate:new Date(), // for now
-  dirImage:employeeData.dirImage,
-  roleId:rolesMap[employeeData.roles[0].name]
-} as EditEmployee
+const editEmployee = (employeeData: Employee) => {
+  dialog.open(EditEmployeeCard, {
+    data: {
+      employeeData: {
+        dni: employeeData.dni,
+        cmvp: employeeData.cmvp,
+        names: employeeData.names,
+        lastnames: employeeData.lastnames,
+        address: employeeData.address,
+        phone: employeeData.phone,
+        headquarterId: employeeData.headquarter.headquarterId,
+        birthdate: new Date(), // for now
+        dirImage: employeeData.dirImage,
+        roleId: rolesMap[employeeData.roles[0].name],
+      } as EditEmployee,
     },
-    props:{
-      modal: true
+    props: {
+      modal: true,
     },
     onClose: (data) => {
       if (data) {
-        console.log('Datos recibidos del diálogo:',data);
+        console.log('Datos recibidos del diálogo:', data)
       }
-    }
-  });
+    },
+  })
 }
 
 //for confirm
-const confirm = useConfirm();
+const confirm = useConfirm()
 
 //for delete with confirm popup
-const deleteEmployee = (event:MouseEvent|KeyboardEvent,employee:Employee) => {
+const deleteEmployee = (event: MouseEvent | KeyboardEvent, employee: Employee) => {
   confirm.require({
-    target:event.currentTarget as HTMLElement,
-    message:'¿Seguro que quiere eliminar a este empleado?',
+    target: event.currentTarget as HTMLElement,
+    message: '¿Seguro que quiere eliminar a este empleado?',
     icon: 'pi pi-exclamation-triangle',
-    rejectProps:{
-      label:'Cancelar',
-      severity:'secondary',
-      outlined: true
+    rejectProps: {
+      label: 'Cancelar',
+      severity: 'secondary',
+      outlined: true,
     },
-    acceptProps:{
-      label:'Eliminar',
-      severity:'danger'
+    acceptProps: {
+      label: 'Eliminar',
+      severity: 'danger',
     },
-    accept:()=>{
+    accept: () => {
       console.log('Eliminando Empleado ', employee.employeeId)
     },
-    reject:()=>{
+    reject: () => {
       console.log('Cancelando')
-    }
+    },
   })
 }
 
@@ -232,9 +244,18 @@ const exportCSV = () => {
             </div>
           </form>
           <!-- imporve design responsive -->
+          <!-- for messague loading  -->
+          <Message v-if="loading.getAllEmployees" severity="error" size="small" variant="simple">
+            {{ loading.getAllEmployees }}
+          </Message>
+          <!-- for messague error -->
+          <Message v-if="error.getAllEmployees" severity="error" size="small" variant="simple">
+            {{ error.getAllEmployees }}
+          </Message>
           <!-- table -->
           <DataTable
-            :value="Employees"
+            v-if="employees"
+            :value="employees"
             paginator
             :rows="10"
             :rows-per-page-options="[10, 15, 20, 25, 30]"
@@ -242,21 +263,48 @@ const exportCSV = () => {
           >
             <template #header>
               <div class="w-full flex flex-col xs:flex-row justify-between gap-2 pb-4">
-                <Button icon="pi pi-user-plus" iconPos="right" severity="success" label="Agregar Empleado" @click="addEmployee" />
+                <Button
+                  icon="pi pi-user-plus"
+                  iconPos="right"
+                  severity="success"
+                  label="Agregar Empleado"
+                  @click="addEmployee"
+                />
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
             </template>
-            <Column field="names" sortable header="Nombres" class=" hidden lg:table-cell" style="width: 18%"></Column>
+            <Column
+              field="names"
+              sortable
+              header="Nombres"
+              class="hidden lg:table-cell"
+              style="width: 18%"
+            ></Column>
             <Column field="lastnames" sortable header="Apellidos" style="width: 18%"></Column>
-            <Column field="dni" class=" hidden lg:table-cell" header="DNI" sortable style="width: 15%"></Column>
-            <Column field="cmvp" class=" hidden lg:table-cell" header="CMVP" sortable style="width: 15%"></Column>
-            <Column  class=" hidden md:table-cell" header="Rol" sortable style="width: 15%">
-            <template #body="{ data }">
-              {{ data.roles[0].name }}
-            </template></Column>
-            <Column >
+            <Column
+              field="dni"
+              class="hidden lg:table-cell"
+              header="DNI"
+              sortable
+              style="width: 15%"
+            ></Column>
+            <Column
+              field="cmvp"
+              class="hidden lg:table-cell"
+              header="CMVP"
+              sortable
+              style="width: 15%"
+            ></Column>
+            <Column class="hidden md:table-cell" header="Rol" sortable style="width: 15%">
               <template #body="{ data }">
-                <div class="flex justify-between items-center flex-row lg:flex-col xl:flex-row gap-1">
+                {{ data.roles[0].name }}
+              </template></Column
+            >
+            <Column>
+              <template #body="{ data }">
+                <div
+                  class="flex justify-between items-center flex-row lg:flex-col xl:flex-row gap-1"
+                >
                   <Button
                     icon="pi pi-eye"
                     severity="info"
@@ -279,7 +327,7 @@ const exportCSV = () => {
                     variant="outlined"
                     aria-label="Filter"
                     rounded
-                    @click="deleteEmployee($event,data)"
+                    @click="deleteEmployee($event, data)"
                   ></Button>
                 </div>
               </template>

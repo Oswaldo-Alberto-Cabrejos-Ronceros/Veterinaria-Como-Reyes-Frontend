@@ -11,7 +11,7 @@ export interface Employee {
     headquarterId: number
     name: string
   }
-  birthDate: string
+  birthdate: string
   dirImage: string
   roles: { roleId: number; name: string }[]
 }

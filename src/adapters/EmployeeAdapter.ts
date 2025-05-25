@@ -16,7 +16,7 @@ export class EmployeeAdapter {
         headquarterId: employee.headquarter.headquarterId,
         name: employee.headquarter.name,
       },
-      birthDate: employee.birthDate,
+      birthdate: employee.birthDate,
       dirImage: employee.dirImage,
       roles: employee.roles,
     }
