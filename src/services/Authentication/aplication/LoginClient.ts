@@ -5,9 +5,6 @@ export class LoginClient {
   constructor(private authenticationService: AuthenticationService) {}
   async execute(email: string, password: string):Promise<User> {
     const user = await this.authenticationService.loginClient(email, password)
-    if(!user){
-      throw new Error('Usuario o contraseña incorrectos')
-    }
     return user
   }
 }

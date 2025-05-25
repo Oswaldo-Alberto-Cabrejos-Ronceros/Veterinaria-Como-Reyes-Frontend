@@ -10,6 +10,7 @@ const {loading,error,loginClient,loginEmployee} = useAuthentication()
 const login = async (loginRequest: { loginRequest: LoginSchema; isEmployee: boolean }) => {
     if(loginRequest.isEmployee){
       await loginEmployee(loginRequest.loginRequest.email,loginRequest.loginRequest.password);
+      console.log(error.loginEmployee)
     } else{
       await loginClient(loginRequest.loginRequest.email,loginRequest.loginRequest.password)
     }
@@ -22,6 +23,6 @@ const login = async (loginRequest: { loginRequest: LoginSchema; isEmployee: bool
     </div>
     <CardLogin @login="login($event)" class="self-center" />
     <p v-if="loading.loginClient||loading.loginEmployee">Cargando ...</p>
-    <p v-if="error.loginClient||error.loginEmployee">Error al iniciar session</p>
+    <p v-if="error.loginClient||error.loginEmployee">Error al iniciar sesion</p>
   </div>
 </template>

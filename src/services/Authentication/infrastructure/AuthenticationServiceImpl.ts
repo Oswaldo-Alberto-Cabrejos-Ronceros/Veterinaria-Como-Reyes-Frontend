@@ -1,15 +1,15 @@
 import type { AuthenticationService } from '../domain/services/AuthenticationService'
 import type { User, UserClientRequest } from '../domain/models/User'
+import { safeFetch } from '@/utilities/safeFetch'
 
 export class AuthenticationServiceImpl implements AuthenticationService {
   async loginEmployee(email: string, password: string): Promise<User> {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/login/employee`, {
+    const data = await safeFetch<User>(`${import.meta.env.VITE_API_URL}/auth/login/employee`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
       credentials: 'include',
     })
-    const data: User = await response.json()
     return {
       userId: data.userId,
       entityId: data.entityId,
@@ -18,13 +18,12 @@ export class AuthenticationServiceImpl implements AuthenticationService {
     }
   }
   async loginClient(email: string, password: string): Promise<User> {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/login/client`, {
+    const data = await safeFetch<User>(`${import.meta.env.VITE_API_URL}/auth/login/client`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
       credentials: 'include',
     })
-    const data: User = await response.json()
     return {
       userId: data.userId,
       entityId: data.entityId,
@@ -33,13 +32,12 @@ export class AuthenticationServiceImpl implements AuthenticationService {
     }
   }
   async register(user: UserClientRequest): Promise<User> {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/register`, {
+    const data = await safeFetch<User>(`${import.meta.env.VITE_API_URL}/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(user),
       credentials: 'include',
     })
-    const data: User = await response.json()
     return {
       userId: data.userId,
       entityId: data.entityId,
@@ -48,7 +46,7 @@ export class AuthenticationServiceImpl implements AuthenticationService {
     }
   }
   async logout(): Promise<void> {
-    await fetch(`${import.meta.env.VITE_API_URL}/auth/logout`, {
+    await safeFetch<void>(`${import.meta.env.VITE_API_URL}/auth/logout`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
