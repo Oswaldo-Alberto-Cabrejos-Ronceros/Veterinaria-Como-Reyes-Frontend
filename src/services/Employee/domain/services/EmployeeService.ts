@@ -1,5 +1,6 @@
-import type { Employee } from "@/models/Employee";
+
 import type { PageResponse } from "@/services/models/PageResponse";
+import type { Employee } from "../models/Employee";
 
 export interface EmployeeService{
   getAllEmployees():Promise<Employee[]>;

@@ -1,6 +1,7 @@
 import type { PageResponse } from '@/services/models/PageResponse'
 import type { EmployeeService } from '../domain/services/EmployeeService'
-import type { Employee } from '@/models/Employee'
+import type { Employee } from '../domain/models/Employee'
+
 
 export class SearchEmployees {
   constructor(private readonly employeeService: EmployeeService) {}

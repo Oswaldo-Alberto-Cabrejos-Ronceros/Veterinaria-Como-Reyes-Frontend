@@ -1,4 +1,5 @@
-import type { Employee } from '@/models/Employee'
+
+import type { Employee } from '../domain/models/Employee'
 import type { EmployeeService } from '../domain/services/EmployeeService'
 
 export class UpdateEmployee {

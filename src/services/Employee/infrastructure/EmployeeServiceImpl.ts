@@ -1,7 +1,8 @@
-import type { Employee } from '@/models/Employee'
+
 import type { EmployeeService } from '../domain/services/EmployeeService'
 import type { PageResponse } from '@/services/models/PageResponse'
 import type { HttpClient } from '@/services/Http/model/HttpClient'
+import type { Employee } from '../domain/models/Employee'
 
 export class EmployeeServiceImpl implements EmployeeService {
   //inject httpClient
