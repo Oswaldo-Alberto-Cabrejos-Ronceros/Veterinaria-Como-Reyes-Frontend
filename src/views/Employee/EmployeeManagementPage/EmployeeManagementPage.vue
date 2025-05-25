@@ -125,7 +125,7 @@ employeeData:{
   lastnames:employeeData.lastnames,
   address: employeeData.address,
   phone:employeeData.phone,
-  headquarterId:employeeData.headquarterId,
+  headquarterId:employeeData.headquarter.headquarterId,
   birthdate:new Date(), // for now
   dirImage:employeeData.dirImage,
   roleId:rolesMap[employeeData.roles[0].name]

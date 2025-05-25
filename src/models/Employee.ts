@@ -7,9 +7,11 @@ export interface Employee {
   lastnames: string
   address: string
   phone: string
-  headquarterName: string
-  headquarterId:number
+  headquarter: {
+    headquarterId: number
+    name: string
+  }
   birthDate: string
   dirImage: string
-  roles: {roleId:number,name:string}[]
+  roles: { roleId: number; name: string }[]
 }

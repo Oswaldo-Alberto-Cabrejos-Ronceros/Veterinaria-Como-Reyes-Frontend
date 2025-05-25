@@ -12,8 +12,10 @@ export class EmployeeAdapter {
       lastnames: employee.lastName,
       address: employee.address,
       phone: employee.phone,
-      headquarterName: employee.headquarter.name,
-      headquarterId: employee.headquarter.headquarterId,
+      headquarter: {
+        headquarterId: employee.headquarter.headquarterId,
+        name: employee.headquarter.name,
+      },
       birthDate: employee.birthDate,
       dirImage: employee.dirImage,
       roles: employee.roles,
