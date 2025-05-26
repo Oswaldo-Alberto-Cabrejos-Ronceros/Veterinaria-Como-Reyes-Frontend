@@ -5,7 +5,7 @@ export interface Client {
   lastnames: string
   phone: string
   address: string
-  birthdate: string // format: (dd/mm/yyyy)
+  birthdate: string // format: (dd-mm-yyyy)
   headquarter: {
     headquarterId: number
     name: string
