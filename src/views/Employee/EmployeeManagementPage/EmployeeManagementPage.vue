@@ -245,12 +245,12 @@ const exportCSV = () => {
           </form>
           <!-- imporve design responsive -->
           <!-- for messague loading  -->
-          <Message v-if="loading.getAllEmployees" severity="error" size="small" variant="simple">
-            {{ loading.getAllEmployees }}
+          <Message v-if="loading.getAllEmployees" severity="warn" size="small" variant="simple">
+            Cargando ...
           </Message>
           <!-- for messague error -->
           <Message v-if="error.getAllEmployees" severity="error" size="small" variant="simple">
-            {{ error.getAllEmployees }}
+            Error al cargar los empleados
           </Message>
           <!-- table -->
           <DataTable
