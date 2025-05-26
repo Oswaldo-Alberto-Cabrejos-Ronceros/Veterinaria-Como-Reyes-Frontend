@@ -10,9 +10,8 @@ export interface Client {
     headquarterId: number
     name: string
   }
-  email?: string
   user?: {
     userId?: number
-    email: string
+    email?: string
   }
 }
