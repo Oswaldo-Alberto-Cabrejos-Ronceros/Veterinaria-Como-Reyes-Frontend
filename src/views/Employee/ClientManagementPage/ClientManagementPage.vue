@@ -9,10 +9,9 @@ import Message from 'primevue/message'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/yup'
 import Button from 'primevue/button'
-import Clients from '@/assets/data/clients.json'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import type { Client } from '@/models/Client'
 import { useConfirm } from 'primevue'
 import ViewClientCard from './components/ViewClientCard.vue'
@@ -21,6 +20,19 @@ import AddClientCard from './components/AddClientCard.vue'
 import EditClientCard from './components/EditClientCard.vue'
 //form
 import type { FormValues as SchemaEditClient } from '@/validation-schemas-forms/schema-edit-client'
+import { useClient } from '@/composables/useClient'
+
+//methods
+const {loading,error,getAllClients}=useClient()
+
+//clients
+
+const clients = ref<Client[]>([])
+
+onMounted(async()=>{
+  clients.value=await getAllClients()
+})
+
 const { handleSubmit, errors, defineField } = useForm< SchemaSearchClient>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
@@ -79,8 +91,8 @@ dialog.open(EditClientCard,{
       lastnames:clientData.lastnames,
       phone:clientData.phone,
       address:clientData.phone,
-      birthdate:new Date(), //for now
-      headquarterId:clientData.headquarterId
+      birthdate:new Date(clientData.birthdate),
+      headquarterId:clientData.headquarter.headquarterId
     } as SchemaEditClient
   },
   props:{
@@ -205,7 +217,15 @@ const exportCSV = () => {
               />
             </div>
           </form>
-          <DataTable :value="Clients"
+                    <!-- for messague loading  -->
+          <Message v-if="loading.getAllClients" severity="warn" size="small" variant="simple">
+            Cargando ...
+          </Message>
+          <!-- for messague error -->
+          <Message v-if="error.getAllClients" severity="error" size="small" variant="simple">
+            Error al cargar los clientes
+          </Message>
+          <DataTable :value="clients"
           paginator
             :rows="10"
             :rows-per-page-options="[10, 15, 20, 25, 30]"
@@ -220,7 +240,11 @@ const exportCSV = () => {
             <Column field="names" sortable header="Nombres" style="width: 18%"></Column>
             <Column field="lastnames" class=" hidden md:table-cell" header="Apellidos" sortable style="width: 15%"></Column>
             <Column field="phone" class=" hidden xl:table-cell" header="Celular" sortable style="width: 15%"></Column>
-            <Column field="email" class=" hidden lg:table-cell" header="Correo" sortable style="width: 15%"></Column>
+            <Column class=" hidden lg:table-cell" header="Correo" sortable style="width: 15%">
+            <template #body="{data}">
+              {{ data.user.email }}
+            </template>
+            </Column>
             <Column >
               <template #body="{ data }">
                 <div class="flex justify-between items-center flex-row lg:flex-col xl:flex-row gap-1">

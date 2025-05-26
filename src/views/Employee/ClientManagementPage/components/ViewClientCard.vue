@@ -64,19 +64,9 @@ const elements: { title: string; key: keyof Client; icon: string }[] = [
     icon: 'pi-phone',
   },
   {
-    title: 'Sede',
-    key: 'headquarterName',
-    icon: 'pi-home',
-  },
-  {
     title: 'Fecha Nacimiento',
     key: 'birthdate',
     icon: 'pi-calendar',
-  },
-  {
-    title: 'Email',
-    key: 'email',
-    icon: 'pi-envelope',
   },
 ]
 </script>
@@ -97,6 +87,27 @@ const elements: { title: string; key: keyof Client; icon: string }[] = [
                 <i :class="`pi ${element.icon}`"></i>
               </InputGroupAddon>
               <InputText :value="clientData[element.key]" disabled class="w-full" />
+            </InputGroup>
+          </div>
+
+          <!-- email -->
+                    <div >
+            <label class="block mb-2">Email</label>
+            <InputGroup>
+              <InputGroupAddon class="text-neutral-400">
+                <i :class="`pi pi-envelope`"></i>
+              </InputGroupAddon>
+              <InputText :value="clientData.user?.email" disabled class="w-full" />
+            </InputGroup>
+          </div>
+          <!-- headquarter -->
+                    <div >
+            <label class="block mb-2">Sede</label>
+            <InputGroup>
+              <InputGroupAddon class="text-neutral-400">
+                <i :class="`pi pi-home`"></i>
+              </InputGroupAddon>
+              <InputText :value="clientData.headquarter.name" disabled class="w-full" />
             </InputGroup>
           </div>
         </div>

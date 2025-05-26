@@ -1,17 +1,20 @@
 export interface Client {
   clientId: number
   dni: string
-  names: string
-  lastnames: string
-  phone: string
+  name: string
+  lastName: string
   address: string
-  birthdate: string // format: (dd-mm-yyyy)
+  phone: string
+  birthDate: string
+  dirImage: string
   headquarter: {
     headquarterId: number
     name: string
   }
   user?: {
     userId?: number
-    email?: string
+    email: string
+    password?: string
   }
+  blockNote?: string
 }
