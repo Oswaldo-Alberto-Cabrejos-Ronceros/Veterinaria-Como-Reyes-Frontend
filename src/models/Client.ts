@@ -1,14 +1,18 @@
 export interface Client {
-  userId: number
   clientId: number
   dni: string
   names: string
   lastnames: string
-  phone: string,
-  address: string,
-  birthdate: string, // format: (dd/mm/yyyy)
-  headquarterName: string,
-  headquarterId: number,
-  role?: string,
-  email?:string
+  phone: string
+  address: string
+  birthdate: string // format: (dd/mm/yyyy)
+  headquarter: {
+    headquarterId: number
+    name: string
+  }
+  email?: string
+  user?: {
+    userId?: number
+    email: string
+  }
 }

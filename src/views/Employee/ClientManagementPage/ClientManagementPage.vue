@@ -79,8 +79,8 @@ dialog.open(EditClientCard,{
       lastnames:clientData.lastnames,
       phone:clientData.phone,
       address:clientData.phone,
-      birthdate:new Date(), //for now
-      headquarterId:clientData.headquarterId
+      birthdate:new Date(clientData.birthdate), 
+      headquarterId:clientData.headquarter.headquarterId
     } as SchemaEditClient
   },
   props:{

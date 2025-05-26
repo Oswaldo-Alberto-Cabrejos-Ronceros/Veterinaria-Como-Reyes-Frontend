@@ -32,11 +32,6 @@ const elementsClient: { title: string; key: keyof Client; icon: string }[] = [
     key: 'phone',
     icon: 'pi-phone',
   },
-  {
-    title: 'Sede',
-    key: 'headquarterName',
-    icon: 'pi-home',
-  },
 ]
 
 const elementsEmployee: { title: string; key: keyof Employee; icon: string }[] = [
@@ -61,13 +56,8 @@ const elementsEmployee: { title: string; key: keyof Employee; icon: string }[] =
     icon: 'pi-phone',
   },
   {
-    title: 'Sede',
-    key: 'headquarterName',
-    icon: 'pi-home',
-  },
-  {
     title: 'Fecha Nacimiento',
-    key: 'birthDate',
+    key: 'birthdate',
     icon: 'pi-calendar',
   },
 ]
@@ -81,21 +71,21 @@ const clientData = isClient(props.userData) ? props.userData : null
 
 const employeeData = !isClient(props.userData) ? props.userData : null
 
-const profileImageDefault:string="https://img.freepik.com/vector-gratis/circulo-azul-usuario-blanco_78370-4707.jpg?semt=ais_hybrid&w=740"
+const profileImageDefault: string =
+  'https://img.freepik.com/vector-gratis/circulo-azul-usuario-blanco_78370-4707.jpg?semt=ais_hybrid&w=740'
 //emit
-const emit = defineEmits(['edit:client','edit:employee'])
+const emit = defineEmits(['edit:client', 'edit:employee'])
 
 //for send emit edit user
 
-const handleEditUser = ()=>{
-  if(isClient(props.userData)){
+const handleEditUser = () => {
+  if (isClient(props.userData)) {
     emit('edit:client')
-  } else{
+  } else {
     emit('edit:employee')
     console.log('empleado')
   }
 }
-
 </script>
 
 <template>
@@ -104,8 +94,8 @@ const handleEditUser = ()=>{
   >
     <template #header>
       <div class="flex gap-4 items-center w-full">
-        <h3 class="h3 font-medium"> Mi Perfil </h3>
-        <p v-if="employeeData" class="textLg text-gray-400">{{employeeData.role}}</p>
+        <h3 class="h3 font-medium">Mi Perfil</h3>
+        <p v-if="employeeData" class="textLg text-gray-400">{{ employeeData.roles[0].name }}</p>
       </div>
     </template>
 
@@ -114,25 +104,29 @@ const handleEditUser = ()=>{
         <!-- images and ids -->
         <div class="flex flex-col xs:flex-row items-center gap-4 self-center">
           <div class="relative">
-          <div class=" relative w-48 h-48 flex rounded-full overflow-hidden ">
+            <div class="relative w-48 h-48 flex rounded-full overflow-hidden">
               <Image
                 :src="employeeData ? employeeData?.dirImage : profileImageDefault"
                 alt="Profile photo"
-                class=" w-full h-full object-cover z-10"
+                class="w-full h-full object-cover z-10"
                 preview
               />
             </div>
-            <Button v-if="employeeData" icon="pi pi-camera" rounded aria-label="Foto" class="absolute bottom-2 right-2 z-20"  />
+            <Button
+              v-if="employeeData"
+              icon="pi pi-camera"
+              rounded
+              aria-label="Foto"
+              class="absolute bottom-2 right-2 z-20"
+            />
           </div>
-            <div class="flex flex-col items-center mt-4">
-              <h2 class="text-2xl font-bold">{{ firstName }} {{ firstLastName }}</h2>
-              <div class="text-gray-600 mt-1">
-
-                <p>DNI: {{ userData.dni }}</p>
-                <p v-if="employeeData && employeeData.cmvp!=null">CMVP: {{ employeeData.cmvp }}</p>
-              </div>
+          <div class="flex flex-col items-center mt-4">
+            <h2 class="text-2xl font-bold">{{ firstName }} {{ firstLastName }}</h2>
+            <div class="text-gray-600 mt-1">
+              <p>DNI: {{ userData.dni }}</p>
+              <p v-if="employeeData && employeeData.cmvp != null">CMVP: {{ employeeData.cmvp }}</p>
             </div>
-
+          </div>
         </div>
 
         <!-- Formulario -->
@@ -148,6 +142,16 @@ const handleEditUser = ()=>{
                 <InputText :value="clientData[element.key]" disabled class="w-full" />
               </InputGroup>
             </div>
+            <!-- headquarter -->
+            <div>
+              <label class="block mb-2">Sede</label>
+              <InputGroup>
+                <InputGroupAddon class="text-neutral-400">
+                  <i :class="`pi pi-home`"></i>
+                </InputGroupAddon>
+                <InputText :value="clientData.headquarter.name" disabled class="w-full" />
+              </InputGroup>
+            </div>
           </div>
           <!-- for Employee -->
           <div class="form-search-grid-col-5" v-if="employeeData">
@@ -160,10 +164,26 @@ const handleEditUser = ()=>{
                 <InputText :value="employeeData[element.key]" disabled class="w-full" />
               </InputGroup>
             </div>
+            <!-- headquarter -->
+            <div>
+              <label class="block mb-2">Sede</label>
+              <InputGroup>
+                <InputGroupAddon class="text-neutral-400">
+                  <i :class="`pi pi-home`"></i>
+                </InputGroupAddon>
+                <InputText :value="employeeData.headquarter.name" disabled class="w-full" />
+              </InputGroup>
+            </div>
           </div>
           <!-- Botón guardar/editar -->
           <div class="pt-4 flex justify-center">
-            <Button class="w-full max-w-md" label="Editar" iconPos="right"  icon="pi pi-pencil" @click="handleEditUser"/>
+            <Button
+              class="w-full max-w-md"
+              label="Editar"
+              iconPos="right"
+              icon="pi pi-pencil"
+              @click="handleEditUser"
+            />
           </div>
         </div>
       </div>
