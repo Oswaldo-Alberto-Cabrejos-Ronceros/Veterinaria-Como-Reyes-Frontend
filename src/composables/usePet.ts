@@ -9,18 +9,18 @@ export function usePet() {
 
   //create
 
-  const deleteAnimal = async (animalId: number): Promise<void> => {
+  const deletePet = async (animalId: number): Promise<void> => {
     await runUseCase('deleteAnimal', () => animalUsesCases.deleteAnimal.execute(animalId))
   }
 
-  const getAllAnimals = async (): Promise<PetView[]> => {
+  const getAllPets = async (): Promise<PetView[]> => {
     const animals: Animal[] = await runUseCase('getAllAnimals', () =>
       animalUsesCases.getAllAnimals.execute(),
     )
     return animals.map((animal) => AnimalAdapter.toPetView(animal))
   }
 
-  const getAnimalByClientId = async (clientId: number): Promise<PetView[]> => {
+  const getPetByClientId = async (clientId: number): Promise<PetView[]> => {
     const animals: Animal[] = await runUseCase('getAnimalByClientId', () =>
       animalUsesCases.getAnimalByClientId.execute(clientId),
     )
@@ -28,7 +28,7 @@ export function usePet() {
     return animals.map((animal) => AnimalAdapter.toPetView(animal))
   }
 
-  const getAnimalById = async (animalId: number): Promise<PetView> => {
+  const getPetById = async (animalId: number): Promise<PetView> => {
     const animal: Animal = await runUseCase('getAnimalById', () =>
       animalUsesCases.getAnimalById.execute(animalId),
     )
@@ -40,9 +40,9 @@ export function usePet() {
   return {
     loading,
     error,
-    deleteAnimal,
-    getAllAnimals,
-    getAnimalByClientId,
-    getAnimalById,
+    deletePet,
+    getAllPets,
+    getPetByClientId,
+    getPetById,
   }
 }

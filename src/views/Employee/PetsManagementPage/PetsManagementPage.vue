@@ -15,11 +15,23 @@ import { useConfirm } from 'primevue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import type { Pet } from '@/models/Pet'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useDialog } from 'primevue'
 import AddEditPetCard from './components/AddEditPetCard.vue'
 import type { FormValues as AddEditPetSchema } from '@/validation-schemas-forms/schema-add-edit-pet'
 import { useRouter } from 'vue-router'
+import { usePet } from '@/composables/usePet'
+
+//methods
+
+const {loading, error,getAllPets} = usePet();
+
+//pets
+const pets = ref<Pet[]>([])
+onMounted(async()=>{
+pets.value = await getAllPets()
+})
+
 //form
 
 const { handleSubmit, errors, defineField } = useForm<SearchEmployeeSchema>({
@@ -77,73 +89,81 @@ const genders = [
 
 //for submit
 
-const onSubmit = handleSubmit((values)=>{
+const onSubmit = handleSubmit((values) => {
   console.log(values)
 })
 
-
 //for dialog
-const dialog = useDialog();
+const dialog = useDialog()
 
 //for add
-const addPet=()=>{
-  dialog.open(AddEditPetCard,{
-    props:{
-      modal:true
+const addPet = () => {
+  dialog.open(AddEditPetCard, {
+    props: {
+      modal: true,
     },
-    onClose:(data)=>{
-      if(data){
-        console.log('Datos recibidos del dialogo:',data)
+    onClose: (data) => {
+      if (data) {
+        console.log('Datos recibidos del dialogo:', data)
       }
-    }
+    },
   })
 }
 
 const router = useRouter()
 
 //for view
-const viewPet=(petData:Pet)=>{
-    router.push({name:'administrator-pets-unitary-pet', params:{id:petData.id}});
+const viewPet = (petData: Pet) => {
+  router.push({ name: 'administrator-pets-unitary-pet', params: { id: petData.id } })
 }
 
-const editPet=(petData:Pet)=>{
-  dialog.open(AddEditPetCard,{
-    props:{
-      modal:true
+const editPet = (petData: Pet) => {
+  dialog.open(AddEditPetCard, {
+    props: {
+      modal: true,
     },
-    data:{
-      petData:petData as AddEditPetSchema
-    }
+    data: {
+      petData: {
+        name: petData.name,
+        gender: petData.gender,
+        weight: petData.weight,
+        birthdate: new Date(petData.birthdate),
+        comment: petData.comment,
+        specieId: petData.specie.id,
+        breedId: petData.breed.id,
+        urlImage: petData.urlImage,
+        ownerDni: petData.clientId.toString(),
+      } as AddEditPetSchema,
+    },
   })
 }
 
 //for confirm
-const confirm = useConfirm();
+const confirm = useConfirm()
 
 //for delete with confirm popup
-const deleteClient = (event:MouseEvent|KeyboardEvent,pet:Pet) => {
+const deleteClient = (event: MouseEvent | KeyboardEvent, pet: Pet) => {
   confirm.require({
-    target:event.currentTarget as HTMLElement,
-    message:'¿Seguro que quiere eliminar a este empleado?',
+    target: event.currentTarget as HTMLElement,
+    message: '¿Seguro que quiere eliminar a este empleado?',
     icon: 'pi pi-exclamation-triangle',
-    rejectProps:{
-      label:'Cancelar',
-      severity:'secondary',
-      outlined: true
+    rejectProps: {
+      label: 'Cancelar',
+      severity: 'secondary',
+      outlined: true,
     },
-    acceptProps:{
-      label:'Eliminar',
-      severity:'danger'
+    acceptProps: {
+      label: 'Eliminar',
+      severity: 'danger',
     },
-    accept:()=>{
+    accept: () => {
       console.log('Eliminando Empleado ', pet.id)
     },
-    reject:()=>{
+    reject: () => {
       console.log('Cancelando')
-    }
+    },
   })
 }
-
 
 //for export
 
@@ -155,8 +175,8 @@ const exportCSV = () => {
 
 <template>
   <div class="layout-principal-flex">
-<Card class="card-principal-color-neutral">
-  <template #title>
+    <Card class="card-principal-color-neutral">
+      <template #title>
         <h3 class="h3">Gestión de mascotas</h3>
       </template>
       <template #content>
@@ -240,8 +260,18 @@ const exportCSV = () => {
               />
             </div>
           </form>
-               <!-- table -->
-               <DataTable
+
+                    <!-- for messague loading  -->
+          <Message v-if="loading.getAllEmployees" severity="warn" size="small" variant="simple">
+            Cargando ...
+          </Message>
+          <!-- for messague error -->
+          <Message v-if="error.getAllEmployees" severity="error" size="small" variant="simple">
+            Error al cargar los empleados
+          </Message>
+
+          <!-- table -->
+          <DataTable
             :value="Pets"
             paginator
             :rows="10"
@@ -250,18 +280,46 @@ const exportCSV = () => {
           >
             <template #header>
               <div class="w-full flex flex-col xs:flex-row justify-between gap-2 pb-4">
-                <Button icon="pi pi-plus-circle" iconPos="right" severity="success" label="Agregar Mascota" @click="addPet"  />
+                <Button
+                  icon="pi pi-plus-circle"
+                  iconPos="right"
+                  severity="success"
+                  label="Agregar Mascota"
+                  @click="addPet"
+                />
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
             </template>
-            <Column field="name" sortable header="Nombre" class=" hidden lg:table-cell" style="width: 18%"></Column>
-            <Column field="ownerDni" sortable header="Dueño" style="width: 18%"></Column>
-            <Column field="specie" class=" hidden lg:table-cell" header="Especie" sortable style="width: 15%"></Column>
-            <Column field="breed" class=" hidden lg:table-cell" header="Raza" sortable style="width: 15%"></Column>
-            <Column field="gender" class=" hidden md:table-cell" header="Sexo" sortable style="width: 15%"></Column>
-            <Column >
+            <Column
+              field="name"
+              sortable
+              header="Nombre"
+              class="hidden lg:table-cell"
+              style="width: 18%"
+            ></Column>
+            <Column field="clientId" sortable header="Dueño" style="width: 18%"></Column>
+            <Column class="hidden lg:table-cell" header="Especie" sortable style="width: 15%">
               <template #body="{ data }">
-                <div class="flex justify-between items-center flex-row lg:flex-col xl:flex-row gap-1">
+                {{ data.specie.name }}
+              </template>
+            </Column>
+            <Column class="hidden lg:table-cell" header="Raza" sortable style="width: 15%">
+              <template #body="{ data }">
+                {{ data.breed.name }}
+              </template>
+            </Column>
+            <Column
+              field="gender"
+              class="hidden md:table-cell"
+              header="Sexo"
+              sortable
+              style="width: 15%"
+            ></Column>
+            <Column>
+              <template #body="{ data }">
+                <div
+                  class="flex justify-between items-center flex-row lg:flex-col xl:flex-row gap-1"
+                >
                   <Button
                     icon="pi pi-eye"
                     severity="info"
@@ -284,7 +342,7 @@ const exportCSV = () => {
                     variant="outlined"
                     aria-label="Filter"
                     rounded
-@click="deleteClient($event,data)"
+                    @click="deleteClient($event, data)"
                   ></Button>
                 </div>
               </template>
@@ -292,6 +350,6 @@ const exportCSV = () => {
           </DataTable>
         </div>
       </template>
-</Card>
+    </Card>
   </div>
-  </template>
+</template>
