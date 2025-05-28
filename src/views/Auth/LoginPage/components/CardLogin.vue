@@ -107,6 +107,9 @@ const onSubmit = handleSubmit((values) => {
 
         <!-- button -->
         <Button label="Ingresar" type="submit" icon="pi pi-sign-in" iconPos="right" class="mt-4" />
+        <div class="flex w-full items-center justify-center gap-2">
+          <p>¿No tienes cuenta?</p> <router-link class=" transition-colors duration-150 hover:text-red-500 dark:hover:text-red-400" to="/auth/registration">Registrate</router-link>
+        </div>
       </form>
     </template>
   </Card>
