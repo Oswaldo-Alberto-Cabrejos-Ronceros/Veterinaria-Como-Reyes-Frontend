@@ -7,7 +7,7 @@ export interface Animal{
     animalComment:string,
     urlImage:string,
     breed:{
-        breedId:string,
+        breedId:number,
         name:string,
         specie:{
             specieId:number,
