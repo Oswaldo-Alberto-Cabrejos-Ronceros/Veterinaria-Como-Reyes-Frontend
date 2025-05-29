@@ -10,18 +10,18 @@ export function usePet() {
   //create
 
   const deletePet = async (animalId: number): Promise<void> => {
-    await runUseCase('deleteAnimal', () => animalUsesCases.deleteAnimal.execute(animalId))
+    await runUseCase('deletePet', () => animalUsesCases.deleteAnimal.execute(animalId))
   }
 
   const getAllPets = async (): Promise<PetView[]> => {
-    const animals: Animal[] = await runUseCase('getAllAnimals', () =>
+    const animals: Animal[] = await runUseCase('getAllPets', () =>
       animalUsesCases.getAllAnimals.execute(),
     )
     return animals.map((animal) => AnimalAdapter.toPetView(animal))
   }
 
   const getPetByClientId = async (clientId: number): Promise<PetView[]> => {
-    const animals: Animal[] = await runUseCase('getAnimalByClientId', () =>
+    const animals: Animal[] = await runUseCase('getPetByClientId', () =>
       animalUsesCases.getAnimalByClientId.execute(clientId),
     )
     //adapt
@@ -29,7 +29,7 @@ export function usePet() {
   }
 
   const getPetById = async (animalId: number): Promise<PetView> => {
-    const animal: Animal = await runUseCase('getAnimalById', () =>
+    const animal: Animal = await runUseCase('getPetById', () =>
       animalUsesCases.getAnimalById.execute(animalId),
     )
     return AnimalAdapter.toPetView(animal)
