@@ -10,7 +10,6 @@ import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/yup'
 import Button from 'primevue/button'
 import Select from 'primevue/select'
-import Pets from '@/assets/data/pets.json'
 import { useConfirm } from 'primevue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
@@ -262,17 +261,17 @@ const exportCSV = () => {
           </form>
 
                     <!-- for messague loading  -->
-          <Message v-if="loading.getAllEmployees" severity="warn" size="small" variant="simple">
+          <Message v-if="loading.getAllPets" severity="warn" size="small" variant="simple">
             Cargando ...
           </Message>
           <!-- for messague error -->
-          <Message v-if="error.getAllEmployees" severity="error" size="small" variant="simple">
+          <Message v-if="error.getAllPets" severity="error" size="small" variant="simple">
             Error al cargar los empleados
           </Message>
 
           <!-- table -->
           <DataTable
-            :value="Pets"
+            :value="pets"
             paginator
             :rows="10"
             :rows-per-page-options="[10, 15, 20, 25, 30]"
