@@ -9,17 +9,33 @@ import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
 import Message from 'primevue/message'
 import Button from 'primevue/button'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import Categories from '@/assets/data/categories.json'
 import AddEditCategoryCard from './components/AddEditCategoryCard.vue'
 import { useDialog } from 'primevue'
 import type { Category } from '@/models/Category'
 import type { FormValues as AddEditCategorySchema } from '@/validation-schemas-forms/schema-add-edit-category'
 import ViewCategoryCard from './components/ViewCategoryCard.vue'
 import { useConfirm } from 'primevue'
+import { useCategory } from '@/composables/useCategory'
 
+
+//methods
+
+const {loading, error,getAllCategories} = useCategory()
+
+//categories
+
+const categories = ref<Category[]>([])
+
+//load categories
+
+onMounted(async ()=>{
+  categories.value= await getAllCategories()
+})
+
+//form
 const { handleSubmit, errors, defineField } = useForm<SearchCategorySchema>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
@@ -146,10 +162,17 @@ const exportCSV = () => {
               />
             </div>
           </form>
-
+          <!-- for messague loading  -->
+          <Message v-if="loading.getAllCategories" severity="warn" size="small" variant="simple">
+            Cargando ...
+          </Message>
+          <!-- for messague error -->
+          <Message v-if="error.getAllCategories" severity="error" size="small" variant="simple">
+            Error al cargar las categorias
+          </Message>
           <!-- table -->
           <DataTable
-            :value="Categories"
+            :value="categories"
             paginator
             :rows="10"
             :rows-per-page-options="[5, 10]"
