@@ -23,12 +23,12 @@ import { usePet } from '@/composables/usePet'
 
 //methods
 
-const {loading, error,getAllPets} = usePet();
+const { loading, error, getAllPets } = usePet()
 
 //pets
 const pets = ref<Pet[]>([])
-onMounted(async()=>{
-pets.value = await getAllPets()
+onMounted(async () => {
+  pets.value = await getAllPets()
 })
 
 //form
@@ -260,13 +260,13 @@ const exportCSV = () => {
             </div>
           </form>
 
-                    <!-- for messague loading  -->
+          <!-- for messague loading  -->
           <Message v-if="loading.getAllPets" severity="warn" size="small" variant="simple">
             Cargando ...
           </Message>
           <!-- for messague error -->
           <Message v-if="error.getAllPets" severity="error" size="small" variant="simple">
-            Error al cargar los empleados
+            Error al cargar las mascotas
           </Message>
 
           <!-- table -->
