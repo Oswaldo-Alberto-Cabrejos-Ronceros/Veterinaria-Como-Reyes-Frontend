@@ -3,6 +3,7 @@ import { useAsyncHandler } from './useAsyncHandler'
 import type { Headquarter as HeadquarterView } from '@/models/Headquarter'
 import type { Headquarter } from '@/services/Headquarter/domain/models/Headquarter'
 import { HeadquarterAdapter } from '@/adapters/HeadquarterAdapter'
+import type { FormValues as HeadquarterAddEditSchema } from '@/validation-schemas-forms/schema-add-edit-headquarter'
 
 export function useHeadquarter() {
   //get from useAsyncHandle
@@ -11,6 +12,17 @@ export function useHeadquarter() {
   //expose use cases
 
   //create
+
+  const createHeadquarter = async (headquarterAddEditSchema: HeadquarterAddEditSchema) => {
+    const headquarterRequest =
+      HeadquarterAdapter.fromSchemaAddEditToHeadquarterRequest(headquarterAddEditSchema)
+
+    const createHeadquarter = await runUseCase('createHeadquarter', () =>
+      headquarterUsesCases.createHeadquarter.execute(headquarterRequest),
+    )
+
+    return HeadquarterAdapter.toHeadquarterView(createHeadquarter)
+  }
 
   const deleteHeadquarter = async (headquarterId: number) => {
     await runUseCase('deleteHeadquarter', () =>
@@ -35,11 +47,25 @@ export function useHeadquarter() {
 
   //update
 
+  const updateHeadquarter = async (
+    headquarterId: number,
+    headquarterAddEditSchema: HeadquarterAddEditSchema,
+  ) => {
+    const headquarterRequest =
+      HeadquarterAdapter.fromSchemaAddEditToHeadquarterRequest(headquarterAddEditSchema)
+    const headquarter: Headquarter = await runUseCase('updateHeadquarter', () =>
+      headquarterUsesCases.updateHeadquarter.execute(headquarterId, headquarterRequest),
+    )
+    return HeadquarterAdapter.toHeadquarterView(headquarter)
+  }
+
   return {
     loading,
     error,
     deleteHeadquarter,
     getAllHeadquarters,
     getHeadquarterById,
+    createHeadquarter,
+    updateHeadquarter,
   }
 }

@@ -1,6 +1,6 @@
 import type { HttpClient } from '@/services/Http/model/HttpClient'
 import type { HeadquarterService } from '../domain/services/HeadquarterService'
-import type { Headquarter } from '../domain/models/Headquarter'
+import type { Headquarter, HeadquarterRequest } from '../domain/models/Headquarter'
 
 export class HeadquarterServiceImpl implements HeadquarterService {
   constructor(private readonly httpClient: HttpClient) {}
@@ -17,13 +17,13 @@ export class HeadquarterServiceImpl implements HeadquarterService {
     return response.data
   }
 
-  async createHeadquarter(headquarter: Headquarter): Promise<Headquarter> {
-    const response = await this.httpClient.post<Headquarter>(this.urlBase, headquarter)
+  async createHeadquarter(headquarterRequest: HeadquarterRequest): Promise<Headquarter> {
+    const response = await this.httpClient.post<Headquarter>(this.urlBase, headquarterRequest)
     return response.data
   }
 
-  async updateHeadquarter(id: number, headquarter: Headquarter): Promise<Headquarter> {
-    const response = await this.httpClient.put<Headquarter>(`${this.urlBase}/${id}`, headquarter)
+  async updateHeadquarter(id: number, headquarterRequest: HeadquarterRequest): Promise<Headquarter> {
+    const response = await this.httpClient.put<Headquarter>(`${this.urlBase}/${id}`, headquarterRequest)
     return response.data
   }
 

@@ -11,6 +11,7 @@ import type { FormValues } from '@/validation-schemas-forms/schema-add-edit-head
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/yup'
 import { ref } from 'vue'
+import Message from 'primevue/message'
 
 //form
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
@@ -151,16 +152,6 @@ onMounted(() => {
             {{ errors[element.key] }}
           </Message>
         </div>
-        <div class="button-form-container-grid-end">
-          <Button
-            class="w-full max-w-md"
-            :label="title"
-            type="submit"
-            severity="success"
-            icon="pi pi-save"
-            iconPos="right"
-          />
-        </div>
 
         <!-- province -->
         <div>
@@ -214,6 +205,17 @@ onMounted(() => {
           <Message v-if="errors.district" severity="error" size="small" variant="simple">
             {{ errors.district }}
           </Message>
+        </div>
+
+        <div class="button-form-container-grid-end">
+          <Button
+            class="w-full max-w-md"
+            :label="title"
+            type="submit"
+            severity="success"
+            icon="pi pi-save"
+            iconPos="right"
+          />
         </div>
       </form>
     </template>

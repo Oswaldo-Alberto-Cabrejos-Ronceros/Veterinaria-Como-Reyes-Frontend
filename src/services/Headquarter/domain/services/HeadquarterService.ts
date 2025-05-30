@@ -1,13 +1,13 @@
-import type { Headquarter } from '../models/Headquarter'
+import type { Headquarter, HeadquarterRequest } from '../models/Headquarter'
 
 export interface HeadquarterService {
   getAllHeadquarters(): Promise<Headquarter[]>
 
   getHeadquarterById(id: number): Promise<Headquarter>
 
-  createHeadquarter(headquarter: Headquarter): Promise<Headquarter>
+  createHeadquarter(headquarterRequest: HeadquarterRequest): Promise<Headquarter>
 
-  updateHeadquarter(id: number, headquarter: Headquarter): Promise<Headquarter>
+  updateHeadquarter(id: number, headquarterRequest: HeadquarterRequest): Promise<Headquarter>
 
   deleteHeadquarter(id: number): Promise<void>
 }

@@ -19,16 +19,24 @@ import AddEditHeadquarterCard from './components/AddEditHeadquarterCard.vue'
 import type { FormValues as AddEditHeadquarterSchema } from '@/validation-schemas-forms/schema-add-edit-headquarter'
 import ViewHeadquaterCard from './components/ViewHeadquaterCard.vue'
 import { useHeadquarter } from '@/composables/useHeadquarter'
+import type { FormValues as HeadquarterAddEditSchema } from '@/validation-schemas-forms/schema-add-edit-headquarter'
 
 //get from compose
-const { loading, error, getAllHeadquarters } = useHeadquarter()
+const { loading, error, getAllHeadquarters, createHeadquarter, updateHeadquarter } =
+  useHeadquarter()
 
 //headquarters
 const headquarters = ref<Headquarter[]>([])
 
 onMounted(async () => {
-  headquarters.value = await getAllHeadquarters()
+  loadHeadquarters()
 })
+
+//for load headquartes
+
+const loadHeadquarters = async () => {
+  headquarters.value = await getAllHeadquarters()
+}
 
 //form
 const { handleSubmit, errors, defineField } = useForm<SearchHeadquarterSchema>({
@@ -114,9 +122,12 @@ const addHeadquarter = () => {
     props: {
       modal: true,
     },
-    onClose: (data) => {
+    onClose: async (options) => {
+      const data = options?.data as HeadquarterAddEditSchema
       if (data) {
-        console.log('Datos recibidos del dialogo', data)
+        const headquarter = await createHeadquarter(data)
+        console.log('Datos recibidos del dialogo', headquarter)
+        loadHeadquarters()
       }
     },
   })
@@ -143,6 +154,14 @@ const editHeadquarter = (headquarterData: Headquarter) => {
     },
     data: {
       headquarterData: headquarterData as AddEditHeadquarterSchema,
+    },
+    onClose: async (options) => {
+      const data = options?.data as HeadquarterAddEditSchema
+      if (data) {
+        const headquarter = await updateHeadquarter(headquarterData.id, data)
+        console.log(headquarter)
+        loadHeadquarters()
+      }
     },
   })
 }
@@ -287,7 +306,7 @@ const exportCSV = () => {
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
             </template>
-            <Column field="location" sortable header="Dirección" style="width: 25%"></Column>
+            <Column field="address" sortable header="Dirección" style="width: 25%"></Column>
             <Column
               field="district"
               class="hidden lg:table-cell"

@@ -15,8 +15,8 @@ export const schema = yup.object({
     .max(255, 'Dirección debe ser menor a 255 caracteres'),
   email: yup.string().required('Email es obligatorio').email('Formato de email inválido'),
   district: yup.string().required('Distrito es obligatorio'),
-  province: yup.string(),
-  departament: yup.string(),
+  province: yup.string().required('Provincia es obligatoria'),
+  departament: yup.string().required('Departamento es obligatorio'),
 })
 
 export type FormValues = yup.InferType<typeof schema>
