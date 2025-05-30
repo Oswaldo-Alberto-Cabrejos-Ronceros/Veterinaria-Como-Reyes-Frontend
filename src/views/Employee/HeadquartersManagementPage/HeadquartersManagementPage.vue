@@ -24,7 +24,8 @@ import ViewHeadquaterCard from './components/ViewHeadquaterCard.vue'
 const { handleSubmit, errors, defineField } = useForm<SearchHeadquarterSchema>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
-    location: '',
+    name:'',
+    address: '',
     province: '',
     district: '',
     phone: '',
@@ -35,7 +36,8 @@ const { handleSubmit, errors, defineField } = useForm<SearchHeadquarterSchema>({
 //fieldMap
 
 const fieldMap = {
-  location: defineField('location'),
+  name:defineField('name'),
+  address: defineField('address'),
   phone: defineField('phone'),
   email: defineField('email'),
 }
@@ -48,8 +50,14 @@ const [district, districtAttrs] = defineField('district')
 //textfields
 const textFields: { title: string; key: keyof typeof fieldMap; type: string; icon: string }[] = [
   {
+    title: 'Name',
+    key: 'name',
+    type: 'text',
+    icon: 'pi-info',
+  },
+{
     title: 'Dirección',
-    key: 'location',
+    key: 'address',
     type: 'text',
     icon: 'pi-map-marker',
   },

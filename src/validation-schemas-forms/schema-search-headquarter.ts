@@ -1,7 +1,8 @@
 import * as yup from 'yup'
 
 export const schema = yup.object({
-  location: yup.string().max(255, 'Dirección debe ser menor a 255 caracteres'),
+  address: yup.string().max(255, 'Dirección debe ser menor a 255 caracteres'),
+  name:yup.string().max(50,'Nombre debe ser menos a 50 caracteres'),
   province:yup.string(),
   district: yup.string(),
   phone: yup
