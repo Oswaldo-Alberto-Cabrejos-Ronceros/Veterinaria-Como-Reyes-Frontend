@@ -1,5 +1,5 @@
 import type { HttpClient } from '@/services/Http/model/HttpClient'
-import type { Category } from '../domain/models/Category'
+import type { Category, CategoryRequest } from '../domain/models/Category'
 import type { CategoryService } from '../domain/services/CategoryService'
 
 export class CategoryServiceImpl implements CategoryService {
@@ -17,13 +17,13 @@ export class CategoryServiceImpl implements CategoryService {
     return response.data
   }
 
-  async createCategory(category: Category): Promise<Category> {
-    const response = await this.httpClient.post<Category>(this.urlBase, category)
+  async createCategory(categoryRequest: CategoryRequest): Promise<Category> {
+    const response = await this.httpClient.post<Category>(this.urlBase, categoryRequest)
     return response.data
   }
 
-  async updateCategory(id: number, category: Category): Promise<Category> {
-    const response = await this.httpClient.put<Category>(`${this.urlBase}/${id}`, category)
+  async updateCategory(id: number, categoryRequest: CategoryRequest): Promise<Category> {
+    const response = await this.httpClient.put<Category>(`${this.urlBase}/${id}`, categoryRequest)
     return response.data
   }
 

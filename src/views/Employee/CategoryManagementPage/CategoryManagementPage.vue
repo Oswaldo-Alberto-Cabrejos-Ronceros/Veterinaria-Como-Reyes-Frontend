@@ -20,20 +20,23 @@ import ViewCategoryCard from './components/ViewCategoryCard.vue'
 import { useConfirm } from 'primevue'
 import { useCategory } from '@/composables/useCategory'
 
-
 //methods
 
-const {loading, error,getAllCategories} = useCategory()
+const { loading, error, getAllCategories, createCategory, updateCategory, deleteCategory } =
+  useCategory()
 
 //categories
 
 const categories = ref<Category[]>([])
 
-//load categories
-
-onMounted(async ()=>{
-  categories.value= await getAllCategories()
+onMounted(async () => {
+  loadCategories()
 })
+
+//load categories
+const loadCategories = async () => {
+  categories.value = await getAllCategories()
+}
 
 //form
 const { handleSubmit, errors, defineField } = useForm<SearchCategorySchema>({
@@ -59,9 +62,12 @@ const addCategory = () => {
     props: {
       modal: true,
     },
-    onClose: (data) => {
+    onClose: async (options) => {
+      const data = options?.data as AddEditCategorySchema
       if (data) {
-        console.log('Datos recibidos', data)
+        const category = await createCategory(data)
+        console.log('Datos recibidos', category)
+        loadCategories()
       }
     },
   })
@@ -76,6 +82,12 @@ const editCategory = (categoryData: Category) => {
     },
     data: {
       categoryData: categoryData as AddEditCategorySchema,
+    },
+    onClose: async (options) => {
+      const data = options?.data as AddEditCategorySchema
+      const category = await updateCategory(categoryData.id, data)
+      console.log('Datos recibidos', category)
+      loadCategories()
     },
   })
 }
@@ -98,7 +110,7 @@ const confirm = useConfirm()
 
 //for delete with confirm popup
 
-const deleteCategory = (event: MouseEvent | KeyboardEvent, category: Category) => {
+const deleteCategoryAction = (event: MouseEvent | KeyboardEvent, category: Category) => {
   confirm.require({
     target: event.currentTarget as HTMLElement,
     message: '¿Seguro que quiere eliminar esta categoria?',
@@ -112,8 +124,10 @@ const deleteCategory = (event: MouseEvent | KeyboardEvent, category: Category) =
       label: 'Eliminar',
       severity: 'danger',
     },
-    accept: () => {
-      console.log('Eliminando método ', category.id)
+    accept: async () => {
+      console.log('Eliminando categoria ', category.id)
+      await deleteCategory(category.id)
+      loadCategories()
     },
     reject: () => {
       console.log('Cancelando')
@@ -224,7 +238,7 @@ const exportCSV = () => {
                     variant="outlined"
                     aria-label="Filter"
                     rounded
-                    @click="deleteCategory($event,data)"
+                    @click="deleteCategoryAction($event, data)"
                   ></Button>
                 </div>
               </template>

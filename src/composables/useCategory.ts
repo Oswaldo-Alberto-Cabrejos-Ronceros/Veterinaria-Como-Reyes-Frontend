@@ -3,7 +3,7 @@ import { useAsyncHandler } from './useAsyncHandler'
 import { CategoryAdapter } from '@/adapters/CategoryAdapter'
 import type { Category } from '@/services/Category/domain/models/Category'
 import type { Category as CategoryView } from '@/models/Category'
-
+import type { FormValues as CategoryAddEditSchema } from '@/validation-schemas-forms/schema-add-edit-category'
 
 export function useCategory() {
   const { loading, error, runUseCase } = useAsyncHandler()
@@ -24,12 +24,33 @@ export function useCategory() {
 
   //create
 
+  const createCategory = async (
+    categoryAddEditSchema: CategoryAddEditSchema,
+  ): Promise<CategoryView> => {
+    const categoryRequest =
+      CategoryAdapter.fromSchemaAddEditToCategoryRequest(categoryAddEditSchema)
+    const category: Category = await runUseCase('createCategory', () =>
+      categoryUsesCases.createCategory.execute(categoryRequest),
+    )
+    return CategoryAdapter.toCategoryView(category)
+  }
+
   //update
 
-  const deleteCategory = async (id: number): Promise<void> => {
-    await runUseCase('deleteCategory', () =>
-      categoryUsesCases.deleteCategory.execute(id),
+  const updateCategory = async (
+    categoryId: number,
+    categoryAddEditSchema: CategoryAddEditSchema,
+  ): Promise<CategoryView> => {
+    const categoryRequest =
+      CategoryAdapter.fromSchemaAddEditToCategoryRequest(categoryAddEditSchema)
+    const category: Category = await runUseCase('updateCategory', () =>
+      categoryUsesCases.updateCategory.execute(categoryId, categoryRequest),
     )
+    return CategoryAdapter.toCategoryView(category)
+  }
+
+  const deleteCategory = async (id: number): Promise<void> => {
+    await runUseCase('deleteCategory', () => categoryUsesCases.deleteCategory.execute(id))
   }
 
   return {
@@ -38,5 +59,7 @@ export function useCategory() {
     getAllCategories,
     getCategoryById,
     deleteCategory,
+    createCategory,
+    updateCategory,
   }
 }
