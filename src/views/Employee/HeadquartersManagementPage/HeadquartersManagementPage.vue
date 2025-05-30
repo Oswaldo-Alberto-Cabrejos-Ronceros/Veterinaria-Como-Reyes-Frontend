@@ -22,7 +22,7 @@ import { useHeadquarter } from '@/composables/useHeadquarter'
 import type { FormValues as HeadquarterAddEditSchema } from '@/validation-schemas-forms/schema-add-edit-headquarter'
 
 //get from compose
-const { loading, error, getAllHeadquarters, createHeadquarter, updateHeadquarter } =
+const { loading, error, getAllHeadquarters, createHeadquarter, updateHeadquarter,deleteHeadquarter } =
   useHeadquarter()
 
 //headquarters
@@ -171,7 +171,7 @@ const confirm = useConfirm()
 
 //for delete with confirm popup
 
-const deleteHeadquarter = (event: MouseEvent | KeyboardEvent, headquarter: Headquarter) => {
+const deleteHeadquarterAction = (event: MouseEvent | KeyboardEvent, headquarter: Headquarter) => {
   confirm.require({
     target: event.currentTarget as HTMLElement,
     message: '¿Seguro que quiere eliminar esta sede?',
@@ -185,8 +185,10 @@ const deleteHeadquarter = (event: MouseEvent | KeyboardEvent, headquarter: Headq
       label: 'Eliminar',
       severity: 'danger',
     },
-    accept: () => {
+    accept: async () => {
       console.log('Eliminando Sede ', headquarter.id)
+      await deleteHeadquarter(headquarter.id)
+      loadHeadquarters()
     },
     reject: () => {
       console.log('Cancelando')
@@ -355,7 +357,7 @@ const exportCSV = () => {
                     variant="outlined"
                     aria-label="Filter"
                     rounded
-                    @click="deleteHeadquarter($event, data)"
+                    @click="deleteHeadquarterAction($event, data)"
                   ></Button>
                 </div>
               </template>
