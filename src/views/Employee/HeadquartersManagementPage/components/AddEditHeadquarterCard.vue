@@ -11,24 +11,28 @@ import type { FormValues } from '@/validation-schemas-forms/schema-add-edit-head
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/yup'
 import { ref } from 'vue'
+import Message from 'primevue/message'
 
 //form
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
-    location: '',
-    province: '',
-    district: '',
+    name: '',
     phone: '',
+    address: '',
     email: '',
+    district: '',
+    province: '',
+    departament: '',
   },
 })
 
 //fieldMap
 
 const fieldMap = {
-  location: defineField('location'),
+  name: defineField('name'),
   phone: defineField('phone'),
+  address: defineField('address'),
   email: defineField('email'),
 }
 
@@ -36,21 +40,30 @@ const fieldMap = {
 
 const [province, provinceAttrs] = defineField('province')
 const [district, districtAttrs] = defineField('district')
+const [departament, departamentAttrs] = defineField('departament')
 
 //textfields
 const textFields: { title: string; key: keyof typeof fieldMap; type: string; icon: string }[] = [
   {
-    title: 'Dirección',
-    key: 'location',
+    title: 'Nombre',
+    key: 'name',
     type: 'text',
-    icon: 'pi-map-marker',
+    icon: 'pi-user',
   },
+
   {
     title: 'Teléfono',
     key: 'phone',
     type: 'tel',
     icon: 'pi-mobile',
   },
+  {
+    title: 'Dirección',
+    key: 'address',
+    type: 'text',
+    icon: 'pi-map-marker',
+  },
+
   {
     title: 'Email',
     key: 'email',
@@ -88,6 +101,13 @@ const districts = [
   { name: 'Nazca', value: 'Nazca' },
 ]
 
+const departaments = [
+  { name: 'Ica', value: 'Ica' },
+  { name: 'Lima', value: 'Lima' },
+  { name: 'Arequipa', value: 'Arequipa' },
+  { name: 'Ancash', value: 'Ancash' },
+]
+
 //for title
 
 const title = ref<string>('Agregar')
@@ -114,6 +134,25 @@ onMounted(() => {
     </template>
     <template #content>
       <form @submit.prevent="onSubmit" class="form-dialog-layout">
+        <div v-for="element in textFields" :key="element.key">
+          <label class="block mb-2">{{ element.title }}</label>
+          <InputGroup>
+            <InputGroupAddon class="text-neutral-400">
+              <i :class="`pi ${element.icon}`"></i>
+            </InputGroupAddon>
+            <InputText
+              v-model="fieldMap[element.key][0].value"
+              v-bind="fieldMap[element.key][1]"
+              class="w-full"
+              :placeholder="element.title"
+              :type="element.type"
+            />
+          </InputGroup>
+          <Message v-if="errors[element.key]" severity="error" size="small" variant="simple">
+            {{ errors[element.key] }}
+          </Message>
+        </div>
+
         <!-- province -->
         <div>
           <label class="block mb-2">Province</label>
@@ -150,24 +189,24 @@ onMounted(() => {
           </Message>
         </div>
 
-        <div v-for="element in textFields" :key="element.key">
-          <label class="block mb-2">{{ element.title }}</label>
-          <InputGroup>
-            <InputGroupAddon class="text-neutral-400">
-              <i :class="`pi ${element.icon}`"></i>
-            </InputGroupAddon>
-            <InputText
-              v-model="fieldMap[element.key][0].value"
-              v-bind="fieldMap[element.key][1]"
-              class="w-full"
-              :placeholder="element.title"
-              :type="element.type"
-            />
-          </InputGroup>
-          <Message v-if="errors[element.key]" severity="error" size="small" variant="simple">
-            {{ errors[element.key] }}
+        <!-- departament -->
+        <div>
+          <label class="block mb-2">Departamento</label>
+          <Select
+            class="w-full"
+            v-bind="departamentAttrs"
+            v-model="departament"
+            :options="departaments"
+            optionLabel="name"
+            optionValue="value"
+            placeholder="Selecciona Departamento"
+          />
+
+          <Message v-if="errors.district" severity="error" size="small" variant="simple">
+            {{ errors.district }}
           </Message>
         </div>
+
         <div class="button-form-container-grid-end">
           <Button
             class="w-full max-w-md"

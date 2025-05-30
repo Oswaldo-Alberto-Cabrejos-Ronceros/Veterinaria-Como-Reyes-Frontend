@@ -28,13 +28,8 @@ onMounted(() => {
 
 const elements: { title: string; key: keyof Headquarter; icon: string }[] = [
   {
-    title: 'Distrito',
-    key: 'district',
-    icon: 'pi-map',
-  },
-  {
     title: 'Dirección',
-    key: 'location',
+    key: 'address',
     icon: 'pi-map-marker',
   },
   {
@@ -46,6 +41,21 @@ const elements: { title: string; key: keyof Headquarter; icon: string }[] = [
     title: 'Email',
     key: 'email',
     icon: 'pi-envelope',
+  },
+  {
+    title: 'Distrito',
+    key: 'district',
+    icon: 'pi-map',
+  },
+  {
+    title: 'Provincia',
+    key: 'province',
+    icon: 'pi-map',
+  },
+  {
+    title: 'Departamento',
+    key: 'departament',
+    icon: 'pi-map',
   },
 ]
 </script>
