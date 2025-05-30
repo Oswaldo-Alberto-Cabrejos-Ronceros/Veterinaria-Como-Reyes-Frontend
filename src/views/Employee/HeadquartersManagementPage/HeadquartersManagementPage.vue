@@ -10,8 +10,7 @@ import Select from 'primevue/select'
 import Button from 'primevue/button'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/yup'
-import { ref } from 'vue'
-import Headquarters from '@/assets/data/headquarters.json'
+import { onMounted, ref } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import { useConfirm, useDialog } from 'primevue'
@@ -19,12 +18,23 @@ import type { Headquarter } from '@/models/Headquarter'
 import AddEditHeadquarterCard from './components/AddEditHeadquarterCard.vue'
 import type { FormValues as AddEditHeadquarterSchema } from '@/validation-schemas-forms/schema-add-edit-headquarter'
 import ViewHeadquaterCard from './components/ViewHeadquaterCard.vue'
+import { useHeadquarter } from '@/composables/useHeadquarter'
+
+//get from compose
+const { loading, error, getAllHeadquarters } = useHeadquarter()
+
+//headquarters
+const headquarters = ref<Headquarter[]>([])
+
+onMounted(async () => {
+  headquarters.value = await getAllHeadquarters()
+})
 
 //form
 const { handleSubmit, errors, defineField } = useForm<SearchHeadquarterSchema>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
-    name:'',
+    name: '',
     address: '',
     province: '',
     district: '',
@@ -36,7 +46,7 @@ const { handleSubmit, errors, defineField } = useForm<SearchHeadquarterSchema>({
 //fieldMap
 
 const fieldMap = {
-  name:defineField('name'),
+  name: defineField('name'),
   address: defineField('address'),
   phone: defineField('phone'),
   email: defineField('email'),
@@ -55,7 +65,7 @@ const textFields: { title: string; key: keyof typeof fieldMap; type: string; ico
     type: 'text',
     icon: 'pi-info',
   },
-{
+  {
     title: 'Dirección',
     key: 'address',
     type: 'text',
@@ -99,45 +109,43 @@ const districts = [
 const dialog = useDialog()
 
 //for add
-const addHeadquarter = ()=>{
-  dialog.open(AddEditHeadquarterCard,{
-    props:{
-      modal:true
+const addHeadquarter = () => {
+  dialog.open(AddEditHeadquarterCard, {
+    props: {
+      modal: true,
     },
-    onClose:(data)=>{
-      if(data){
+    onClose: (data) => {
+      if (data) {
         console.log('Datos recibidos del dialogo', data)
       }
-    }
+    },
   })
 }
 
 //for view
-const viewHeadquarter = (headquarterData:Headquarter)=>{
-  dialog.open(ViewHeadquaterCard,{
-    props:{
-      modal:true
+const viewHeadquarter = (headquarterData: Headquarter) => {
+  dialog.open(ViewHeadquaterCard, {
+    props: {
+      modal: true,
     },
-    data:{
-headquarterData:headquarterData
-    }
+    data: {
+      headquarterData: headquarterData,
+    },
   })
 }
 
 //for edit
 
-const editHeadquarter =(headquarterData:Headquarter)=>{
-dialog.open(AddEditHeadquarterCard,{
-  props:{
-    modal:true
-  },
-  data:{
-    headquarterData:headquarterData as AddEditHeadquarterSchema
-  }
-})
+const editHeadquarter = (headquarterData: Headquarter) => {
+  dialog.open(AddEditHeadquarterCard, {
+    props: {
+      modal: true,
+    },
+    data: {
+      headquarterData: headquarterData as AddEditHeadquarterSchema,
+    },
+  })
 }
-
-
 
 //for confirm
 const confirm = useConfirm()
@@ -250,9 +258,18 @@ const exportCSV = () => {
             </div>
           </form>
 
+          <!-- for messague loading  -->
+          <Message v-if="loading.getAllHeadquarters" severity="warn" size="small" variant="simple">
+            Cargando ...
+          </Message>
+          <!-- for messague error -->
+          <Message v-if="error.getAllHeadquarters" severity="error" size="small" variant="simple">
+            Error al cargar los sedes
+          </Message>
+
           <!-- table -->
           <DataTable
-            :value="Headquarters"
+            :value="headquarters"
             paginator
             :rows="10"
             :rows-per-page-options="[5, 10]"
@@ -319,7 +336,7 @@ const exportCSV = () => {
                     variant="outlined"
                     aria-label="Filter"
                     rounded
-                    @click="deleteHeadquarter($event,data)"
+                    @click="deleteHeadquarter($event, data)"
                   ></Button>
                 </div>
               </template>
