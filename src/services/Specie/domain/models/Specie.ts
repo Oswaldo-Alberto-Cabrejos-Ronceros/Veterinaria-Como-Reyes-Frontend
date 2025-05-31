@@ -3,3 +3,8 @@ export interface Specie {
   name: string
   imagePath: string
 }
+
+export interface SpecieRequest {
+  name: string
+  imagePath: string
+}

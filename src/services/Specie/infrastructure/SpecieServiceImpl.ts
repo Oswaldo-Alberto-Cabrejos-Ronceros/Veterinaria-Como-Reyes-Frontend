@@ -1,5 +1,5 @@
 import type { SpecieService } from '../domain/services/SpecieService'
-import type { Specie } from '../domain/models/Specie'
+import type { Specie, SpecieRequest } from '../domain/models/Specie'
 import type { HttpClient } from '@/services/Http/model/HttpClient'
 
 export class SpecieServiceImpl implements SpecieService {
@@ -17,13 +17,13 @@ export class SpecieServiceImpl implements SpecieService {
     return response.data
   }
 
-  async createSpecie(specie: Specie): Promise<Specie> {
-    const response = await this.httpClient.post<Specie>(this.url, specie)
+  async createSpecie(specieRequest: SpecieRequest): Promise<Specie> {
+    const response = await this.httpClient.post<Specie>(this.url, specieRequest)
     return response.data
   }
 
-  async updateSpecie(specieId: number, specie: Specie): Promise<Specie> {
-    const response = await this.httpClient.put<Specie>(`${this.url}/${specieId}`, specie)
+  async updateSpecie(specieId: number, specieRequest: SpecieRequest): Promise<Specie> {
+    const response = await this.httpClient.put<Specie>(`${this.url}/${specieId}`, specieRequest)
     return response.data
   }
 

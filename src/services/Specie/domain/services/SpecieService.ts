@@ -1,9 +1,9 @@
-import type { Specie } from '../models/Specie'
+import type { Specie, SpecieRequest } from '../models/Specie'
 
 export interface SpecieService {
   getSpecieById(specieId: number): Promise<Specie>
   getAllSpecies(): Promise<Specie[]>
-  createSpecie(specie: Specie): Promise<Specie>
-  updateSpecie(specieId: number, specie: Specie): Promise<Specie>
+  createSpecie(specieRequest: SpecieRequest): Promise<Specie>
+  updateSpecie(specieId: number, specieRequest: SpecieRequest): Promise<Specie>
   deleteSpecie(specieId: number): Promise<void>
 }
