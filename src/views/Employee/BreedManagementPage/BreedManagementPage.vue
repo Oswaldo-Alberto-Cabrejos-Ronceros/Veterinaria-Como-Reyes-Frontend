@@ -62,7 +62,10 @@ const editPaymentMethod = (breedData:Breed)=>{
       modal:true
     },
     data:{
-      breedData: breedData as AddEditBreedSchema
+      breedData: {
+        name:breedData.name,
+        specieId:breedData.specie.id
+      } as AddEditBreedSchema
     }
   })
 }
@@ -176,7 +179,11 @@ const exportCSV = () => {
                 </div>
               </template>
                 <Column field="name" sortable header="Nombre" style="width: 40%"></Column>
-                <Column field="specie" sortable header="Especie" style="width: 30%" class=" hidden xs:table-cell"></Column>
+                <Column sortable header="Especie" style="width: 30%" class=" hidden xs:table-cell">
+                <template #body="{data}">
+                  {{ data.specie.name }}
+                </template>
+                </Column>
                 <Column>
                   <template #body="{ data }">
                     <div class="flex justify-between items-center flex-row xs:flex-col lg:flex-row gap-1">

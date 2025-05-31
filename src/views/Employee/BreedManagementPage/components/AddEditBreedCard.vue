@@ -18,15 +18,13 @@ const { handleSubmit, errors, defineField } = useForm<FormValues>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
     name: '',
-    specieId: undefined,
-    dirImage: '',
+    specieId: undefined
   },
 })
 
 //fields
 const [name, nameAttrs] = defineField('name')
 const [specieId, specieIdAttrs] = defineField('specieId')
-const [dirImage, dirImageAttrs] = defineField('dirImage')
 
 const dialogRef = inject('dialogRef') as Ref<{
   close: (data?: FormValues) => void
@@ -58,7 +56,6 @@ onMounted(() => {
       title.value = 'Editar'
       name.value = params.name
       specieId.value = params.specieId
-      dirImage.value = params.dirImage
     }
   }
 })
@@ -99,25 +96,6 @@ onMounted(() => {
 
           <Message v-if="errors.specieId" severity="error" size="small" variant="simple">
             {{ errors.specieId }}
-          </Message>
-        </div>
-
-        <!-- name -->
-        <div>
-          <label class="block mb-2">Imagen</label>
-          <InputGroup>
-            <InputGroupAddon class="text-neutral-400">
-              <i class="pi pi-image"></i>
-            </InputGroupAddon>
-            <InputText
-              v-model="dirImage"
-              v-bind="dirImageAttrs"
-              class="w-full"
-              placeholder="Imagen"
-            />
-          </InputGroup>
-          <Message v-if="errors.dirImage" severity="error" size="small" variant="simple">
-            {{ errors.dirImage }}
           </Message>
         </div>
         <div class="button-form-container-grid-end">
