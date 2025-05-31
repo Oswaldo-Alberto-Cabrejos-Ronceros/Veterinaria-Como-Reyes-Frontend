@@ -3,6 +3,7 @@ import { useAsyncHandler } from './useAsyncHandler'
 import type { Specie } from '@/services/Specie/domain/models/Specie'
 import { SpecieAdapter } from '@/adapters/SpecieAdapter'
 import type { Specie as SpecieView } from '@/models/Specie'
+import type { FormValues as SpecieAddEditSchema } from '@/validation-schemas-forms/schema-add-edit-specie'
 
 export function useSpecie() {
   //get from useAsyncHandle
@@ -11,6 +12,14 @@ export function useSpecie() {
   //expose use cases
 
   //create
+
+  const createSpecie = async (schemaAddEdit: SpecieAddEditSchema): Promise<SpecieView> => {
+    const specieRequest = SpecieAdapter.fromSchemaAddEditToSpecieRequest(schemaAddEdit)
+    const specie = await runUseCase('createSpecie', () =>
+      specieUsesCases.createSpecie.execute(specieRequest),
+    )
+    return SpecieAdapter.toSpecieView(specie)
+  }
 
   const deleteSpecie = async (specieId: number) => {
     await runUseCase('deleteSpecie', () => specieUsesCases.deleteSpecie.execute(specieId))
@@ -32,12 +41,24 @@ export function useSpecie() {
   }
 
   //update
+  const updateSpecie = async (
+    specieId: number,
+    schemaAddEdit: SpecieAddEditSchema,
+  ): Promise<SpecieView> => {
+    const specieRequest = SpecieAdapter.fromSchemaAddEditToSpecieRequest(schemaAddEdit)
+    const specie: Specie = await runUseCase('updateSpecie', () =>
+      specieUsesCases.updateSpecie.execute(specieId, specieRequest),
+    )
+    return SpecieAdapter.toSpecieView(specie)
+  }
 
   return {
     loading,
     error,
+    createSpecie,
     deleteSpecie,
     getAllSpecies,
     getSpecieById,
+    updateSpecie,
   }
 }
