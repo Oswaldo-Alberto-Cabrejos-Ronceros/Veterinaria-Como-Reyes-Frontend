@@ -12,7 +12,9 @@ import type { FormValues } from '@/validation-schemas-forms/schema-add-edit-bree
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/yup'
 import { ref } from 'vue'
+import type { OptionSelect } from '@/models/OptionSelect'
 //form
+
 
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
   validationSchema: toTypedSchema(schema),
@@ -26,21 +28,21 @@ const { handleSubmit, errors, defineField } = useForm<FormValues>({
 const [name, nameAttrs] = defineField('name')
 const [specieId, specieIdAttrs] = defineField('specieId')
 
+//species options
+
+const speciesOptions=ref<OptionSelect[]>([])
+
 const dialogRef = inject('dialogRef') as Ref<{
   close: (data?: FormValues) => void
   data: {
-    breedData?: FormValues
+    breedData?: FormValues,
+    speciesOptions?:OptionSelect[]
   }
 }>
 
 //title
 const title = ref<string>('Agregar')
 
-//roles
-const species = [
-  { name: 'Perro', value: 1 },
-  { name: 'Gato', value: 2 },
-]
 
 const onSubmit = handleSubmit((values) => {
   console.log(values)
@@ -51,11 +53,16 @@ onMounted(() => {
   if (dialogRef.value.data) {
     console.log(dialogRef.value.data)
     const params = dialogRef.value.data.breedData
+    const speciesOptionsGet = dialogRef.value.data.speciesOptions
     //set data if edit
     if (params) {
       title.value = 'Editar'
       name.value = params.name
       specieId.value = params.specieId
+    }
+    //si existen opciones para species
+    if(speciesOptionsGet){
+      speciesOptions.value=speciesOptionsGet
     }
   }
 })
@@ -88,7 +95,7 @@ onMounted(() => {
             class="w-full"
             v-bind="specieIdAttrs"
             v-model="specieId"
-            :options="species"
+            :options="speciesOptions"
             optionLabel="name"
             optionValue="value"
             placeholder="Selecciona Especie"
