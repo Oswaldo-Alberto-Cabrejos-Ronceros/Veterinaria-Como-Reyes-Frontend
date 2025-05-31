@@ -18,6 +18,7 @@ const { handleSubmit, errors, defineField } = useForm<FormValues>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
     name: '',
+    imagePath:''
   },
 })
 
@@ -48,6 +49,7 @@ onMounted(()=>{
     if(params){
       title.value='Editar'
       name.value = params.name
+      imagePath.value=params.imagePath
     }
   }
 })

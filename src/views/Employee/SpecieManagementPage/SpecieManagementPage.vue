@@ -21,7 +21,7 @@ import { useSpecie } from '@/composables/useSpecie'
 
 //for get species
 
-const { loading, error, getAllSpecies } = useSpecie()
+const { loading, error, getAllSpecies, createSpecie, updateSpecie,deleteSpecie } = useSpecie()
 
 const species = ref<Specie[]>([])
 
@@ -64,9 +64,12 @@ const addSpecie = () => {
     props: {
       modal: true,
     },
-    onClose: (data) => {
+    onClose: async (options) => {
+      const data = options?.data as AddEditSpecieSchema
       if (data) {
-        console.log('Datps recibidos', data)
+        const specie = await createSpecie(data)
+        console.log('Datos recibidos del dialogo', specie)
+        loadSpecies()
       }
     },
   })
@@ -80,6 +83,14 @@ const editPaymentMethod = (specieData: Specie) => {
     data: {
       specieData: specieData as AddEditSpecieSchema,
     },
+    onClose: async (options) => {
+      const data = options?.data as AddEditSpecieSchema
+      if (data) {
+        const specie = await updateSpecie(specieData.id, data)
+        console.log('Datos recibidos del dialogo', specie)
+        loadSpecies()
+      }
+    },
   })
 }
 
@@ -88,7 +99,7 @@ const confirm = useConfirm()
 
 //for delete with confirm popup
 
-const deleteSpecie = (event: MouseEvent | KeyboardEvent, specieData: Specie) => {
+const deleteSpecieAction = (event: MouseEvent | KeyboardEvent, specieData: Specie) => {
   confirm.require({
     target: event.currentTarget as HTMLElement,
     message: '¿Seguro que quiere eliminar esta especie?',
@@ -102,8 +113,13 @@ const deleteSpecie = (event: MouseEvent | KeyboardEvent, specieData: Specie) => 
       label: 'Eliminar',
       severity: 'danger',
     },
-    accept: () => {
+    accept: async () => {
       console.log('Eliminando método ', specieData.id)
+      await deleteSpecie(specieData.id)
+      loadSpecies()
+      if(error.deleteSpecie){
+        console.log(error.deleteSpecie)
+      }
     },
     reject: () => {
       console.log('Cancelando')
@@ -194,7 +210,7 @@ const deleteSpecie = (event: MouseEvent | KeyboardEvent, specieData: Specie) => 
                     variant="outlined"
                     aria-label="Filter"
                     rounded
-                    @click="deleteSpecie($event, data)"
+                    @click="deleteSpecieAction($event, data)"
                   ></Button>
                 </div>
               </template>
