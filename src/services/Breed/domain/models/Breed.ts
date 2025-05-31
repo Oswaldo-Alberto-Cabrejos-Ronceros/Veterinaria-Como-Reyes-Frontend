@@ -7,3 +7,10 @@ export interface Breed {
     imagePath:string
   }
 }
+
+export interface BreedRequest {
+  name:string,
+  specie:{
+    specieId:number
+  }
+}

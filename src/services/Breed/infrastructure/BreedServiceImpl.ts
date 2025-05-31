@@ -1,5 +1,5 @@
 import type { BreedService } from '../domain/services/BreedService'
-import type { Breed } from '../domain/models/Breed'
+import type { Breed, BreedRequest } from '../domain/models/Breed'
 import type { HttpClient } from '@/services/Http/model/HttpClient'
 
 export class BreedServiceImpl implements BreedService {
@@ -22,13 +22,13 @@ export class BreedServiceImpl implements BreedService {
     return response.data
   }
 
-  async createBreed(breed: Breed): Promise<Breed> {
-    const response = await this.httpClient.post<Breed>(this.url, breed)
+  async createBreed(breedRequest: BreedRequest): Promise<Breed> {
+    const response = await this.httpClient.post<Breed>(this.url, breedRequest)
     return response.data
   }
 
-  async updateBreed(breedId: number, breed: Breed): Promise<Breed> {
-    const response = await this.httpClient.put<Breed>(`${this.url}/${breedId}`, breed)
+  async updateBreed(breedId: number, breedRequest: BreedRequest): Promise<Breed> {
+    const response = await this.httpClient.put<Breed>(`${this.url}/${breedId}`, breedRequest)
     return response.data
   }
 
