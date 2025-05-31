@@ -33,6 +33,6 @@ export class BreedServiceImpl implements BreedService {
   }
 
   async deleteBreed(breedId: number): Promise<void> {
-    await this.httpClient.delete(this.url, { data: breedId })
+    await this.httpClient.delete(`${this.url}/${breedId}`)
   }
 }

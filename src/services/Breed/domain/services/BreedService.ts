@@ -1,4 +1,3 @@
-import type { PageResponse } from '@/services/models/PageResponse'
 import type { Breed } from '../models/Breed'
 
 export interface BreedService {
