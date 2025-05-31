@@ -9,15 +9,31 @@ import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
 import Message from 'primevue/message'
 import Button from 'primevue/button'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import Species from '@/assets/data/species.json'
 import type { Specie } from '@/models/Specie'
 import { useConfirm } from 'primevue'
 import { useDialog } from 'primevue'
 import AddEditSpecie from './components/AddEditSpecieCard.vue'
-import type {FormValues as AddEditSpecieSchema} from '@/validation-schemas-forms/schema-add-edit-specie'
+import type { FormValues as AddEditSpecieSchema } from '@/validation-schemas-forms/schema-add-edit-specie'
+import { useSpecie } from '@/composables/useSpecie'
+
+//for get species
+
+const { loading, error, getAllSpecies } = useSpecie()
+
+const species = ref<Specie[]>([])
+
+onMounted(() => {
+  loadSpecies()
+})
+
+//for load species
+const loadSpecies = async () => {
+  species.value = await getAllSpecies()
+}
+
 //form
 const { handleSubmit, errors, defineField } = useForm<SearchSpecieSchema>({
   validationSchema: toTypedSchema(schema),
@@ -43,30 +59,29 @@ const exportCSV = () => {
 
 const dialog = useDialog()
 
-const addSpecie = ()=>{
-  dialog.open(AddEditSpecie,{
-    props:{
-      modal:true
+const addSpecie = () => {
+  dialog.open(AddEditSpecie, {
+    props: {
+      modal: true,
     },
-    onClose:(data)=>{
-      if(data){
-        console.log('Datps recibidos', data )
+    onClose: (data) => {
+      if (data) {
+        console.log('Datps recibidos', data)
       }
-    }
-  })
-}
-
-const editPaymentMethod = (specieData:Specie)=>{
-  dialog.open(AddEditSpecie,{
-    props:{
-      modal:true
     },
-    data:{
-      specieData: specieData as AddEditSpecieSchema
-    }
   })
 }
 
+const editPaymentMethod = (specieData: Specie) => {
+  dialog.open(AddEditSpecie, {
+    props: {
+      modal: true,
+    },
+    data: {
+      specieData: specieData as AddEditSpecieSchema,
+    },
+  })
+}
 
 //for confirm
 const confirm = useConfirm()
@@ -130,9 +145,19 @@ const deleteSpecie = (event: MouseEvent | KeyboardEvent, specieData: Specie) => 
               />
             </div>
           </form>
+
+          <!-- for messague loading  -->
+          <Message v-if="loading.getAllSpecies" severity="warn" size="small" variant="simple">
+            Cargando ...
+          </Message>
+          <!-- for messague error -->
+          <Message v-if="error.getAllSpecies" severity="error" size="small" variant="simple">
+            Error al cargar las species
+          </Message>
+
           <!-- table -->
           <DataTable
-            :value="Species"
+            :value="species"
             paginator
             :rows="10"
             :rows-per-page-options="[5, 10]"
