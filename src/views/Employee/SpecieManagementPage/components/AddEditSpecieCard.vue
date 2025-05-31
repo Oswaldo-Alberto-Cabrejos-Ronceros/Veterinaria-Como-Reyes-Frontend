@@ -23,6 +23,7 @@ const { handleSubmit, errors, defineField } = useForm<FormValues>({
 
 //fields
 const [name, nameAttrs] = defineField('name')
+const [imagePath,imagePathAttrs] = defineField('imagePath')
 
 const dialogRef = inject('dialogRef') as Ref<{
   close: (data?: FormValues) => void,
@@ -75,6 +76,19 @@ onMounted(()=>{
           </Message>
         </div>
 
+                <!-- image -->
+        <div>
+          <label class="block mb-2">Image</label>
+          <InputGroup>
+            <InputGroupAddon class="text-neutral-400">
+              <i class="pi pi-image"></i>
+            </InputGroupAddon>
+            <InputText v-model="imagePath" v-bind="imagePathAttrs" class="w-full" placeholder="Imagen" />
+          </InputGroup>
+          <Message v-if="errors.imagePath" severity="error" size="small" variant="simple">
+            {{ errors.imagePath }}
+          </Message>
+        </div>
         <Button
           class="w-full max-w-md"
           :label="title"
