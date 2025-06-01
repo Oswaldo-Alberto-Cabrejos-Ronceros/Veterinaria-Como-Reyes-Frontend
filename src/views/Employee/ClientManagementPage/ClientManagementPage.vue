@@ -24,7 +24,7 @@ import type { FormValues as SchemaClientAdd } from '@/validation-schemas-forms/s
 import { useClient } from '@/composables/useClient'
 
 //methods
-const { loading, error, getAllClients, createClient, updateClient } = useClient()
+const { loading, error, getAllClients, createClient, updateClient,deleteClient } = useClient()
 
 //clients
 
@@ -120,7 +120,7 @@ const editClient = (clientData: Client) => {
 const confirm = useConfirm()
 
 //for delete with confirm popup
-const deleteClient = (event: MouseEvent | KeyboardEvent, client: Client) => {
+const deleteClientAction = (event: MouseEvent | KeyboardEvent, client: Client) => {
   confirm.require({
     target: event.currentTarget as HTMLElement,
     message: '¿Seguro que quiere eliminar a este empleado?',
@@ -134,8 +134,10 @@ const deleteClient = (event: MouseEvent | KeyboardEvent, client: Client) => {
       label: 'Eliminar',
       severity: 'danger',
     },
-    accept: () => {
+    accept: async () => {
       console.log('Eliminando Empleado ', client.clientId)
+      await deleteClient(client.clientId)
+      loadClients()
     },
     reject: () => {
       console.log('Cancelando')
@@ -304,7 +306,7 @@ const exportCSV = () => {
                     variant="outlined"
                     aria-label="Filter"
                     rounded
-                    @click="deleteClient($event, data)"
+                    @click="deleteClientAction($event, data)"
                   ></Button>
                 </div>
               </template>
