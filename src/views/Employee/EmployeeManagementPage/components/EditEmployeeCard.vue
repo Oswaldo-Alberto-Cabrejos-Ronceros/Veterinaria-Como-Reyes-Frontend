@@ -12,8 +12,8 @@ import Select from 'primevue/select'
 import Button from 'primevue/button'
 import DatePicker from 'primevue/datepicker'
 import type { Ref } from 'vue'
-import type { EditEmployee } from '@/models/EditEmployee'
-import { inject, onMounted } from 'vue'
+import { inject, onMounted, ref } from 'vue'
+import type { OptionSelect } from '@/models/OptionSelect'
 //form
 
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
@@ -94,39 +94,44 @@ const textFields: { title: string; key: keyof typeof fieldMap; icon: string }[] 
 
 const onSubmit = handleSubmit((values) => {
   console.log(values)
-  dialogRef.value.close(values as EditEmployee)
+  dialogRef.value.close(values)
 })
 
-//for roles
-const roles = [
-  { name: 'Veterinario', value: 1 },
-  { name: 'Recepcionista', value: 2 },
-  { name: 'Jefe de sede', value: 3 },
-]
+//headquarter options
+const headquartersOptions = ref<OptionSelect[]>([])
 
-//headquarterIds
-const headquarkers = [
-  { name: 'Ica', value: 1 },
-  { name: 'Parcona', value: 2 },
-  { name: 'Tinguiña', value: 3 },
-]
+//roles options
+const rolesOptions = ref<OptionSelect[]>([])
 
 //for dynamicDialog
 const dialogRef = inject('dialogRef') as Ref<{
-  close: (data?: EditEmployee) => void
+  close: (data?: FormValues) => void
   data: {
-    employeeData: EditEmployee
+    employeeData?: FormValues
+    headquartersOptions?: OptionSelect[]
+    rolesOptions?: OptionSelect[]
   }
 }>
 onMounted(() => {
-  const params = dialogRef.value.data
-  Object.entries(fieldMap).forEach(([key, [value]]) => {
-    value.value = String(params.employeeData[key as keyof typeof params.employeeData]) ?? ''
-  })
-  headquarterId.value = params.employeeData.headquarterId
-  if (params.employeeData.birthdate instanceof Date) birthdate.value = params.employeeData.birthdate
-  roleId.value = params.employeeData.roleId
-  console.log(params.employeeData.birthdate)
+  if (dialogRef.value.data) {
+    const params = dialogRef.value.data.employeeData
+    const headquartersOptionsGet = dialogRef.value.data.headquartersOptions
+    const rolesOptionsGet = dialogRef.value.data.rolesOptions
+    if (params) {
+      Object.entries(fieldMap).forEach(([key, [value]]) => {
+        value.value = String(params[key as keyof typeof params])
+      })
+      headquarterId.value = params.headquarterId
+      birthdate.value = params.birthdate
+      roleId.value = params.roleId
+    }
+    if (headquartersOptionsGet) {
+      headquartersOptions.value = headquartersOptionsGet
+    }
+    if (rolesOptionsGet) {
+      rolesOptions.value = rolesOptionsGet
+    }
+  }
 })
 </script>
 
@@ -174,7 +179,7 @@ onMounted(() => {
             class="w-full"
             v-bind="roleIdAttrs"
             v-model="roleId"
-            :options="roles"
+            :options="rolesOptions"
             optionLabel="name"
             optionValue="value"
             placeholder="Selecciona Rol"
@@ -190,7 +195,7 @@ onMounted(() => {
             class="w-full"
             v-bind="headquarterIdAttrs"
             v-model="headquarterId"
-            :options="headquarkers"
+            :options="headquartersOptions"
             optionLabel="name"
             optionValue="value"
             placeholder="Selecciona Sede"
