@@ -3,6 +3,7 @@ import { useAsyncHandler } from './useAsyncHandler'
 import type { Client } from '@/services/Client/domain/models/Client'
 import type { Client as ClientView } from '@/models/Client'
 import { ClientAdapter } from '@/adapters/ClientAdapter'
+import type { FormValues as ClientAddSchema } from '@/validation-schemas-forms/schema-add-client'
 import type { PageResponse } from '@/services/models/PageResponse'
 
 export function useClient() {
@@ -15,9 +16,10 @@ export function useClient() {
   }
 
   //fix
-  const createClient = async (client: Client): Promise<ClientView> => {
+  const createClient = async (clientAddSchema: ClientAddSchema): Promise<ClientView> => {
+    const clientRequest = ClientAdapter.fromSchemaAddToClientRequest(clientAddSchema)
     const clientCreate: Client = await runUseCase('createClient', () =>
-      clientUsesCases.createClient.execute(client),
+      clientUsesCases.createClient.execute(clientRequest),
     )
     //adapt
     return ClientAdapter.toClientView(clientCreate)
@@ -74,12 +76,12 @@ export function useClient() {
   }
 
   //fix
-  const updateClient = async (clientId: number, client: Client): Promise<ClientView> => {
+  /*const updateClient = async (clientId: number, client: Client): Promise<ClientView> => {
     const clientUpdated = await runUseCase('updateClient', () =>
       clientUsesCases.updateClient.execute(clientId, client),
     )
     return ClientAdapter.toClientView(clientUpdated)
-  }
+  }*/
 
   //fix
   const updateClientAsClient = async (clientId: number, client: Client): Promise<string> => {
@@ -98,7 +100,7 @@ export function useClient() {
     myInfoAsClient,
     searchClient,
     updateBlockNote,
-    updateClient,
+
     updateClientAsClient
   }
 }
