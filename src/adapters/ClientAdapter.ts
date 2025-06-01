@@ -1,6 +1,7 @@
 import type { Client, ClientRequest } from '@/services/Client/domain/models/Client'
 import type { Client as ClientView } from '@/models/Client'
 import type { FormValues as ClientAddSchema } from '@/validation-schemas-forms/schema-add-client'
+import type { FormValues as ClientEditSchema } from '@/validation-schemas-forms/schema-edit-client'
 import { DateAdapter } from './DateAdapter'
 
 export class ClientAdapter {
@@ -39,6 +40,21 @@ export class ClientAdapter {
       user: {
         email: schemaAdd.email,
         password: schemaAdd.password,
+      },
+    }
+  }
+
+  //para adaptar de schema edit a ClientRequest
+  static fromSchemaEditToClientRequest(schemaEdit: ClientEditSchema): ClientRequest {
+    return {
+      dni: schemaEdit.dni,
+      name: schemaEdit.names,
+      lastName: schemaEdit.lastnames,
+      address: schemaEdit.address,
+      phone: schemaEdit.phone,
+      birthDate: DateAdapter.toDateYYYYmmDD(schemaEdit.birthdate),
+      headquarter: {
+        headquarterId: schemaEdit.headquarterId,
       },
     }
   }
