@@ -26,11 +26,11 @@ export interface ClientRequest {
   address: string
   phone: string
   birthDate: string
-  dirImage: string
+  dirImage?: string
   headquarter: {
     headquarterId: number
   }
-  user: {
+  user?: {
     email: string
     password: string
   }
