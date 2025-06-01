@@ -52,7 +52,7 @@ export class ClientServiceImpl implements ClientService {
     return response.data
   }
   async updateClient(clientId: number,clientRequest: ClientRequest): Promise<Client> {
-    const response = await this.httpClient.put<Client>(`${this.urlBase}/${clientId}}`, clientRequest)
+    const response = await this.httpClient.put<Client>(`${this.urlBase}/${clientId}`, clientRequest)
     return response.data
   }
   async blockClient(clientId: number, note: string): Promise<void> {

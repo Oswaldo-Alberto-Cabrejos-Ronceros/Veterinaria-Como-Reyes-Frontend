@@ -76,7 +76,6 @@ export function useClient() {
     )
   }
 
-  //fix
   const updateClient = async (
     clientId: number,
     clientEditSchema: ClientEditSchema,

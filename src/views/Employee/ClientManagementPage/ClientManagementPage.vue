@@ -24,7 +24,7 @@ import type { FormValues as SchemaClientAdd } from '@/validation-schemas-forms/s
 import { useClient } from '@/composables/useClient'
 
 //methods
-const { loading, error, getAllClients, createClient } = useClient()
+const { loading, error, getAllClients, createClient, updateClient } = useClient()
 
 //clients
 
@@ -104,9 +104,13 @@ const editClient = (clientData: Client) => {
     props: {
       modal: true,
     },
-    onClose: (data) => {
+    onClose: async (options) => {
+      const data = options?.data as SchemaEditClient
       if (data) {
-        console.log('Datos recibidos del dialogo:', data)
+        console.log(clientData)
+        const client = await updateClient(clientData.clientId, data)
+        console.log('Datos recibidos', client)
+        loadClients()
       }
     },
   })
