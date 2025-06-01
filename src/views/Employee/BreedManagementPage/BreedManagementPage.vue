@@ -25,7 +25,7 @@ import { useSpecie } from '@/composables/useSpecie'
 
 //get from compose
 
-const { loading, error, getAllBreeds, createBreed, updateBreed } = useBreed()
+const { loading, error, getAllBreeds, createBreed, updateBreed, deleteBreed } = useBreed()
 
 const { getAllSpecies } = useSpecie()
 
@@ -119,7 +119,7 @@ const confirm = useConfirm()
 
 //for delete with confirm popup
 
-const deleteBreed = (event: MouseEvent | KeyboardEvent, breedData: Breed) => {
+const deleteBreedAction = (event: MouseEvent | KeyboardEvent, breedData: Breed) => {
   confirm.require({
     target: event.currentTarget as HTMLElement,
     message: '¿Seguro que quiere eliminar esta raza?',
@@ -133,8 +133,10 @@ const deleteBreed = (event: MouseEvent | KeyboardEvent, breedData: Breed) => {
       label: 'Eliminar',
       severity: 'danger',
     },
-    accept: () => {
+    accept: async () => {
       console.log('Eliminando método ', breedData.id)
+      await deleteBreed(breedData.id)
+      loadBreeds()
     },
     reject: () => {
       console.log('Cancelando')
@@ -263,7 +265,7 @@ const exportCSV = () => {
                     variant="outlined"
                     aria-label="Filter"
                     rounded
-                    @click="deleteBreed($event, data)"
+                    @click="deleteBreedAction($event, data)"
                   ></Button>
                 </div>
               </template>
