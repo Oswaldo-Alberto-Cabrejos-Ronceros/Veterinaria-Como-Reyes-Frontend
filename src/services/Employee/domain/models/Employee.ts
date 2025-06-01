@@ -1,7 +1,7 @@
 export interface Employee {
   employeeId: number
   dni: string
-  cmvp: string
+  cmvp?: string
   name: string
   lastName: string
   address: string
@@ -22,7 +22,7 @@ export interface Employee {
 
 export interface EmployeeRequest {
   dni: string
-  cmvp: string
+  cmvp?: string
   name: string
   lastName: string
   address: string
