@@ -18,3 +18,20 @@ export interface Client {
   }
   blockNote?: string
 }
+
+export interface ClientRequest {
+  dni: string
+  name: string
+  lastName: string
+  address: string
+  phone: string
+  birthDate: string
+  dirImage: string
+  headquarter: {
+    headquarterId: number
+  }
+  user: {
+    email: string
+    password: string
+  }
+}

@@ -1,5 +1,5 @@
 import type { PageResponse } from '@/services/models/PageResponse'
-import type { Client } from '../domain/models/Client'
+import type { Client,ClientRequest } from '../domain/models/Client'
 import type { ClientService } from '../domain/services/ClientService'
 import type { HttpClient } from '@/services/Http/model/HttpClient'
 
@@ -43,16 +43,16 @@ export class ClientServiceImpl implements ClientService {
     )
     return response.data
   }
-  async createClient(client: Client): Promise<Client> {
-    const response = await this.httpClient.post<Client>(this.urlBase, client)
+  async createClient(clientRequest: ClientRequest): Promise<Client> {
+    const response = await this.httpClient.post<Client>(this.urlBase, clientRequest)
     return response.data
   }
   async getAllClients(): Promise<Client[]> {
     const response = await this.httpClient.get<Client[]>(this.urlBase)
     return response.data
   }
-  async updateClient(clientId: number, client: Client): Promise<Client> {
-    const response = await this.httpClient.put<Client>(`${this.urlBase}/${clientId}}`, client)
+  async updateClient(clientId: number,clientRequest: ClientRequest): Promise<Client> {
+    const response = await this.httpClient.put<Client>(`${this.urlBase}/${clientId}}`, clientRequest)
     return response.data
   }
   async blockClient(clientId: number, note: string): Promise<void> {
