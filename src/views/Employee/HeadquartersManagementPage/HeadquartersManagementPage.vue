@@ -10,8 +10,7 @@ import Select from 'primevue/select'
 import Button from 'primevue/button'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/yup'
-import { ref } from 'vue'
-import Headquarters from '@/assets/data/headquarters.json'
+import { onMounted, ref } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import { useConfirm, useDialog } from 'primevue'
@@ -19,12 +18,32 @@ import type { Headquarter } from '@/models/Headquarter'
 import AddEditHeadquarterCard from './components/AddEditHeadquarterCard.vue'
 import type { FormValues as AddEditHeadquarterSchema } from '@/validation-schemas-forms/schema-add-edit-headquarter'
 import ViewHeadquaterCard from './components/ViewHeadquaterCard.vue'
+import { useHeadquarter } from '@/composables/useHeadquarter'
+import type { FormValues as HeadquarterAddEditSchema } from '@/validation-schemas-forms/schema-add-edit-headquarter'
+
+//get from compose
+const { loading, error, getAllHeadquarters, createHeadquarter, updateHeadquarter,deleteHeadquarter } =
+  useHeadquarter()
+
+//headquarters
+const headquarters = ref<Headquarter[]>([])
+
+onMounted(async () => {
+  loadHeadquarters()
+})
+
+//for load headquartes
+
+const loadHeadquarters = async () => {
+  headquarters.value = await getAllHeadquarters()
+}
 
 //form
 const { handleSubmit, errors, defineField } = useForm<SearchHeadquarterSchema>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
-    location: '',
+    name: '',
+    address: '',
     province: '',
     district: '',
     phone: '',
@@ -35,7 +54,8 @@ const { handleSubmit, errors, defineField } = useForm<SearchHeadquarterSchema>({
 //fieldMap
 
 const fieldMap = {
-  location: defineField('location'),
+  name: defineField('name'),
+  address: defineField('address'),
   phone: defineField('phone'),
   email: defineField('email'),
 }
@@ -48,8 +68,14 @@ const [district, districtAttrs] = defineField('district')
 //textfields
 const textFields: { title: string; key: keyof typeof fieldMap; type: string; icon: string }[] = [
   {
+    title: 'Name',
+    key: 'name',
+    type: 'text',
+    icon: 'pi-info',
+  },
+  {
     title: 'Dirección',
-    key: 'location',
+    key: 'address',
     type: 'text',
     icon: 'pi-map-marker',
   },
@@ -91,52 +117,61 @@ const districts = [
 const dialog = useDialog()
 
 //for add
-const addHeadquarter = ()=>{
-  dialog.open(AddEditHeadquarterCard,{
-    props:{
-      modal:true
+const addHeadquarter = () => {
+  dialog.open(AddEditHeadquarterCard, {
+    props: {
+      modal: true,
     },
-    onClose:(data)=>{
-      if(data){
-        console.log('Datos recibidos del dialogo', data)
+    onClose: async (options) => {
+      const data = options?.data as HeadquarterAddEditSchema
+      if (data) {
+        const headquarter = await createHeadquarter(data)
+        console.log('Datos recibidos del dialogo', headquarter)
+        loadHeadquarters()
       }
-    }
+    },
   })
 }
 
 //for view
-const viewHeadquarter = (headquarterData:Headquarter)=>{
-  dialog.open(ViewHeadquaterCard,{
-    props:{
-      modal:true
+const viewHeadquarter = (headquarterData: Headquarter) => {
+  dialog.open(ViewHeadquaterCard, {
+    props: {
+      modal: true,
     },
-    data:{
-headquarterData:headquarterData
-    }
+    data: {
+      headquarterData: headquarterData,
+    },
   })
 }
 
 //for edit
 
-const editHeadquarter =(headquarterData:Headquarter)=>{
-dialog.open(AddEditHeadquarterCard,{
-  props:{
-    modal:true
-  },
-  data:{
-    headquarterData:headquarterData as AddEditHeadquarterSchema
-  }
-})
+const editHeadquarter = (headquarterData: Headquarter) => {
+  dialog.open(AddEditHeadquarterCard, {
+    props: {
+      modal: true,
+    },
+    data: {
+      headquarterData: headquarterData as AddEditHeadquarterSchema,
+    },
+    onClose: async (options) => {
+      const data = options?.data as HeadquarterAddEditSchema
+      if (data) {
+        const headquarter = await updateHeadquarter(headquarterData.id, data)
+        console.log(headquarter)
+        loadHeadquarters()
+      }
+    },
+  })
 }
-
-
 
 //for confirm
 const confirm = useConfirm()
 
 //for delete with confirm popup
 
-const deleteHeadquarter = (event: MouseEvent | KeyboardEvent, headquarter: Headquarter) => {
+const deleteHeadquarterAction = (event: MouseEvent | KeyboardEvent, headquarter: Headquarter) => {
   confirm.require({
     target: event.currentTarget as HTMLElement,
     message: '¿Seguro que quiere eliminar esta sede?',
@@ -150,8 +185,10 @@ const deleteHeadquarter = (event: MouseEvent | KeyboardEvent, headquarter: Headq
       label: 'Eliminar',
       severity: 'danger',
     },
-    accept: () => {
+    accept: async () => {
       console.log('Eliminando Sede ', headquarter.id)
+      await deleteHeadquarter(headquarter.id)
+      loadHeadquarters()
     },
     reject: () => {
       console.log('Cancelando')
@@ -242,9 +279,18 @@ const exportCSV = () => {
             </div>
           </form>
 
+          <!-- for messague loading  -->
+          <Message v-if="loading.getAllHeadquarters" severity="warn" size="small" variant="simple">
+            Cargando ...
+          </Message>
+          <!-- for messague error -->
+          <Message v-if="error.getAllHeadquarters" severity="error" size="small" variant="simple">
+            Error al cargar los sedes
+          </Message>
+
           <!-- table -->
           <DataTable
-            :value="Headquarters"
+            :value="headquarters"
             paginator
             :rows="10"
             :rows-per-page-options="[5, 10]"
@@ -262,7 +308,7 @@ const exportCSV = () => {
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
             </template>
-            <Column field="location" sortable header="Dirección" style="width: 25%"></Column>
+            <Column field="address" sortable header="Dirección" style="width: 25%"></Column>
             <Column
               field="district"
               class="hidden lg:table-cell"
@@ -311,7 +357,7 @@ const exportCSV = () => {
                     variant="outlined"
                     aria-label="Filter"
                     rounded
-                    @click="deleteHeadquarter($event,data)"
+                    @click="deleteHeadquarterAction($event, data)"
                   ></Button>
                 </div>
               </template>

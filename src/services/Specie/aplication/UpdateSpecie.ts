@@ -1,10 +1,10 @@
 import type { SpecieService } from '../domain/services/SpecieService'
-import type { Specie } from '../domain/models/Specie'
+import type { Specie, SpecieRequest } from '../domain/models/Specie'
 
-export class GetAllSpecies {
+export class UpdateSpecie {
   constructor(private readonly service: SpecieService) {}
 
-  async execute(): Promise<Specie[]> {
-    return await this.service.getAllSpecies()
+  async execute(specieId: number, specieRequest:SpecieRequest): Promise<Specie> {
+    return await this.service.updateSpecie(specieId, specieRequest)
   }
 }

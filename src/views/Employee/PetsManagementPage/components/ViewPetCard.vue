@@ -58,12 +58,7 @@ const elements: { title: string; key: keyof Pet; icon: string }[] = [
     title: 'Raza',
     key: 'breed',
     icon: 'pi-info',
-  },
-  {
-    title: 'Dueño',
-    key: 'ownerDni',
-    icon: 'pi-id-card',
-  },
+  }
 ]
 </script>
 
@@ -95,6 +90,18 @@ const elements: { title: string; key: keyof Pet; icon: string }[] = [
               class="resize-none w-full"
             />
           </div>
+          
+
+          <div >
+            <label class="block mb-2">Dueño</label>
+            <InputGroup>
+              <InputGroupAddon class="text-neutral-400">
+                <i :class="`pi pi-id-card`"></i>
+              </InputGroupAddon>
+              <InputText :value="petData.clientId" disabled class="w-full" />
+            </InputGroup>
+          </div>
+
         </div>
       </div>
     </template>

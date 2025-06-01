@@ -7,11 +7,15 @@
     "birthdate": "2015-05-21",
     "comment": "Juguetón y energético.",
     "urlImage": "https://placekitten.com/308/228",
-    "specie": "Gato",
-    "specieId": 1,
-    "breed": "Persa",
-    "breedId": 0,
-    "ownerDni": "77901977"
+    "specie": {
+      "id": 1,
+      "name": "Gato"
+    },
+    "breed": {
+      "id": 0,
+      "name": "Persa"
+    },
+    "clientId": "77901977"
   },
   {
     "id": 2,
@@ -21,11 +25,15 @@
     "birthdate": "2010-12-13",
     "comment": "Se asusta con facilidad.",
     "urlImage": "https://placekitten.com/345/285",
-    "specie": "Gato",
-    "specieId": 1,
-    "breed": "Persa",
-    "breedId": 0,
-    "ownerDni": "77014287"
+    "specie": {
+      "id": 1,
+      "name": "Gato"
+    },
+    "breed": {
+      "id": 0,
+      "name": "Persa"
+    },
+    "clientId": "77014287"
   },
   {
     "id": 3,
@@ -35,11 +43,15 @@
     "birthdate": "2014-09-17",
     "comment": "Le encanta dormir en el sofá.",
     "urlImage": "https://placekitten.com/305/208",
-    "specie": "Perro",
-    "specieId": 0,
-    "breed": "Labrador",
-    "breedId": 1,
-    "ownerDni": "77710162"
+    "specie": {
+      "id": 0,
+      "name": "Perro"
+    },
+    "breed": {
+      "id": 1,
+      "name": "Labrador"
+    },
+    "clientId": "77710162"
   },
   {
     "id": 4,
@@ -49,11 +61,15 @@
     "birthdate": "2014-11-28",
     "comment": "Le encanta dormir en el sofá.",
     "urlImage": "https://placekitten.com/370/256",
-    "specie": "Perro",
-    "specieId": 0,
-    "breed": "Labrador",
-    "breedId": 1,
-    "ownerDni": "79288224"
+    "specie": {
+      "id": 0,
+      "name": "Perro"
+    },
+    "breed": {
+      "id": 1,
+      "name": "Labrador"
+    },
+    "clientId": "79288224"
   },
   {
     "id": 5,
@@ -63,11 +79,15 @@
     "birthdate": "2018-12-11",
     "comment": "Juguetón y energético.",
     "urlImage": "https://placekitten.com/379/295",
-    "specie": "Perro",
-    "specieId": 0,
-    "breed": "Pastor Alemán",
-    "breedId": 0,
-    "ownerDni": "78368783"
+    "specie": {
+      "id": 0,
+      "name": "Perro"
+    },
+    "breed": {
+      "id": 0,
+      "name": "Pastor Alemán"
+    },
+    "clientId": "78368783"
   },
   {
     "id": 6,
@@ -77,11 +97,15 @@
     "birthdate": "2020-03-10",
     "comment": "Ama perseguir pelotas.",
     "urlImage": "https://placekitten.com/370/282",
-    "specie": "Gato",
-    "specieId": 1,
-    "breed": "Siames",
-    "breedId": 1,
-    "ownerDni": "78664691"
+    "specie": {
+      "id": 1,
+      "name": "Gato"
+    },
+    "breed": {
+      "id": 1,
+      "name": "Siames"
+    },
+    "clientId": "78664691"
   },
   {
     "id": 7,
@@ -91,11 +115,15 @@
     "birthdate": "2019-05-04",
     "comment": "Disfruta caminar en el parque.",
     "urlImage": "https://placekitten.com/305/262",
-    "specie": "Gato",
-    "specieId": 1,
-    "breed": "Siames",
-    "breedId": 1,
-    "ownerDni": "77444689"
+    "specie": {
+      "id": 1,
+      "name": "Gato"
+    },
+    "breed": {
+      "id": 1,
+      "name": "Siames"
+    },
+    "clientId": "77444689"
   },
   {
     "id": 8,
@@ -105,11 +133,15 @@
     "birthdate": "2017-06-15",
     "comment": "Ama perseguir pelotas.",
     "urlImage": "https://placekitten.com/386/259",
-    "specie": "Perro",
-    "specieId": 0,
-    "breed": "Pastor Alemán",
-    "breedId": 0,
-    "ownerDni": "72112798"
+    "specie": {
+      "id": 0,
+      "name": "Perro"
+    },
+    "breed": {
+      "id": 0,
+      "name": "Pastor Alemán"
+    },
+    "clientId": "72112798"
   },
   {
     "id": 9,
@@ -119,11 +151,15 @@
     "birthdate": "2018-06-04",
     "comment": "Muy curiosa y observadora.",
     "urlImage": "https://placekitten.com/307/297",
-    "specie": "Gato",
-    "specieId": 1,
-    "breed": "Persa",
-    "breedId": 0,
-    "ownerDni": "74525194"
+    "specie": {
+      "id": 1,
+      "name": "Gato"
+    },
+    "breed": {
+      "id": 0,
+      "name": "Persa"
+    },
+    "clientId": "74525194"
   },
   {
     "id": 10,
@@ -133,11 +169,15 @@
     "birthdate": "2010-01-09",
     "comment": "Siempre está alerta.",
     "urlImage": "https://placekitten.com/304/261",
-    "specie": "Gato",
-    "specieId": 1,
-    "breed": "Persa",
-    "breedId": 0,
-    "ownerDni": "73198463"
+    "specie": {
+      "id": 1,
+      "name": "Gato"
+    },
+    "breed": {
+      "id": 0,
+      "name": "Persa"
+    },
+    "clientId": "73198463"
   },
   {
     "id": 11,
@@ -147,11 +187,15 @@
     "birthdate": "2021-06-13",
     "comment": "Es muy amigable con los niños.",
     "urlImage": "https://placekitten.com/381/278",
-    "specie": "Perro",
-    "specieId": 0,
-    "breed": "Labrador",
-    "breedId": 1,
-    "ownerDni": "74764266"
+    "specie": {
+      "id": 0,
+      "name": "Perro"
+    },
+    "breed": {
+      "id": 1,
+      "name": "Labrador"
+    },
+    "clientId": "74764266"
   },
   {
     "id": 12,
@@ -161,11 +205,15 @@
     "birthdate": "2020-01-25",
     "comment": "Se asusta con facilidad.",
     "urlImage": "https://placekitten.com/359/211",
-    "specie": "Perro",
-    "specieId": 0,
-    "breed": "Labrador",
-    "breedId": 1,
-    "ownerDni": "75863723"
+    "specie": {
+      "id": 0,
+      "name": "Perro"
+    },
+    "breed": {
+      "id": 1,
+      "name": "Labrador"
+    },
+    "clientId": "75863723"
   },
   {
     "id": 13,
@@ -175,11 +223,15 @@
     "birthdate": "2016-11-28",
     "comment": "Prefiere estar solo.",
     "urlImage": "https://placekitten.com/395/243",
-    "specie": "Perro",
-    "specieId": 0,
-    "breed": "Labrador",
-    "breedId": 1,
-    "ownerDni": "71759843"
+    "specie": {
+      "id": 0,
+      "name": "Perro"
+    },
+    "breed": {
+      "id": 1,
+      "name": "Labrador"
+    },
+    "clientId": "71759843"
   },
   {
     "id": 14,
@@ -189,11 +241,15 @@
     "birthdate": "2018-01-02",
     "comment": "Es muy amigable con los niños.",
     "urlImage": "https://placekitten.com/377/253",
-    "specie": "Gato",
-    "specieId": 1,
-    "breed": "Siames",
-    "breedId": 1,
-    "ownerDni": "77727707"
+    "specie": {
+      "id": 1,
+      "name": "Gato"
+    },
+    "breed": {
+      "id": 1,
+      "name": "Siames"
+    },
+    "clientId": "77727707"
   },
   {
     "id": 15,
@@ -203,11 +259,15 @@
     "birthdate": "2019-08-05",
     "comment": "Muy protector.",
     "urlImage": "https://placekitten.com/329/249",
-    "specie": "Gato",
-    "specieId": 1,
-    "breed": "Siames",
-    "breedId": 1,
-    "ownerDni": "72830612"
+    "specie": {
+      "id": 1,
+      "name": "Gato"
+    },
+    "breed": {
+      "id": 1,
+      "name": "Siames"
+    },
+    "clientId": "72830612"
   },
   {
     "id": 16,
@@ -217,11 +277,15 @@
     "birthdate": "2013-01-22",
     "comment": "Ama perseguir pelotas.",
     "urlImage": "https://placekitten.com/365/264",
-    "specie": "Gato",
-    "specieId": 1,
-    "breed": "Siames",
-    "breedId": 1,
-    "ownerDni": "72267789"
+    "specie": {
+      "id": 1,
+      "name": "Gato"
+    },
+    "breed": {
+      "id": 1,
+      "name": "Siames"
+    },
+    "clientId": "72267789"
   },
   {
     "id": 17,
@@ -231,11 +295,15 @@
     "birthdate": "2013-10-15",
     "comment": "Disfruta caminar en el parque.",
     "urlImage": "https://placekitten.com/353/267",
-    "specie": "Gato",
-    "specieId": 1,
-    "breed": "Siames",
-    "breedId": 1,
-    "ownerDni": "75900931"
+    "specie": {
+      "id": 1,
+      "name": "Gato"
+    },
+    "breed": {
+      "id": 1,
+      "name": "Siames"
+    },
+    "clientId": "75900931"
   },
   {
     "id": 18,
@@ -245,11 +313,15 @@
     "birthdate": "2020-01-10",
     "comment": "Siempre está alerta.",
     "urlImage": "https://placekitten.com/327/264",
-    "specie": "Perro",
-    "specieId": 0,
-    "breed": "Labrador",
-    "breedId": 1,
-    "ownerDni": "75102987"
+    "specie": {
+      "id": 0,
+      "name": "Perro"
+    },
+    "breed": {
+      "id": 1,
+      "name": "Labrador"
+    },
+    "clientId": "75102987"
   },
   {
     "id": 19,
@@ -259,11 +331,15 @@
     "birthdate": "2021-05-23",
     "comment": "Juguetón y energético.",
     "urlImage": "https://placekitten.com/373/207",
-    "specie": "Perro",
-    "specieId": 0,
-    "breed": "Labrador",
-    "breedId": 1,
-    "ownerDni": "71175167"
+    "specie": {
+      "id": 0,
+      "name": "Perro"
+    },
+    "breed": {
+      "id": 1,
+      "name": "Labrador"
+    },
+    "clientId": "71175167"
   },
   {
     "id": 20,
@@ -273,11 +349,15 @@
     "birthdate": "2014-01-13",
     "comment": "Disfruta caminar en el parque.",
     "urlImage": "https://placekitten.com/337/230",
-    "specie": "Perro",
-    "specieId": 0,
-    "breed": "Pastor Alemán",
-    "breedId": 0,
-    "ownerDni": "77094047"
+    "specie": {
+      "id": 0,
+      "name": "Perro"
+    },
+    "breed": {
+      "id": 0,
+      "name": "Pastor Alemán"
+    },
+    "clientId": "77094047"
   },
   {
     "id": 21,
@@ -287,11 +367,15 @@
     "birthdate": "2012-10-25",
     "comment": "Se asusta con facilidad.",
     "urlImage": "https://placekitten.com/385/271",
-    "specie": "Perro",
-    "specieId": 0,
-    "breed": "Labrador",
-    "breedId": 1,
-    "ownerDni": "77578188"
+    "specie": {
+      "id": 0,
+      "name": "Perro"
+    },
+    "breed": {
+      "id": 1,
+      "name": "Labrador"
+    },
+    "clientId": "77578188"
   },
   {
     "id": 22,
@@ -301,11 +385,15 @@
     "birthdate": "2011-05-04",
     "comment": "Juguetón y energético.",
     "urlImage": "https://placekitten.com/327/286",
-    "specie": "Gato",
-    "specieId": 1,
-    "breed": "Persa",
-    "breedId": 0,
-    "ownerDni": "74514541"
+    "specie": {
+      "id": 1,
+      "name": "Gato"
+    },
+    "breed": {
+      "id": 0,
+      "name": "Persa"
+    },
+    "clientId": "74514541"
   },
   {
     "id": 23,
@@ -315,11 +403,15 @@
     "birthdate": "2019-10-02",
     "comment": "Le encanta dormir en el sofá.",
     "urlImage": "https://placekitten.com/314/204",
-    "specie": "Perro",
-    "specieId": 0,
-    "breed": "Pastor Alemán",
-    "breedId": 0,
-    "ownerDni": "71136049"
+    "specie": {
+      "id": 0,
+      "name": "Perro"
+    },
+    "breed": {
+      "id": 0,
+      "name": "Pastor Alemán"
+    },
+    "clientId": "71136049"
   },
   {
     "id": 24,
@@ -329,11 +421,15 @@
     "birthdate": "2022-09-07",
     "comment": "Juguetón y energético.",
     "urlImage": "https://placekitten.com/332/243",
-    "specie": "Gato",
-    "specieId": 1,
-    "breed": "Siames",
-    "breedId": 1,
-    "ownerDni": "72155827"
+    "specie": {
+      "id": 1,
+      "name": "Gato"
+    },
+    "breed": {
+      "id": 1,
+      "name": "Siames"
+    },
+    "clientId": "72155827"
   },
   {
     "id": 25,
@@ -343,11 +439,15 @@
     "birthdate": "2018-10-30",
     "comment": "Es muy amigable con los niños.",
     "urlImage": "https://placekitten.com/314/289",
-    "specie": "Perro",
-    "specieId": 0,
-    "breed": "Labrador",
-    "breedId": 1,
-    "ownerDni": "75774571"
+    "specie": {
+      "id": 0,
+      "name": "Perro"
+    },
+    "breed": {
+      "id": 1,
+      "name": "Labrador"
+    },
+    "clientId": "75774571"
   },
   {
     "id": 26,
@@ -357,11 +457,15 @@
     "birthdate": "2012-09-28",
     "comment": "Muy curiosa y observadora.",
     "urlImage": "https://placekitten.com/356/244",
-    "specie": "Perro",
-    "specieId": 0,
-    "breed": "Labrador",
-    "breedId": 1,
-    "ownerDni": "72440491"
+    "specie": {
+      "id": 0,
+      "name": "Perro"
+    },
+    "breed": {
+      "id": 1,
+      "name": "Labrador"
+    },
+    "clientId": "72440491"
   },
   {
     "id": 27,
@@ -371,11 +475,15 @@
     "birthdate": "2011-01-21",
     "comment": "Se asusta con facilidad.",
     "urlImage": "https://placekitten.com/365/295",
-    "specie": "Gato",
-    "specieId": 1,
-    "breed": "Persa",
-    "breedId": 0,
-    "ownerDni": "71210009"
+    "specie": {
+      "id": 1,
+      "name": "Gato"
+    },
+    "breed": {
+      "id": 0,
+      "name": "Persa"
+    },
+    "clientId": "71210009"
   },
   {
     "id": 28,
@@ -385,11 +493,15 @@
     "birthdate": "2016-12-18",
     "comment": "Siempre está alerta.",
     "urlImage": "https://placekitten.com/319/215",
-    "specie": "Gato",
-    "specieId": 1,
-    "breed": "Persa",
-    "breedId": 0,
-    "ownerDni": "72459935"
+    "specie": {
+      "id": 1,
+      "name": "Gato"
+    },
+    "breed": {
+      "id": 0,
+      "name": "Persa"
+    },
+    "clientId": "72459935"
   },
   {
     "id": 29,
@@ -399,11 +511,15 @@
     "birthdate": "2010-12-05",
     "comment": "Siempre está alerta.",
     "urlImage": "https://placekitten.com/361/226",
-    "specie": "Perro",
-    "specieId": 0,
-    "breed": "Pastor Alemán",
-    "breedId": 0,
-    "ownerDni": "76740431"
+    "specie": {
+      "id": 0,
+      "name": "Perro"
+    },
+    "breed": {
+      "id": 0,
+      "name": "Pastor Alemán"
+    },
+    "clientId": "76740431"
   },
   {
     "id": 30,
@@ -413,11 +529,15 @@
     "birthdate": "2014-11-07",
     "comment": "Muy protector.",
     "urlImage": "https://placekitten.com/353/246",
-    "specie": "Perro",
-    "specieId": 0,
-    "breed": "Labrador",
-    "breedId": 1,
-    "ownerDni": "79171614"
+    "specie": {
+      "id": 0,
+      "name": "Perro"
+    },
+    "breed": {
+      "id": 1,
+      "name": "Labrador"
+    },
+    "clientId": "79171614"
   },
   {
     "id": 31,
@@ -427,11 +547,15 @@
     "birthdate": "2021-04-23",
     "comment": "Prefiere estar solo.",
     "urlImage": "https://placekitten.com/400/213",
-    "specie": "Perro",
-    "specieId": 0,
-    "breed": "Labrador",
-    "breedId": 1,
-    "ownerDni": "72593388"
+    "specie": {
+      "id": 0,
+      "name": "Perro"
+    },
+    "breed": {
+      "id": 1,
+      "name": "Labrador"
+    },
+    "clientId": "72593388"
   },
   {
     "id": 32,
@@ -441,11 +565,15 @@
     "birthdate": "2022-05-16",
     "comment": "Muy curiosa y observadora.",
     "urlImage": "https://placekitten.com/381/285",
-    "specie": "Gato",
-    "specieId": 1,
-    "breed": "Persa",
-    "breedId": 0,
-    "ownerDni": "76450730"
+    "specie": {
+      "id": 1,
+      "name": "Gato"
+    },
+    "breed": {
+      "id": 0,
+      "name": "Persa"
+    },
+    "clientId": "76450730"
   },
   {
     "id": 33,
@@ -455,11 +583,15 @@
     "birthdate": "2019-12-06",
     "comment": "Juguetón y energético.",
     "urlImage": "https://placekitten.com/379/295",
-    "specie": "Perro",
-    "specieId": 0,
-    "breed": "Labrador",
-    "breedId": 1,
-    "ownerDni": "72516955"
+    "specie": {
+      "id": 0,
+      "name": "Perro"
+    },
+    "breed": {
+      "id": 1,
+      "name": "Labrador"
+    },
+    "clientId": "72516955"
   },
   {
     "id": 34,
@@ -469,11 +601,15 @@
     "birthdate": "2014-05-23",
     "comment": "Le encanta dormir en el sofá.",
     "urlImage": "https://placekitten.com/321/221",
-    "specie": "Gato",
-    "specieId": 1,
-    "breed": "Siames",
-    "breedId": 1,
-    "ownerDni": "76754010"
+    "specie": {
+      "id": 1,
+      "name": "Gato"
+    },
+    "breed": {
+      "id": 1,
+      "name": "Siames"
+    },
+    "clientId": "76754010"
   },
   {
     "id": 35,
@@ -483,11 +619,15 @@
     "birthdate": "2017-06-08",
     "comment": "Siempre está alerta.",
     "urlImage": "https://placekitten.com/313/253",
-    "specie": "Gato",
-    "specieId": 1,
-    "breed": "Persa",
-    "breedId": 0,
-    "ownerDni": "76494316"
+    "specie": {
+      "id": 1,
+      "name": "Gato"
+    },
+    "breed": {
+      "id": 0,
+      "name": "Persa"
+    },
+    "clientId": "76494316"
   },
   {
     "id": 36,
@@ -497,11 +637,15 @@
     "birthdate": "2022-08-29",
     "comment": "Muy curiosa y observadora.",
     "urlImage": "https://placekitten.com/334/202",
-    "specie": "Gato",
-    "specieId": 1,
-    "breed": "Persa",
-    "breedId": 0,
-    "ownerDni": "70174202"
+    "specie": {
+      "id": 1,
+      "name": "Gato"
+    },
+    "breed": {
+      "id": 0,
+      "name": "Persa"
+    },
+    "clientId": "70174202"
   },
   {
     "id": 37,
@@ -511,11 +655,15 @@
     "birthdate": "2013-09-21",
     "comment": "Prefiere estar solo.",
     "urlImage": "https://placekitten.com/339/223",
-    "specie": "Gato",
-    "specieId": 1,
-    "breed": "Persa",
-    "breedId": 0,
-    "ownerDni": "75953758"
+    "specie": {
+      "id": 1,
+      "name": "Gato"
+    },
+    "breed": {
+      "id": 0,
+      "name": "Persa"
+    },
+    "clientId": "75953758"
   },
   {
     "id": 38,
@@ -525,11 +673,15 @@
     "birthdate": "2017-07-23",
     "comment": "Prefiere estar solo.",
     "urlImage": "https://placekitten.com/353/224",
-    "specie": "Gato",
-    "specieId": 1,
-    "breed": "Persa",
-    "breedId": 0,
-    "ownerDni": "72916121"
+    "specie": {
+      "id": 1,
+      "name": "Gato"
+    },
+    "breed": {
+      "id": 0,
+      "name": "Persa"
+    },
+    "clientId": "72916121"
   },
   {
     "id": 39,
@@ -539,11 +691,15 @@
     "birthdate": "2017-02-10",
     "comment": "Prefiere estar solo.",
     "urlImage": "https://placekitten.com/329/279",
-    "specie": "Perro",
-    "specieId": 0,
-    "breed": "Labrador",
-    "breedId": 1,
-    "ownerDni": "78176766"
+    "specie": {
+      "id": 0,
+      "name": "Perro"
+    },
+    "breed": {
+      "id": 1,
+      "name": "Labrador"
+    },
+    "clientId": "78176766"
   },
   {
     "id": 40,
@@ -553,11 +709,15 @@
     "birthdate": "2016-03-31",
     "comment": "Ama perseguir pelotas.",
     "urlImage": "https://placekitten.com/375/273",
-    "specie": "Gato",
-    "specieId": 1,
-    "breed": "Siames",
-    "breedId": 1,
-    "ownerDni": "74631971"
+    "specie": {
+      "id": 1,
+      "name": "Gato"
+    },
+    "breed": {
+      "id": 1,
+      "name": "Siames"
+    },
+    "clientId": "74631971"
   },
   {
     "id": 41,
@@ -567,11 +727,15 @@
     "birthdate": "2011-09-22",
     "comment": "Prefiere estar solo.",
     "urlImage": "https://placekitten.com/324/215",
-    "specie": "Perro",
-    "specieId": 0,
-    "breed": "Labrador",
-    "breedId": 1,
-    "ownerDni": "72695361"
+    "specie": {
+      "id": 0,
+      "name": "Perro"
+    },
+    "breed": {
+      "id": 1,
+      "name": "Labrador"
+    },
+    "clientId": "72695361"
   },
   {
     "id": 42,
@@ -581,11 +745,15 @@
     "birthdate": "2016-01-30",
     "comment": "Disfruta caminar en el parque.",
     "urlImage": "https://placekitten.com/302/298",
-    "specie": "Perro",
-    "specieId": 0,
-    "breed": "Pastor Alemán",
-    "breedId": 0,
-    "ownerDni": "77588712"
+    "specie": {
+      "id": 0,
+      "name": "Perro"
+    },
+    "breed": {
+      "id": 0,
+      "name": "Pastor Alemán"
+    },
+    "clientId": "77588712"
   },
   {
     "id": 43,
@@ -595,11 +763,15 @@
     "birthdate": "2017-02-25",
     "comment": "Prefiere estar solo.",
     "urlImage": "https://placekitten.com/380/299",
-    "specie": "Perro",
-    "specieId": 0,
-    "breed": "Labrador",
-    "breedId": 1,
-    "ownerDni": "75648114"
+    "specie": {
+      "id": 0,
+      "name": "Perro"
+    },
+    "breed": {
+      "id": 1,
+      "name": "Labrador"
+    },
+    "clientId": "75648114"
   },
   {
     "id": 44,
@@ -609,11 +781,15 @@
     "birthdate": "2016-08-26",
     "comment": "Le encanta dormir en el sofá.",
     "urlImage": "https://placekitten.com/385/249",
-    "specie": "Gato",
-    "specieId": 1,
-    "breed": "Persa",
-    "breedId": 0,
-    "ownerDni": "74544608"
+    "specie": {
+      "id": 1,
+      "name": "Gato"
+    },
+    "breed": {
+      "id": 0,
+      "name": "Persa"
+    },
+    "clientId": "74544608"
   },
   {
     "id": 45,
@@ -623,11 +799,15 @@
     "birthdate": "2011-05-21",
     "comment": "Muy curiosa y observadora.",
     "urlImage": "https://placekitten.com/328/207",
-    "specie": "Perro",
-    "specieId": 0,
-    "breed": "Labrador",
-    "breedId": 1,
-    "ownerDni": "76512689"
+    "specie": {
+      "id": 0,
+      "name": "Perro"
+    },
+    "breed": {
+      "id": 1,
+      "name": "Labrador"
+    },
+    "clientId": "76512689"
   },
   {
     "id": 46,
@@ -637,11 +817,15 @@
     "birthdate": "2013-04-27",
     "comment": "Siempre está alerta.",
     "urlImage": "https://placekitten.com/330/204",
-    "specie": "Gato",
-    "specieId": 1,
-    "breed": "Persa",
-    "breedId": 0,
-    "ownerDni": "70138350"
+    "specie": {
+      "id": 1,
+      "name": "Gato"
+    },
+    "breed": {
+      "id": 0,
+      "name": "Persa"
+    },
+    "clientId": "70138350"
   },
   {
     "id": 47,
@@ -651,11 +835,15 @@
     "birthdate": "2019-01-08",
     "comment": "Muy protector.",
     "urlImage": "https://placekitten.com/307/211",
-    "specie": "Perro",
-    "specieId": 0,
-    "breed": "Labrador",
-    "breedId": 1,
-    "ownerDni": "75883323"
+    "specie": {
+      "id": 0,
+      "name": "Perro"
+    },
+    "breed": {
+      "id": 1,
+      "name": "Labrador"
+    },
+    "clientId": "75883323"
   },
   {
     "id": 48,
@@ -665,11 +853,15 @@
     "birthdate": "2022-02-12",
     "comment": "Le encanta dormir en el sofá.",
     "urlImage": "https://placekitten.com/302/257",
-    "specie": "Gato",
-    "specieId": 1,
-    "breed": "Siames",
-    "breedId": 1,
-    "ownerDni": "76930124"
+    "specie": {
+      "id": 1,
+      "name": "Gato"
+    },
+    "breed": {
+      "id": 1,
+      "name": "Siames"
+    },
+    "clientId": "76930124"
   },
   {
     "id": 49,
@@ -679,11 +871,15 @@
     "birthdate": "2013-10-03",
     "comment": "Disfruta caminar en el parque.",
     "urlImage": "https://placekitten.com/374/249",
-    "specie": "Gato",
-    "specieId": 1,
-    "breed": "Persa",
-    "breedId": 0,
-    "ownerDni": "78499977"
+    "specie": {
+      "id": 1,
+      "name": "Gato"
+    },
+    "breed": {
+      "id": 0,
+      "name": "Persa"
+    },
+    "clientId": "78499977"
   },
   {
     "id": 50,
@@ -693,10 +889,14 @@
     "birthdate": "2019-01-04",
     "comment": "Siempre está alerta.",
     "urlImage": "https://placekitten.com/387/212",
-    "specie": "Gato",
-    "specieId": 1,
-    "breed": "Siames",
-    "breedId": 1,
-    "ownerDni": "73354811"
+    "specie": {
+      "id": 1,
+      "name": "Gato"
+    },
+    "breed": {
+      "id": 1,
+      "name": "Siames"
+    },
+    "clientId": "73354811"
   }
 ]

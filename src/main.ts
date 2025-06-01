@@ -47,8 +47,7 @@ const MyPreset = definePreset(Aura, {
           800: '{neutral.800}',
           900: '{neutral.900}',
           950: '{neutral.950}',
-        },
-
+        }
       },
       dark: {
         surface: {

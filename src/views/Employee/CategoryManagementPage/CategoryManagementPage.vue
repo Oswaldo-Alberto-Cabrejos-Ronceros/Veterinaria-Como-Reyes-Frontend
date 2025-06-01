@@ -9,17 +9,36 @@ import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
 import Message from 'primevue/message'
 import Button from 'primevue/button'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import Categories from '@/assets/data/categories.json'
 import AddEditCategoryCard from './components/AddEditCategoryCard.vue'
 import { useDialog } from 'primevue'
 import type { Category } from '@/models/Category'
 import type { FormValues as AddEditCategorySchema } from '@/validation-schemas-forms/schema-add-edit-category'
 import ViewCategoryCard from './components/ViewCategoryCard.vue'
 import { useConfirm } from 'primevue'
+import { useCategory } from '@/composables/useCategory'
 
+//methods
+
+const { loading, error, getAllCategories, createCategory, updateCategory, deleteCategory } =
+  useCategory()
+
+//categories
+
+const categories = ref<Category[]>([])
+
+onMounted(async () => {
+  loadCategories()
+})
+
+//load categories
+const loadCategories = async () => {
+  categories.value = await getAllCategories()
+}
+
+//form
 const { handleSubmit, errors, defineField } = useForm<SearchCategorySchema>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
@@ -43,9 +62,12 @@ const addCategory = () => {
     props: {
       modal: true,
     },
-    onClose: (data) => {
+    onClose: async (options) => {
+      const data = options?.data as AddEditCategorySchema
       if (data) {
-        console.log('Datos recibidos', data)
+        const category = await createCategory(data)
+        console.log('Datos recibidos', category)
+        loadCategories()
       }
     },
   })
@@ -60,6 +82,12 @@ const editCategory = (categoryData: Category) => {
     },
     data: {
       categoryData: categoryData as AddEditCategorySchema,
+    },
+    onClose: async (options) => {
+      const data = options?.data as AddEditCategorySchema
+      const category = await updateCategory(categoryData.id, data)
+      console.log('Datos recibidos', category)
+      loadCategories()
     },
   })
 }
@@ -82,7 +110,7 @@ const confirm = useConfirm()
 
 //for delete with confirm popup
 
-const deleteCategory = (event: MouseEvent | KeyboardEvent, category: Category) => {
+const deleteCategoryAction = (event: MouseEvent | KeyboardEvent, category: Category) => {
   confirm.require({
     target: event.currentTarget as HTMLElement,
     message: '¿Seguro que quiere eliminar esta categoria?',
@@ -96,8 +124,10 @@ const deleteCategory = (event: MouseEvent | KeyboardEvent, category: Category) =
       label: 'Eliminar',
       severity: 'danger',
     },
-    accept: () => {
-      console.log('Eliminando método ', category.id)
+    accept: async () => {
+      console.log('Eliminando categoria ', category.id)
+      await deleteCategory(category.id)
+      loadCategories()
     },
     reject: () => {
       console.log('Cancelando')
@@ -146,10 +176,17 @@ const exportCSV = () => {
               />
             </div>
           </form>
-
+          <!-- for messague loading  -->
+          <Message v-if="loading.getAllCategories" severity="warn" size="small" variant="simple">
+            Cargando ...
+          </Message>
+          <!-- for messague error -->
+          <Message v-if="error.getAllCategories" severity="error" size="small" variant="simple">
+            Error al cargar las categorias
+          </Message>
           <!-- table -->
           <DataTable
-            :value="Categories"
+            :value="categories"
             paginator
             :rows="10"
             :rows-per-page-options="[5, 10]"
@@ -201,7 +238,7 @@ const exportCSV = () => {
                     variant="outlined"
                     aria-label="Filter"
                     rounded
-                    @click="deleteCategory($event,data)"
+                    @click="deleteCategoryAction($event, data)"
                   ></Button>
                 </div>
               </template>

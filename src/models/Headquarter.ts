@@ -1,7 +1,10 @@
-export interface Headquarter{
-  id:number,
-  location:string,
-  district:string,
-  phone:string,
-  email:string
+export interface Headquarter {
+  id: number
+  name: string
+  phone: string
+  address: string
+  email: string
+  district: string
+  province: string
+  departament: string
 }

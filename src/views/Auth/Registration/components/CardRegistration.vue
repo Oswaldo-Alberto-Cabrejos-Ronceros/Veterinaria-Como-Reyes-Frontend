@@ -115,7 +115,7 @@ const imageLogo=computed(()=>(
             v-bind="namesAttrs"
             v-model="names"
             type="text"
-            placeholder="names"
+            placeholder="Nombres"
 
           />
         </InputGroup>
@@ -135,7 +135,7 @@ const imageLogo=computed(()=>(
             v-bind="lastnamesAttrs"
             v-model="lastnames"
             type="text"
-            placeholder="lastnames"
+            placeholder="Apellidos"
 
           />
         </InputGroup>
@@ -195,7 +195,7 @@ const imageLogo=computed(()=>(
             v-bind="phoneAttrs"
             v-model="phone"
             type="tel"
-            placeholder="phone"
+            placeholder="Celular"
 
           />
         </InputGroup>
