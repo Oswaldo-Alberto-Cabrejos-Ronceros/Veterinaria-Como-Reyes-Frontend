@@ -21,18 +21,39 @@ import EditEmployeeCard from './components/EditEmployeeCard.vue'
 import type { EditEmployee } from '@/models/EditEmployee'
 import AddEmployeeCard from './components/AddEmployeeCard.vue'
 import { useEmployee } from '@/composables/useEmployee'
+import { useRole } from '@/composables/useRole'
+import type { OptionSelect } from '@/models/OptionSelect'
+import type { Role } from '@/models/Role'
 
 //methotds
 
 const { loading, error, getAllEmployees } = useEmployee()
 
+const { getAllRoles } = useRole()
+
 //employees
 
 const employees = ref<Employee[]>([])
 
+const rolesOptions = ref<OptionSelect[]>([])
+
 onMounted(async () => {
-  employees.value = await getAllEmployees()
+  loadEmployees()
 })
+
+const loadEmployees = async () => {
+  employees.value = await getAllEmployees()
+  rolesOptions.value = rolesToOptionsSelect(await getAllRoles())
+}
+
+//for get options from roles
+
+const rolesToOptionsSelect = (roles: Role[]): OptionSelect[] => {
+  return roles.map((role) => ({
+    value: role.id,
+    name: role.name,
+  }))
+}
 
 //form
 
@@ -83,12 +104,6 @@ const onSubmit = handleSubmit((values) => {
   console.log(values)
 })
 
-//roles
-const roles = [
-  { name: 'Veterinario', value: 1 },
-  { name: 'Recepcionista', value: 2 },
-  { name: 'Jefe de sede', value: 3 },
-]
 
 const rolesMap: Record<string, number> = {
   Recepcionista: 1,
@@ -138,7 +153,7 @@ const editEmployee = (employeeData: Employee) => {
         address: employeeData.address,
         phone: employeeData.phone,
         headquarterId: employeeData.headquarter.headquarterId,
-        birthdate:new Date(employeeData.birthdate),
+        birthdate: new Date(employeeData.birthdate),
         dirImage: employeeData.dirImage,
         roleId: rolesMap[employeeData.roles[0].name],
       } as EditEmployee,
@@ -216,12 +231,12 @@ const exportCSV = () => {
               </Message>
             </div>
             <div>
-              <label class="block mb-2">Sede</label>
+              <label class="block mb-2">Rol</label>
               <Select
                 class="w-full"
                 v-bind="rolAttrs"
                 v-model="rol"
-                :options="roles"
+                :options="rolesOptions"
                 optionLabel="name"
                 optionValue="value"
                 placeholder="Selecciona Rol"
