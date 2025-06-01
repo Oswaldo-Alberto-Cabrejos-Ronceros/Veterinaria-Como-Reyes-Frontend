@@ -24,6 +24,8 @@ import { useEmployee } from '@/composables/useEmployee'
 import { useRole } from '@/composables/useRole'
 import type { OptionSelect } from '@/models/OptionSelect'
 import type { Role } from '@/models/Role'
+import { useHeadquarter } from '@/composables/useHeadquarter'
+import type { Headquarter } from '@/models/Headquarter'
 
 //methotds
 
@@ -31,11 +33,15 @@ const { loading, error, getAllEmployees } = useEmployee()
 
 const { getAllRoles } = useRole()
 
+const { getAllHeadquarters } = useHeadquarter()
+
 //employees
 
 const employees = ref<Employee[]>([])
 
 const rolesOptions = ref<OptionSelect[]>([])
+
+const headquartersOptions = ref<OptionSelect[]>([])
 
 onMounted(async () => {
   loadEmployees()
@@ -44,6 +50,7 @@ onMounted(async () => {
 const loadEmployees = async () => {
   employees.value = await getAllEmployees()
   rolesOptions.value = rolesToOptionsSelect(await getAllRoles())
+  headquartersOptions.value = headquartersToOptionsSelect(await getAllHeadquarters())
 }
 
 //for get options from roles
@@ -52,6 +59,15 @@ const rolesToOptionsSelect = (roles: Role[]): OptionSelect[] => {
   return roles.map((role) => ({
     value: role.id,
     name: role.name,
+  }))
+}
+
+//for get options from headquarters
+
+const headquartersToOptionsSelect = (headquarters: Headquarter[]): OptionSelect[] => {
+  return headquarters.map((headquarter) => ({
+    value: headquarter.id,
+    name: headquarter.name,
   }))
 }
 
@@ -65,6 +81,7 @@ const { handleSubmit, errors, defineField } = useForm<FormValues>({
     names: '',
     lastnames: '',
     rol: undefined,
+    headquarter: undefined,
   },
 })
 
@@ -76,6 +93,7 @@ const fieldMap = {
 }
 
 const [rol, rolAttrs] = defineField('rol')
+const [headquarter, headquarterAttrs] = defineField('headquarter')
 
 const searchElementsEmployee: { title: string; key: keyof typeof fieldMap; icon: string }[] = [
   {
@@ -104,7 +122,6 @@ const onSubmit = handleSubmit((values) => {
   console.log(values)
 })
 
-
 const rolesMap: Record<string, number> = {
   Recepcionista: 1,
   Veterinario: 2,
@@ -116,10 +133,14 @@ const rolesMap: Record<string, number> = {
 const dialog = useDialog()
 
 //for add
-const addEmployee = () => {
+const addEmployee = async () => {
   dialog.open(AddEmployeeCard, {
     props: {
       modal: true,
+    },
+    data: {
+      headquartersOptions: headquartersToOptionsSelect(await getAllHeadquarters()),
+      rolesOptions: rolesToOptionsSelect(await getAllRoles()),
     },
     onClose: (data) => {
       if (data) {
@@ -230,6 +251,7 @@ const exportCSV = () => {
                 {{ errors[element.key] }}
               </Message>
             </div>
+            <!-- rol -->
             <div>
               <label class="block mb-2">Rol</label>
               <Select
@@ -246,6 +268,24 @@ const exportCSV = () => {
                 {{ errors.rol }}
               </Message>
             </div>
+            <!-- headquarter -->
+            <div>
+              <label class="block mb-2">Sede</label>
+              <Select
+                class="w-full"
+                v-bind="headquarterAttrs"
+                v-model="headquarter"
+                :options="headquartersOptions"
+                optionLabel="name"
+                optionValue="value"
+                placeholder="Selecciona Rol"
+              />
+
+              <Message v-if="errors.headquarter" severity="error" size="small" variant="simple">
+                {{ errors.headquarter }}
+              </Message>
+            </div>
+
             <div class="form-button-search-container-grid-col-5">
               <!-- button -->
               <Button
