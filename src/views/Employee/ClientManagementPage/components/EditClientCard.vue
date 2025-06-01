@@ -74,9 +74,19 @@ const textFields: { title: string; key: keyof typeof fieldMap; icon: string }[] 
   },
 ]
 
+//for dynamicDialog
+const dialogRef = inject('dialogRef') as Ref<{
+  close: (data?: FormValues) => void
+  data: {
+    clientData: FormValues
+  }
+}>
+
+
 //for submit
 const onSubmit = handleSubmit((values) => {
   console.log(values)
+  dialogRef.value.close(values as FormValues)
 })
 
 //headquarterIds
@@ -88,13 +98,6 @@ const headquarkers = [
 
 //for dialog
 
-//for dynamicDialog
-const dialogRef = inject('dialogRef') as Ref<{
-  close: (data?: FormValues) => void
-  data: {
-    clientData: FormValues
-  }
-}>
 
 onMounted(() => {
   const params = dialogRef.value.data
