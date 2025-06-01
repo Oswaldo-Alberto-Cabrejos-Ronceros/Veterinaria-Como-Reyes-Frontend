@@ -13,12 +13,12 @@ import Button from 'primevue/button'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import type { Employee } from '@/models/Employee'
+import type { FormValues as EditEmployeeSchema } from '@/validation-schemas-forms/schema-edit.employee'
 import { onMounted, ref } from 'vue'
 import { useDialog } from 'primevue/usedialog'
 import ViewEmployeeCard from './components/ViewEmployeeCard.vue'
 import { useConfirm } from 'primevue'
 import EditEmployeeCard from './components/EditEmployeeCard.vue'
-import type { EditEmployee } from '@/models/EditEmployee'
 import AddEmployeeCard from './components/AddEmployeeCard.vue'
 import { useEmployee } from '@/composables/useEmployee'
 import { useRole } from '@/composables/useRole'
@@ -163,7 +163,7 @@ const viewEmployee = (employeeData: Employee) => {
 }
 
 //for edit
-const editEmployee = (employeeData: Employee) => {
+const editEmployee = async (employeeData: Employee) => {
   dialog.open(EditEmployeeCard, {
     data: {
       employeeData: {
@@ -177,7 +177,9 @@ const editEmployee = (employeeData: Employee) => {
         birthdate: new Date(employeeData.birthdate),
         dirImage: employeeData.dirImage,
         roleId: rolesMap[employeeData.roles[0].name],
-      } as EditEmployee,
+      } as EditEmployeeSchema,
+      headquartersOptions: headquartersToOptionsSelect(await getAllHeadquarters()),
+      rolesOptions: rolesToOptionsSelect(await getAllRoles()),
     },
     props: {
       modal: true,
