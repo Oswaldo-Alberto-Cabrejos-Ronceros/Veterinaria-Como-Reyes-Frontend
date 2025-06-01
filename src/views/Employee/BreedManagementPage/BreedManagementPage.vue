@@ -25,7 +25,7 @@ import { useSpecie } from '@/composables/useSpecie'
 
 //get from compose
 
-const { loading, error, getAllBreeds } = useBreed()
+const { loading, error, getAllBreeds, createBreed, updateBreed } = useBreed()
 
 const { getAllSpecies } = useSpecie()
 
@@ -80,15 +80,18 @@ const addBreed = () => {
     data: {
       speciesOptions: speciesOptions,
     },
-    onClose: (data) => {
+    onClose: async (options) => {
+      const data = options?.data as AddEditBreedSchema
       if (data) {
-        console.log('Datos recibidos', data)
+        const breed = await createBreed(data)
+        console.log('Datos recibidos', breed)
+        loadBreeds()
       }
     },
   })
 }
 
-const editPaymentMethod = (breedData: Breed) => {
+const editBreed = (breedData: Breed) => {
   dialog.open(AddEditBreedCard, {
     props: {
       modal: true,
@@ -99,6 +102,14 @@ const editPaymentMethod = (breedData: Breed) => {
         specieId: breedData.specie.id,
       } as AddEditBreedSchema,
       speciesOptions: speciesOptions,
+    },
+    onClose: async (options) => {
+      const data = options?.data as AddEditBreedSchema
+      if (data) {
+        const breed = await updateBreed(breedData.id, data)
+        console.log('Datos recibidos', breed)
+        loadBreeds()
+      }
     },
   })
 }
@@ -244,7 +255,7 @@ const exportCSV = () => {
                     variant="outlined"
                     aria-label="Filter"
                     rounded
-                    @click="editPaymentMethod(data)"
+                    @click="editBreed(data)"
                   ></Button>
                   <Button
                     icon="pi pi-trash"
