@@ -28,7 +28,7 @@ import { useBreed } from '@/composables/useBreed'
 
 //methods
 
-const { loading, error, getAllPets } = usePet()
+const { loading, error, getAllPets, createPet, updatePet } = usePet()
 
 const { getAllSpecies } = useSpecie()
 
@@ -127,13 +127,16 @@ const addPet = async () => {
     props: {
       modal: true,
     },
-    data:{
+    data: {
       speciesOptions: speciesToOptionsSelect(await getAllSpecies()),
       breedsOptions: breedsToOptionsSelect(await getAllBreeds()),
     },
-    onClose: (data) => {
+    onClose: async (options) => {
+      const data = options?.data as AddEditPetSchema
       if (data) {
-        console.log('Datos recibidos del dialogo:', data)
+        const pet = await createPet(data)
+        console.log('Datos recibidos¿', pet)
+        loadPets()
       }
     },
   })
@@ -165,6 +168,14 @@ const editPet = async (petData: Pet) => {
       } as AddEditPetSchema,
       speciesOptions: speciesToOptionsSelect(await getAllSpecies()),
       breedsOptions: breedsToOptionsSelect(await getAllBreeds()),
+    },
+    onClose: async (options) => {
+      const data = options?.data as AddEditPetSchema
+      if (data) {
+        const pet = await updatePet(petData.id, data)
+        console.log('Datos recibidos¿', pet)
+        loadPets()
+      }
     },
   })
 }
