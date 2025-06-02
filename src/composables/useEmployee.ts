@@ -4,6 +4,8 @@ import { EmployeeAdapter } from '@/adapters/EmployeeAdapter'
 import type { Employee } from '@/services/Employee/domain/models/Employee'
 import type { Employee as EmployeeView } from '@/models/Employee'
 import type { PageResponse } from '@/services/models/PageResponse'
+import type { FormValues as EmployeeAddSchema } from '@/validation-schemas-forms/schema-add-employee'
+import type { FormValues as EmployeeEditSchema } from '@/validation-schemas-forms/schema-edit.employee'
 
 export function useEmployee() {
   //fet from useAsyncHandle
@@ -16,6 +18,14 @@ export function useEmployee() {
   }
 
   //create
+
+  const createEmployee = async (employeeAddSchema: EmployeeAddSchema): Promise<EmployeeView> => {
+    const employeeRequest = EmployeeAdapter.fromSchemaAddToEmployeeRequest(employeeAddSchema)
+    const employee = await runUseCase('createEmployee', () =>
+      employeeUsesCases.createEmployee.execute(employeeRequest),
+    )
+    return EmployeeAdapter.toEmployeeView(employee)
+  }
 
   const getAllEmployees = async (): Promise<EmployeeView[]> => {
     const employees: Employee[] = await runUseCase('getAllEmployees', () =>
@@ -74,14 +84,28 @@ export function useEmployee() {
 
   //update
 
+  const updateEmployee = async (
+    employeeId: number,
+    employeeEditSchema: EmployeeEditSchema,
+  ): Promise<EmployeeView> => {
+    const employeeRequest = EmployeeAdapter.fromSchemaEditToEmployeeRequest(employeeEditSchema)
+    const employee = await runUseCase('updateEmployee', () =>
+      employeeUsesCases.updateEmployee.execute(employeeId, employeeRequest),
+    )
+
+    return EmployeeAdapter.toEmployeeView(employee)
+  }
+
   return {
     loading,
     error,
+    createEmployee,
     blockEmployee,
     getAllEmployees,
     getEmployeeById,
     getEmployeeMyInfo,
     restoreEmployee,
     searchEmployees,
+    updateEmployee
   }
 }
