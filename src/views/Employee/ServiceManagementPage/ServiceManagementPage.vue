@@ -10,17 +10,31 @@ import InputGroupAddon from 'primevue/inputgroupaddon'
 import Message from 'primevue/message'
 import Select from 'primevue/select'
 import Button from 'primevue/button'
-import Services from '@/assets/data/services.json'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import type { Service } from '@/models/Service'
 import { useConfirm, useDialog } from 'primevue'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import AddEditServiceCard from './components/AddEditServiceCard.vue'
 import type { FormValues as AddEditServiceSchema } from '@/validation-schemas-forms/schema-add-edit-service'
 import ViewServiceCard from './components/ViewServiceCard.vue'
+import { useVeterinaryService } from '@/composables/useVeterinaryService'
 
+//methods
 
+const {loading,error,getAllVeterinaryServices} = useVeterinaryService()
+
+//services
+
+const services = ref<Service[]>([])
+
+onMounted(()=>{
+  loadServices()
+})
+
+const loadServices = async()=>{
+services.value = await getAllVeterinaryServices()
+}
 
 //form
 const { handleSubmit, errors, defineField } = useForm<SearchServiceSchema>({
@@ -209,9 +223,19 @@ const exportCSV = () => {
               />
             </div>
           </form>
+
+                    <!-- for messague loading  -->
+          <Message v-if="loading.getAllVeterinaryServices" severity="warn" size="small" variant="simple">
+            Cargando ...
+          </Message>
+          <!-- for messague error -->
+          <Message v-if="error.getAllVeterinaryServices" severity="error" size="small" variant="simple">
+            Error al cargar los servicios
+          </Message>
+
           <!-- table -->
           <DataTable
-            :value="Services"
+            :value="services"
             paginator
             :rows="10"
             :rows-per-page-options="[10, 15, 20, 25, 30]"
