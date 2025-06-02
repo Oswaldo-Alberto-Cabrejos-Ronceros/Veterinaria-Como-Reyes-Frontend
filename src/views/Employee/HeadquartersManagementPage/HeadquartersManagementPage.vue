@@ -28,7 +28,7 @@ const { loading, error, getAllHeadquarters, createHeadquarter, updateHeadquarter
 //headquarters
 const headquarters = ref<Headquarter[]>([])
 
-onMounted(async () => {
+onMounted(() => {
   loadHeadquarters()
 })
 
