@@ -14,6 +14,7 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import type { Employee } from '@/models/Employee'
 import type { FormValues as EditEmployeeSchema } from '@/validation-schemas-forms/schema-edit.employee'
+import type { FormValues as AddEmployeeSchema } from '@/validation-schemas-forms/schema-add-employee'
 import { onMounted, ref } from 'vue'
 import { useDialog } from 'primevue/usedialog'
 import ViewEmployeeCard from './components/ViewEmployeeCard.vue'
@@ -29,7 +30,8 @@ import type { Headquarter } from '@/models/Headquarter'
 
 //methotds
 
-const { loading, error, getAllEmployees } = useEmployee()
+const { loading, error, getAllEmployees, createEmployee, updateEmployee, blockEmployee } =
+  useEmployee()
 
 const { getAllRoles } = useRole()
 
@@ -142,9 +144,12 @@ const addEmployee = async () => {
       headquartersOptions: headquartersToOptionsSelect(await getAllHeadquarters()),
       rolesOptions: rolesToOptionsSelect(await getAllRoles()),
     },
-    onClose: (data) => {
+    onClose: async (options) => {
+      const data = options?.data as AddEmployeeSchema
       if (data) {
-        console.log('Datos recibidos del diálogo:', data)
+        const employee = await createEmployee(data)
+        console.log('Datos recibidos:', employee)
+        loadEmployees()
       }
     },
   })
@@ -184,9 +189,12 @@ const editEmployee = async (employeeData: Employee) => {
     props: {
       modal: true,
     },
-    onClose: (data) => {
+    onClose: async (options) => {
+      const data = options?.data as EditEmployeeSchema
       if (data) {
-        console.log('Datos recibidos del diálogo:', data)
+        const employee = await updateEmployee(employeeData.employeeId, data)
+        console.log('Datos recibidos:', employee)
+        loadEmployees()
       }
     },
   })
@@ -210,8 +218,9 @@ const deleteEmployee = (event: MouseEvent | KeyboardEvent, employee: Employee) =
       label: 'Eliminar',
       severity: 'danger',
     },
-    accept: () => {
+    accept: async () => {
       console.log('Eliminando Empleado ', employee.employeeId)
+      await blockEmployee(employee.employeeId)
     },
     reject: () => {
       console.log('Cancelando')
