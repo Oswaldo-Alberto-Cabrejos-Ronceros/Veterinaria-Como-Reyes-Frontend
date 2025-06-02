@@ -32,7 +32,7 @@ const { loading, error, getAllPets } = usePet()
 
 const { getAllSpecies } = useSpecie()
 
-const {getAllBreeds}= useBreed()
+const { getAllBreeds } = useBreed()
 
 const speciesOptions = ref<OptionSelect[]>([])
 
@@ -62,13 +62,12 @@ const speciesToOptionsSelect = (species: Specie[]): OptionSelect[] => {
 
 // for breeds to optionSelect
 
-const breedsToOptionsSelect = (breeds:Breed[]):OptionSelect[]=>{
-    return breeds.map((breed) => ({
+const breedsToOptionsSelect = (breeds: Breed[]): OptionSelect[] => {
+  return breeds.map((breed) => ({
     value: breed.id,
     name: breed.name,
   }))
 }
-
 
 //form
 
@@ -107,7 +106,6 @@ const searchTextElementsClient: { title: string; key: keyof typeof textFields; i
   },
 ]
 
-
 //genders
 const genders = [
   { name: 'Macho', value: 'M' },
@@ -124,10 +122,14 @@ const onSubmit = handleSubmit((values) => {
 const dialog = useDialog()
 
 //for add
-const addPet = () => {
+const addPet = async () => {
   dialog.open(AddEditPetCard, {
     props: {
       modal: true,
+    },
+    data:{
+      speciesOptions: speciesToOptionsSelect(await getAllSpecies()),
+      breedsOptions: breedsToOptionsSelect(await getAllBreeds()),
     },
     onClose: (data) => {
       if (data) {
@@ -144,7 +146,7 @@ const viewPet = (petData: Pet) => {
   router.push({ name: 'administrator-pets-unitary-pet', params: { id: petData.id } })
 }
 
-const editPet = (petData: Pet) => {
+const editPet = async (petData: Pet) => {
   dialog.open(AddEditPetCard, {
     props: {
       modal: true,
@@ -161,6 +163,8 @@ const editPet = (petData: Pet) => {
         urlImage: petData.urlImage,
         ownerDni: petData.clientId.toString(),
       } as AddEditPetSchema,
+      speciesOptions: speciesToOptionsSelect(await getAllSpecies()),
+      breedsOptions: breedsToOptionsSelect(await getAllBreeds()),
     },
   })
 }
