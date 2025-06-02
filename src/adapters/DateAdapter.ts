@@ -9,4 +9,27 @@ export class DateAdapter {
     //14:30:00
     return date.toTimeString().split(' ')[0]
   }
+
+  static fromHHmmSSToDate(time: string): Date | null {
+    const [hours, minutes, seconds] = time.split(':').map(Number)
+
+    if (
+      isNaN(hours) ||
+      isNaN(minutes) ||
+      isNaN(seconds) ||
+      hours < 0 ||
+      hours > 23 ||
+      minutes < 0 ||
+      minutes > 59 ||
+      seconds < 0 ||
+      seconds > 59
+    ) {
+      console.error('Formato de hora inválido:', time)
+      return null
+    }
+
+    const date = new Date()
+    date.setHours(hours, minutes, seconds, 0)
+    return date
+  }
 }

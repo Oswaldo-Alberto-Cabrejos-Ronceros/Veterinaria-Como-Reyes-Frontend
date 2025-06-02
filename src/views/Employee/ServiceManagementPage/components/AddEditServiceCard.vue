@@ -17,6 +17,7 @@ import { toTypedSchema } from '@vee-validate/yup'
 import { inject, onMounted } from 'vue'
 import type { Ref } from 'vue'
 import { ref } from 'vue'
+import type { OptionSelect } from '@/models/OptionSelect'
 //form
 
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
@@ -49,24 +50,26 @@ const onSubmit = handleSubmit((values) => {
   dialogRef.value.close(values)
 })
 
+
+//headquarter options
+const speciesOptions = ref<OptionSelect[]>([])
+
+//roles options
+const categoriesOptions = ref<OptionSelect[]>([])
+
+
+
 //for dialog
 
 const dialogRef = inject('dialogRef') as Ref<{
   close: (data?: FormValues) => void
   data:{
-    serviceData?:FormValues
+    serviceData?:FormValues,
+    speciesOptions?:OptionSelect[],
+    categoriesOptions?:OptionSelect[]
   }
 }>
 
-const species = [
-  { name: 'Perro', value: 1 },
-  { name: 'Gato', value: 2 },
-]
-
-const categories = [
-  { name: 'Cuidado', value: 1 },
-  { name: 'Médico', value: 1 },
-]
 
 //title reactive
 const title = ref<string>('Agregar')
@@ -75,6 +78,8 @@ const title = ref<string>('Agregar')
 onMounted(()=>{
   if(dialogRef.value.data){
     const params = dialogRef.value.data.serviceData
+    const speciesOptionsGet = dialogRef.value.data.speciesOptions
+    const categoriesOptionsGet = dialogRef.value.data.categoriesOptions
     if(params){
       title.value='Editar'
       name.value=params.name
@@ -84,6 +89,12 @@ onMounted(()=>{
       dirImage.value=params.dirImage
       specieId.value = params.specieId
       categoryId.value= params.categoryId
+    }
+    if(speciesOptionsGet){
+      speciesOptions.value = speciesOptionsGet
+    }
+    if(categoriesOptionsGet) {
+      categoriesOptions.value = categoriesOptionsGet
     }
   }
 })
@@ -169,7 +180,7 @@ onMounted(()=>{
             class="w-full"
             v-bind="specieIdAttrs"
             v-model="specieId"
-            :options="species"
+            :options="speciesOptions"
             optionLabel="name"
             optionValue="value"
             placeholder="Selecciona Especie"
@@ -188,7 +199,7 @@ onMounted(()=>{
             class="w-full"
             v-bind="categoryIdAttrs"
             v-model="categoryId"
-            :options="categories"
+            :options="categoriesOptions"
             optionLabel="name"
             optionValue="value"
             placeholder="Selecciona Categoria"

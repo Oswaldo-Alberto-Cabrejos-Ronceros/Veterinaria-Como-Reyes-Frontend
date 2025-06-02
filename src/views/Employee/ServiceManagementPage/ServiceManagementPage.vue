@@ -19,21 +19,44 @@ import AddEditServiceCard from './components/AddEditServiceCard.vue'
 import type { FormValues as AddEditServiceSchema } from '@/validation-schemas-forms/schema-add-edit-service'
 import ViewServiceCard from './components/ViewServiceCard.vue'
 import { useVeterinaryService } from '@/composables/useVeterinaryService'
+import type { Specie } from '@/models/Specie'
+import type { OptionSelect } from '@/models/OptionSelect'
+import { useSpecie } from '@/composables/useSpecie'
+import type { Category } from '@/models/Category'
+import { useCategory } from '@/composables/useCategory'
+import { DateAdapter } from '@/adapters/DateAdapter'
 
 //methods
 
-const {loading,error,getAllVeterinaryServices} = useVeterinaryService()
+const {
+  loading,
+  error,
+  getAllVeterinaryServices,
+  createVeterinaryService,
+  updateVeterinaryService,
+  deleteVeterinaryService,
+} = useVeterinaryService()
+
+const { getAllSpecies } = useSpecie()
+
+const { getAllCategories } = useCategory()
 
 //services
 
 const services = ref<Service[]>([])
 
-onMounted(()=>{
+const speciesOptions = ref<OptionSelect[]>([])
+
+const categoriesOptions = ref<OptionSelect[]>([])
+
+onMounted(async () => {
   loadServices()
+  speciesOptions.value = speciesToOptionsSelect(await getAllSpecies())
+  categoriesOptions.value = categoriesToOptionsSelect(await getAllCategories())
 })
 
-const loadServices = async()=>{
-services.value = await getAllVeterinaryServices()
+const loadServices = async () => {
+  services.value = await getAllVeterinaryServices()
 }
 
 //form
@@ -57,76 +80,94 @@ const onSubmit = handleSubmit((values) => {
   console.log(values)
 })
 
-//for specie
-const species = [
-  { name: 'Perro', value: 1 },
-  { name: 'Gato', value: 2 },
-]
+//for species to options Select
 
-//for category
+const speciesToOptionsSelect = (species: Specie[]): OptionSelect[] => {
+  return species.map((specie) => ({
+    value: specie.id,
+    name: specie.name,
+  }))
+}
 
-const categories = [
-  { name: 'Cuidado', value: 1 },
-  { name: 'Médico', value: 1 },
-]
+const categoriesToOptionsSelect = (category: Category[]): OptionSelect[] => {
+  return category.map((category) => ({
+    value: category.id,
+    name: category.name,
+  }))
+}
 
 //for dialog
 const dialog = useDialog()
 
 //for add
 
-const viewService = (serviceData: Service)=>{
-  dialog.open(ViewServiceCard,{
-    props:{
-      modal:true
+const viewService = (serviceData: Service) => {
+  dialog.open(ViewServiceCard, {
+    props: {
+      modal: true,
     },
-    data:{
-      serviceData: serviceData
-    }
+    data: {
+      serviceData: serviceData,
+    },
   })
 }
 
-const addService = ()=>{
-  dialog.open(AddEditServiceCard,{
-    props:{
-      modal:true
+const addService = async () => {
+  dialog.open(AddEditServiceCard, {
+    props: {
+      modal: true,
     },
-    onClose:(data)=>{
-      if(data){
-        console.log('Datos recibidos del dialogo', data)
+    data: {
+      speciesOptions: speciesToOptionsSelect(await getAllSpecies()),
+      categoriesOptions: categoriesToOptionsSelect(await getAllCategories()),
+    },
+    onClose: async (options) => {
+      const data = options?.data
+      if (data) {
+        const service = await createVeterinaryService(data)
+        console.log('Datos recibidos', service)
+        loadServices()
       }
-    }
+    },
   })
 }
 
 //for edit
 
-const editService = (serviceData:Service)=>{
-  dialog.open(AddEditServiceCard,{
-    props:{
-      modal:true
+const editService = async (serviceData: Service) => {
+  dialog.open(AddEditServiceCard, {
+    props: {
+      modal: true,
     },
-    data:{
-      serviceData:{
-        name:serviceData.name,
-        description:serviceData.description,
-        price:serviceData.price,
-        duration:new Date (),
-        dirImage:serviceData.dirImage,
-        specieId:serviceData.specieId,
-        categoryId:serviceData.categoryId
-      } as AddEditServiceSchema
-    }
+    data: {
+      serviceData: {
+        name: serviceData.name,
+        description: serviceData.description,
+        price: serviceData.price,
+        duration: DateAdapter.fromHHmmSSToDate(serviceData.duration),
+        dirImage: serviceData.dirImage,
+        specieId: serviceData.specieId,
+        categoryId: serviceData.categoryId,
+      } as AddEditServiceSchema,
+      speciesOptions: speciesToOptionsSelect(await getAllSpecies()),
+      categoriesOptions: categoriesToOptionsSelect(await getAllCategories()),
+    },
+    onClose: async (options) => {
+      const data = options?.data
+      if (data) {
+        const service = await updateVeterinaryService(serviceData.id, data)
+        console.log('Datos recibidos', service)
+        loadServices()
+      }
+    },
   })
 }
-
-
 
 //for confirm
 const confirm = useConfirm()
 
 //for delete with confirm popup
-const deleteEmployee = (event: MouseEvent | KeyboardEvent, service: Service) => {
+const deleteService = (event: MouseEvent | KeyboardEvent, service: Service) => {
   confirm.require({
     target: event.currentTarget as HTMLElement,
     message: '¿Seguro que quiere eliminar este servicio?',
@@ -140,8 +181,9 @@ const deleteEmployee = (event: MouseEvent | KeyboardEvent, service: Service) => 
       label: 'Eliminar',
       severity: 'danger',
     },
-    accept: () => {
+    accept: async () => {
       console.log('Eliminando Empleado ', service.id)
+      await deleteVeterinaryService(service.id)
     },
     reject: () => {
       console.log('Cancelando')
@@ -185,7 +227,7 @@ const exportCSV = () => {
                 class="w-full"
                 v-bind="specieIdAttrs"
                 v-model="specieId"
-                :options="species"
+                :options="speciesOptions"
                 optionLabel="name"
                 optionValue="value"
                 placeholder="Selecciona Especie"
@@ -202,7 +244,7 @@ const exportCSV = () => {
                 class="w-full"
                 v-bind="categoryIdAttrs"
                 v-model="categoryId"
-                :options="categories"
+                :options="categoriesOptions"
                 optionLabel="name"
                 optionValue="value"
                 placeholder="Selecciona Categoria"
@@ -224,12 +266,22 @@ const exportCSV = () => {
             </div>
           </form>
 
-                    <!-- for messague loading  -->
-          <Message v-if="loading.getAllVeterinaryServices" severity="warn" size="small" variant="simple">
+          <!-- for messague loading  -->
+          <Message
+            v-if="loading.getAllVeterinaryServices"
+            severity="warn"
+            size="small"
+            variant="simple"
+          >
             Cargando ...
           </Message>
           <!-- for messague error -->
-          <Message v-if="error.getAllVeterinaryServices" severity="error" size="small" variant="simple">
+          <Message
+            v-if="error.getAllVeterinaryServices"
+            severity="error"
+            size="small"
+            variant="simple"
+          >
             Error al cargar los servicios
           </Message>
 
@@ -309,7 +361,7 @@ const exportCSV = () => {
                     variant="outlined"
                     aria-label="Filter"
                     rounded
-                    @click="deleteEmployee($event, data)"
+                    @click="deleteService($event, data)"
                   ></Button>
                 </div>
               </template>

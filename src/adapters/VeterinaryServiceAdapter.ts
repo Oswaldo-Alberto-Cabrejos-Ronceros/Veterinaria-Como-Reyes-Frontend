@@ -1,4 +1,7 @@
-import type { VeterinaryService, VeterinaryServiceRequest } from '@/services/VeterinaryService/domain/models/VeterinaryService'
+import type {
+  VeterinaryService,
+  VeterinaryServiceRequest,
+} from '@/services/VeterinaryService/domain/models/VeterinaryService'
 import type { FormValues as VeterinaryServiceAddEditSchema } from '@/validation-schemas-forms/schema-add-edit-service'
 import type { Service as VeterinaryServiceView } from '@/models/Service'
 import { DateAdapter } from './DateAdapter'
@@ -27,8 +30,12 @@ export class VeterinaryServiceAdapter {
       description: schema.description,
       price: schema.price,
       duration: DateAdapter.toTimeHHmmSS(schema.duration),
-      specieId: schema.specieId,
-      categoryId: schema.categoryId,
+      specie: {
+        specieId: schema.specieId,
+      },
+      category: {
+        categoryId: schema.categoryId,
+      },
     }
   }
 }
