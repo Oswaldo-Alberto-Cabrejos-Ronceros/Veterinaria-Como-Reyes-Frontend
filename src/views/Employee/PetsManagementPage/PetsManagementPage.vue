@@ -20,16 +20,54 @@ import AddEditPetCard from './components/AddEditPetCard.vue'
 import type { FormValues as AddEditPetSchema } from '@/validation-schemas-forms/schema-add-edit-pet'
 import { useRouter } from 'vue-router'
 import { usePet } from '@/composables/usePet'
+import { useSpecie } from '@/composables/useSpecie'
+import type { OptionSelect } from '@/models/OptionSelect'
+import type { Specie } from '@/models/Specie'
+import type { Breed } from '@/models/Breed'
+import { useBreed } from '@/composables/useBreed'
 
 //methods
 
 const { loading, error, getAllPets } = usePet()
 
+const { getAllSpecies } = useSpecie()
+
+const { getAllBreeds } = useBreed()
+
+const speciesOptions = ref<OptionSelect[]>([])
+
+const breedsOptions = ref<OptionSelect[]>([])
+
 //pets
 const pets = ref<Pet[]>([])
 onMounted(async () => {
-  pets.value = await getAllPets()
+  loadPets()
 })
+
+//for load pets
+const loadPets = async () => {
+  pets.value = await getAllPets()
+  speciesOptions.value = speciesToOptionsSelect(await getAllSpecies())
+  breedsOptions.value = breedsToOptionsSelect(await getAllBreeds())
+}
+
+//for species to options Select
+
+const speciesToOptionsSelect = (species: Specie[]): OptionSelect[] => {
+  return species.map((specie) => ({
+    value: specie.id,
+    name: specie.name,
+  }))
+}
+
+// for breeds to optionSelect
+
+const breedsToOptionsSelect = (breeds: Breed[]): OptionSelect[] => {
+  return breeds.map((breed) => ({
+    value: breed.id,
+    name: breed.name,
+  }))
+}
 
 //form
 
@@ -68,18 +106,6 @@ const searchTextElementsClient: { title: string; key: keyof typeof textFields; i
   },
 ]
 
-//roles
-const species = [
-  { name: 'Perro', value: 1 },
-  { name: 'Gato', value: 2 },
-]
-
-//breeds
-const breeds = [
-  { name: 'Pastor Alemán', value: 1 },
-  { name: 'Salchicha', value: 2 },
-]
-
 //genders
 const genders = [
   { name: 'Macho', value: 'M' },
@@ -96,10 +122,14 @@ const onSubmit = handleSubmit((values) => {
 const dialog = useDialog()
 
 //for add
-const addPet = () => {
+const addPet = async () => {
   dialog.open(AddEditPetCard, {
     props: {
       modal: true,
+    },
+    data:{
+      speciesOptions: speciesToOptionsSelect(await getAllSpecies()),
+      breedsOptions: breedsToOptionsSelect(await getAllBreeds()),
     },
     onClose: (data) => {
       if (data) {
@@ -116,7 +146,7 @@ const viewPet = (petData: Pet) => {
   router.push({ name: 'administrator-pets-unitary-pet', params: { id: petData.id } })
 }
 
-const editPet = (petData: Pet) => {
+const editPet = async (petData: Pet) => {
   dialog.open(AddEditPetCard, {
     props: {
       modal: true,
@@ -133,6 +163,8 @@ const editPet = (petData: Pet) => {
         urlImage: petData.urlImage,
         ownerDni: petData.clientId.toString(),
       } as AddEditPetSchema,
+      speciesOptions: speciesToOptionsSelect(await getAllSpecies()),
+      breedsOptions: breedsToOptionsSelect(await getAllBreeds()),
     },
   })
 }
@@ -204,7 +236,7 @@ const exportCSV = () => {
                 class="w-full"
                 v-bind="specieIdAttrs"
                 v-model="specieId"
-                :options="species"
+                :options="speciesOptions"
                 optionLabel="name"
                 optionValue="value"
                 placeholder="Selecciona Especie"
@@ -220,7 +252,7 @@ const exportCSV = () => {
                 class="w-full"
                 v-bind="breedIdAttrs"
                 v-model="breedId"
-                :options="breeds"
+                :options="breedsOptions"
                 optionLabel="name"
                 optionValue="value"
                 placeholder="Selecciona Raza"
