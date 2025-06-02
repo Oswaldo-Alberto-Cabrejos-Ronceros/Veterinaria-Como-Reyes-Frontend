@@ -9,16 +9,41 @@ import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
 import Message from 'primevue/message'
 import Button from 'primevue/button'
-import PaymentMethods from '@/assets/data/payment-methods.json'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import type { PaymentMethod } from '@/models/PaymentMethod'
 import { useConfirm } from 'primevue'
 import AddEditPaymentMethodCard from './components/AddEditPaymentMethodCard.vue'
 import { useDialog } from 'primevue'
-import type { FormValues as AddEditPaymentMethodSchema} from '@/validation-schemas-forms/schema-add-edit-payment-method'
+import type { FormValues as AddEditPaymentMethodSchema } from '@/validation-schemas-forms/schema-add-edit-payment-method'
 import ViewPaymentMethodCard from './components/ViewPaymentMethodCard.vue'
+import { usePaymentMethod } from '@/composables/usePaymentMethod'
+
+//get from compose
+
+const {
+  loading,
+  error,
+  getAllPaymentMethods,
+  createPaymentMethod,
+  updatePaymentMethod,
+  deletePaymentMethod,
+} = usePaymentMethod()
+
+//payment methods
+
+const paymentMethods = ref<PaymentMethod[]>([])
+
+onMounted(() => {
+  loadPaymentMethods()
+})
+
+//for load payment methods
+
+const loadPaymentMethods = async () => {
+  paymentMethods.value = await getAllPaymentMethods()
+}
 
 //form
 const { handleSubmit, errors, defineField } = useForm<SearchPaymentMethotSchema>({
@@ -34,53 +59,64 @@ const onSubmit = handleSubmit((values) => {
   console.log(values)
 })
 
-
 //for dialog
 const dialog = useDialog()
 
-
-const addPaymentMethod = ()=>{
-  dialog.open(AddEditPaymentMethodCard,{
-    props:{
-      modal:true
+const addPaymentMethod = () => {
+  dialog.open(AddEditPaymentMethodCard, {
+    props: {
+      modal: true,
     },
-    onClose:(data)=>{
-      if(data){
-        console.log('Datos recibidos',data)
+    onClose: async (options) => {
+      const data = options?.data as AddEditPaymentMethodSchema
+      if (data) {
+        const paymentMethod = await createPaymentMethod(data)
+        console.log('Datos recibidos del dialogo', paymentMethod)
+        loadPaymentMethods()
       }
-    }
-  })
-}
-
-const viewPaymentMethod=(paymentMethodData:PaymentMethod)=>{
-  dialog.open(ViewPaymentMethodCard,{
-    props:{
-      modal:true
     },
-    data:{
-      paymentMethodData:paymentMethodData
-    }
   })
 }
 
-const editPaymentMethod = (paymentMethodData:PaymentMethod)=>{
-  dialog.open(AddEditPaymentMethodCard,{
-    props:{
-      modal:true
+const viewPaymentMethod = (paymentMethodData: PaymentMethod) => {
+  dialog.open(ViewPaymentMethodCard, {
+    props: {
+      modal: true,
     },
-    data:{
-      paymentMethodData: paymentMethodData as AddEditPaymentMethodSchema
-    }
+    data: {
+      paymentMethodData: paymentMethodData,
+    },
   })
 }
 
+const editPaymentMethod = (paymentMethodData: PaymentMethod) => {
+  dialog.open(AddEditPaymentMethodCard, {
+    props: {
+      modal: true,
+    },
+    data: {
+      paymentMethodData: paymentMethodData as AddEditPaymentMethodSchema,
+    },
+    onClose: async (options) => {
+      const data = options?.data as AddEditPaymentMethodSchema
+      if (data) {
+        const paymentMethod = await updatePaymentMethod(paymentMethodData.id, data)
+        console.log('Datos recibidos del dialogo', paymentMethod)
+        loadPaymentMethods()
+      }
+    },
+  })
+}
 
 //for confirm
 const confirm = useConfirm()
 
 //for delete with confirm popup
 
-const deletePaymentMethod = (event: MouseEvent | KeyboardEvent, paymentMethod: PaymentMethod) => {
+const deletePaymentMethodAction = (
+  event: MouseEvent | KeyboardEvent,
+  paymentMethod: PaymentMethod,
+) => {
   confirm.require({
     target: event.currentTarget as HTMLElement,
     message: '¿Seguro que quiere eliminar este método?',
@@ -94,8 +130,9 @@ const deletePaymentMethod = (event: MouseEvent | KeyboardEvent, paymentMethod: P
       label: 'Eliminar',
       severity: 'danger',
     },
-    accept: () => {
+    accept: async () => {
       console.log('Eliminando método ', paymentMethod.id)
+      await deletePaymentMethod(paymentMethod.id)
     },
     reject: () => {
       console.log('Cancelando')
@@ -103,14 +140,12 @@ const deletePaymentMethod = (event: MouseEvent | KeyboardEvent, paymentMethod: P
   })
 }
 
-
 //for export
 
 const dt = ref()
 const exportCSV = () => {
   dt.value.exportCSV()
 }
-
 </script>
 
 <template>
@@ -146,16 +181,30 @@ const exportCSV = () => {
               />
             </div>
           </form>
+
+          <!-- for messague loading  -->
+          <Message
+            v-if="loading.getAllPaymentMethods"
+            severity="warn"
+            size="small"
+            variant="simple"
+          >
+            Cargando ...
+          </Message>
+          <!-- for messague error -->
+          <Message v-if="error.getAllPaymentMethods" severity="error" size="small" variant="simple">
+            Error al cargar los sedes
+          </Message>
+
           <!-- table -->
-                     <DataTable
-            :value="PaymentMethods"
+          <DataTable
+            :value="paymentMethods"
             paginator
             :rows="10"
-            :rows-per-page-options="[5,10]"
+            :rows-per-page-options="[5, 10]"
             ref="dt"
           >
-
-                    <template #header>
+            <template #header>
               <div class="w-full flex flex-col xs:flex-row justify-between gap-2 pb-4">
                 <Button
                   icon="pi pi-plus-circle"
@@ -168,13 +217,8 @@ const exportCSV = () => {
               </div>
             </template>
 
-                        <Column
-              field="name"
-              sortable
-              header="Nombre"
-              style="width: 20%"
-            ></Column>
-                        <Column
+            <Column field="name" sortable header="Nombre" style="width: 20%"></Column>
+            <Column
               field="description"
               class="hidden md:table-cell"
               header="Descripción"
@@ -183,9 +227,7 @@ const exportCSV = () => {
             ></Column>
             <Column>
               <template #body="{ data }">
-                <div
-                  class="flex justify-between items-center flex-col sm:flex-row gap-1"
-                >
+                <div class="flex justify-between items-center flex-col sm:flex-row gap-1">
                   <Button
                     icon="pi pi-eye"
                     severity="info"
@@ -208,12 +250,12 @@ const exportCSV = () => {
                     variant="outlined"
                     aria-label="Filter"
                     rounded
-                    @click="deletePaymentMethod($event,data)"
+                    @click="deletePaymentMethodAction($event, data)"
                   ></Button>
                 </div>
               </template>
             </Column>
-        </DataTable>
+          </DataTable>
         </div>
       </template>
     </Card>

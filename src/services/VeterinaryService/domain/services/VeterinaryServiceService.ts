@@ -1,4 +1,4 @@
-import { VeterinaryService, VeterinaryServiceRequest } from "../models/VeterinaryService";
+import type { VeterinaryService, VeterinaryServiceRequest } from "../models/VeterinaryService";
 
 export interface VeterinaryServiceService {
   getVeterinaryServiceById(id: number): Promise<VeterinaryService>;

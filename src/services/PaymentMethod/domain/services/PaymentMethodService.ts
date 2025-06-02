@@ -1,4 +1,4 @@
-import { PaymentMethod, PaymentMethodRequest } from '../models/PaymentMethod';
+import type { PaymentMethod, PaymentMethodRequest } from '../models/PaymentMethod';
 
 export interface PaymentMethodService {
   getPaymentMethodById(id: number): Promise<PaymentMethod>;
