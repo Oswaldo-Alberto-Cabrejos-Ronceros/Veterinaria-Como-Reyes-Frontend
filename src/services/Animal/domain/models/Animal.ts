@@ -21,9 +21,9 @@ export interface AnimalRequest {
   name: string
   gender: string
   weight: number
-  birthDate: string
-  animalComment: string
-  urlImage: string
+  birthDate?: string
+  animalComment?: string
+  urlImage?: string
   breed: {
     breedId: number
   }
