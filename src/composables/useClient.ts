@@ -1,11 +1,13 @@
 import { clientUsesCases } from '@/dependency-injection/client.container'
 import { useAsyncHandler } from './useAsyncHandler'
-import type { Client } from '@/services/Client/domain/models/Client'
+import type { Client, ClientUpdateAsClient, MyInfoClient } from '@/services/Client/domain/models/Client'
 import type { Client as ClientView } from '@/models/Client'
 import { ClientAdapter } from '@/adapters/ClientAdapter'
 import type { FormValues as ClientAddSchema } from '@/validation-schemas-forms/schema-add-client'
 import type { FormValues as ClientEditSchema } from '@/validation-schemas-forms/schema-edit-client'
 import type { PageResponse } from '@/services/models/PageResponse'
+import type { MyInfoClient as MyInfoClientView } from '@/models/MyInfoClient'
+import type { FormValues as SchemaEditSelfClient } from '@/validation-schemas-forms/schema-edit-self-client'
 
 export function useClient() {
   //from useAsyncHandle
@@ -44,11 +46,11 @@ export function useClient() {
     return ClientAdapter.toClientView(client)
   }
 
-  const myInfoAsClient = async (clientId: number): Promise<ClientView> => {
-    const client: Client = await runUseCase('myInfoAsClient', () =>
+  const myInfoAsClient = async (clientId: number): Promise<MyInfoClientView> => {
+    const myInfoClient: MyInfoClient = await runUseCase('myInfoAsClient', () =>
       clientUsesCases.myInfoAsClient.execute(clientId),
     )
-    return ClientAdapter.toClientView(client)
+    return ClientAdapter.fromMyInfoClientToMyInfoClientView(myInfoClient)
   }
 
   const searchClient = async (
@@ -88,9 +90,10 @@ export function useClient() {
   }
 
   //fix
-  const updateClientAsClient = async (clientId: number, client: Client): Promise<string> => {
+  const updateClientAsClient = async (clientId: number, schemaEditSelfClient: SchemaEditSelfClient): Promise<string> => {
+    const clientUpdateAsClient:ClientUpdateAsClient=ClientAdapter.fromSchemaEditSelfClientToClientUpdateAsClient(schemaEditSelfClient)
     return await runUseCase('updateClientAsClient', () =>
-      clientUsesCases.updateClientAsClient.execute(clientId, client),
+      clientUsesCases.updateClientAsClient.execute(clientId, clientUpdateAsClient),
     )
   }
   return {
