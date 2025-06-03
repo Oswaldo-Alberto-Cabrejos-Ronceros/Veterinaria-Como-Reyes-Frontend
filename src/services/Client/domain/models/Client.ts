@@ -36,26 +36,25 @@ export interface ClientRequest {
   }
 }
 
-
-export interface MyInfoClient{
-  clientId:number,
-  user:{
-        id:number
-    email:string
+export interface MyInfoClient {
+  clientId: number
+  user: {
+    id: number
+    email: string
   }
-  dni:string,
-  names:string,
-  LastNames:string,
-  phone:string,
-  address:string,
-  headquarter:{
-    id:number,
-    name:string
+  dni: string
+  names: string
+  LastNames: string
+  phone: string
+  address: string
+  headquarter: {
+    id: number
+    name: string
   }
 }
 
-export interface ClientUpdateAsClient{
-   address:string,
-  phone:string,
-  hearheadquarterId:number
+export interface ClientUpdateAsClient {
+  address: string
+  phone: string
+  hearheadquarterId: number
 }
