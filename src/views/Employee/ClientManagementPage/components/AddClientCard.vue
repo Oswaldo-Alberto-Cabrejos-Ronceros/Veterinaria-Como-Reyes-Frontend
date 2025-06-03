@@ -59,14 +59,14 @@ const textFields: { title: string; key: keyof typeof fieldMap; icon: string }[] 
     icon: 'pi-user',
   },
   {
-    title: 'Phone',
-    key: 'phone',
-    icon: 'pi-mobile',
-  },
-  {
     title: 'Apellidos',
     key: 'lastnames',
     icon: 'pi-user',
+  },
+  {
+    title: 'Celular',
+    key: 'phone',
+    icon: 'pi-mobile',
   },
   {
     title: 'Dirección',
@@ -102,10 +102,7 @@ const headquarkers = [
     </template>
 
     <template #content>
-      <form
-        @submit.prevent="onSubmit"
-        class="form-dialog-layout"
-      >
+      <form @submit.prevent="onSubmit" class="form-dialog-layout">
         <div v-for="element in textFields" :key="element.key">
           <label class="block mb-2">{{ element.title }}</label>
           <InputGroup>

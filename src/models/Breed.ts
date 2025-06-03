@@ -1,7 +1,8 @@
 export interface Breed {
     id:number,
     name:string,
-    specie:string,
-    specieId:number,
-    dirImage:string
+    specie:{
+      id:number,
+      name:string
+    }
 }

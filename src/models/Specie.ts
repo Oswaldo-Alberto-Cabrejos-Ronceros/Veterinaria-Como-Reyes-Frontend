@@ -1,4 +1,5 @@
 export interface Specie {
     id:number,
-    name:string
+    name:string,
+    imagePath:string
 }

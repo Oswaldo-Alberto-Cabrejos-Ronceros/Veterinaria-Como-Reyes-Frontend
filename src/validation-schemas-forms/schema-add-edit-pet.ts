@@ -13,7 +13,7 @@ weight:yup.number().required('Peso es obligatorio').positive('Peso debe ser posi
   specieId:yup.number().required('Especie es obligatoria'),
   breedId:yup.number().required('Raza es obligatoria'),
   urlImage:yup.string(),
-  ownerDni:yup.string().required('El Dni del dueño es obligatorio').matches(/^\d{8}$/, 'Dni inválido (debe tener 8 dígitos)')
+  ownerDni:yup.string().required('El Dni del dueño es obligatorio') //.matches(/^\d{8}$/, 'Dni inválido (debe tener 8 dígitos)')
 })
 
 export type FormValues = yup.InferType<typeof schema>

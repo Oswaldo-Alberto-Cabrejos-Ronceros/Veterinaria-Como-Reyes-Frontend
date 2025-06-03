@@ -15,6 +15,7 @@ import Textarea from 'primevue/textarea'
 import IftaLabel from 'primevue/iftalabel'
 import Button from 'primevue/button'
 import Message from 'primevue/message'
+import type { OptionSelect } from '@/models/OptionSelect'
 
 //form
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
@@ -49,11 +50,19 @@ const onSubmit = handleSubmit((values) => {
   dialogRef.value.close(values as FormValues)
 })
 
+//species options
+const speciesOptions = ref<OptionSelect[]>([])
+
+//breeds options
+const breedsOptions = ref<OptionSelect[]>([])
+
 //for dynamicDialog
 const dialogRef = inject('dialogRef') as Ref<{
   close: (data?: FormValues) => void
   data: {
-    petData?: FormValues
+    petData?: FormValues,
+    speciesOptions?:OptionSelect[],
+    breedsOptions?:OptionSelect[]
   }
 }>
 
@@ -63,17 +72,6 @@ const genders = [
   { name: 'Hembra', value: 'H' },
 ]
 
-const species = [
-  { name: 'Perro', value: 1 },
-  { name: 'Gato', value: 2 },
-]
-
-//breeds
-const breeds = [
-  { name: 'Pastor Chiribaya', value: 0 },
-  { name: 'Pastor Alemán', value: 1 },
-  { name: 'Salchicha', value: 2 },
-]
 
 const title = ref<string>('Agregar')
 
@@ -81,6 +79,8 @@ onMounted(() => {
   if (dialogRef.value.data) {
     console.log(dialogRef.value.data)
     const params = dialogRef.value.data.petData
+    const speciesOptionsGet = dialogRef.value.data.speciesOptions
+    const breedsOptionsGet = dialogRef.value.data.breedsOptions
     //set data if edit
     if (params) {
       title.value='Editar'
@@ -94,6 +94,8 @@ onMounted(() => {
       urlImage.value = params.urlImage
       ownerDni.value = params.ownerDni
     }
+    if(speciesOptionsGet) speciesOptions.value=speciesOptionsGet
+    if(breedsOptionsGet) breedsOptions.value = breedsOptionsGet
   }
 })
 </script>
@@ -129,7 +131,7 @@ onMounted(() => {
             :options="genders"
             optionLabel="name"
             optionValue="value"
-            placeholder="Selecciona Raza"
+            placeholder="Selecciona Sexo"
           />
 
           <Message v-if="errors.gender" severity="error" size="small" variant="simple">
@@ -180,7 +182,7 @@ onMounted(() => {
             class="w-full"
             v-bind="specieIdAttrs"
             v-model="specieId"
-            :options="species"
+            :options="speciesOptions"
             optionLabel="name"
             optionValue="value"
             placeholder="Selecciona Especie"
@@ -197,7 +199,7 @@ onMounted(() => {
             class="w-full"
             v-bind="breedIdAttrs"
             v-model="breedId"
-            :options="breeds"
+            :options="breedsOptions"
             optionLabel="name"
             optionValue="value"
             placeholder="Selecciona Raza"

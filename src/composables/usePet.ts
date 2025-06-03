@@ -3,14 +3,20 @@ import { useAsyncHandler } from './useAsyncHandler'
 import { AnimalAdapter } from '@/adapters/AnimalAdapter'
 import type { Animal } from '@/services/Animal/domain/models/Animal'
 import type { Pet as PetView } from '@/models/Pet'
+import type { FormValues as PetAddEditSchema } from '@/validation-schemas-forms/schema-add-edit-pet'
 
 export function usePet() {
   const { loading, error, runUseCase } = useAsyncHandler()
 
   //create
 
-  const deletePet = async (animalId: number): Promise<void> => {
-    await runUseCase('deletePet', () => animalUsesCases.deleteAnimal.execute(animalId))
+  const createPet = async (petAddEditSchema: PetAddEditSchema) => {
+    const animalRequest = AnimalAdapter.fromSchemaAddEditToPetRequest(petAddEditSchema)
+    await runUseCase('createPet', () => animalUsesCases.createAnimal.execute(animalRequest))
+  }
+
+  const deletePet = async (petId: number): Promise<void> => {
+    await runUseCase('deletePet', () => animalUsesCases.deleteAnimal.execute(petId))
   }
 
   const getAllPets = async (): Promise<PetView[]> => {
@@ -28,21 +34,28 @@ export function usePet() {
     return animals.map((animal) => AnimalAdapter.toPetView(animal))
   }
 
-  const getPetById = async (animalId: number): Promise<PetView> => {
+  const getPetById = async (petId: number): Promise<PetView> => {
     const animal: Animal = await runUseCase('getPetById', () =>
-      animalUsesCases.getAnimalById.execute(animalId),
+      animalUsesCases.getAnimalById.execute(petId),
     )
     return AnimalAdapter.toPetView(animal)
   }
 
   //update
 
+  const updatePet = async (petId: number, petAddEditSchema: PetAddEditSchema) => {
+    const animalRequest = AnimalAdapter.fromSchemaAddEditToPetRequest(petAddEditSchema)
+    await runUseCase('updatePet', () => animalUsesCases.updateAnimal.execute(petId, animalRequest))
+  }
+
   return {
     loading,
     error,
+    createPet,
     deletePet,
     getAllPets,
     getPetByClientId,
     getPetById,
+    updatePet,
   }
 }

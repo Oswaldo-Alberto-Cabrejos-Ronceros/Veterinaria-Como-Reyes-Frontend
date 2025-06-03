@@ -9,16 +9,50 @@ import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
 import Message from 'primevue/message'
 import Button from 'primevue/button'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import Select from 'primevue/select'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import Breeds from '@/assets/data/breeds.json'
 import AddEditBreedCard from './components/AddEditBreedCard.vue'
 import { useDialog } from 'primevue'
 import type { Breed } from '@/models/Breed'
 import type { FormValues as AddEditBreedSchema } from '@/validation-schemas-forms/schema-add-edit-breed'
 import { useConfirm } from 'primevue'
+import { useBreed } from '@/composables/useBreed'
+import type { OptionSelect } from '@/models/OptionSelect'
+import type { Specie } from '@/models/Specie'
+import { useSpecie } from '@/composables/useSpecie'
+
+//get from compose
+
+const { loading, error, getAllBreeds, createBreed, updateBreed, deleteBreed } = useBreed()
+
+const { getAllSpecies } = useSpecie()
+
+const breeds = ref<Breed[]>([])
+
+const speciesOptions = ref<OptionSelect[]>([])
+
+onMounted(() => {
+  loadBreeds()
+})
+
+//for load breeds
+
+const loadBreeds = async () => {
+  breeds.value = await getAllBreeds()
+  speciesOptions.value = speciesToOptionsSelect(await getAllSpecies())
+}
+
+//for species to options Select
+
+const speciesToOptionsSelect = (species: Specie[]): OptionSelect[] => {
+  return species.map((specie) => ({
+    value: specie.id,
+    name: specie.name,
+  }))
+}
+
 //form
 const { handleSubmit, errors, defineField } = useForm<SearchBreedSchema>({
   validationSchema: toTypedSchema(schema),
@@ -31,11 +65,6 @@ const { handleSubmit, errors, defineField } = useForm<SearchBreedSchema>({
 const [name, nameAttrs] = defineField('name')
 const [specieId, specieIdAttrs] = defineField('specieId')
 
-const species = [
-  { name: 'Perro', value: 1 },
-  { name: 'Gato', value: 2 },
-]
-
 const onSubmit = handleSubmit((values) => {
   console.log(values)
 })
@@ -43,37 +72,54 @@ const onSubmit = handleSubmit((values) => {
 //for dialog
 const dialog = useDialog()
 
-const addBreed = ()=>{
-  dialog.open(AddEditBreedCard,{
-    props:{
-      modal:true
+const addBreed = () => {
+  dialog.open(AddEditBreedCard, {
+    props: {
+      modal: true,
     },
-    onClose:(data)=>{
-      if(data){
-        console.log('Datps recibidos', data )
+    data: {
+      speciesOptions: speciesOptions,
+    },
+    onClose: async (options) => {
+      const data = options?.data as AddEditBreedSchema
+      if (data) {
+        const breed = await createBreed(data)
+        console.log('Datos recibidos', breed)
+        loadBreeds()
       }
-    }
-  })
-}
-
-const editPaymentMethod = (breedData:Breed)=>{
-  dialog.open(AddEditBreedCard,{
-    props:{
-      modal:true
     },
-    data:{
-      breedData: breedData as AddEditBreedSchema
-    }
   })
 }
 
+const editBreed = (breedData: Breed) => {
+  dialog.open(AddEditBreedCard, {
+    props: {
+      modal: true,
+    },
+    data: {
+      breedData: {
+        name: breedData.name,
+        specieId: breedData.specie.id,
+      } as AddEditBreedSchema,
+      speciesOptions: speciesOptions,
+    },
+    onClose: async (options) => {
+      const data = options?.data as AddEditBreedSchema
+      if (data) {
+        const breed = await updateBreed(breedData.id, data)
+        console.log('Datos recibidos', breed)
+        loadBreeds()
+      }
+    },
+  })
+}
 
 //for confirm
 const confirm = useConfirm()
 
 //for delete with confirm popup
 
-const deleteBreed = (event: MouseEvent | KeyboardEvent, breedData: Breed) => {
+const deleteBreedAction = (event: MouseEvent | KeyboardEvent, breedData: Breed) => {
   confirm.require({
     target: event.currentTarget as HTMLElement,
     message: '¿Seguro que quiere eliminar esta raza?',
@@ -87,8 +133,10 @@ const deleteBreed = (event: MouseEvent | KeyboardEvent, breedData: Breed) => {
       label: 'Eliminar',
       severity: 'danger',
     },
-    accept: () => {
+    accept: async () => {
       console.log('Eliminando método ', breedData.id)
+      await deleteBreed(breedData.id)
+      loadBreeds()
     },
     reject: () => {
       console.log('Cancelando')
@@ -132,7 +180,7 @@ const exportCSV = () => {
                 class="w-full"
                 v-bind="specieIdAttrs"
                 v-model="specieId"
-                :options="species"
+                :options="speciesOptions"
                 optionLabel="name"
                 optionValue="value"
                 placeholder="Selecciona Especie"
@@ -155,9 +203,19 @@ const exportCSV = () => {
               />
             </div>
           </form>
+
+          <!-- for messague loading  -->
+          <Message v-if="loading.getAllBreeds" severity="warn" size="small" variant="simple">
+            Cargando ...
+          </Message>
+          <!-- for messague error -->
+          <Message v-if="error.getAllBreeds" severity="error" size="small" variant="simple">
+            Error al cargar las categorias
+          </Message>
+
           <!-- table -->
           <DataTable
-            :value="Breeds"
+            :value="breeds"
             paginator
             :rows="10"
             :rows-per-page-options="[5, 10, 15, 20]"
@@ -173,40 +231,45 @@ const exportCSV = () => {
                   @click="addBreed"
                 />
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
-                </div>
+              </div>
+            </template>
+            <Column field="name" sortable header="Nombre" style="width: 40%"></Column>
+            <Column sortable header="Especie" style="width: 30%" class="hidden xs:table-cell">
+              <template #body="{ data }">
+                {{ data.specie.name }}
               </template>
-                <Column field="name" sortable header="Nombre" style="width: 40%"></Column>
-                <Column field="specie" sortable header="Especie" style="width: 30%" class=" hidden xs:table-cell"></Column>
-                <Column>
-                  <template #body="{ data }">
-                    <div class="flex justify-between items-center flex-row xs:flex-col lg:flex-row gap-1">
-                                      <Button
+            </Column>
+            <Column>
+              <template #body="{ data }">
+                <div
+                  class="flex justify-between items-center flex-row xs:flex-col lg:flex-row gap-1"
+                >
+                  <Button
                     icon="pi pi-eye"
                     severity="info"
                     variant="outlined"
                     aria-label="Filter"
                     rounded
- ></Button>
-                      <Button
-                        icon="pi pi-pencil"
-                        severity="warn"
-                        variant="outlined"
-                        aria-label="Filter"
-                        rounded
-                        @click="editPaymentMethod(data)"
-                      ></Button>
-                      <Button
-                        icon="pi pi-trash"
-                        severity="danger"
-                        variant="outlined"
-                        aria-label="Filter"
-                        rounded
-                        @click="deleteBreed($event,data)"
-                      ></Button>
-                    </div>
-                  </template>
-                </Column>
-
+                  ></Button>
+                  <Button
+                    icon="pi pi-pencil"
+                    severity="warn"
+                    variant="outlined"
+                    aria-label="Filter"
+                    rounded
+                    @click="editBreed(data)"
+                  ></Button>
+                  <Button
+                    icon="pi pi-trash"
+                    severity="danger"
+                    variant="outlined"
+                    aria-label="Filter"
+                    rounded
+                    @click="deleteBreedAction($event, data)"
+                  ></Button>
+                </div>
+              </template>
+            </Column>
           </DataTable>
         </div>
       </template>

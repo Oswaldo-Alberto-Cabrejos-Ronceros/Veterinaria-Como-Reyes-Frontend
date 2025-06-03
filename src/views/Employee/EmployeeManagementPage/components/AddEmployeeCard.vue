@@ -13,8 +13,8 @@ import Select from 'primevue/select'
 import Button from 'primevue/button'
 import DatePicker from 'primevue/datepicker'
 import type { Ref } from 'vue'
-import type { AddEmployee } from '@/models/AddEmployee'
-import { inject } from 'vue'
+import { inject, onMounted, ref } from 'vue'
+import type { OptionSelect } from '@/models/OptionSelect'
 //form
 
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
@@ -97,27 +97,39 @@ const textFields: { title: string; key: keyof typeof fieldMap; icon: string }[] 
 
 const onSubmit = handleSubmit((values) => {
   console.log(values)
-  dialogRef.value.close(values as AddEmployee)
+  dialogRef.value.close(values)
 })
+
+//headquarter options
+const headquartersOptions = ref<OptionSelect[]>([])
+
+//roles options
+const rolesOptions = ref<OptionSelect[]>([])
+
+
 
 //for dynamicDialog
 const dialogRef = inject('dialogRef') as Ref<{
-  close: (data?: AddEmployee) => void
+  close: (data?: FormValues) => void
+  data:{
+    headquartersOptions?:OptionSelect[],
+    rolesOptions?:OptionSelect[]
+  }
 }>
 
-//for roles
-const roles = [
-  { name: 'Veterinario', value: 1 },
-  { name: 'Recepcionista', value: 2 },
-  { name: 'Jefe de sede', value: 3 },
-]
+onMounted(()=>{
+  if(dialogRef.value.data){
+    const headquartersOptionsGet = dialogRef.value.data.headquartersOptions
+    const rolesOptionsGet = dialogRef.value.data.rolesOptions
+    if(headquartersOptionsGet){
+      headquartersOptions.value=headquartersOptionsGet
+    }
+    if(rolesOptionsGet){
+      rolesOptions.value=rolesOptionsGet
+    }
+  }
+})
 
-//headquarterIds
-const headquarkers = [
-  { name: 'Ica', value: 1 },
-  { name: 'Parcona', value: 2 },
-  { name: 'Tinguiña', value: 3 },
-]
 </script>
 
 <template>
@@ -169,7 +181,7 @@ const headquarkers = [
             class="w-full"
             v-bind="roleIdAttrs"
             v-model="roleId"
-            :options="roles"
+            :options="rolesOptions"
             optionLabel="name"
             optionValue="value"
             placeholder="Selecciona Rol"
@@ -185,7 +197,7 @@ const headquarkers = [
             class="w-full"
             v-bind="headquarterIdAttrs"
             v-model="headquarterId"
-            :options="headquarkers"
+            :options="headquartersOptions"
             optionLabel="name"
             optionValue="value"
             placeholder="Selecciona Sede"

@@ -1,5 +1,5 @@
 import type { PageResponse } from '@/services/models/PageResponse'
-import type { Client } from '../models/Client'
+import type { Client, ClientRequest } from '../models/Client'
 
 export interface ClientService {
   getClientById(clientId: number): Promise<Client>
@@ -12,9 +12,9 @@ export interface ClientService {
     page?: number,
     size?: number,
   ): Promise<PageResponse<Client>>
-  createClient(client: Client): Promise<Client>
+  createClient(clientRequest: ClientRequest): Promise<Client>
   getAllClients(): Promise<Client[]>
-  updateClient(clientId: number, client: Client): Promise<Client>
+  updateClient(clientId: number, clientRequest: ClientRequest): Promise<Client>
   blockClient(clientId: number, note: string): Promise<void>
   deleteClient(clientId: number): Promise<void>
   myInfoAsClient(clientId: number): Promise<Client>

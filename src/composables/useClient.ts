@@ -3,6 +3,8 @@ import { useAsyncHandler } from './useAsyncHandler'
 import type { Client } from '@/services/Client/domain/models/Client'
 import type { Client as ClientView } from '@/models/Client'
 import { ClientAdapter } from '@/adapters/ClientAdapter'
+import type { FormValues as ClientAddSchema } from '@/validation-schemas-forms/schema-add-client'
+import type { FormValues as ClientEditSchema } from '@/validation-schemas-forms/schema-edit-client'
 import type { PageResponse } from '@/services/models/PageResponse'
 
 export function useClient() {
@@ -15,9 +17,10 @@ export function useClient() {
   }
 
   //fix
-  const createClient = async (client: Client): Promise<ClientView> => {
+  const createClient = async (clientAddSchema: ClientAddSchema): Promise<ClientView> => {
+    const clientRequest = ClientAdapter.fromSchemaAddToClientRequest(clientAddSchema)
     const clientCreate: Client = await runUseCase('createClient', () =>
-      clientUsesCases.createClient.execute(client),
+      clientUsesCases.createClient.execute(clientRequest),
     )
     //adapt
     return ClientAdapter.toClientView(clientCreate)
@@ -73,10 +76,13 @@ export function useClient() {
     )
   }
 
-  //fix
-  const updateClient = async (clientId: number, client: Client): Promise<ClientView> => {
+  const updateClient = async (
+    clientId: number,
+    clientEditSchema: ClientEditSchema,
+  ): Promise<ClientView> => {
+    const clientRequest = ClientAdapter.fromSchemaEditToClientRequest(clientEditSchema)
     const clientUpdated = await runUseCase('updateClient', () =>
-      clientUsesCases.updateClient.execute(clientId, client),
+      clientUsesCases.updateClient.execute(clientId, clientRequest),
     )
     return ClientAdapter.toClientView(clientUpdated)
   }
@@ -87,7 +93,7 @@ export function useClient() {
       clientUsesCases.updateClientAsClient.execute(clientId, client),
     )
   }
-  return{
+  return {
     loading,
     error,
     blockClient,
@@ -99,6 +105,6 @@ export function useClient() {
     searchClient,
     updateBlockNote,
     updateClient,
-    updateClientAsClient
+    updateClientAsClient,
   }
 }

@@ -13,26 +13,65 @@ import Button from 'primevue/button'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import type { Employee } from '@/models/Employee'
+import type { FormValues as EditEmployeeSchema } from '@/validation-schemas-forms/schema-edit.employee'
+import type { FormValues as AddEmployeeSchema } from '@/validation-schemas-forms/schema-add-employee'
 import { onMounted, ref } from 'vue'
 import { useDialog } from 'primevue/usedialog'
 import ViewEmployeeCard from './components/ViewEmployeeCard.vue'
 import { useConfirm } from 'primevue'
 import EditEmployeeCard from './components/EditEmployeeCard.vue'
-import type { EditEmployee } from '@/models/EditEmployee'
 import AddEmployeeCard from './components/AddEmployeeCard.vue'
 import { useEmployee } from '@/composables/useEmployee'
+import { useRole } from '@/composables/useRole'
+import type { OptionSelect } from '@/models/OptionSelect'
+import type { Role } from '@/models/Role'
+import { useHeadquarter } from '@/composables/useHeadquarter'
+import type { Headquarter } from '@/models/Headquarter'
 
 //methotds
 
-const { loading, error, getAllEmployees } = useEmployee()
+const { loading, error, getAllEmployees, createEmployee, updateEmployee, blockEmployee } =
+  useEmployee()
+
+const { getAllRoles } = useRole()
+
+const { getAllHeadquarters } = useHeadquarter()
 
 //employees
 
 const employees = ref<Employee[]>([])
 
+const rolesOptions = ref<OptionSelect[]>([])
+
+const headquartersOptions = ref<OptionSelect[]>([])
+
 onMounted(async () => {
-  employees.value = await getAllEmployees()
+  loadEmployees()
 })
+
+const loadEmployees = async () => {
+  employees.value = await getAllEmployees()
+  rolesOptions.value = rolesToOptionsSelect(await getAllRoles())
+  headquartersOptions.value = headquartersToOptionsSelect(await getAllHeadquarters())
+}
+
+//for get options from roles
+
+const rolesToOptionsSelect = (roles: Role[]): OptionSelect[] => {
+  return roles.map((role) => ({
+    value: role.id,
+    name: role.name,
+  }))
+}
+
+//for get options from headquarters
+
+const headquartersToOptionsSelect = (headquarters: Headquarter[]): OptionSelect[] => {
+  return headquarters.map((headquarter) => ({
+    value: headquarter.id,
+    name: headquarter.name,
+  }))
+}
 
 //form
 
@@ -44,6 +83,7 @@ const { handleSubmit, errors, defineField } = useForm<FormValues>({
     names: '',
     lastnames: '',
     rol: undefined,
+    headquarter: undefined,
   },
 })
 
@@ -55,6 +95,7 @@ const fieldMap = {
 }
 
 const [rol, rolAttrs] = defineField('rol')
+const [headquarter, headquarterAttrs] = defineField('headquarter')
 
 const searchElementsEmployee: { title: string; key: keyof typeof fieldMap; icon: string }[] = [
   {
@@ -83,13 +124,6 @@ const onSubmit = handleSubmit((values) => {
   console.log(values)
 })
 
-//roles
-const roles = [
-  { name: 'Veterinario', value: 1 },
-  { name: 'Recepcionista', value: 2 },
-  { name: 'Jefe de sede', value: 3 },
-]
-
 const rolesMap: Record<string, number> = {
   Recepcionista: 1,
   Veterinario: 2,
@@ -101,14 +135,21 @@ const rolesMap: Record<string, number> = {
 const dialog = useDialog()
 
 //for add
-const addEmployee = () => {
+const addEmployee = async () => {
   dialog.open(AddEmployeeCard, {
     props: {
       modal: true,
     },
-    onClose: (data) => {
+    data: {
+      headquartersOptions: headquartersToOptionsSelect(await getAllHeadquarters()),
+      rolesOptions: rolesToOptionsSelect(await getAllRoles()),
+    },
+    onClose: async (options) => {
+      const data = options?.data as AddEmployeeSchema
       if (data) {
-        console.log('Datos recibidos del diálogo:', data)
+        const employee = await createEmployee(data)
+        console.log('Datos recibidos:', employee)
+        loadEmployees()
       }
     },
   })
@@ -127,7 +168,7 @@ const viewEmployee = (employeeData: Employee) => {
 }
 
 //for edit
-const editEmployee = (employeeData: Employee) => {
+const editEmployee = async (employeeData: Employee) => {
   dialog.open(EditEmployeeCard, {
     data: {
       employeeData: {
@@ -138,17 +179,22 @@ const editEmployee = (employeeData: Employee) => {
         address: employeeData.address,
         phone: employeeData.phone,
         headquarterId: employeeData.headquarter.headquarterId,
-        birthdate:new Date(employeeData.birthdate),
+        birthdate: new Date(employeeData.birthdate),
         dirImage: employeeData.dirImage,
         roleId: rolesMap[employeeData.roles[0].name],
-      } as EditEmployee,
+      } as EditEmployeeSchema,
+      headquartersOptions: headquartersToOptionsSelect(await getAllHeadquarters()),
+      rolesOptions: rolesToOptionsSelect(await getAllRoles()),
     },
     props: {
       modal: true,
     },
-    onClose: (data) => {
+    onClose: async (options) => {
+      const data = options?.data as EditEmployeeSchema
       if (data) {
-        console.log('Datos recibidos del diálogo:', data)
+        const employee = await updateEmployee(employeeData.employeeId, data)
+        console.log('Datos recibidos:', employee)
+        loadEmployees()
       }
     },
   })
@@ -172,8 +218,9 @@ const deleteEmployee = (event: MouseEvent | KeyboardEvent, employee: Employee) =
       label: 'Eliminar',
       severity: 'danger',
     },
-    accept: () => {
+    accept: async () => {
       console.log('Eliminando Empleado ', employee.employeeId)
+      await blockEmployee(employee.employeeId)
     },
     reject: () => {
       console.log('Cancelando')
@@ -215,13 +262,14 @@ const exportCSV = () => {
                 {{ errors[element.key] }}
               </Message>
             </div>
+            <!-- rol -->
             <div>
-              <label class="block mb-2">Sede</label>
+              <label class="block mb-2">Rol</label>
               <Select
                 class="w-full"
                 v-bind="rolAttrs"
                 v-model="rol"
-                :options="roles"
+                :options="rolesOptions"
                 optionLabel="name"
                 optionValue="value"
                 placeholder="Selecciona Rol"
@@ -231,6 +279,24 @@ const exportCSV = () => {
                 {{ errors.rol }}
               </Message>
             </div>
+            <!-- headquarter -->
+            <div>
+              <label class="block mb-2">Sede</label>
+              <Select
+                class="w-full"
+                v-bind="headquarterAttrs"
+                v-model="headquarter"
+                :options="headquartersOptions"
+                optionLabel="name"
+                optionValue="value"
+                placeholder="Selecciona Rol"
+              />
+
+              <Message v-if="errors.headquarter" severity="error" size="small" variant="simple">
+                {{ errors.headquarter }}
+              </Message>
+            </div>
+
             <div class="form-button-search-container-grid-col-5">
               <!-- button -->
               <Button

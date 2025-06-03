@@ -20,20 +20,26 @@ import AddClientCard from './components/AddClientCard.vue'
 import EditClientCard from './components/EditClientCard.vue'
 //form
 import type { FormValues as SchemaEditClient } from '@/validation-schemas-forms/schema-edit-client'
+import type { FormValues as SchemaClientAdd } from '@/validation-schemas-forms/schema-add-client'
 import { useClient } from '@/composables/useClient'
 
 //methods
-const {loading,error,getAllClients}=useClient()
+const { loading, error, getAllClients, createClient, updateClient,deleteClient } = useClient()
 
 //clients
 
 const clients = ref<Client[]>([])
 
-onMounted(async()=>{
-  clients.value=await getAllClients()
+onMounted(async () => {
+  loadClients()
 })
 
-const { handleSubmit, errors, defineField } = useForm< SchemaSearchClient>({
+//for load clients
+const loadClients = async () => {
+  clients.value = await getAllClients()
+}
+
+const { handleSubmit, errors, defineField } = useForm<SchemaSearchClient>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
     dni: '',
@@ -52,89 +58,92 @@ const fieldMap = {
   email: defineField('email'),
 }
 
-
-
 //for dialog
-const dialog = useDialog();
+const dialog = useDialog()
 
-const viewClient=(clientData:Client)=>{
-dialog.open(ViewClientCard,{
-  data:{
-    clientData:clientData
-  },
-  props:{
-    modal:true
-  }
-})
-}
-
-const addClient = ()=>{
-  dialog.open(AddClientCard,{
-    props:{
-      modal: true
+const viewClient = (clientData: Client) => {
+  dialog.open(ViewClientCard, {
+    data: {
+      clientData: clientData,
     },
-    onClose: (data) => {
-      if (data) {
-        console.log('Datos recibidos del diálogo:',data);
-      }
-    }
-  });
-}
-
-
-const editClient = (clientData:Client)=>{
-dialog.open(EditClientCard,{
-  data:{
-    clientData:{
-      dni:clientData.dni,
-      names:clientData.names,
-      lastnames:clientData.lastnames,
-      phone:clientData.phone,
-      address:clientData.phone,
-      birthdate:new Date(clientData.birthdate),
-      headquarterId:clientData.headquarter.headquarterId
-    } as SchemaEditClient
-  },
-  props:{
-    modal:true
-  },
-  onClose:(data)=>{
-    if(data){
-      console.log("Datos recibidos del dialogo:",data)
-    }
-  }
-})
-}
-
-
-//for confirm
-const confirm = useConfirm();
-
-
-//for delete with confirm popup
-const deleteClient = (event:MouseEvent|KeyboardEvent,client:Client) => {
-  confirm.require({
-    target:event.currentTarget as HTMLElement,
-    message:'¿Seguro que quiere eliminar a este empleado?',
-    icon: 'pi pi-exclamation-triangle',
-    rejectProps:{
-      label:'Cancelar',
-      severity:'secondary',
-      outlined: true
+    props: {
+      modal: true,
     },
-    acceptProps:{
-      label:'Eliminar',
-      severity:'danger'
-    },
-    accept:()=>{
-      console.log('Eliminando Empleado ', client.clientId)
-    },
-    reject:()=>{
-      console.log('Cancelando')
-    }
   })
 }
 
+const addClient = () => {
+  dialog.open(AddClientCard, {
+    props: {
+      modal: true,
+    },
+    onClose: async (options) => {
+      const data = options?.data as SchemaClientAdd
+      if (data) {
+        const client = await createClient(data)
+        console.log('Datos recibidos', client)
+        loadClients()
+      }
+    },
+  })
+}
+
+const editClient = (clientData: Client) => {
+  dialog.open(EditClientCard, {
+    data: {
+      clientData: {
+        dni: clientData.dni,
+        names: clientData.names,
+        lastnames: clientData.lastnames,
+        phone: clientData.phone,
+        address: clientData.phone,
+        birthdate: new Date(clientData.birthdate),
+        headquarterId: clientData.headquarter.headquarterId,
+      } as SchemaEditClient,
+    },
+    props: {
+      modal: true,
+    },
+    onClose: async (options) => {
+      const data = options?.data as SchemaEditClient
+      if (data) {
+        console.log(clientData)
+        const client = await updateClient(clientData.clientId, data)
+        console.log('Datos recibidos', client)
+        loadClients()
+      }
+    },
+  })
+}
+
+//for confirm
+const confirm = useConfirm()
+
+//for delete with confirm popup
+const deleteClientAction = (event: MouseEvent | KeyboardEvent, client: Client) => {
+  confirm.require({
+    target: event.currentTarget as HTMLElement,
+    message: '¿Seguro que quiere eliminar a este empleado?',
+    icon: 'pi pi-exclamation-triangle',
+    rejectProps: {
+      label: 'Cancelar',
+      severity: 'secondary',
+      outlined: true,
+    },
+    acceptProps: {
+      label: 'Eliminar',
+      severity: 'danger',
+    },
+    accept: async () => {
+      console.log('Eliminando Empleado ', client.clientId)
+      await deleteClient(client.clientId)
+      loadClients()
+    },
+    reject: () => {
+      console.log('Cancelando')
+    },
+  })
+}
 
 const searchElementsClient: { title: string; key: keyof typeof fieldMap; icon: string }[] = [
   {
@@ -168,7 +177,6 @@ const searchElementsClient: { title: string; key: keyof typeof fieldMap; icon: s
 const onSubmit = handleSubmit((values) => {
   console.log(values)
 })
-
 
 //for export
 
@@ -217,7 +225,7 @@ const exportCSV = () => {
               />
             </div>
           </form>
-                    <!-- for messague loading  -->
+          <!-- for messague loading  -->
           <Message v-if="loading.getAllClients" severity="warn" size="small" variant="simple">
             Cargando ...
           </Message>
@@ -225,29 +233,57 @@ const exportCSV = () => {
           <Message v-if="error.getAllClients" severity="error" size="small" variant="simple">
             Error al cargar los clientes
           </Message>
-          <DataTable :value="clients"
-          paginator
+          <DataTable
+            :value="clients"
+            paginator
             :rows="10"
             :rows-per-page-options="[10, 15, 20, 25, 30]"
-            ref="dt">
+            ref="dt"
+          >
             <template #header>
               <div class="w-full flex flex-col xs:flex-row justify-between gap-2 pb-4">
-                <Button icon="pi pi-user-plus" iconPos="right" severity="success" label="Agregar Cliente" @click="addClient"  />
+                <Button
+                  icon="pi pi-user-plus"
+                  iconPos="right"
+                  severity="success"
+                  label="Agregar Cliente"
+                  @click="addClient"
+                />
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
             </template>
-            <Column field="dni" sortable header="DNI" class=" hidden lg:table-cell" style="width: 18%"></Column>
+            <Column
+              field="dni"
+              sortable
+              header="DNI"
+              class="hidden lg:table-cell"
+              style="width: 18%"
+            ></Column>
             <Column field="names" sortable header="Nombres" style="width: 18%"></Column>
-            <Column field="lastnames" class=" hidden md:table-cell" header="Apellidos" sortable style="width: 15%"></Column>
-            <Column field="phone" class=" hidden xl:table-cell" header="Celular" sortable style="width: 15%"></Column>
-            <Column class=" hidden lg:table-cell" header="Correo" sortable style="width: 15%">
-            <template #body="{data}">
-              {{ data.user.email }}
-            </template>
-            </Column>
-            <Column >
+            <Column
+              field="lastnames"
+              class="hidden md:table-cell"
+              header="Apellidos"
+              sortable
+              style="width: 15%"
+            ></Column>
+            <Column
+              field="phone"
+              class="hidden xl:table-cell"
+              header="Celular"
+              sortable
+              style="width: 15%"
+            ></Column>
+            <Column class="hidden lg:table-cell" header="Correo" sortable style="width: 15%">
               <template #body="{ data }">
-                <div class="flex justify-between items-center flex-row lg:flex-col xl:flex-row gap-1">
+                {{ data.user.email }}
+              </template>
+            </Column>
+            <Column>
+              <template #body="{ data }">
+                <div
+                  class="flex justify-between items-center flex-row lg:flex-col xl:flex-row gap-1"
+                >
                   <Button
                     icon="pi pi-eye"
                     severity="info"
@@ -270,7 +306,7 @@ const exportCSV = () => {
                     variant="outlined"
                     aria-label="Filter"
                     rounded
-                    @click="deleteClient($event,data)"
+                    @click="deleteClientAction($event, data)"
                   ></Button>
                 </div>
               </template>
