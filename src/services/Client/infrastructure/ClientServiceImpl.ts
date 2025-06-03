@@ -1,5 +1,5 @@
 import type { PageResponse } from '@/services/models/PageResponse'
-import type { Client,ClientRequest } from '../domain/models/Client'
+import type { Client,ClientRequest, MyInfoClient } from '../domain/models/Client'
 import type { ClientService } from '../domain/services/ClientService'
 import type { HttpClient } from '@/services/Http/model/HttpClient'
 
@@ -63,8 +63,8 @@ export class ClientServiceImpl implements ClientService {
   async deleteClient(clientId: number): Promise<void> {
     await this.httpClient.delete<void>(`${this.urlBase}/${clientId}`)
   }
-  async myInfoAsClient(clientId: number): Promise<Client> {
-    const response = this.httpClient.get<Client>(`${this.urlBase}/${clientId}/my-info`)
+  async myInfoAsClient(clientId: number): Promise<MyInfoClient> {
+    const response = this.httpClient.get<MyInfoClient>(`${this.urlBase}/${clientId}/my-info`)
     return (await response).data
   }
   async updateClientAsClient(clientId: number, client: Client): Promise<string> {
