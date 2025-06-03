@@ -1,4 +1,4 @@
-import type { Client, ClientUpdateAsClient } from '../domain/models/Client'
+import type { ClientUpdateAsClient } from '../domain/models/Client'
 import type { ClientService } from '../domain/services/ClientService'
 
 export class UpdateClientAsClient {
