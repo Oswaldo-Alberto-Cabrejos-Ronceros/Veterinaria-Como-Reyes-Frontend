@@ -53,3 +53,9 @@ export interface MyInfoClient{
     name:string
   }
 }
+
+export interface ClientUpdateAsClient{
+   address:string,
+  phone:string,
+  hearheadquarterId:number
+}

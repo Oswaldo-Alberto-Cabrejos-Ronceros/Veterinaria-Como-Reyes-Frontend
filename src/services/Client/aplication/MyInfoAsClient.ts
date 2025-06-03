@@ -1,4 +1,4 @@
-import type { Client, MyInfoClient } from '../domain/models/Client'
+import type { MyInfoClient } from '../domain/models/Client'
 import type { ClientService } from '../domain/services/ClientService'
 
 export class MyInfoAsClient {

@@ -1,5 +1,5 @@
 import type { PageResponse } from '@/services/models/PageResponse'
-import type { Client,ClientRequest, MyInfoClient } from '../domain/models/Client'
+import type { Client,ClientRequest, ClientUpdateAsClient, MyInfoClient } from '../domain/models/Client'
 import type { ClientService } from '../domain/services/ClientService'
 import type { HttpClient } from '@/services/Http/model/HttpClient'
 
@@ -67,10 +67,10 @@ export class ClientServiceImpl implements ClientService {
     const response = this.httpClient.get<MyInfoClient>(`${this.urlBase}/${clientId}/my-info`)
     return (await response).data
   }
-  async updateClientAsClient(clientId: number, client: Client): Promise<string> {
+  async updateClientAsClient(clientId: number, clientUpdateAsClient: ClientUpdateAsClient): Promise<string> {
     const response = await this.httpClient.put<string>(
       `${this.urlBase}/${clientId}/update-my-info`,
-      client,
+      clientUpdateAsClient,
     )
     return response.data
   }
