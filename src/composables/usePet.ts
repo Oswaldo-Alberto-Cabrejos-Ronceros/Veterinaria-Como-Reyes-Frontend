@@ -10,14 +10,10 @@ export function usePet() {
 
   //create
 
-  const createPet = async(petAddEditSchema:PetAddEditSchema):Promise<PetView>=>{
-    const animalRequest = AnimalAdapter.fromSchemaAddEditToPetRequest(petAddEditSchema);
-    const animal:Animal = await runUseCase('createPet',()=>
-    animalUsesCases.createAnimal.execute(animalRequest)
-    )
-    return AnimalAdapter.toPetView(animal)
+  const createPet = async (petAddEditSchema: PetAddEditSchema) => {
+    const animalRequest = AnimalAdapter.fromSchemaAddEditToPetRequest(petAddEditSchema)
+    await runUseCase('createPet', () => animalUsesCases.createAnimal.execute(animalRequest))
   }
-
 
   const deletePet = async (petId: number): Promise<void> => {
     await runUseCase('deletePet', () => animalUsesCases.deleteAnimal.execute(petId))
@@ -45,17 +41,12 @@ export function usePet() {
     return AnimalAdapter.toPetView(animal)
   }
 
-
   //update
 
-    const updatePet = async(petId:number,petAddEditSchema:PetAddEditSchema):Promise<PetView>=>{
-    const animalRequest = AnimalAdapter.fromSchemaAddEditToPetRequest(petAddEditSchema);
-    const animal:Animal = await runUseCase('updatePet',()=>
-    animalUsesCases.updateAnimal.execute(petId,animalRequest)
-    )
-    return AnimalAdapter.toPetView(animal)
+  const updatePet = async (petId: number, petAddEditSchema: PetAddEditSchema) => {
+    const animalRequest = AnimalAdapter.fromSchemaAddEditToPetRequest(petAddEditSchema)
+    await runUseCase('updatePet', () => animalUsesCases.updateAnimal.execute(petId, animalRequest))
   }
-
 
   return {
     loading,
@@ -65,6 +56,6 @@ export function usePet() {
     getAllPets,
     getPetByClientId,
     getPetById,
-    updatePet
+    updatePet,
   }
 }

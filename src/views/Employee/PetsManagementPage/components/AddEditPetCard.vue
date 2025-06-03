@@ -79,6 +79,8 @@ onMounted(() => {
   if (dialogRef.value.data) {
     console.log(dialogRef.value.data)
     const params = dialogRef.value.data.petData
+    const speciesOptionsGet = dialogRef.value.data.speciesOptions
+    const breedsOptionsGet = dialogRef.value.data.breedsOptions
     //set data if edit
     if (params) {
       title.value='Editar'
@@ -92,6 +94,8 @@ onMounted(() => {
       urlImage.value = params.urlImage
       ownerDni.value = params.ownerDni
     }
+    if(speciesOptionsGet) speciesOptions.value=speciesOptionsGet
+    if(breedsOptionsGet) breedsOptions.value = breedsOptionsGet
   }
 })
 </script>
@@ -127,7 +131,7 @@ onMounted(() => {
             :options="genders"
             optionLabel="name"
             optionValue="value"
-            placeholder="Selecciona Raza"
+            placeholder="Selecciona Sexo"
           />
 
           <Message v-if="errors.gender" severity="error" size="small" variant="simple">

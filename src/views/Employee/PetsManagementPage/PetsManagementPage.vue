@@ -134,8 +134,7 @@ const addPet = async () => {
     onClose: async (options) => {
       const data = options?.data as AddEditPetSchema
       if (data) {
-        const pet = await createPet(data)
-        console.log('Datos recibidos¿', pet)
+        await createPet(data)
         loadPets()
       }
     },
@@ -172,8 +171,7 @@ const editPet = async (petData: Pet) => {
     onClose: async (options) => {
       const data = options?.data as AddEditPetSchema
       if (data) {
-        const pet = await updatePet(petData.id, data)
-        console.log('Datos recibidos¿', pet)
+        await updatePet(petData.id, data)
         loadPets()
       }
     },
