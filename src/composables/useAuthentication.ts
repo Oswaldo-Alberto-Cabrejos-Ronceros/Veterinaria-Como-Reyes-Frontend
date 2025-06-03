@@ -61,5 +61,6 @@ export function useAuthentication() {
     loginEmployee,
     logoutUser,
     registerUserClient,
+    getMainRole
   }
 }
