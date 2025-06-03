@@ -1,7 +1,7 @@
 import type { EmployeeService } from '../domain/services/EmployeeService'
 import type { PageResponse } from '@/services/models/PageResponse'
 import type { HttpClient } from '@/services/Http/model/HttpClient'
-import type { Employee, EmployeeRequest } from '../domain/models/Employee'
+import type { Employee, EmployeeRequest, MyInfoEmployee } from '../domain/models/Employee'
 
 export class EmployeeServiceImpl implements EmployeeService {
   //inject httpClient
@@ -65,8 +65,8 @@ export class EmployeeServiceImpl implements EmployeeService {
     )
     return response.data
   }
-  async getEmployeeMyInfo(employeeId: number): Promise<Employee> {
-    const response = await this.httpClient.get<Employee>(`${this.urlBase}/${employeeId}/myInfo`)
+  async getEmployeeMyInfo(employeeId: number): Promise<MyInfoEmployee> {
+    const response = await this.httpClient.get<MyInfoEmployee>(`${this.urlBase}/${employeeId}/myInfo`)
     return response.data
   }
 }
