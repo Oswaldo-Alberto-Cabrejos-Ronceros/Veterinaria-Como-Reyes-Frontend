@@ -20,7 +20,6 @@ const { handleSubmit, errors, defineField } = useForm<FormValues>({
   initialValues: {
     phone: '',
     address: '',
-    birthdate: undefined,
     headquarterId: undefined,
   },
 })
@@ -33,7 +32,6 @@ const headquarkers = [
 ]
 
 const [address, addressAttrs] = defineField('address')
-const [birthdate, birthdateAttrs] = defineField('birthdate')
 const [headquarterId, headquarterIdAttrs] = defineField('headquarterId')
 const [phone, phoneAttrs] = defineField('phone')
 
@@ -51,7 +49,6 @@ onMounted(() => {
   const params = dialogRef.value.data
   //change default values
   address.value = params.address
-  birthdate.value = params.birthdate
   headquarterId.value = params.headquarterId
   phone.value = params.phone
 })
@@ -99,22 +96,6 @@ onMounted(() => {
 
           <Message v-if="errors.address" severity="error" size="small" variant="simple">
             {{ errors.address }}
-          </Message>
-        </div>
-
-        <!-- birthDate -->
-        <div>
-          <label class="block mb-2">Fecha Nacimiento</label>
-
-          <DatePicker
-            v-bind="birthdateAttrs"
-            v-model="birthdate"
-            showIcon
-            fluid
-            iconDisplay="input"
-          />
-          <Message v-if="errors.birthdate" severity="error" size="small" variant="simple">
-            {{ errors.birthdate }}
           </Message>
         </div>
         <!--for headquarte-->
