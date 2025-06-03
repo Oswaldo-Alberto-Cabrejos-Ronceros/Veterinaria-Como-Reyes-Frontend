@@ -28,7 +28,7 @@ import { useBreed } from '@/composables/useBreed'
 
 //methods
 
-const { loading, error, getAllPets, createPet, updatePet } = usePet()
+const { loading, error, getAllPets, createPet, updatePet, deletePet } = usePet()
 
 const { getAllSpecies } = useSpecie()
 
@@ -198,8 +198,9 @@ const deleteClient = (event: MouseEvent | KeyboardEvent, pet: Pet) => {
       label: 'Eliminar',
       severity: 'danger',
     },
-    accept: () => {
+    accept: async () => {
       console.log('Eliminando Empleado ', pet.id)
+      await deletePet(pet.id)
     },
     reject: () => {
       console.log('Cancelando')
