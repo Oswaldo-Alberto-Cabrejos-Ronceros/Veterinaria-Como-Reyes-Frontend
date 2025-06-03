@@ -6,7 +6,7 @@ export interface MyInfoClient {
   }
   dni: string
   names: string
-  lastNames: string
+  lastnames: string
   phone: string
   address: string
   headquarter: {

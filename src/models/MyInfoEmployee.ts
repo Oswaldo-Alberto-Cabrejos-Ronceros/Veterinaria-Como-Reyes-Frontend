@@ -7,14 +7,14 @@ export interface MyInfoEmployee {
   dni: string
   cmvp?: string
   names: string
-  lastNames: string
+  lastnames: string
   address: string
   phone: string
   headquarter: {
     id: number
     name: string
   }
-  birthDate: string
+  birthdate: string
   dirImage?: string
   roles: [
     {

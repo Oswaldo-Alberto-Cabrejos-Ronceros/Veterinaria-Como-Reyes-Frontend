@@ -71,7 +71,7 @@ export class ClientAdapter {
       },
       dni: myInfoAsClient.dni,
       names: myInfoAsClient.names,
-      lastNames: myInfoAsClient.LastNames,
+      lastnames: myInfoAsClient.LastNames,
       phone: myInfoAsClient.phone,
       address: myInfoAsClient.address,
       headquarter: {
@@ -80,7 +80,7 @@ export class ClientAdapter {
       },
     }
   }
-  
+
   static fromSchemaEditSelfClientToClientUpdateAsClient(
     schemaEditSelfClient: SchemaEditSelfClient,
   ): ClientUpdateAsClient {
