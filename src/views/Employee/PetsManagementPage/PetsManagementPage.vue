@@ -28,7 +28,7 @@ import { useBreed } from '@/composables/useBreed'
 
 //methods
 
-const { loading, error, getAllPets } = usePet()
+const { loading, error, getAllPets, createPet, updatePet, deletePet } = usePet()
 
 const { getAllSpecies } = useSpecie()
 
@@ -127,13 +127,15 @@ const addPet = async () => {
     props: {
       modal: true,
     },
-    data:{
+    data: {
       speciesOptions: speciesToOptionsSelect(await getAllSpecies()),
       breedsOptions: breedsToOptionsSelect(await getAllBreeds()),
     },
-    onClose: (data) => {
+    onClose: async (options) => {
+      const data = options?.data as AddEditPetSchema
       if (data) {
-        console.log('Datos recibidos del dialogo:', data)
+        await createPet(data)
+        loadPets()
       }
     },
   })
@@ -166,6 +168,13 @@ const editPet = async (petData: Pet) => {
       speciesOptions: speciesToOptionsSelect(await getAllSpecies()),
       breedsOptions: breedsToOptionsSelect(await getAllBreeds()),
     },
+    onClose: async (options) => {
+      const data = options?.data as AddEditPetSchema
+      if (data) {
+        await updatePet(petData.id, data)
+        loadPets()
+      }
+    },
   })
 }
 
@@ -187,8 +196,9 @@ const deleteClient = (event: MouseEvent | KeyboardEvent, pet: Pet) => {
       label: 'Eliminar',
       severity: 'danger',
     },
-    accept: () => {
+    accept: async () => {
       console.log('Eliminando Empleado ', pet.id)
+      await deletePet(pet.id)
     },
     reject: () => {
       console.log('Cancelando')

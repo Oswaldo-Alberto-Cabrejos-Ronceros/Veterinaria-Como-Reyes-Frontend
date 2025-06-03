@@ -1,5 +1,5 @@
 import type { HttpClient } from '@/services/Http/model/HttpClient'
-import type { Animal } from '../domain/models/Animal'
+import type { Animal, AnimalRequest } from '../domain/models/Animal'
 import type { AnimalService } from '../domain/services/AnimalService'
 
 export class AnimalServiceImpl implements AnimalService {
@@ -19,13 +19,11 @@ export class AnimalServiceImpl implements AnimalService {
     return response.data
   }
 
-  async createAnimal(animal: Animal): Promise<Animal> {
-    const response = await this.httpClient.post<Animal>(this.urlBase, animal)
-    return response.data
+  async createAnimal(animalRequest: AnimalRequest): Promise<void> {
+    await this.httpClient.post<Animal>(this.urlBase, animalRequest)
   }
-  async updateAnimal(animalId: number, animal: Animal): Promise<Animal> {
-    const response = await this.httpClient.put<Animal>(`${this.urlBase}/${animalId}`, animal)
-    return response.data
+  async updateAnimal(animalId: number, animalRequest: AnimalRequest) {
+    await this.httpClient.put<Animal>(`${this.urlBase}/${animalId}`, animalRequest)
   }
   async deleteAnimal(animalId: number): Promise<void> {
     await this.httpClient.delete<void>(`${this.urlBase}/${animalId}`)
