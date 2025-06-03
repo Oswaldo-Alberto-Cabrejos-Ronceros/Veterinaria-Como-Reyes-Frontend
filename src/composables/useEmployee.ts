@@ -6,6 +6,8 @@ import type { Employee as EmployeeView } from '@/models/Employee'
 import type { PageResponse } from '@/services/models/PageResponse'
 import type { FormValues as EmployeeAddSchema } from '@/validation-schemas-forms/schema-add-employee'
 import type { FormValues as EmployeeEditSchema } from '@/validation-schemas-forms/schema-edit.employee'
+import type { MyInfoEmployee } from '@/services/Employee/domain/models/Employee'
+import type { MyInfoEmployee as MyInfoEmployeeView } from '@/models/MyInfoEmployee'
 
 export function useEmployee() {
   //fet from useAsyncHandle
@@ -42,11 +44,11 @@ export function useEmployee() {
     return EmployeeAdapter.toEmployeeView(employee)
   }
 
-  const getEmployeeMyInfo = async (employeeId: number): Promise<EmployeeView> => {
-    const employee: Employee = await runUseCase('getEmployeeMyInfo', () =>
+  const getEmployeeMyInfo = async (employeeId: number): Promise<MyInfoEmployeeView> => {
+    const myInfoEmployee: MyInfoEmployee = await runUseCase('getEmployeeMyInfo', () =>
       employeeUsesCases.getEmployeeMyInfo.execute(employeeId),
     )
-    return EmployeeAdapter.toEmployeeView(employee)
+    return EmployeeAdapter.fromMyInfoEmployeeToMyInfoEmployeeView(myInfoEmployee)
   }
 
   const restoreEmployee = async (employeeId: number) => {
