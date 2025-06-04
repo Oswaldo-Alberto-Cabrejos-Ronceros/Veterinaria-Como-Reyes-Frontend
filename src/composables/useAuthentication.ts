@@ -56,7 +56,7 @@ export function useAuthentication() {
   }
 
   //para obtener entityId de un usuario
-  const getEntityRole =()=>{
+  const getEntityId =()=>{
     return autenthenticationStore.entityId
   }
 
@@ -69,6 +69,6 @@ export function useAuthentication() {
     logoutUser,
     registerUserClient,
     getMainRole,
-    getEntityRole
+    getEntityId
   }
 }

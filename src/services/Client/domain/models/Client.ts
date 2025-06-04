@@ -44,7 +44,7 @@ export interface MyInfoClient {
   }
   dni: string
   names: string
-  LastNames: string
+  lastNames: string
   phone: string
   address: string
   headquarter: {

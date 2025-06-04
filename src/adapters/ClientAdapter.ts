@@ -71,7 +71,7 @@ export class ClientAdapter {
       },
       dni: myInfoAsClient.dni,
       names: myInfoAsClient.names,
-      lastnames: myInfoAsClient.LastNames,
+      lastnames: myInfoAsClient.lastNames,
       phone: myInfoAsClient.phone,
       address: myInfoAsClient.address,
       headquarter: {

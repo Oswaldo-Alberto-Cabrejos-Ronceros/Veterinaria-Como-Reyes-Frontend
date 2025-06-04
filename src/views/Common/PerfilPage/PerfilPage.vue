@@ -4,50 +4,38 @@ import EditClientCard from '@/views/Common/PerfilPage/components/EditClientCard.
 import { useDialog } from 'primevue/usedialog'
 import type { MyInfoClient } from '@/models/MyInfoClient'
 import type { MyInfoEmployee } from '@/models/MyInfoEmployee'
+import { useClient } from '@/composables/useClient'
+import { useEmployee } from '@/composables/useEmployee'
+import { onMounted, ref } from 'vue'
+import { useAuthentication } from '@/composables/useAuthentication'
 
-const myInfoClient: MyInfoClient = {
-  clientId: 101,
-  user: {
-    id: 5,
-    email: "cliente.ejemplo@correo.com"
-  },
-  dni: "12345678",
-  names: "Carlos Alberto",
-  lastnames: "Ramírez Quispe",
-  phone: "987654321",
-  address: "Av. Los Próceres 123, Lima",
-  headquarter: {
-    id: 2,
-    name: "Sede Central"
-  }
-}
+//methods for get
+const { getEntityId, getMainRole } = useAuthentication()
+const { myInfoAsClient } = useClient()
+const { getEmployeeMyInfo } = useEmployee()
+//ref for myInfoClient
+const myInfoClient = ref<MyInfoClient | null>(null)
+//ref for myInfoEmployee
+const myInfoEmployee = ref<MyInfoEmployee | null>(null)
+//const myInfo
+const myInfo = ref<MyInfoClient | MyInfoEmployee | null>(null)
 
-const myInfoEmployee: MyInfoEmployee = {
-  employeeId: 202,
-  user: {
-    id: 12,
-    email: "maria.torres@empresa.com"
-  },
-  dni: "87654321",
-  cmvp: "CMVP-45678", // Puedes omitirlo si no aplica
-  names: "María Fernanda",
-  lastnames: "Torres Salazar",
-  address: "Jr. Las Rosas 456, Arequipa",
-  phone: "912345678",
-  headquarter: {
-    id: 3,
-    name: "Sede Arequipa"
-  },
-  birthdate: "1990-07-15",
-  dirImage: "https://example.com/images/maria-torres.jpg", // Opcional
-  roles: [
-    {
-      id: 1,
-      name: "Veterinario"
+onMounted(async () => {
+  const role = getMainRole()
+  const entityId = getEntityId()
+  console.log(role,entityId)
+  if (role && entityId) {
+    if (role.toUpperCase() === 'CLIENTE') {
+      myInfoClient.value = await myInfoAsClient(entityId)
+      console.log(myInfoClient.value)
+      myInfo.value=myInfoClient.value
+    } else {
+      myInfoEmployee.value = await getEmployeeMyInfo(entityId)
+      myInfo.value=myInfoEmployee.value
     }
-  ]
-}
-
+  }
+  console.log(myInfo.value)
+})
 //for open dynamic dialog
 const dialog = useDialog()
 
@@ -55,9 +43,9 @@ const dialog = useDialog()
 const showEditClient = () => {
   dialog.open(EditClientCard, {
     data: {
-      address: myInfoClient.user.email,
-      headquarterId: myInfoClient.headquarter.id,
-      phone: myInfoClient.phone
+      address: myInfoClient.value?.user.email,
+      headquarterId: myInfoClient.value?.headquarter.id,
+      phone: myInfoClient.value?.phone,
     },
     props: {
       modal: true,
@@ -70,14 +58,10 @@ const showEditClient = () => {
     },
   })
 }
-
 </script>
 
 <template>
   <div class="layout-principal-flex">
-    <PerfilCard
-      :user-data="myInfoClient"
-      @edit:client="showEditClient"
-    />
+    <PerfilCard v-if="myInfo" :user-data="myInfo" @edit:client="showEditClient" />
   </div>
 </template>
