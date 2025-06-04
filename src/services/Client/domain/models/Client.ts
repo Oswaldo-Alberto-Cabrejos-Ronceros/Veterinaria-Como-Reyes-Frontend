@@ -56,5 +56,5 @@ export interface MyInfoClient {
 export interface ClientUpdateAsClient {
   address: string
   phone: string
-  hearheadquarterId: number
+  headquarterId: number
 }

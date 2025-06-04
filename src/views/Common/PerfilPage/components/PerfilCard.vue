@@ -7,6 +7,7 @@ import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
 import type { MyInfoClient } from '@/models/MyInfoClient'
 import type { MyInfoEmployee } from '@/models/MyInfoEmployee'
+import { computed } from 'vue'
 
 const props = defineProps<{
   userData: MyInfoClient | MyInfoEmployee
@@ -66,10 +67,8 @@ const elementsEmployee: { title: string; key: keyof MyInfoEmployee; icon: string
 function isClient(user: MyInfoClient | MyInfoEmployee): user is MyInfoClient {
   return (user as MyInfoClient).clientId !== undefined
 }
-
-const clientData = isClient(props.userData) ? props.userData : null
-
-const employeeData = !isClient(props.userData) ? props.userData : null
+const clientData = computed(() => isClient(props.userData) ? props.userData : null)
+const employeeData = computed(() => !isClient(props.userData) ? props.userData : null)
 
 const profileImageDefault: string =
   'https://img.freepik.com/vector-gratis/circulo-azul-usuario-blanco_78370-4707.jpg?semt=ais_hybrid&w=740'

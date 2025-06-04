@@ -15,7 +15,7 @@ import { useHeadquarter } from '@/composables/useHeadquarter'
 
 //methods for get
 const { getEntityId, getMainRole } = useAuthentication()
-const { myInfoAsClient } = useClient()
+const { myInfoAsClient, updateClientAsClient } = useClient()
 const { getEmployeeMyInfo } = useEmployee()
 const { getAllHeadquarters } = useHeadquarter()
 //ref for myInfoClient
@@ -24,23 +24,25 @@ const myInfoClient = ref<MyInfoClient | null>(null)
 const myInfoEmployee = ref<MyInfoEmployee | null>(null)
 //const myInfo
 const myInfo = ref<MyInfoClient | MyInfoEmployee | null>(null)
+//
+const entityId = ref<number | null>(null)
+onMounted(() => loadMyInfo())
 
-onMounted(async () => {
+//for load
+const loadMyInfo = async () => {
   const role = getMainRole()
-  const entityId = getEntityId()
-  console.log(role,entityId)
-  if (role && entityId) {
+  const entityIdGet = getEntityId()
+  entityId.value = entityIdGet
+  if (role && entityIdGet) {
     if (role.toUpperCase() === 'CLIENTE') {
-      myInfoClient.value = await myInfoAsClient(entityId)
-      console.log(myInfoClient.value)
-      myInfo.value=myInfoClient.value
+      myInfoClient.value = await myInfoAsClient(entityIdGet)
+      myInfo.value = myInfoClient.value
     } else {
-      myInfoEmployee.value = await getEmployeeMyInfo(entityId)
-      myInfo.value=myInfoEmployee.value
+      myInfoEmployee.value = await getEmployeeMyInfo(entityIdGet)
+      myInfo.value = myInfoEmployee.value
     }
   }
-  console.log(myInfo.value)
-})
+}
 
 //for get options from headquarters
 
@@ -57,19 +59,26 @@ const dialog = useDialog()
 //for client
 const showEditClient = async () => {
   dialog.open(EditClientCard, {
-    data: {clientSelfData:{
-      address: myInfoClient.value?.user.email,
-      headquarterId: myInfoClient.value?.headquarter.id,
-      phone: myInfoClient.value?.phone,
-    } as SchemaEditSelfClient,
-  headquartersOptions: headquartersToOptionsSelect(await getAllHeadquarters()),},
+    data: {
+      clientSelfData: {
+        address: myInfoClient.value?.user.email,
+        headquarterId: myInfoClient.value?.headquarter.id,
+        phone: myInfoClient.value?.phone,
+      } as SchemaEditSelfClient,
+      headquartersOptions: headquartersToOptionsSelect(await getAllHeadquarters()),
+    },
     props: {
       modal: true,
     },
-    onClose: (data) => {
-      // Escuchar el evento 'close' y recibir los datos
+    onClose: async (options) => {
+      const data = options?.data as SchemaEditSelfClient
       if (data) {
-        console.log('Datos recibidos del diálogo:', data)
+        if (entityId.value) {
+          const myInfoGet = await updateClientAsClient(entityId.value, data)
+          console.log('Datos recibidos', myInfoGet)
+          myInfoClient.value = await myInfoAsClient(entityId.value)
+          myInfo.value = myInfoClient.value
+        }
       }
     },
   })

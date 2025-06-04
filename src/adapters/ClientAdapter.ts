@@ -87,7 +87,7 @@ export class ClientAdapter {
     return {
       address: schemaEditSelfClient.address,
       phone: schemaEditSelfClient.phone,
-      hearheadquarterId: schemaEditSelfClient.headquarterId,
+      headquarterId: schemaEditSelfClient.headquarterId,
     }
   }
 }
