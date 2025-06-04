@@ -54,6 +54,13 @@ export function useAuthentication() {
   const getMainRole =()=>{
     return autenthenticationStore.userRole
   }
+
+  //para obtener entityId de un usuario
+  const getEntityRole =()=>{
+    return autenthenticationStore.entityId
+  }
+
+  //para
   return {
     loading,
     error,
@@ -61,6 +68,7 @@ export function useAuthentication() {
     loginEmployee,
     logoutUser,
     registerUserClient,
-    getMainRole
+    getMainRole,
+    getEntityRole
   }
 }
