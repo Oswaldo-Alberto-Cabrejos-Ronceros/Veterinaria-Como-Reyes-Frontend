@@ -8,11 +8,16 @@ import { useClient } from '@/composables/useClient'
 import { useEmployee } from '@/composables/useEmployee'
 import { onMounted, ref } from 'vue'
 import { useAuthentication } from '@/composables/useAuthentication'
+import type { FormValues as SchemaEditSelfClient } from '@/validation-schemas-forms/schema-edit-self-client'
+import type { Headquarter } from '@/models/Headquarter'
+import type { OptionSelect } from '@/models/OptionSelect'
+import { useHeadquarter } from '@/composables/useHeadquarter'
 
 //methods for get
 const { getEntityId, getMainRole } = useAuthentication()
 const { myInfoAsClient } = useClient()
 const { getEmployeeMyInfo } = useEmployee()
+const { getAllHeadquarters } = useHeadquarter()
 //ref for myInfoClient
 const myInfoClient = ref<MyInfoClient | null>(null)
 //ref for myInfoEmployee
@@ -36,17 +41,28 @@ onMounted(async () => {
   }
   console.log(myInfo.value)
 })
+
+//for get options from headquarters
+
+const headquartersToOptionsSelect = (headquarters: Headquarter[]): OptionSelect[] => {
+  return headquarters.map((headquarter) => ({
+    value: headquarter.id,
+    name: headquarter.name,
+  }))
+}
+
 //for open dynamic dialog
 const dialog = useDialog()
 
 //for client
-const showEditClient = () => {
+const showEditClient = async () => {
   dialog.open(EditClientCard, {
-    data: {
+    data: {clientSelfData:{
       address: myInfoClient.value?.user.email,
       headquarterId: myInfoClient.value?.headquarter.id,
       phone: myInfoClient.value?.phone,
-    },
+    } as SchemaEditSelfClient,
+  headquartersOptions: headquartersToOptionsSelect(await getAllHeadquarters()),},
     props: {
       modal: true,
     },

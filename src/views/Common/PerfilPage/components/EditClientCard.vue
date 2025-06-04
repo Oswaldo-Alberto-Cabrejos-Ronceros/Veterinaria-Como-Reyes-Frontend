@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import Card from 'primevue/card'
 import InputText from 'primevue/inputtext'
-import DatePicker from 'primevue/datepicker'
 import Select from 'primevue/select'
 import Message from 'primevue/message'
 import InputGroup from 'primevue/inputgroup'
@@ -10,10 +9,11 @@ import { schema } from '@/validation-schemas-forms/schema-edit-self-client'
 import type { FormValues } from '@/validation-schemas-forms//schema-edit-self-client'
 import { useForm } from 'vee-validate'
 import Button from 'primevue/button'
-import { inject, onMounted } from 'vue'
+import { inject, onMounted, ref } from 'vue'
 import type { EditSelfClient } from '@/models/EditSelfClient'
 import { toTypedSchema } from '@vee-validate/yup'
 import type { Ref } from 'vue'
+import type { OptionSelect } from '@/models/OptionSelect'
 
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
   validationSchema: toTypedSchema(schema),
@@ -24,12 +24,9 @@ const { handleSubmit, errors, defineField } = useForm<FormValues>({
   },
 })
 
-//headquarterIds
-const headquarkers = [
-  { name: 'Ica', value: 1 },
-  { name: 'Parcona', value: 2 },
-  { name: 'Tinguiña', value: 3 },
-]
+//headquarter options
+const headquartersOptions = ref<OptionSelect[]>([])
+
 
 const [address, addressAttrs] = defineField('address')
 const [headquarterId, headquarterIdAttrs] = defineField('headquarterId')
@@ -42,15 +39,20 @@ const onSubmit = handleSubmit((values) => {
 //for dynamicDialog
 const dialogRef = inject('dialogRef') as Ref<{
   close: (data?: EditSelfClient) => void
-  data: EditSelfClient
+  data: { clientSelfData?: EditSelfClient; headquartersOptions?: OptionSelect[] }
 }>
 
 onMounted(() => {
-  const params = dialogRef.value.data
-  //change default values
-  address.value = params.address
-  headquarterId.value = params.headquarterId
-  phone.value = params.phone
+  const params = dialogRef.value.data.clientSelfData
+  if (params) {
+    address.value = params.address
+    headquarterId.value = params.headquarterId
+    phone.value = params.phone
+  }
+  const headquartersOptionsGet = dialogRef.value.data.headquartersOptions
+      if (headquartersOptionsGet) {
+      headquartersOptions.value = headquartersOptionsGet
+    }
 })
 
 //emit for edit
@@ -104,10 +106,11 @@ onMounted(() => {
           <Select
             v-bind="headquarterIdAttrs"
             v-model="headquarterId"
-            :options="headquarkers"
+            :options="headquartersOptions"
             optionLabel="name"
             optionValue="value"
             placeholder="Selecciona Sede"
+            class="w-full"
           />
 
           <Message v-if="errors.headquarterId" severity="error" size="small" variant="simple">
