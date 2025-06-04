@@ -35,3 +35,26 @@ export interface ClientRequest {
     password: string
   }
 }
+
+export interface MyInfoClient {
+  clientId: number
+  user: {
+    id: number
+    email: string
+  }
+  dni: string
+  names: string
+  lastNames: string
+  phone: string
+  address: string
+  headquarter: {
+    id: number
+    name: string
+  }
+}
+
+export interface ClientUpdateAsClient {
+  address: string
+  phone: string
+  headquarterId: number
+}

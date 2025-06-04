@@ -1,7 +1,10 @@
-import type { Client, ClientRequest } from '@/services/Client/domain/models/Client'
+import type { Client, ClientRequest, MyInfoClient } from '@/services/Client/domain/models/Client'
 import type { Client as ClientView } from '@/models/Client'
 import type { FormValues as ClientAddSchema } from '@/validation-schemas-forms/schema-add-client'
 import type { FormValues as ClientEditSchema } from '@/validation-schemas-forms/schema-edit-client'
+import type { MyInfoClient as MyInfoClientView } from '@/models/MyInfoClient'
+import type { FormValues as SchemaEditSelfClient } from '@/validation-schemas-forms/schema-edit-self-client'
+import type { ClientUpdateAsClient } from '@/services/Client/domain/models/Client'
 import { DateAdapter } from './DateAdapter'
 
 export class ClientAdapter {
@@ -56,6 +59,35 @@ export class ClientAdapter {
       headquarter: {
         headquarterId: schemaEdit.headquarterId,
       },
+    }
+  }
+  //para mapear de MyInfoAsClient  MyInfoAsClientView
+  static fromMyInfoClientToMyInfoClientView(myInfoAsClient: MyInfoClient): MyInfoClientView {
+    return {
+      clientId: myInfoAsClient.clientId,
+      user: {
+        id: myInfoAsClient.user.id,
+        email: myInfoAsClient.user.email,
+      },
+      dni: myInfoAsClient.dni,
+      names: myInfoAsClient.names,
+      lastnames: myInfoAsClient.lastNames,
+      phone: myInfoAsClient.phone,
+      address: myInfoAsClient.address,
+      headquarter: {
+        id: myInfoAsClient.headquarter.id,
+        name: myInfoAsClient.headquarter.name,
+      },
+    }
+  }
+
+  static fromSchemaEditSelfClientToClientUpdateAsClient(
+    schemaEditSelfClient: SchemaEditSelfClient,
+  ): ClientUpdateAsClient {
+    return {
+      address: schemaEditSelfClient.address,
+      phone: schemaEditSelfClient.phone,
+      headquarterId: schemaEditSelfClient.headquarterId,
     }
   }
 }

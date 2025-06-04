@@ -2,6 +2,8 @@ import type { Employee, EmployeeRequest } from '@/services/Employee/domain/model
 import type { Employee as EmployeeView } from '@/models/Employee'
 import type { FormValues as EmployeeAddSchema } from '@/validation-schemas-forms/schema-add-employee'
 import type { FormValues as EmployeeEditSchema } from '@/validation-schemas-forms/schema-edit.employee'
+import type { MyInfoEmployee } from '@/services/Employee/domain/models/Employee'
+import type { MyInfoEmployee as MyInfoEmployeeView } from '@/models/MyInfoEmployee'
 import { DateAdapter } from './DateAdapter'
 
 export class EmployeeAdapter {
@@ -72,6 +74,31 @@ export class EmployeeAdapter {
           roleId: schemaEdit.roleId,
         },
       ],
+    }
+  }
+  //para adaptar MyInfoEmployee a MyInfoEmployeeView
+
+  static fromMyInfoEmployeeToMyInfoEmployeeView(myInfoEmployee:MyInfoEmployee):MyInfoEmployeeView{
+    return{
+         employeeId: myInfoEmployee.employeeId,
+         user:{
+          id:myInfoEmployee.user.id,
+          email:myInfoEmployee.user.email
+         },
+         dni:myInfoEmployee.dni,
+         cmvp:myInfoEmployee.cmvp,
+         names:myInfoEmployee.names,
+         lastnames:myInfoEmployee.lastNames,
+
+         address:myInfoEmployee.address,
+                  phone:myInfoEmployee.phone,
+         headquarter:{
+          id:myInfoEmployee.headquarter.id,
+          name:myInfoEmployee.headquarter.name
+         },
+         birthdate:myInfoEmployee.birthDate,
+         dirImage:myInfoEmployee.dirImage,
+         roles:myInfoEmployee.roles
     }
   }
 }

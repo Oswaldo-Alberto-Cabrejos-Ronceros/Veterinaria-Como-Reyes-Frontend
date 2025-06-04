@@ -5,18 +5,19 @@ import Button from 'primevue/button'
 import Image from 'primevue/image'
 import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
-import type { Client } from '@/models/Client'
-import type { Employee } from '@/models/Employee'
+import type { MyInfoClient } from '@/models/MyInfoClient'
+import type { MyInfoEmployee } from '@/models/MyInfoEmployee'
+import { computed } from 'vue'
 
 const props = defineProps<{
-  userData: Client | Employee
+  userData: MyInfoClient | MyInfoEmployee
 }>()
 
 // Separar nombres y apellidos
 const [firstName] = props.userData.names.split(' ')
 const [firstLastName] = props.userData.lastnames.split(' ')
 
-const elementsClient: { title: string; key: keyof Client; icon: string }[] = [
+const elementsClient: { title: string; key: keyof MyInfoClient; icon: string }[] = [
   {
     title: 'Nombres',
     key: 'names',
@@ -34,7 +35,7 @@ const elementsClient: { title: string; key: keyof Client; icon: string }[] = [
   },
 ]
 
-const elementsEmployee: { title: string; key: keyof Employee; icon: string }[] = [
+const elementsEmployee: { title: string; key: keyof MyInfoEmployee; icon: string }[] = [
   {
     title: 'Nombres',
     key: 'names',
@@ -63,13 +64,11 @@ const elementsEmployee: { title: string; key: keyof Employee; icon: string }[] =
 ]
 
 //for check if userdata is client or employee
-function isClient(user: Client | Employee): user is Client {
-  return (user as Client).clientId !== undefined
+function isClient(user: MyInfoClient | MyInfoEmployee): user is MyInfoClient {
+  return (user as MyInfoClient).clientId !== undefined
 }
-
-const clientData = isClient(props.userData) ? props.userData : null
-
-const employeeData = !isClient(props.userData) ? props.userData : null
+const clientData = computed(() => isClient(props.userData) ? props.userData : null)
+const employeeData = computed(() => !isClient(props.userData) ? props.userData : null)
 
 const profileImageDefault: string =
   'https://img.freepik.com/vector-gratis/circulo-azul-usuario-blanco_78370-4707.jpg?semt=ais_hybrid&w=740'
@@ -78,13 +77,8 @@ const emit = defineEmits(['edit:client', 'edit:employee'])
 
 //for send emit edit user
 
-const handleEditUser = () => {
-  if (isClient(props.userData)) {
+const handleEditUserClient = () => {
     emit('edit:client')
-  } else {
-    emit('edit:employee')
-    console.log('empleado')
-  }
 }
 </script>
 
@@ -182,7 +176,8 @@ const handleEditUser = () => {
               label="Editar"
               iconPos="right"
               icon="pi pi-pencil"
-              @click="handleEditUser"
+              v-if="clientData"
+              @click="handleEditUserClient"
             />
           </div>
         </div>

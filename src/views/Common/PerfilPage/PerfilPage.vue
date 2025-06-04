@@ -1,96 +1,84 @@
 <script setup lang="ts">
 import PerfilCard from './components/PerfilCard.vue'
-import type { Client } from '@/models/Client'
-
-import type { Employee } from '@/models/Employee'
 import EditClientCard from '@/views/Common/PerfilPage/components/EditClientCard.vue'
 import { useDialog } from 'primevue/usedialog'
-import EditEmployeeCard from './components/EditEmployeeCard.vue'
+import type { MyInfoClient } from '@/models/MyInfoClient'
+import type { MyInfoEmployee } from '@/models/MyInfoEmployee'
+import { useClient } from '@/composables/useClient'
+import { useEmployee } from '@/composables/useEmployee'
+import { onMounted, ref } from 'vue'
+import { useAuthentication } from '@/composables/useAuthentication'
+import type { FormValues as SchemaEditSelfClient } from '@/validation-schemas-forms/schema-edit-self-client'
+import type { Headquarter } from '@/models/Headquarter'
+import type { OptionSelect } from '@/models/OptionSelect'
+import { useHeadquarter } from '@/composables/useHeadquarter'
 
-const exampleClient: Client = {
-  clientId: 1001,
-  dni: '12345678',
-  names: 'Juan Carlos',
-  lastnames: 'Pérez Gómez',
-  phone: '984512312',
-  address: 'Av. Canto Grande',
-  headquarter: {
-    name: 'Sucursal Lima Centro',
-    headquarterId: 1,
-  },
-  user: {
-    userId: 1,
-    email: 'juan@gmail.com',
-  },
-  birthdate: '05/10/2004',
+//methods for get
+const { getEntityId, getMainRole } = useAuthentication()
+const { myInfoAsClient, updateClientAsClient } = useClient()
+const { getEmployeeMyInfo } = useEmployee()
+const { getAllHeadquarters } = useHeadquarter()
+//ref for myInfoClient
+const myInfoClient = ref<MyInfoClient | null>(null)
+//ref for myInfoEmployee
+const myInfoEmployee = ref<MyInfoEmployee | null>(null)
+//const myInfo
+const myInfo = ref<MyInfoClient | MyInfoEmployee | null>(null)
+//
+const entityId = ref<number | null>(null)
+onMounted(() => loadMyInfo())
+
+//for load
+const loadMyInfo = async () => {
+  const role = getMainRole()
+  const entityIdGet = getEntityId()
+  entityId.value = entityIdGet
+  if (role && entityIdGet) {
+    if (role.toUpperCase() === 'CLIENTE') {
+      myInfoClient.value = await myInfoAsClient(entityIdGet)
+      myInfo.value = myInfoClient.value
+    } else {
+      myInfoEmployee.value = await getEmployeeMyInfo(entityIdGet)
+      myInfo.value = myInfoEmployee.value
+    }
+  }
 }
 
-const exampleEmployee: Employee = {
-  userId: 10,
-  employeeId: 2001,
-  dni: '87654321',
-  cmvp: 'CMVP123456',
-  names: 'María Fernanda',
-  lastnames: 'Ramírez López',
-  address: 'Av. Siempre Viva 123, Miraflores',
-  phone: '987654321',
-  headquarter: {
-    name: 'Sucursal Lima Centro',
-    headquarterId: 1,
-  },
-  birthdate: '1990-05-15',
-  dirImage:
-    'https://www.giorgiline.com/wp-content/uploads/2023/12/hombre-sonriente-que-sostiene-smartphone-1536x1024.jpg',
-  roles: [
-    {
-      roleId: 1,
-      name: 'Recepcionista',
-    },
-  ],
+//for get options from headquarters
+
+const headquartersToOptionsSelect = (headquarters: Headquarter[]): OptionSelect[] => {
+  return headquarters.map((headquarter) => ({
+    value: headquarter.id,
+    name: headquarter.name,
+  }))
 }
 
 //for open dynamic dialog
-
-console.log(exampleClient)
 const dialog = useDialog()
 
 //for client
-const showEditClient = () => {
+const showEditClient = async () => {
   dialog.open(EditClientCard, {
     data: {
-      address: exampleClient.address,
-      birthdate: new Date(exampleClient.birthdate),
-      headquarterId: exampleClient.headquarter.headquarterId,
-      phone: exampleClient.phone,
+      clientSelfData: {
+        address: myInfoClient.value?.user.email,
+        headquarterId: myInfoClient.value?.headquarter.id,
+        phone: myInfoClient.value?.phone,
+      } as SchemaEditSelfClient,
+      headquartersOptions: headquartersToOptionsSelect(await getAllHeadquarters()),
     },
     props: {
       modal: true,
     },
-    onClose: (data) => {
-      // Escuchar el evento 'close' y recibir los datos
+    onClose: async (options) => {
+      const data = options?.data as SchemaEditSelfClient
       if (data) {
-        console.log('Datos recibidos del diálogo:', data)
-      }
-    },
-  })
-}
-
-//for employee
-const showEditEmployee = () => {
-  dialog.open(EditEmployeeCard, {
-    data: {
-      address: exampleEmployee.address,
-      headquarterId: exampleEmployee.headquarter.headquarterId,
-      phone: exampleEmployee.phone,
-      dirImage: exampleEmployee.dirImage,
-    },
-    props: {
-      modal: true,
-    },
-    onClose: (data) => {
-      // Escuchar el evento 'close' y recibir los datos
-      if (data) {
-        console.log('Datos recibidos del diálogo:', data)
+        if (entityId.value) {
+          const myInfoGet = await updateClientAsClient(entityId.value, data)
+          console.log('Datos recibidos', myInfoGet)
+          myInfoClient.value = await myInfoAsClient(entityId.value)
+          myInfo.value = myInfoClient.value
+        }
       }
     },
   })
@@ -99,10 +87,6 @@ const showEditEmployee = () => {
 
 <template>
   <div class="layout-principal-flex">
-    <PerfilCard
-      :user-data="exampleEmployee"
-      @edit:client="showEditClient"
-      @edit:employee="showEditEmployee"
-    />
+    <PerfilCard v-if="myInfo" :user-data="myInfo" @edit:client="showEditClient" />
   </div>
 </template>

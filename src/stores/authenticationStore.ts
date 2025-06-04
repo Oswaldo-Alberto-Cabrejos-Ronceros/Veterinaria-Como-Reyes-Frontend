@@ -7,6 +7,7 @@ export const useAuthenticationStore = defineStore('authentication', {
   }),
   getters: {
     userRole: (state) => state.user?.mainRole || null,
+    entityId:(state)=>state.user?.entityId||null
   },
   actions: {
     setUser(user: UserSession) {
