@@ -23,4 +23,3 @@ defineProps<{
   </Card>
 </template>
 
-<style></style>
