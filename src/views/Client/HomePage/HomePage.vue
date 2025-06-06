@@ -2,7 +2,9 @@
 import Card from 'primevue/card'
 import CardAppointmentPrimary from '@/components/CardAppointmentPrimary.vue'
 import ScrollPanel from 'primevue/scrollpanel'
+import CardTest from '@/components/CardTest.vue'
 
+//examples for cardsAppointment
 const cardsAppointmentPrimaryPropsExamples = [
   {
     serviceImageUrl:
@@ -50,6 +52,40 @@ const cardsAppointmentPrimaryPropsExamples = [
     appointmentId: 3,
   },
 ]
+
+//examples for testCards
+const testExamples = [
+  {
+    testName: 'Examen de Sangre',
+    testId: 101,
+    petName: 'Firulais',
+    testStatus: 'Pendiente',
+  },
+  {
+    testName: 'Radiografía Torácica',
+    testId: 102,
+    petName: 'Michi',
+    testStatus: 'Completado',
+  },
+  {
+    testName: 'Ecografía Abdominal',
+    testId: 103,
+    petName: 'Rocky',
+    testStatus: 'En Proceso',
+  },
+  {
+    testName: 'Análisis de Orina',
+    testId: 104,
+    petName: 'Luna',
+    testStatus: 'Cancelado',
+  },
+  {
+    testName: 'Prueba de Alergia',
+    testId: 105,
+    petName: 'Toby',
+    testStatus: 'Completado',
+  },
+]
 </script>
 
 <template>
@@ -60,26 +96,41 @@ const cardsAppointmentPrimaryPropsExamples = [
       </template>
       <template #content>
         <div class="w-full grid grid-cols-3 min-h-full">
+          <!-- apointments -->
           <div>
-          <h3 class="text-xl mb-2">Citas Programadas</h3>
-          <ScrollPanel class=" max-h-96 pr-4">
-            <div class="flex flex-col gap-2">
-
-            <CardAppointmentPrimary
-              v-for="example in cardsAppointmentPrimaryPropsExamples"
-              :key="example.appointmentId"
-              :appointmentId="example.appointmentId"
-              :serviceImageUrl="example.serviceImageUrl"
-              :serviceName="example.serviceName"
-              :petName="example.serviceName"
-              :date="example.date"
-              :time="example.time"
-            ></CardAppointmentPrimary
-          >
-            </div>
-</ScrollPanel>
+            <h3 class="text-xl mb-2">Citas Programadas</h3>
+            <ScrollPanel class="max-h-96 pr-4">
+              <div class="flex flex-col gap-2">
+                <CardAppointmentPrimary
+                  v-for="example in cardsAppointmentPrimaryPropsExamples"
+                  :key="example.appointmentId"
+                  :appointmentId="example.appointmentId"
+                  :serviceImageUrl="example.serviceImageUrl"
+                  :serviceName="example.serviceName"
+                  :petName="example.serviceName"
+                  :date="example.date"
+                  :time="example.time"
+                ></CardAppointmentPrimary>
+              </div>
+            </ScrollPanel>
           </div>
 
+          <!-- test -->
+          <div>
+            <h3 class="text-xl mb-2">Citas Programadas</h3>
+            <ScrollPanel class="max-h-96 pr-4">
+              <div class="flex flex-col gap-2">
+                <CardTest
+                  v-for="test in testExamples"
+                  :key="test.testId"
+                  :testName="test.testName"
+                  :testId="test.testId"
+                  :petName="test.petName"
+                  :testStatus="test.testStatus"
+                ></CardTest>
+              </div>
+            </ScrollPanel>
+          </div>
         </div>
       </template>
     </Card>
