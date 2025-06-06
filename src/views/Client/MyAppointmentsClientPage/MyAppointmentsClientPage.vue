@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import Card from 'primevue/card'
 import CardAppointmentSecondary from '@/components/CardAppointmentSecondary.vue'
+import Button from 'primevue/button'
 //examples for cardAppointments
 const appointments = [
   {
@@ -72,6 +73,17 @@ const appointments = [
             :service-description="appointment.serviceDescription"
           ></CardAppointmentSecondary>
         </div>
+      </template>
+      <template #footer>
+        <div class="w-full flex justify-end pt-4">
+        <Button
+          severity="success"
+          label="Agendar cita"
+          icon="pi pi-calendar"
+          iconPos="right"
+        ></Button>
+        </div>
+
       </template>
     </Card>
   </div>
