@@ -19,6 +19,8 @@ import SpecieManagementPage from '@/views/Employee/SpecieManagementPage/SpecieMa
 import BreedManagementPage from '@/views/Employee/BreedManagementPage/BreedManagementPage.vue'
 import ServicesHeadquarterManagementPage from '@/views/Employee/ServicesHeadquarterManagementPage/ServicesHeadquarterManagementPage.vue'
 import PaymentManagementPage from '@/views/Employee/PaymentManagementPage/PaymentManagementPage.vue'
+//client
+import MyAppointmentsClientPage from '@/views/Client/MyAppointmentsClientPage/MyAppointmentsClientPage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -57,6 +59,11 @@ const router = createRouter({
           name: 'client-perfil',
           component: PerfilPage,
         },
+        {
+          path: 'my-appointments',
+          name: 'client-my-appointments',
+          component: MyAppointmentsClientPage,
+        },
       ],
     },
     {
@@ -70,8 +77,8 @@ const router = createRouter({
 
           children: [
             {
-              path:'',
-              redirect:'/employee/administrator/home'
+              path: '',
+              redirect: '/employee/administrator/home',
             },
             {
               path: 'home',
