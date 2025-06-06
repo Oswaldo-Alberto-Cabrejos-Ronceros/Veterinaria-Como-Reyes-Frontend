@@ -53,7 +53,7 @@ const elements: { title: string; key: keyof Pet; icon: string }[] = [
   },
   {
     title: 'Dueño',
-    key: 'ownerDni',
+    key: 'clientId',
     icon: 'pi-id-card',
   },
 ]
@@ -69,30 +69,42 @@ onMounted(() => {
     birthdate: '2015-05-21',
     comment: 'Juguetón y energético.',
     urlImage: 'https://placekitten.com/308/228',
-    specie: 'Gato',
-    specieId: 1,
-    breed: 'Persa',
-    breedId: 0,
-    ownerDni: '77901977',
+    specie: {
+      id: 1,
+      name: 'Gato',
+    },
+    breed: {
+      id: 1,
+      name: 'Persa',
+    },
+    clientId: 2,
   }
   console.log(props.id)
 })
 
 //for dialog
-const dialog = useDialog();
+const dialog = useDialog()
 
-const editPet=(petData:Pet)=>{
-  dialog.open(AddEditPetCard,{
-    props:{
-      modal:true
+const editPet = (petData: Pet) => {
+  dialog.open(AddEditPetCard, {
+    props: {
+      modal: true,
     },
-    data:{
-      petData:petData as AddEditPetSchema
-    }
+    data: {
+      petData: {
+        name:petData.name,
+        gender:petData.gender,
+        weight:petData.weight,
+        birthdate:new Date(petData.birthdate),
+        comment:petData.comment,
+        specieId:petData.specie.id,
+        breedId:petData.breed.id,
+        urlImage:petData.urlImage,
+        ownerDni:String(petData.clientId)
+      } as AddEditPetSchema,
+    },
   })
 }
-
-
 </script>
 
 <template>

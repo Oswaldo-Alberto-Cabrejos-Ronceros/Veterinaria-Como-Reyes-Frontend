@@ -69,9 +69,11 @@ const pets = [
       </template>
          <template #content>
           <div class="flex flex-col gap-6">
-            <CardPetSecondary v-for="pet in pets" :key="pet.petId" :id="pet.petId" :image-url="pet.petImageUrl"
+            <RouterLink v-for="pet in pets" :key="pet.petId"  :to="`/client/my-pets/${pet.petId}`">
+            <CardPetSecondary :id="pet.petId" :image-url="pet.petImageUrl"
             :name="pet.petName" :description="pet.petDescription" :specie="pet.petSpecie" :breed="pet.petBreed"
             :gender="pet.petGender" :weight="pet.petWeight" :birthdate="pet.birthdate"></CardPetSecondary>
+            </RouterLink>
           </div>
          </template>
 </Card>
