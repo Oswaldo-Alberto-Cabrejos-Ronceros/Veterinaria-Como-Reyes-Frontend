@@ -16,6 +16,11 @@ const items = ref<MenuItem[]>([
     icon: 'pi pi-clipboard',
     to: '/client/my-appointments',
   },
+    {
+    label: 'Mis mascotas',
+    icon: 'pi pi-github',
+    to: '/client/my-pets',
+  }
 ])
 
 const showMenu = ref(true)
