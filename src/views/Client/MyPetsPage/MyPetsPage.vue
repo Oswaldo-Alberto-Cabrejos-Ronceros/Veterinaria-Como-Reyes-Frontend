@@ -1,10 +1,11 @@
 <script lang="ts" setup>
+import Card from 'primevue/card';
 import CardPetSecondary from '@/components/CardPetSecondary.vue';
 //example for pets
 const pets = [
   {
     petId: 1,
-    petImageUrl: "https://example.com/images/luna.jpg",
+    petImageUrl: "https://definicion.de/wp-content/uploads/2018/01/gato-1.jpg",
     petName: "Luna",
     petDescription: "Gata muy juguetona y amigable",
     petSpecie: "Felino",
@@ -15,7 +16,7 @@ const pets = [
   },
   {
     petId: 2,
-    petImageUrl: "https://example.com/images/max.jpg",
+    petImageUrl: "https://definicion.de/wp-content/uploads/2018/01/gato-1.jpg",
     petName: "Max",
     petDescription: "Perro leal, protector y energético",
     petSpecie: "Canino",
@@ -26,7 +27,7 @@ const pets = [
   },
   {
     petId: 3,
-    petImageUrl: "https://example.com/images/kiwi.jpg",
+    petImageUrl: "https://definicion.de/wp-content/uploads/2018/01/gato-1.jpg",
     petName: "Kiwi",
     petDescription: "Ave tranquila, ideal para interiores",
     petSpecie: "Ave",
@@ -37,7 +38,7 @@ const pets = [
   },
   {
     petId: 4,
-    petImageUrl: "https://example.com/images/rocky.jpg",
+    petImageUrl: "https://definicion.de/wp-content/uploads/2018/01/gato-1.jpg",
     petName: "Rocky",
     petDescription: "Perro muy cariñoso, ideal para niños",
     petSpecie: "Canino",
@@ -48,7 +49,7 @@ const pets = [
   },
   {
     petId: 5,
-    petImageUrl: "https://example.com/images/mia.jpg",
+    petImageUrl: "https://definicion.de/wp-content/uploads/2018/01/gato-1.jpg",
     petName: "Mía",
     petDescription: "Gata tranquila, le gusta dormir en ventanas",
     petSpecie: "Felino",
@@ -64,7 +65,7 @@ const pets = [
   <div class="layout-principal-flex">
 <Card class="card-principal-color-neutral">
         <template #title>
-        <h3 class="h3">Bienvenido</h3>
+        <h3 class="h3">Mis mascotas</h3>
       </template>
          <template #content>
           <div class="flex flex-col gap-6">

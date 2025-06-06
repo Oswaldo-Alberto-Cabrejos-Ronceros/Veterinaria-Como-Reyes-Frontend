@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import CardPrimary from './CardPrimary.vue';
+import Image from 'primevue/image'
 defineProps<{
   id: number
   imageUrl: string
@@ -18,10 +20,13 @@ defineProps<{
       <Image :src="imageUrl" image-class="size-40 object-cover" :alt="name" />
       <div class="flex-1 flex flex-col gap-2 p-3">
         <div class="flex items-center justify-between">
+          <div class="flex gap-2 items-center">
           <h3 class="text-lg font-medium">{{ name }}</h3>
           <p>{{ specie }}</p>
-          >
+
           <p>{{ breed }}</p>
+          </div>
+
           <i
             :class="
               gender === 'H'
@@ -33,13 +38,13 @@ defineProps<{
         <div class="flex-1">
           {{ description }}
         </div>
-        <div class="w-full flex gap-1 text-lg items-center">
-          <div class="flex items-center gap-1">
+        <div class="w-full flex gap-2 text-lg justify-between">
+          <div class="flex items-center gap-2">
             <i class="pi pi-calendar text-xl"></i>
             <p>{{ birthdate }}</p>
           </div>
-          <div class="flex items-center gap-1">
-            <p>{{ weight }}</p>
+          <div class="flex items-center gap-2">
+            <p>{{ weight }} Kg</p>
             <i class="pi pi-arrow-circle-down text-xl"></i>
           </div>
         </div>
