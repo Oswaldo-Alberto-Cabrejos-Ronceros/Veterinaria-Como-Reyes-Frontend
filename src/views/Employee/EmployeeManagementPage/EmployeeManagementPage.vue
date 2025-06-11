@@ -30,8 +30,15 @@ import type { Headquarter } from '@/models/Headquarter'
 
 //methotds
 
-const { loading, error, getAllEmployees, createEmployee, updateEmployee, blockEmployee } =
-  useEmployee()
+const {
+  loading,
+  error,
+  getAllEmployees,
+  createEmployee,
+  updateEmployee,
+  blockEmployee,
+  searchEmployees,
+} = useEmployee()
 
 const { getAllRoles } = useRole()
 
@@ -120,8 +127,17 @@ const searchElementsEmployee: { title: string; key: keyof typeof fieldMap; icon:
   },
 ]
 
-const onSubmit = handleSubmit((values) => {
+const onSubmit = handleSubmit(async (values) => {
   console.log(values)
+  const pageSearchEmployees = await searchEmployees(
+    values.dni,
+    values.names,
+    values.lastnames,
+    undefined,
+    values.headquarter,
+  )
+  const employeesSearch = pageSearchEmployees.content
+  employees.value = employeesSearch
 })
 
 const rolesMap: Record<string, number> = {

@@ -24,7 +24,8 @@ import type { FormValues as SchemaClientAdd } from '@/validation-schemas-forms/s
 import { useClient } from '@/composables/useClient'
 
 //methods
-const { loading, error, getAllClients, createClient, updateClient,deleteClient } = useClient()
+const { loading, error, getAllClients, createClient, updateClient, deleteClient, searchClient } =
+  useClient()
 
 //clients
 
@@ -174,8 +175,16 @@ const searchElementsClient: { title: string; key: keyof typeof fieldMap; icon: s
 ]
 
 //for submit
-const onSubmit = handleSubmit((values) => {
+const onSubmit = handleSubmit(async (values) => {
   console.log(values)
+  const pageSearchCliente = await searchClient(
+    values.dni,
+    values.names,
+    values.lastnames,
+    undefined,
+  )
+  const clientsSearch = pageSearchCliente.content
+  clients.value = clientsSearch
 })
 
 //for export
