@@ -10,6 +10,7 @@ import CardPetPrimary from './CardPetPrimary.vue'
 import CardServiceSecondary from './CardServiceSecondary.vue'
 import Panel from 'primevue/panel'
 import CardScheduleUnitary from './CardScheduleUnitary.vue'
+import CardServicePrimary from './CardServicePrimary.vue'
 
 defineProps<{
   pets: {
@@ -233,8 +234,47 @@ const schedulesNight: string[] = [
           <!-- for resume -->
 
           <StepPanel class="dark:bg-surface-800" v-slot="{ activateCallback }" value="4">
-            <div class="h-48">
+            <div class="min-h-48">
               <p>Resumen</p>
+              <div class="w-full grid gap-2 md:grid-cols-1 lg:grid-cols-2 my-4">
+                <!-- pet -->
+                <div>
+                  <p class="block mb-2">Mascota</p>
+                  <CardPetPrimary
+                    :key="pets[0].petId"
+                    :petId="pets[0].petId"
+                    :petImageUrl="pets[0].petImageUrl"
+                    :petName="pets[0].petName"
+                    :petSpecie="pets[0].petSpecie"
+                    :petBreed="pets[0].petBreed"
+                    :petGender="pets[0].petGender"
+                    :birthdate="pets[0].birthdate"
+                  ></CardPetPrimary>
+                </div>
+                <!-- Servicio -->
+                <div>
+                  <p class="block mb-2">Servicio</p>
+                  <CardServicePrimary
+                    v-if="services"
+                    :key="services[0].serviceId"
+                    :serviceId="services[0].serviceId"
+                    :serviceName="services[0].serviceName"
+                    :serviceImageUrl="services[0].serviceImageUrl"
+                    :specieName="services[0].specieName"
+                    :categoryName="services[0].categoryName"
+                    :duration="services[0].duration"
+                    :price="services[0].price"
+                  ></CardServicePrimary>
+                </div>
+              </div>
+              <p>Horario</p>
+              <div class="flex gap-2 my-4 items-center">
+                <i class="pi pi-clock text-2xl"></i>
+                <p>17 junio 2025</p>
+                <i class="pi pi-calendar text-2xl"></i>
+                <p>{{ schedulesAfternoon[0] }}</p>
+              </div>
+              <p>Pago</p>
             </div>
             <div class="flex justify-between">
               <Button
