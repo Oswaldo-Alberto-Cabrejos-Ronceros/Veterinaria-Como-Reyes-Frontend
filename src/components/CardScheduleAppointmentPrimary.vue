@@ -9,6 +9,7 @@ import Button from 'primevue/button'
 import CardPetPrimary from './CardPetPrimary.vue'
 import CardServiceSecondary from './CardServiceSecondary.vue'
 import Panel from 'primevue/panel'
+import CardScheduleUnitary from './CardScheduleUnitary.vue'
 
 defineProps<{
   pets: {
@@ -30,6 +31,35 @@ defineProps<{
     price: number
   }[]
 }>()
+// schedule morning
+const schedulesMorning: string[] = [
+  '8:00 - 8:30',
+  '8:45 - 9:15',
+  '9:30 - 10:30',
+  '10:45 - 11:15',
+  '11:30 - 12:00',
+]
+// schedule afternoon
+const schedulesAfternoon: string[] = [
+  '12:15 - 12:45',
+  '13:00 - 13:30',
+  '13:45 - 14:15',
+  '14:30 - 15:00',
+  '15:15 - 15:45',
+  '16:00 - 16:30',
+]
+
+// schedule night
+const schedulesNight: string[] = [
+  '16:45 - 17:15',
+  '17:30 - 18:00',
+  '18:15 - 18:45',
+  '19:00 - 19:30',
+  '19:45 - 20:15',
+  '20:30 - 21:00',
+  '21:15 - 21:45',
+  '22:00 - 22:30',
+]
 </script>
 
 <template>
@@ -128,7 +158,15 @@ defineProps<{
                   <template #icons>
                     <span>8h-13h</span>
                   </template>
-                  <p>Horarios mañana</p>
+                  <div
+                    class="w-full grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 my-2"
+                  >
+                    <CardScheduleUnitary
+                      v-for="(schedule, index) of schedulesMorning"
+                      :key="index"
+                      :time="schedule"
+                    ></CardScheduleUnitary>
+                  </div>
                 </Panel>
                 <!-- for afternoon -->
                 <Panel toggleable :collapsed="true">
@@ -141,7 +179,15 @@ defineProps<{
                   <template #icons>
                     <span>13h-18h</span>
                   </template>
-                  <p>Horarios tarde</p>
+                  <div
+                    class="w-full grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 my-2"
+                  >
+                    <CardScheduleUnitary
+                      v-for="(schedule, index) of schedulesAfternoon"
+                      :key="index"
+                      :time="schedule"
+                    ></CardScheduleUnitary>
+                  </div>
                 </Panel>
 
                 <!-- night -->
@@ -155,7 +201,15 @@ defineProps<{
                   <template #icons>
                     <span>18h-22h</span>
                   </template>
-                  <p>Horarios noche</p>
+                  <div
+                    class="w-full grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 my-2"
+                  >
+                    <CardScheduleUnitary
+                      v-for="(schedule, index) of schedulesNight"
+                      :key="index"
+                      :time="schedule"
+                    ></CardScheduleUnitary>
+                  </div>
                 </Panel>
               </div>
             </div>
