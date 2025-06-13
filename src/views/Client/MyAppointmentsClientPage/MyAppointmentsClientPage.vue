@@ -2,6 +2,7 @@
 import Card from 'primevue/card'
 import CardAppointmentSecondary from '@/components/CardAppointmentSecondary.vue'
 import Button from 'primevue/button'
+import { useRouter } from 'vue-router'
 //examples for cardAppointments
 const appointments = [
   {
@@ -51,6 +52,13 @@ const appointments = [
     serviceDescription: 'Recorte de uñas para evitar lesiones o molestias al caminar.',
   },
 ]
+
+//for router
+const router = useRouter()
+
+const redirectToScheduleAppointment=()=>{
+  router.push('/client/my-appointments/schedule-appointment')
+}
 </script>
 
 <template>
@@ -81,6 +89,7 @@ const appointments = [
           label="Agendar cita"
           icon="pi pi-calendar"
           iconPos="right"
+          @click="redirectToScheduleAppointment()"
         ></Button>
         </div>
 

@@ -23,6 +23,7 @@ import PaymentManagementPage from '@/views/Employee/PaymentManagementPage/Paymen
 import MyAppointmentsClientPage from '@/views/Client/MyAppointmentsClientPage/MyAppointmentsClientPage.vue'
 import MyPetsPage from '@/views/Client/MyPetsPage/MyPetsPage.vue'
 import PetUnitaryClientPage from '@/views/Client/PetUnitaryClientPage/PetUnitaryClientPage.vue'
+import ScheduleAppointmentClientPage from '@/views/Client/ScheduleAppointmentClientPage/ScheduleAppointmentClientPage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -65,6 +66,11 @@ const router = createRouter({
           path: 'my-appointments',
           name: 'client-my-appointments',
           component: MyAppointmentsClientPage,
+        },
+        {
+          path: 'my-appointments/schedule-appointment',
+          name: 'client-schedule-appointment',
+          component: ScheduleAppointmentClientPage,
         },
         {
           path: 'my-pets',
