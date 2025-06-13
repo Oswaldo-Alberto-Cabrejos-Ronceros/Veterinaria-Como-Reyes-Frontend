@@ -56,7 +56,7 @@ const appointments = [
 //for router
 const router = useRouter()
 
-const redirectToScheduleAppointment=()=>{
+const redirectToScheduleAppointment = () => {
   router.push('/client/my-appointments/schedule-appointment')
 }
 </script>
@@ -65,7 +65,16 @@ const redirectToScheduleAppointment=()=>{
   <div class="layout-principal-flex">
     <Card class="card-principal-color-neutral">
       <template #title>
-        <h3 class="h3">Mis citas</h3>
+        <div class="flex justify-between">
+          <h3 class="h3">Mis citas</h3>
+          <Button
+            severity="success"
+            label="Agendar cita"
+            icon="pi pi-calendar"
+            iconPos="right"
+            @click="redirectToScheduleAppointment()"
+          ></Button>
+        </div>
       </template>
       <template #content>
         <div class="flex flex-col gap-6">
@@ -81,18 +90,6 @@ const redirectToScheduleAppointment=()=>{
             :service-description="appointment.serviceDescription"
           ></CardAppointmentSecondary>
         </div>
-      </template>
-      <template #footer>
-        <div class="w-full flex justify-end pt-4">
-        <Button
-          severity="success"
-          label="Agendar cita"
-          icon="pi pi-calendar"
-          iconPos="right"
-          @click="redirectToScheduleAppointment()"
-        ></Button>
-        </div>
-
       </template>
     </Card>
   </div>
