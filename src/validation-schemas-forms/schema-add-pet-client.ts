@@ -13,3 +13,5 @@ export const schema = yup.object({
   specieId: yup.number().required('Seleccione una especie'),
   breedId: yup.number().required('Seleccione una raza'),
 })
+
+export type FormValues = yup.InferType<typeof schema>
