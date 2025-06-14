@@ -5,8 +5,10 @@ import { useAsyncHandler } from './useAsyncHandler'
 import { useAuthenticationStore } from '@/stores/authenticationStore'
 import { UserAdapter } from '@/adapters/UserAdapter'
 import type { UserClientRegister } from '@/models/UserClientRegister'
+import { useRouter } from 'vue-router'
 
 export function useAuthentication() {
+  const router = useRouter()
   //get from useAsyncHandler
   const { loading, error, runUseCase } = useAsyncHandler()
   //instance autenthenticationStore
@@ -35,7 +37,10 @@ export function useAuthentication() {
 
   const logoutUser = async () => {
     autenthenticationStore.cleanUser()
+
+    router.push('/')
     return await runUseCase('logout', () => authenticationUseCases.logoutUser.execute())
+    //for redirect
   }
 
   const registerUserClient = async (userClient: UserClientRegister) => {
@@ -51,12 +56,12 @@ export function useAuthentication() {
   }
 
   //para obtener el rol de un usuario
-  const getMainRole =()=>{
+  const getMainRole = () => {
     return autenthenticationStore.userRole
   }
 
   //para obtener entityId de un usuario
-  const getEntityId =()=>{
+  const getEntityId = () => {
     return autenthenticationStore.entityId
   }
 
@@ -69,6 +74,6 @@ export function useAuthentication() {
     logoutUser,
     registerUserClient,
     getMainRole,
-    getEntityId
+    getEntityId,
   }
 }
