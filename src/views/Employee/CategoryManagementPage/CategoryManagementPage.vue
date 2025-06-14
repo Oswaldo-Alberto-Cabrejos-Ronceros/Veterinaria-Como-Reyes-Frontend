@@ -13,12 +13,24 @@ import { onMounted, ref } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import AddEditCategoryCard from './components/AddEditCategoryCard.vue'
-import { useDialog } from 'primevue'
+import { useDialog, useToast } from 'primevue'
 import type { Category } from '@/models/Category'
 import type { FormValues as AddEditCategorySchema } from '@/validation-schemas-forms/schema-add-edit-category'
 import ViewCategoryCard from './components/ViewCategoryCard.vue'
 import { useConfirm } from 'primevue'
 import { useCategory } from '@/composables/useCategory'
+
+//for toast
+const toast = useToast()
+
+const showToast = (message: string) => {
+  toast.add({
+    severity: 'success',
+    summary: 'Exito',
+    detail: message,
+    life: 3000,
+  })
+}
 
 //methods
 
@@ -68,6 +80,7 @@ const addCategory = () => {
         const category = await createCategory(data)
         console.log('Datos recibidos', category)
         loadCategories()
+        showToast('Categoria agregada exitosamente: ' + category.name)
       }
     },
   })
@@ -88,6 +101,7 @@ const editCategory = (categoryData: Category) => {
       const category = await updateCategory(categoryData.id, data)
       console.log('Datos recibidos', category)
       loadCategories()
+      showToast('Categoria editada exitosamente: ' + category.name)
     },
   })
 }
@@ -128,6 +142,7 @@ const deleteCategoryAction = (event: MouseEvent | KeyboardEvent, category: Categ
       console.log('Eliminando categoria ', category.id)
       await deleteCategory(category.id)
       loadCategories()
+      showToast('Categoria eliminada exitosamente: ' + category.name)
     },
     reject: () => {
       console.log('Cancelando')

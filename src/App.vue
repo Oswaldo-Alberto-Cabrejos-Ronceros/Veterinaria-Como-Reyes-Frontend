@@ -4,6 +4,7 @@ import { RouterView } from 'vue-router'
 import { useThemeStore } from './stores/themeStore'
 import DynamicDialog from 'primevue/dynamicdialog'
 import ConfirmPopup from 'primevue/confirmpopup';
+import Toast from 'primevue/toast';
 
 const themeStore = useThemeStore();
 onMounted(()=>{
@@ -15,5 +16,6 @@ themeStore.initTheme();
   <RouterView />
   <DynamicDialog />
   <ConfirmPopup/>
+  <Toast/>
 </template>
 
