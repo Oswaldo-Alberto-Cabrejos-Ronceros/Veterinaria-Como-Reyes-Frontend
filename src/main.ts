@@ -7,6 +7,7 @@ import PrimeVue from 'primevue/config'
 import Aura from '@primeuix/themes/aura'
 import DialogService from 'primevue/dialogservice'
 import ConfirmationService from 'primevue/confirmationservice'
+import { ToastService } from 'primevue'
 //import esLocale
 import esLocale from '@/assets/locale/es.json'
 
@@ -47,7 +48,7 @@ const MyPreset = definePreset(Aura, {
           800: '{neutral.800}',
           900: '{neutral.900}',
           950: '{neutral.950}',
-        }
+        },
       },
       dark: {
         surface: {
@@ -66,7 +67,7 @@ const MyPreset = definePreset(Aura, {
         },
       },
     },
-  }
+  },
 })
 
 app.use(createPinia())
@@ -88,6 +89,7 @@ app.use(PrimeVue, {
 //user dialog service
 app.use(DialogService)
 app.use(ConfirmationService)
+app.use(ToastService)
 app.use(router)
 
 app.mount('#app')
