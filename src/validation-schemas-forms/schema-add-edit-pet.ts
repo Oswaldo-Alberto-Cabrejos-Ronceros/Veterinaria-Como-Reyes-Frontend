@@ -8,7 +8,7 @@ name: yup.string().required("Nombre es obligatorio").max(50,'Nombre debe tener m
 gender:yup.string().required("Sexo es obligatorio").max(1,'Sexo de tener un caracter'),
 weight:yup.number().required('Peso es obligatorio').positive('Peso debe ser positivo').test('max-3-decimals','Peso debe tener como maximo 3 decimales',
   (value)=> value===undefined||/^\d+(\.\d{1,3})?$/.test(value.toString())),
-  birthdate:yup.date().max(today,'La fecha no puede ser positiva'),
+  birthdate:yup.date().max(today,'La fecha debe ser pasada'),
   comment:yup.string(),
   specieId:yup.number().required('Especie es obligatoria'),
   breedId:yup.number().required('Raza es obligatoria'),
