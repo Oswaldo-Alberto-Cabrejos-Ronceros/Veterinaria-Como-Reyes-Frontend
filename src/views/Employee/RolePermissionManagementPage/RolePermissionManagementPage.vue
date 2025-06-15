@@ -9,13 +9,25 @@ import Message from 'primevue/message'
 import { onMounted, ref } from 'vue'
 import type { Role } from '@/models/Role'
 import { watch } from 'vue'
-import { useDialog } from 'primevue'
+import { useDialog, useToast } from 'primevue'
 import AddEditRoleCard from './components/AddEditRoleCard.vue'
 import type { FormValues as AddEditRoleSchema } from '@/validation-schemas-forms/schema-add-edit-roles'
 import ModulesPermissions from '@/assets/data/modules-permissions.json'
 import ModulePermissionCard from './components/ModulePermissionCard.vue'
 import { useRole } from '@/composables/useRole'
 import type { OptionSelect } from '@/models/OptionSelect'
+
+//toast
+const toast = useToast()
+
+const showToast = (message: string) => {
+  toast.add({
+    severity: 'success',
+    summary: 'Éxito',
+    detail: message,
+    life: 3000,
+  })
+}
 
 //methods
 
@@ -88,6 +100,7 @@ const addRole = () => {
       if (data) {
         const role = await createRole(data)
         console.log('Datos recibidos', role)
+        showToast('Rol agregado exitosamente: ' + data.name)
         loadRoles()
       }
     },
@@ -108,6 +121,7 @@ const editRole = (roleData: Role) => {
       if (data) {
         const role = await updateRole(roleData.id, data)
         console.log('Datos recibidos', role)
+        showToast('Rol editado exitosamente: ' + data.name)
         loadRoles()
       }
     },

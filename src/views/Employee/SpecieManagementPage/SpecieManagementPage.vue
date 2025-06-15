@@ -14,10 +14,22 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import type { Specie } from '@/models/Specie'
 import { useConfirm } from 'primevue'
-import { useDialog } from 'primevue'
+import { useDialog, useToast } from 'primevue'
 import AddEditSpecie from './components/AddEditSpecieCard.vue'
 import type { FormValues as AddEditSpecieSchema } from '@/validation-schemas-forms/schema-add-edit-specie'
 import { useSpecie } from '@/composables/useSpecie'
+
+//toast
+const toast = useToast()
+
+const showToast = (message: string) => {
+  toast.add({
+    severity: 'success',
+    summary: 'Éxito',
+    detail: message,
+    life: 3000,
+  })
+}
 
 //for get species
 
@@ -69,6 +81,7 @@ const addSpecie = () => {
       if (data) {
         const specie = await createSpecie(data)
         console.log('Datos recibidos del dialogo', specie)
+        showToast('Especie agregada exitosamente: ' + data.name)
         loadSpecies()
       }
     },
@@ -88,6 +101,7 @@ const editPaymentMethod = (specieData: Specie) => {
       if (data) {
         const specie = await updateSpecie(specieData.id, data)
         console.log('Datos recibidos del dialogo', specie)
+        showToast('Especie editada exitosamente: ' + data.name)
         loadSpecies()
       }
     },
@@ -116,6 +130,7 @@ const deleteSpecieAction = (event: MouseEvent | KeyboardEvent, specieData: Speci
     accept: async () => {
       console.log('Eliminando método ', specieData.id)
       await deleteSpecie(specieData.id)
+      showToast('Especie eliminada exitosamente: ' + specieData.name)
       loadSpecies()
       if(error.deleteSpecie){
         console.log(error.deleteSpecie)

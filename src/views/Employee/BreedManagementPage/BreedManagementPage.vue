@@ -14,7 +14,7 @@ import Select from 'primevue/select'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import AddEditBreedCard from './components/AddEditBreedCard.vue'
-import { useDialog } from 'primevue'
+import { useDialog, useToast } from 'primevue'
 import type { Breed } from '@/models/Breed'
 import type { FormValues as AddEditBreedSchema } from '@/validation-schemas-forms/schema-add-edit-breed'
 import { useConfirm } from 'primevue'
@@ -22,6 +22,18 @@ import { useBreed } from '@/composables/useBreed'
 import type { OptionSelect } from '@/models/OptionSelect'
 import type { Specie } from '@/models/Specie'
 import { useSpecie } from '@/composables/useSpecie'
+
+//toast
+const toast = useToast()
+
+const showToast = (message: string) => {
+  toast.add({
+    severity: 'success',
+    summary: 'Éxito',
+    detail: message,
+    life: 3000,
+  })
+}
 
 //get from compose
 
@@ -86,6 +98,7 @@ const addBreed = () => {
         const breed = await createBreed(data)
         console.log('Datos recibidos', breed)
         loadBreeds()
+        showToast('Raza agregada exitosamente: ' + breed.name)
       }
     },
   })
@@ -109,6 +122,7 @@ const editBreed = (breedData: Breed) => {
         const breed = await updateBreed(breedData.id, data)
         console.log('Datos recibidos', breed)
         loadBreeds()
+        showToast('Raza editada exitosamente: ' + breed.name)
       }
     },
   })
@@ -137,6 +151,7 @@ const deleteBreedAction = (event: MouseEvent | KeyboardEvent, breedData: Breed) 
       console.log('Eliminando método ', breedData.id)
       await deleteBreed(breedData.id)
       loadBreeds()
+      showToast('Raza eliminada exitosamente: ' + breedData.name)
     },
     reject: () => {
       console.log('Cancelando')
