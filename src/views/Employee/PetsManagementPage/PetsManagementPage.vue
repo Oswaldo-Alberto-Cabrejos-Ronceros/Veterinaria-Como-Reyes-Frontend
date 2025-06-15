@@ -15,7 +15,7 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import type { Pet } from '@/models/Pet'
 import { onMounted, ref } from 'vue'
-import { useDialog } from 'primevue'
+import { useDialog, useToast } from 'primevue'
 import AddEditPetCard from './components/AddEditPetCard.vue'
 import type { FormValues as AddEditPetSchema } from '@/validation-schemas-forms/schema-add-edit-pet'
 import { useRouter } from 'vue-router'
@@ -25,6 +25,18 @@ import type { OptionSelect } from '@/models/OptionSelect'
 import type { Specie } from '@/models/Specie'
 import type { Breed } from '@/models/Breed'
 import { useBreed } from '@/composables/useBreed'
+
+//toast
+const toast = useToast()
+
+const showToast = (message: string) => {
+  toast.add({
+    severity: 'success',
+    summary: 'Éxito',
+    detail: message,
+    life: 3000,
+  })
+}
 
 //methods
 
@@ -136,6 +148,7 @@ const addPet = async () => {
       if (data) {
         await createPet(data)
         loadPets()
+        showToast('Mascota agregada exitosamente: ' + data.name)
       }
     },
   })
@@ -173,6 +186,7 @@ const editPet = async (petData: Pet) => {
       if (data) {
         await updatePet(petData.id, data)
         loadPets()
+        showToast('Mascota editada exitosamente: ' + data.name)
       }
     },
   })
@@ -182,10 +196,10 @@ const editPet = async (petData: Pet) => {
 const confirm = useConfirm()
 
 //for delete with confirm popup
-const deleteClient = (event: MouseEvent | KeyboardEvent, pet: Pet) => {
+const confirmDeletePet = (event: MouseEvent | KeyboardEvent, pet: Pet) => {
   confirm.require({
     target: event.currentTarget as HTMLElement,
-    message: '¿Seguro que quiere eliminar a este empleado?',
+    message: '¿Seguro que quiere eliminar a esta mascota?',
     icon: 'pi pi-exclamation-triangle',
     rejectProps: {
       label: 'Cancelar',
@@ -197,11 +211,12 @@ const deleteClient = (event: MouseEvent | KeyboardEvent, pet: Pet) => {
       severity: 'danger',
     },
     accept: async () => {
-      console.log('Eliminando Empleado ', pet.id)
-      await deletePet(pet.id)
+      console.log('Eliminando mascota: ', pet.id)
+      await deletePet(pet.id) // esta es la que viene de usePet()
+      showToast('Mascota eliminada exitosamente: ' + pet.name)
     },
     reject: () => {
-      console.log('Cancelando')
+      console.log('Cancelando eliminación')
     },
   })
 }
@@ -383,7 +398,7 @@ const exportCSV = () => {
                     variant="outlined"
                     aria-label="Filter"
                     rounded
-                    @click="deleteClient($event, data)"
+                    @click="confirmDeletePet($event, data)"
                   ></Button>
                 </div>
               </template>

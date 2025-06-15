@@ -13,7 +13,7 @@ import Button from 'primevue/button'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import type { Service } from '@/models/Service'
-import { useConfirm, useDialog } from 'primevue'
+import { useConfirm, useDialog, useToast } from 'primevue'
 import { onMounted, ref } from 'vue'
 import AddEditServiceCard from './components/AddEditServiceCard.vue'
 import type { FormValues as AddEditServiceSchema } from '@/validation-schemas-forms/schema-add-edit-service'
@@ -25,6 +25,18 @@ import { useSpecie } from '@/composables/useSpecie'
 import type { Category } from '@/models/Category'
 import { useCategory } from '@/composables/useCategory'
 import { DateAdapter } from '@/adapters/DateAdapter'
+
+//toast
+const toast = useToast()
+
+const showToast = (message: string) => {
+  toast.add({
+    severity: 'success',
+    summary: 'Éxito',
+    detail: message,
+    life: 3000,
+  })
+}
 
 //methods
 
@@ -126,6 +138,7 @@ const addService = async () => {
       if (data) {
         const service = await createVeterinaryService(data)
         console.log('Datos recibidos', service)
+        showToast('Servicio agregado exitosamente: ' + data.name)
         loadServices()
       }
     },
@@ -157,6 +170,7 @@ const editService = async (serviceData: Service) => {
       if (data) {
         const service = await updateVeterinaryService(serviceData.id, data)
         console.log('Datos recibidos', service)
+        showToast('Servicio editado exitosamente: ' + data.name)
         loadServices()
       }
     },
@@ -184,6 +198,7 @@ const deleteService = (event: MouseEvent | KeyboardEvent, service: Service) => {
     accept: async () => {
       console.log('Eliminando Empleado ', service.id)
       await deleteVeterinaryService(service.id)
+      showToast('Servicio eliminado exitosamente: ' + service.name)
     },
     reject: () => {
       console.log('Cancelando')

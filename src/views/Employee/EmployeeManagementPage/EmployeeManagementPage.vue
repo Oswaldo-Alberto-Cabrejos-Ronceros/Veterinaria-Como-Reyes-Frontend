@@ -17,6 +17,7 @@ import type { FormValues as EditEmployeeSchema } from '@/validation-schemas-form
 import type { FormValues as AddEmployeeSchema } from '@/validation-schemas-forms/schema-add-employee'
 import { onMounted, ref } from 'vue'
 import { useDialog } from 'primevue/usedialog'
+import { useToast } from 'primevue'
 import ViewEmployeeCard from './components/ViewEmployeeCard.vue'
 import { useConfirm } from 'primevue'
 import EditEmployeeCard from './components/EditEmployeeCard.vue'
@@ -27,6 +28,18 @@ import type { OptionSelect } from '@/models/OptionSelect'
 import type { Role } from '@/models/Role'
 import { useHeadquarter } from '@/composables/useHeadquarter'
 import type { Headquarter } from '@/models/Headquarter'
+
+//toast
+const toast = useToast()
+
+const showToast = (message: string) => {
+  toast.add({
+    severity: 'success',
+    summary: 'Éxito',
+    detail: message,
+    life: 3000,
+  })
+}
 
 //methotds
 
@@ -166,6 +179,7 @@ const addEmployee = async () => {
         const employee = await createEmployee(data)
         console.log('Datos recibidos:', employee)
         loadEmployees()
+        showToast('Empleado agregado exitosamente: ' + employee.names)
       }
     },
   })
@@ -211,6 +225,7 @@ const editEmployee = async (employeeData: Employee) => {
         const employee = await updateEmployee(employeeData.employeeId, data)
         console.log('Datos recibidos:', employee)
         loadEmployees()
+        showToast('Empleado editado exitosamente: ' + employee.names)
       }
     },
   })
@@ -237,6 +252,7 @@ const deleteEmployee = (event: MouseEvent | KeyboardEvent, employee: Employee) =
     accept: async () => {
       console.log('Eliminando Empleado ', employee.employeeId)
       await blockEmployee(employee.employeeId)
+      showToast('Cliente eliminado exitosamente: ' + employee.names)
     },
     reject: () => {
       console.log('Cancelando')

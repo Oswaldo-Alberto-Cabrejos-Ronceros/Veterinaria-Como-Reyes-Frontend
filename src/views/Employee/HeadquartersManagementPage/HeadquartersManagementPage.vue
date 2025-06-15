@@ -13,13 +13,25 @@ import { toTypedSchema } from '@vee-validate/yup'
 import { onMounted, ref } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import { useConfirm, useDialog } from 'primevue'
+import { useConfirm, useDialog, useToast } from 'primevue'
 import type { Headquarter } from '@/models/Headquarter'
 import AddEditHeadquarterCard from './components/AddEditHeadquarterCard.vue'
 import type { FormValues as AddEditHeadquarterSchema } from '@/validation-schemas-forms/schema-add-edit-headquarter'
 import ViewHeadquaterCard from './components/ViewHeadquaterCard.vue'
 import { useHeadquarter } from '@/composables/useHeadquarter'
 import type { FormValues as HeadquarterAddEditSchema } from '@/validation-schemas-forms/schema-add-edit-headquarter'
+
+//toast
+const toast = useToast()
+
+const showToast = (message: string) => {
+  toast.add({
+    severity: 'success',
+    summary: 'Éxito',
+    detail: message,
+    life: 3000,
+  })
+}
 
 //get from compose
 const { loading, error, getAllHeadquarters, createHeadquarter, updateHeadquarter,deleteHeadquarter } =
@@ -128,6 +140,7 @@ const addHeadquarter = () => {
         const headquarter = await createHeadquarter(data)
         console.log('Datos recibidos del dialogo', headquarter)
         loadHeadquarters()
+        showToast('Sede agregada exitosamente: ' + headquarter.name)
       }
     },
   })
@@ -161,6 +174,7 @@ const editHeadquarter = (headquarterData: Headquarter) => {
         const headquarter = await updateHeadquarter(headquarterData.id, data)
         console.log(headquarter)
         loadHeadquarters()
+        showToast('Sede editada exitosamente: ' + headquarter.name)
       }
     },
   })
@@ -189,6 +203,7 @@ const deleteHeadquarterAction = (event: MouseEvent | KeyboardEvent, headquarter:
       console.log('Eliminando Sede ', headquarter.id)
       await deleteHeadquarter(headquarter.id)
       loadHeadquarters()
+      showToast('Sede eliminada exitosamente: ' + headquarter.name)
     },
     reject: () => {
       console.log('Cancelando')

@@ -15,13 +15,25 @@ import { onMounted, ref } from 'vue'
 import type { Client } from '@/models/Client'
 import { useConfirm } from 'primevue'
 import ViewClientCard from './components/ViewClientCard.vue'
-import { useDialog } from 'primevue'
+import { useDialog, useToast } from 'primevue'
 import AddClientCard from './components/AddClientCard.vue'
 import EditClientCard from './components/EditClientCard.vue'
 //form
 import type { FormValues as SchemaEditClient } from '@/validation-schemas-forms/schema-edit-client'
 import type { FormValues as SchemaClientAdd } from '@/validation-schemas-forms/schema-add-client'
 import { useClient } from '@/composables/useClient'
+
+//toast
+const toast = useToast()
+
+const showToast = (message: string) => {
+  toast.add({
+    severity: 'success',
+    summary: 'Éxito',
+    detail: message,
+    life: 3000,
+  })
+}
 
 //methods
 const { loading, error, getAllClients, createClient, updateClient, deleteClient, searchClient } =
@@ -84,6 +96,7 @@ const addClient = () => {
         const client = await createClient(data)
         console.log('Datos recibidos', client)
         loadClients()
+        showToast('Cliente agregado exitosamente: ' + client.names)
       }
     },
   })
@@ -112,6 +125,7 @@ const editClient = (clientData: Client) => {
         const client = await updateClient(clientData.clientId, data)
         console.log('Datos recibidos', client)
         loadClients()
+        showToast('Cliente editado exitosamente: ' + client.names)
       }
     },
   })
@@ -139,6 +153,7 @@ const deleteClientAction = (event: MouseEvent | KeyboardEvent, client: Client) =
       console.log('Eliminando Empleado ', client.clientId)
       await deleteClient(client.clientId)
       loadClients()
+      showToast('Cliente eliminado exitosamente: ' + client.names)
     },
     reject: () => {
       console.log('Cancelando')

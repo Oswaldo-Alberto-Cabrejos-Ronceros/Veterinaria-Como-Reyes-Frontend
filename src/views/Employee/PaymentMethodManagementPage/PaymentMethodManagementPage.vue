@@ -15,10 +15,22 @@ import { onMounted, ref } from 'vue'
 import type { PaymentMethod } from '@/models/PaymentMethod'
 import { useConfirm } from 'primevue'
 import AddEditPaymentMethodCard from './components/AddEditPaymentMethodCard.vue'
-import { useDialog } from 'primevue'
+import { useDialog, useToast } from 'primevue'
 import type { FormValues as AddEditPaymentMethodSchema } from '@/validation-schemas-forms/schema-add-edit-payment-method'
 import ViewPaymentMethodCard from './components/ViewPaymentMethodCard.vue'
 import { usePaymentMethod } from '@/composables/usePaymentMethod'
+
+//toast
+const toast = useToast()
+
+const showToast = (message: string) => {
+  toast.add({
+    severity: 'success',
+    summary: 'Éxito',
+    detail: message,
+    life: 3000,
+  })
+}
 
 //get from compose
 
@@ -73,6 +85,7 @@ const addPaymentMethod = () => {
         const paymentMethod = await createPaymentMethod(data)
         console.log('Datos recibidos del dialogo', paymentMethod)
         loadPaymentMethods()
+        showToast('Método de pago agregado correctamente.')
       }
     },
   })
@@ -103,6 +116,7 @@ const editPaymentMethod = (paymentMethodData: PaymentMethod) => {
         const paymentMethod = await updatePaymentMethod(paymentMethodData.id, data)
         console.log('Datos recibidos del dialogo', paymentMethod)
         loadPaymentMethods()
+        showToast('Método de pago editado correctamente.')
       }
     },
   })
@@ -133,6 +147,7 @@ const deletePaymentMethodAction = (
     accept: async () => {
       console.log('Eliminando método ', paymentMethod.id)
       await deletePaymentMethod(paymentMethod.id)
+      showToast('Método de pago eliminado correctamente.')
     },
     reject: () => {
       console.log('Cancelando')
