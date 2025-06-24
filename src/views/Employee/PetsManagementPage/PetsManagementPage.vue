@@ -198,6 +198,7 @@ const confirm = useConfirm()
 //for delete with confirm popup
 const confirmDeletePet = (event: MouseEvent | KeyboardEvent, pet: Pet) => {
   confirm.require({
+    group:'confirmPopupGeneral',
     target: event.currentTarget as HTMLElement,
     message: '¿Seguro que quiere eliminar a esta mascota?',
     icon: 'pi pi-exclamation-triangle',

@@ -187,6 +187,7 @@ const confirm = useConfirm()
 
 const deleteHeadquarterAction = (event: MouseEvent | KeyboardEvent, headquarter: Headquarter) => {
   confirm.require({
+    group:'confirmPopupGeneral',
     target: event.currentTarget as HTMLElement,
     message: '¿Seguro que quiere eliminar esta sede?',
     icon: 'pi pi-exclamation-triangle',

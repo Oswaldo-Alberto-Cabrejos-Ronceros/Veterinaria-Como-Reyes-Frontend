@@ -132,6 +132,7 @@ const deletePaymentMethodAction = (
   paymentMethod: PaymentMethod,
 ) => {
   confirm.require({
+    group:'confirmPopupGeneral',
     target: event.currentTarget as HTMLElement,
     message: '¿Seguro que quiere eliminar este método?',
     icon: 'pi pi-exclamation-triangle',

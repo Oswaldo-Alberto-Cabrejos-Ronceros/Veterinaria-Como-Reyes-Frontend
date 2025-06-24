@@ -183,6 +183,7 @@ const confirm = useConfirm()
 //for delete with confirm popup
 const deleteService = (event: MouseEvent | KeyboardEvent, service: Service) => {
   confirm.require({
+    group:'confirmPopupGeneral',
     target: event.currentTarget as HTMLElement,
     message: '¿Seguro que quiere eliminar este servicio?',
     icon: 'pi pi-exclamation-triangle',
