@@ -137,6 +137,7 @@ const confirm = useConfirm()
 //for delete with confirm popup
 const deleteClientAction = (event: MouseEvent | KeyboardEvent, client: Client) => {
   confirm.require({
+    group:'confirmPopupGeneral',
     target: event.currentTarget as HTMLElement,
     message: '¿Seguro que quiere eliminar a este empleado?',
     icon: 'pi pi-exclamation-triangle',

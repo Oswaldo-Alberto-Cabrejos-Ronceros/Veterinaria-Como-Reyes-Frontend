@@ -7,7 +7,7 @@ import PrimeVue from 'primevue/config'
 import Aura from '@primeuix/themes/aura'
 import DialogService from 'primevue/dialogservice'
 import ConfirmationService from 'primevue/confirmationservice'
-import { ToastService } from 'primevue'
+import ToastService from 'primevue/toastservice'
 //import esLocale
 import esLocale from '@/assets/locale/es.json'
 

@@ -9,6 +9,7 @@ import { computed } from 'vue'
 import { ref } from 'vue'
 import Popover from 'primevue/popover'
 import { useAuthentication } from '@/composables/useAuthentication'
+import { useConfirm } from 'primevue'
 
 const themeStore = useThemeStore()
 
@@ -28,7 +29,29 @@ const toggle = (event: MouseEvent | KeyboardEvent) => {
 
 //for session out
 
-const {logoutUser} =useAuthentication()
+const { logoutUser } = useAuthentication()
+
+//for confirm dialog logout
+const confirm = useConfirm()
+
+const confirmLogout = async () => {
+  confirm.require({
+    group: 'confirmDialogGeneral',
+    message: '¿Seguro que quieres cerrar sesión',
+    header: 'Cerrar sesión',
+    icon: 'pi pi-exclamation-circle',
+    rejectProps: {
+      label: 'No',
+      severity: 'secondary',
+      outlined: true,
+    },
+    acceptProps: {
+      label: 'Si',
+      severity: 'danger',
+    },
+    accept: () => logoutUser(),
+  })
+}
 </script>
 
 <template>
@@ -89,7 +112,7 @@ const {logoutUser} =useAuthentication()
 
               <div
                 class="w-full flex items-center justify-between cursor-pointer rounded p-2 transition-colors hover:bg-surface-50 dark:hover:bg-surface-800"
-                @click="logoutUser()"
+                @click="confirmLogout()"
               >
                 Cerrar sesión
                 <i class="pi pi-sign-out"></i>

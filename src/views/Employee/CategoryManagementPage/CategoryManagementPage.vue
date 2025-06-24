@@ -126,6 +126,7 @@ const confirm = useConfirm()
 
 const deleteCategoryAction = (event: MouseEvent | KeyboardEvent, category: Category) => {
   confirm.require({
+    group:'confirmPopupGeneral',
     target: event.currentTarget as HTMLElement,
     message: '¿Seguro que quiere eliminar esta categoria?',
     icon: 'pi pi-exclamation-triangle',
