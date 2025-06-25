@@ -1,7 +1,7 @@
 import type { Appointment, AppointmentRequest, BasicServiceForAppointment, TimesForTurn } from "../models/Appointment";
 
 export interface AppointmentService{
-  getAllAppointments():Promise<Appointment>
+  getAllAppointments():Promise<Appointment[]>
   getAppointmentById(appointmentId:number):Promise<Appointment>
   createAppointment(appointmentRequest:AppointmentRequest):Promise<Appointment>
   updateAppointment(appoinmentId:number,appointmentRequest:AppointmentRequest):Promise<Appointment>

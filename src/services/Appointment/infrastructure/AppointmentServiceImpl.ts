@@ -12,8 +12,8 @@ export class AppointmentServiceImpl implements AppointmentService {
 
   private readonly url = '/appointments'
 
-  async getAllAppointments(): Promise<Appointment> {
-    const response = await this.httpClient.get<Appointment>(`${this.url}`)
+  async getAllAppointments(): Promise<Appointment[]> {
+    const response = await this.httpClient.get<Appointment[]>(`${this.url}`)
     return response.data
   }
 
