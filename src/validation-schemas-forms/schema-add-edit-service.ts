@@ -6,7 +6,7 @@ description:yup.string().required("Descripción es obligatorio"),
 price:yup.number().required('Precio es obligatorio').positive('Precio debe ser negativo').test('precio','Debe tener como máximo 6 enteros y 2 decimales',
   (value)=>value===undefined || /^\d{1,6}(\.\d{1,3})?$/.test(value.toString())
 ),
-duration:yup.date().typeError('Duración inválida').required('Duracion es obligatoria'),
+duration:yup.number().required('Duracion es obligatoria').integer("Debe ser un numero entero"),
 dirImage:yup.string(),
 specieId:yup.number().required('Especie es obligatorio'),
 categoryId:yup.number().required("Categoria es obligatoria"),

@@ -6,7 +6,7 @@ export interface VeterinaryService {
   name: string
   description: string
   price: number
-  duration: string
+  duration: number
   specie: Specie
   category: Category
 }
@@ -15,7 +15,7 @@ export interface VeterinaryServiceRequest {
   name: string
   description: string
   price: number
-  duration: string
+  duration: number
   specie: {
     specieId: number
   }
