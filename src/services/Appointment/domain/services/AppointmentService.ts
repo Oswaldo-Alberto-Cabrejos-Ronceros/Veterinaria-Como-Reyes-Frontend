@@ -9,5 +9,5 @@ export interface AppointmentService{
   confirmAppointment(appoinmentId:number):Promise<Appointment>
   completeAppointment(appoinmentId:number):Promise<Appointment>
   getAvailableTimes(headquarterVetServiceId:number,date:string):Promise<TimesForTurn[]>
-  getServicesByHeadquarterAndSpecies(headquarterId:number,speciesId:number):Promise<BasicServiceForAppointment>
+  getServicesByHeadquarterAndSpecies(headquarterId:number,speciesId:number):Promise<BasicServiceForAppointment[]>
 }

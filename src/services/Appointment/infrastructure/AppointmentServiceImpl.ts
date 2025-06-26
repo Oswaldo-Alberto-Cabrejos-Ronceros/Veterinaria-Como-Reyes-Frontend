@@ -61,11 +61,11 @@ export class AppointmentServiceImpl implements AppointmentService {
   async getServicesByHeadquarterAndSpecies(
     headquarterId: number,
     speciesId: number,
-  ): Promise<BasicServiceForAppointment> {
+  ): Promise<BasicServiceForAppointment[]> {
     const params = new URLSearchParams()
     params.append('headquarterId',headquarterId.toString())
     params.append('speciesId',speciesId.toString())
-    const response = await this.httpClient.get<BasicServiceForAppointment>(`${this.url}/services?${params.toString()}`)
+    const response = await this.httpClient.get<BasicServiceForAppointment[]>(`${this.url}/services?${params.toString()}`)
     return response.data
   }
 }
