@@ -58,6 +58,11 @@ const schedulesNight: string[] = [
   '21:15 - 21:45',
   '22:00 - 22:30',
 ]
+
+//for get petSelected
+const getPetSelected = (pet: PetByClient) => {
+  console.log('Obtenido', pet)
+}
 </script>
 
 <template>
@@ -79,7 +84,7 @@ const schedulesNight: string[] = [
         <!-- panels -->
         <StepPanels>
           <!-- for pet -->
-          <PetStep :pets="pets"></PetStep>
+          <PetStep :pets="pets" @select-pet="getPetSelected($event)"></PetStep>
           <!-- for service -->
           <ServiceStep :services="services"></ServiceStep>
           <!-- for schedule -->
