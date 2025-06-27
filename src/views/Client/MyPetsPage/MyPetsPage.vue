@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import Card from 'primevue/card'
+import Message from 'primevue/message'
 import CardPetSecondary from '@/components/CardPetSecondary.vue'
 import Button from 'primevue/button'
 import { useDialog } from 'primevue'
@@ -10,11 +11,19 @@ import type { Specie } from '@/models/Specie'
 import type { OptionSelect } from '@/models/OptionSelect'
 import type { Breed } from '@/models/Breed'
 import type { FormValues as AddMyPetSchema } from '@/validation-schemas-forms/schema-add-pet-client'
+import { usePet } from '@/composables/usePet'
+import { onMounted, ref } from 'vue'
+import { useAuthentication } from '@/composables/useAuthentication'
+import type { PetByClient } from '@/models/PetByClient'
 
 //methods
 const { getAllSpecies } = useSpecie()
 
 const { getAllBreeds } = useBreed()
+
+const { getEntityId } = useAuthentication()
+
+const { error, loading, getPetByClientId, createPetClient } = usePet()
 
 //for species to options Select
 
@@ -35,63 +44,18 @@ const breedsToOptionsSelect = (breeds: Breed[]): OptionSelect[] => {
 }
 
 //example for pets
-const pets = [
-  {
-    petId: 1,
-    petImageUrl: 'https://definicion.de/wp-content/uploads/2018/01/gato-1.jpg',
-    petName: 'Luna',
-    petDescription: 'Gata muy juguetona y amigable',
-    petSpecie: 'Felino',
-    petBreed: 'Siamesa',
-    petGender: 'H',
-    petWeight: 4.2,
-    birthdate: '2020-04-15',
-  },
-  {
-    petId: 2,
-    petImageUrl: 'https://definicion.de/wp-content/uploads/2018/01/gato-1.jpg',
-    petName: 'Max',
-    petDescription: 'Perro leal, protector y energético',
-    petSpecie: 'Canino',
-    petBreed: 'Pastor Alemán',
-    petGender: 'M',
-    petWeight: 32.5,
-    birthdate: '2019-08-23',
-  },
-  {
-    petId: 3,
-    petImageUrl: 'https://definicion.de/wp-content/uploads/2018/01/gato-1.jpg',
-    petName: 'Kiwi',
-    petDescription: 'Ave tranquila, ideal para interiores',
-    petSpecie: 'Ave',
-    petBreed: 'Periquito Australiano',
-    petGender: 'H',
-    petWeight: 0.09,
-    birthdate: '2022-01-10',
-  },
-  {
-    petId: 4,
-    petImageUrl: 'https://definicion.de/wp-content/uploads/2018/01/gato-1.jpg',
-    petName: 'Rocky',
-    petDescription: 'Perro muy cariñoso, ideal para niños',
-    petSpecie: 'Canino',
-    petBreed: 'Labrador Retriever',
-    petGender: 'M',
-    petWeight: 28.0,
-    birthdate: '2021-03-04',
-  },
-  {
-    petId: 5,
-    petImageUrl: 'https://definicion.de/wp-content/uploads/2018/01/gato-1.jpg',
-    petName: 'Mía',
-    petDescription: 'Gata tranquila, le gusta dormir en ventanas',
-    petSpecie: 'Felino',
-    petBreed: 'Persa',
-    petGender: 'H',
-    petWeight: 3.8,
-    birthdate: '2020-11-12',
-  },
-]
+const pets = ref<PetByClient[]>([])
+
+onMounted(() => {
+  loadPets()
+})
+
+const loadPets = async () => {
+  const clientId = getEntityId()
+  if (clientId) {
+    pets.value = await getPetByClientId(clientId)
+  }
+}
 
 //for dialog
 const dialog = useDialog()
@@ -100,7 +64,7 @@ const dialog = useDialog()
 const addPet = async () => {
   dialog.open(AddMyPetCard, {
     props: {
-      modal: true
+      modal: true,
     },
     data: {
       speciesOptions: speciesToOptionsSelect(await getAllSpecies()),
@@ -108,8 +72,10 @@ const addPet = async () => {
     },
     onClose: async (options) => {
       const data = options?.data as AddMyPetSchema
-      if (data) {
-        console.log(data)
+      const clientId = getEntityId()
+      if (data && clientId) {
+        const pet = await createPetClient(data, clientId)
+        console.log('Mascota creada exitosamente', pet)
       }
     },
   })
@@ -133,17 +99,25 @@ const addPet = async () => {
       </template>
       <template #content>
         <div class="flex flex-col gap-6">
-          <RouterLink v-for="pet in pets" :key="pet.petId" :to="`/client/my-pets/${pet.petId}`">
+          <!-- for messague loading  -->
+          <Message v-if="loading.getPetByClientId" severity="warn" size="small" variant="simple">
+            Cargando ...
+          </Message>
+          <!-- for messague error -->
+          <Message v-if="error.getPetByClientId" severity="error" size="small" variant="simple">
+            Error al cargar tus mascotas
+          </Message>
+          <RouterLink v-for="pet in pets" :key="pet.id" :to="`/client/my-pets/${pet.id}`">
             <CardPetSecondary
-              :id="pet.petId"
-              :image-url="pet.petImageUrl"
-              :name="pet.petName"
-              :description="pet.petDescription"
-              :specie="pet.petSpecie"
-              :breed="pet.petBreed"
-              :gender="pet.petGender"
-              :weight="pet.petWeight"
-              :birthdate="pet.birthdate"
+              :id="pet.id"
+              :image-url="pet.urlImage"
+              :name="pet.name"
+              description=" "
+              :specie="pet.breedName"
+              :breed="pet.breedName"
+              :gender="pet.gender"
+              :weight="pet.weight"
+              :birthdate="pet.birthdate.toString()"
             ></CardPetSecondary>
           </RouterLink>
         </div>
