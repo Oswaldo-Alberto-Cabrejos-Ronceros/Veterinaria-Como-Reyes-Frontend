@@ -11,11 +11,22 @@ import type { PetByClient } from '@/models/PetByClient'
 import { onMounted, ref } from 'vue'
 import Message from 'primevue/message'
 import { RouterLink } from 'vue-router'
+import { useClient } from '@/composables/useClient'
+import { useAppointment } from '@/composables/useAppointment'
+import type { BasicServiceForAppointment } from '@/models/BasicServiceForAppointment'
 
 //methods
 const { getEntityId } = useAuthentication()
 
-const { error, loading, getPetByClientId } = usePet()
+const { error: petError, loading: petLoading, getPetByClientId, getPetById } = usePet()
+
+const {
+  error: servicesError,
+  loading: servicesLoading,
+  getServicesByHeadquarterAndSpecies,
+} = useAppointment()
+
+const { myInfoAsClient } = useClient()
 
 //examples for cardsAppointment
 const cardsAppointmentPrimaryPropsExamples = [
@@ -105,6 +116,7 @@ const pets = ref<PetByClient[]>([])
 //get all for view
 onMounted(() => {
   loadPets()
+  loadServicesByHeadquarterSpecie()
 })
 
 const loadPets = async () => {
@@ -113,58 +125,21 @@ const loadPets = async () => {
     pets.value = await getPetByClientId(clientId)
   }
 }
-const services = [
-  {
-    serviceId: 1,
-    serviceName: 'Baño Canino',
-    serviceImageUrl:
-      'https://enlinea.santotomas.cl/web/wp-content/uploads/sites/2/2016/08/vet-744x465.jpg',
-    specieName: 'Perro',
-    categoryName: 'Estética',
-    duration: '45 min',
-    price: 40.0,
-  },
-  {
-    serviceId: 2,
-    serviceName: 'Consulta Veterinaria Felina',
-    serviceImageUrl:
-      'https://enlinea.santotomas.cl/web/wp-content/uploads/sites/2/2016/08/vet-744x465.jpg',
-    specieName: 'Gato',
-    categoryName: 'Consulta',
-    duration: '30 min',
-    price: 50.0,
-  },
-  {
-    serviceId: 3,
-    serviceName: 'Vacunación Antirrábica',
-    serviceImageUrl:
-      'https://enlinea.santotomas.cl/web/wp-content/uploads/sites/2/2016/08/vet-744x465.jpg',
-    specieName: 'Perro',
-    categoryName: 'Vacunación',
-    duration: '15 min',
-    price: 25.0,
-  },
-  {
-    serviceId: 4,
-    serviceName: 'Corte de Uñas',
-    serviceImageUrl:
-      'https://enlinea.santotomas.cl/web/wp-content/uploads/sites/2/2016/08/vet-744x465.jpg',
-    specieName: 'Perro',
-    categoryName: 'Estética',
-    duration: '10 min',
-    price: 10.0,
-  },
-  {
-    serviceId: 5,
-    serviceName: 'Desparasitación Interna',
-    serviceImageUrl:
-      'https://enlinea.santotomas.cl/web/wp-content/uploads/sites/2/2016/08/vet-744x465.jpg',
-    specieName: 'Gato',
-    categoryName: 'Medicina Preventiva',
-    duration: '20 min',
-    price: 35.0,
-  },
-]
+
+const loadServicesByHeadquarterSpecie = async () => {
+  const clientId = getEntityId()
+  if (clientId) {
+    const infoClient = await myInfoAsClient(clientId)
+    const headquarterId = infoClient.headquarter.id
+    const pet = pets.value[0]
+    if (pet) {
+      const petRaw = await getPetById(pet.id)
+      services.value = await getServicesByHeadquarterAndSpecies(headquarterId, petRaw.specie.id)
+    }
+  }
+}
+
+const services = ref<BasicServiceForAppointment[]>([])
 </script>
 
 <template>
@@ -220,7 +195,7 @@ const services = [
               <div class="flex flex-col gap-2">
                 <!-- for messague loading  -->
                 <Message
-                  v-if="loading.getPetByClientId"
+                  v-if="petLoading.getPetByClientId"
                   severity="warn"
                   size="small"
                   variant="simple"
@@ -229,7 +204,7 @@ const services = [
                 </Message>
                 <!-- for messague error -->
                 <Message
-                  v-if="error.getPetByClientId"
+                  v-if="petError.getPetByClientId"
                   severity="error"
                   size="small"
                   variant="simple"
@@ -256,16 +231,34 @@ const services = [
 
           <div>
             <h3 class="text-xl mb-4">Servicios disponibles</h3>
-            <ScrollPanel class="max-h-96 pr-4">
+            <ScrollPanel class="h-96 pr-4">
               <div class="flex flex-col gap-2">
+                <!-- for messague loading  -->
+                <Message
+                  v-if="servicesLoading.getServicesByHeadquarterAndSpecies"
+                  severity="warn"
+                  size="small"
+                  variant="simple"
+                >
+                  Cargando ...
+                </Message>
+                <!-- for messague error -->
+                <Message
+                  v-if="servicesError.getServicesByHeadquarterAndSpecies"
+                  severity="error"
+                  size="small"
+                  variant="simple"
+                >
+                  Error al cargar tus mascotas
+                </Message>
                 <CardServicePrimary
                   v-for="service in services"
-                  :key="service.serviceId"
-                  :serviceId="service.serviceId"
-                  :serviceName="service.serviceName"
-                  :serviceImageUrl="service.serviceImageUrl"
-                  :specieName="service.specieName"
-                  :categoryName="service.categoryName"
+                  :key="service.id"
+                  :serviceId="service.id"
+                  :serviceName="service.name"
+                  serviceImageUrl="https://enlinea.santotomas.cl/web/wp-content/uploads/sites/2/2016/08/vet-744x465.jpg"
+                  specieName="Especie"
+                  categoryName="Categoria"
                   :duration="service.duration"
                   :price="service.price"
                 ></CardServicePrimary>

@@ -2,16 +2,9 @@
 import StepPanel from 'primevue/steppanel'
 import Button from 'primevue/button'
 import CardServiceSecondary from '@/components/CardServiceSecondary.vue'
+import type { BasicServiceForAppointment } from '@/models/BasicServiceForAppointment';
 defineProps<{
-  services?: {
-    serviceId: number
-    serviceName: string
-    serviceImageUrl: string
-    specieName: string
-    categoryName: string
-    duration: string
-    price: number
-  }[]
+  services?: BasicServiceForAppointment[]
 }>()
 </script>
 
@@ -23,12 +16,12 @@ defineProps<{
       <div class="w-full grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 my-4">
         <CardServiceSecondary
           v-for="service in services"
-          :key="service.serviceId"
-          :serviceId="service.serviceId"
-          :serviceName="service.serviceName"
-          :serviceImageUrl="service.serviceImageUrl"
-          :specieName="service.specieName"
-          :categoryName="service.categoryName"
+          :key="service.id"
+          :serviceId="service.id"
+          :serviceName="service.name"
+          serviceImageUrl="Imagen"
+          specieName="Especie"
+          categoryName="Categoria"
           :duration="service.duration"
           :price="service.price"
         ></CardServiceSecondary>

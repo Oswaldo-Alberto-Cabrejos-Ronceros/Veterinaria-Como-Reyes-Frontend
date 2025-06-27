@@ -11,18 +11,11 @@ import ResumeStep from './AppointmentSteps/ResumeStep.vue'
 import { onMounted, ref } from 'vue'
 import StepItem from 'primevue/stepitem'
 import type { PetByClient } from '@/models/PetByClient'
+import type { BasicServiceForAppointment } from '@/models/BasicServiceForAppointment'
 
 defineProps<{
   pets: PetByClient[]
-  services?: {
-    serviceId: number
-    serviceName: string
-    serviceImageUrl: string
-    specieName: string
-    categoryName: string
-    duration: string
-    price: number
-  }[]
+  services?: BasicServiceForAppointment[]
 }>()
 
 //for small screen

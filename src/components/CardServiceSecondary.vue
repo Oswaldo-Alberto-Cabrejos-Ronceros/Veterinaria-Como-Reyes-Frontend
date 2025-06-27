@@ -7,7 +7,7 @@ defineProps<{
   serviceImageUrl: string
   specieName: string
   categoryName: string
-  duration: string
+  duration: number
   price: number
 }>()
 </script>
