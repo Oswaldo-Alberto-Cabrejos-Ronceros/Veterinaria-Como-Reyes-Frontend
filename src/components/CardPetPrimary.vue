@@ -13,7 +13,7 @@ defineProps<{
 </script>
 <template>
   <CardPrimary>
-    <div class="w-full flex justify-end">
+    <div class="w-full flex justify-end h-40">
       <Image :src="petImageUrl" image-class="size-40 object-cover" :alt="petName" />
       <div class="flex-1 flex flex-col gap-2 p-3">
         <div class="flex items-center justify-between">

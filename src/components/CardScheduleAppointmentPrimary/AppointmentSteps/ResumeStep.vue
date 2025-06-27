@@ -3,16 +3,9 @@ import StepPanel from 'primevue/steppanel'
 import Button from 'primevue/button'
 import CardPetPrimary from '@/components/CardPetPrimary.vue'
 import CardServicePrimary from '@/components/CardServicePrimary.vue'
+import type { PetByClient } from '@/models/PetByClient';
 defineProps<{
-  petSelected?:{
-        petId: number
-    petImageUrl: string
-    petName: string
-    petSpecie: string
-    petBreed: string
-    petGender: string
-    birthdate: string
-  }
+  petSelected?:PetByClient
   serviceSelected?:{
         serviceId: number
     serviceName: string
@@ -39,12 +32,12 @@ defineProps<{
                 <div>
                   <p class="block mb-2">Mascota</p>
                   <CardPetPrimary v-if="petSelected"
-                    :petId="petSelected.petId"
-                    :petImageUrl="petSelected.petImageUrl"
-                    :petName="petSelected.petName"
-                    :petSpecie="petSelected.petSpecie"
-                    :petBreed="petSelected.petBreed"
-                    :petGender="petSelected.petGender"
+                    :petId="petSelected.id"
+                    :petImageUrl="petSelected.urlImage"
+                    :petName="petSelected.name"
+                    :petSpecie="petSelected.specieName"
+                    :petBreed="petSelected.breedName"
+                    :petGender="petSelected.gender"
                     :birthdate="petSelected.birthdate"
                   ></CardPetPrimary>
                 </div>

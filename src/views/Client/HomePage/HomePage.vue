@@ -10,6 +10,7 @@ import { usePet } from '@/composables/usePet'
 import type { PetByClient } from '@/models/PetByClient'
 import { onMounted, ref } from 'vue'
 import Message from 'primevue/message'
+import { RouterLink } from 'vue-router'
 
 //methods
 const { getEntityId } = useAuthentication()
@@ -235,17 +236,18 @@ const services = [
                 >
                   Error al cargar tus mascotas
                 </Message>
-                <CardPetPrimary
-                  v-for="pet in pets"
-                  :key="pet.id"
-                  :petId="pet.id"
-                  :petImageUrl="pet.urlImage"
-                  :petName="pet.name"
-                  :petSpecie="pet.specieName"
-                  :petBreed="pet.breedName"
-                  :petGender="pet.gender"
-                  :birthdate="pet.birthdate"
-                ></CardPetPrimary>
+                <RouterLink v-for="pet in pets" :key="pet.id" :to="`/client/my-pets/${pet.id}`">
+                  <CardPetPrimary
+                    :key="pet.id"
+                    :petId="pet.id"
+                    :petImageUrl="pet.urlImage"
+                    :petName="pet.name"
+                    :petSpecie="pet.specieName"
+                    :petBreed="pet.breedName"
+                    :petGender="pet.gender"
+                    :birthdate="pet.birthdate"
+                  ></CardPetPrimary
+                ></RouterLink>
               </div>
             </ScrollPanel>
           </div>
