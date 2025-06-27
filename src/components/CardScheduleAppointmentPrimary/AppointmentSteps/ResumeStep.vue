@@ -40,6 +40,14 @@ const paymentMethodsToOptionsSelect = (paymentMethods: PaymentMethod[]): OptionS
     name: paymentMethod.name,
   }))
 }
+
+//for emitr
+const emit = defineEmits(['confirm'])
+const emitConfirm = ()=>{
+  if(paymentMethodSelected.value){
+    emit('confirm',paymentMethodSelected.value)
+  }
+}
 </script>
 
 <template>
@@ -105,7 +113,7 @@ const paymentMethodsToOptionsSelect = (paymentMethods: PaymentMethod[]): OptionS
         @click="activateCallback('3')"
       />
 
-      <Button label="Agendar" security="success" />
+      <Button label="Agendar" security="success" @click="emitConfirm()" />
     </div>
   </StepPanel>
 </template>

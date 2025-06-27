@@ -8,16 +8,15 @@ export interface Appointment {
   creationDate: string
   cancellationNote?: string
   statusAppointment: string
-  headquarterVetService: HeadquarterVetService
-  assignedEmployee: Employee
+  headquarterVetService: {id:number}
+  assignedEmployee?: Employee
   animal: Animal
 }
 
 export interface AppointmentRequest {
   scheduleDateTime: string
-  comment: string
+  comment?: string
   headquarterVetServiceId: number
-  assignedEmployeeId: number
   animalId: number
   paymentMethodId: number
 }

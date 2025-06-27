@@ -1,5 +1,4 @@
 import type { Employee } from "./Employee"
-import type { HeadquarterVetService } from "./HeadquarterVetService"
 import type { Pet } from "./Pet"
 
 export interface Appointment {
@@ -8,7 +7,7 @@ export interface Appointment {
   creationDate: string
   cancellationNote?: string
   statusAppointment: string
-  headquarterVetService:HeadquarterVetService
-  assignedEmployee:Employee
+  headquarterVetService:{id:number}
+  assignedEmployee?:Employee
   pet:Pet
 }

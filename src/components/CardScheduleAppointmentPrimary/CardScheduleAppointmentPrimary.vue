@@ -25,7 +25,7 @@ defineProps<{
   serviceSelected?: BasicServiceForAppointment
   dateSelected?: Date
   timeSelected?: FormatTime
-  paymentMethods:PaymentMethod[]
+  paymentMethods: PaymentMethod[]
 }>()
 
 //for small screen
@@ -40,7 +40,13 @@ onMounted(() => {
   window.addEventListener('resize', checkSize)
 })
 
-const emit = defineEmits(['pet-selected', 'service-selected', 'date-change', 'time-selected'])
+const emit = defineEmits([
+  'pet-selected',
+  'service-selected',
+  'date-change',
+  'time-selected',
+  'confirm',
+])
 
 //for get petSelected
 const getPetSelected = (pet: PetByClient) => {
@@ -64,6 +70,11 @@ const getDateAppointment = (date: Date) => {
 const getTimeSelected = (time: FormatTime) => {
   console.log('Obtenido', time)
   emit('time-selected', time)
+}
+
+const getConfirm = (paymentMethodId: number) => {
+  console.log('Obteniendo', paymentMethodId)
+  emit('confirm', paymentMethodId)
 }
 </script>
 
@@ -101,6 +112,7 @@ const getTimeSelected = (time: FormatTime) => {
           <!-- for resume -->
           <ResumeStep
             v-if="services"
+            @confirm="getConfirm($event)"
             :petSelected="petSelected"
             :serviceSelected="serviceSelected"
             :dateSelected="dateSelected"
@@ -138,6 +150,7 @@ const getTimeSelected = (time: FormatTime) => {
           <!-- for resume -->
           <ResumeStep
             v-if="services"
+            @confirm="getConfirm($event)"
             :petSelected="petSelected"
             :serviceSelected="serviceSelected"
             :dateSelected="dateSelected"

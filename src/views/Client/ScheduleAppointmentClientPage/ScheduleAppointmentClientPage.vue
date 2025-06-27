@@ -12,6 +12,9 @@ import type { TimesForTurn } from '@/models/TimesForTurn'
 import type { FormatTime } from '@/models/FormatTime'
 import { usePaymentMethod } from '@/composables/usePaymentMethod'
 import type { PaymentMethod } from '@/models/PaymentMethod'
+import type { AppointmentRequest } from '@/models/AppointmentRequest'
+import { useToast } from 'primevue/usetoast'
+import { useRouter } from 'vue-router'
 
 //methods
 const { getEntityId } = useAuthentication()
@@ -22,7 +25,8 @@ const { myInfoAsClient } = useClient()
 
 const { error, loading, getPetByClientId } = usePet()
 
-const { getServicesByHeadquarterAndSpecies, getAvailableTimes } = useAppointment()
+const { getServicesByHeadquarterAndSpecies, getAvailableTimes, createAppointment } =
+  useAppointment()
 
 const pets = ref<PetByClient[]>([])
 const paymentMethods = ref<PaymentMethod[]>([])
@@ -35,6 +39,10 @@ const petSelected = ref<PetByClient | null>(null)
 const serviceSelected = ref<BasicServiceForAppointment | null>(null)
 const timeSelected = ref<FormatTime | null>(null)
 const dateSelected = ref<Date | null>(null)
+const paymentMethodSelected = ref<number | null>(null)
+
+//for router
+const router = useRouter()
 
 //get all for view
 onMounted(() => {
@@ -106,6 +114,61 @@ const getTimeSelected = (time: FormatTime) => {
   console.log('Obtenido padre', time)
   timeSelected.value = time
 }
+
+const getConfirm = (paymentMethodId: number) => {
+  console.log('Obteniendo Padre', paymentMethodId)
+  paymentMethodSelected.value = paymentMethodId
+  if (
+    petSelected.value &&
+    serviceSelected.value &&
+    timeSelected.value &&
+    dateSelected.value &&
+    paymentMethodSelected.value
+  ) {
+    sendConfirm(
+      petSelected.value,
+      serviceSelected.value,
+      timeSelected.value,
+      dateSelected.value,
+      paymentMethodSelected.value,
+    )
+  }
+}
+
+//toast
+const toast = useToast()
+
+const showToast = (message: string) => {
+  toast.add({
+    severity: 'success',
+    summary: 'Éxito',
+    detail: message,
+    life: 3000,
+  })
+}
+
+const sendConfirm = async (
+  petSelected: PetByClient,
+  serviceSelected: BasicServiceForAppointment,
+  timeSelected: FormatTime,
+  dateSelected: Date,
+  paymentMethodSelectedId: number,
+) => {
+  console.log(petSelected, serviceSelected, timeSelected, dateSelected, paymentMethodSelected)
+  const appointmentRequest: AppointmentRequest = {
+    date: dateSelected,
+    time: timeSelected.time,
+    headquarterVetServiceId: serviceSelected.headquarterServiceId,
+    petId: petSelected.id,
+    paymentMethodId: paymentMethodSelectedId,
+  }
+  console.log(appointmentRequest)
+  const appointment = await createAppointment(appointmentRequest)
+  if (appointment) {
+    router.push('/client/my-appointments')
+    showToast(`Cita creada exitosamente: ${appointment.scheduleDateTime}`)
+  }
+}
 </script>
 
 <template>
@@ -123,6 +186,7 @@ const getTimeSelected = (time: FormatTime) => {
       @service-selected="getServiceSelected($event)"
       @date-change="getNewDate($event)"
       @time-selected="getTimeSelected($event)"
+      @confirm="getConfirm($event)"
       :payment-methods="paymentMethods"
       :pets="pets"
       :services="services"

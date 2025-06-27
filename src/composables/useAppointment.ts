@@ -8,6 +8,7 @@ import { TimesForTurnAdapter } from '@/adapters/TimesForTurnAdapter'
 import type { BasicServiceForAppointment as BasicServiceForAppointmentView } from '@/models/BasicServiceForAppointment'
 import { BasicServiceForAppointmentAdapter } from '@/adapters/BasicServiceForAppoinment'
 import { DateAdapter } from '@/adapters/DateAdapter'
+import type { AppointmentRequest as AppointmentRequestView } from '@/models/AppointmentRequest'
 
 export function useAppointment() {
   //get from useAsyncHandle
@@ -30,8 +31,11 @@ export function useAppointment() {
   }
 
   const createAppointment = async (
-    appointmentRequest: AppointmentRequest,
+    appointmentRequestView: AppointmentRequestView,
   ): Promise<AppointmentView> => {
+    const appointmentRequest: AppointmentRequest =
+      AppointmentAdapter.fromAppoinmentRequestViewToAppoinmentRequest(appointmentRequestView)
+    console.log('Desde compose', appointmentRequest)
     const appointment = await runUseCase('createAppointment', () =>
       appointmentUsesCases.createAppointment.execute(appointmentRequest),
     )
@@ -68,8 +72,8 @@ export function useAppointment() {
     let services = await runUseCase('getServicesByHeadquarterAndSpecies', () =>
       appointmentUsesCases.getServicesByHeadquarterAndSpecies.execute(headquarterId, speciesId),
     )
-    if(!services){
-      services=[]
+    if (!services) {
+      services = []
     }
     return services.map((service) =>
       BasicServiceForAppointmentAdapter.toBasicServiceForAppointmentView(service),
