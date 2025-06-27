@@ -255,9 +255,9 @@ const services = ref<BasicServiceForAppointment[]>([])
                   :key="service.id"
                   :serviceId="service.id"
                   :serviceName="service.name"
-                  serviceImageUrl="https://enlinea.santotomas.cl/web/wp-content/uploads/sites/2/2016/08/vet-744x465.jpg"
-                  specieName="Especie"
-                  categoryName="Categoria"
+                  :serviceImageUrl="service.imageUrl"
+                  :specieName="service.specie.name"
+                  :categoryName="service.category.name"
                   :duration="service.duration"
                   :price="service.price"
                 ></CardServicePrimary>

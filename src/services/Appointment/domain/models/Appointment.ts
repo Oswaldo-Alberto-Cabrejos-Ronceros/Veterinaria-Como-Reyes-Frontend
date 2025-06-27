@@ -40,8 +40,12 @@ export interface FormatTime {
 
 export interface BasicServiceForAppointment {
   headquarterServiceId: number
+  serviceId:number
   name: string
   description: string
-  price: number
+  price: string
   duration: number
+  specieName:string
+  serviceImageUrl:string
+  categoryName:string
 }

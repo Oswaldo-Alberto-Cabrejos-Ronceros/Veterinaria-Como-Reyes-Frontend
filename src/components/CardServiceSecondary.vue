@@ -8,7 +8,7 @@ defineProps<{
   specieName: string
   categoryName: string
   duration: number
-  price: number
+  price: string
 }>()
 </script>
 

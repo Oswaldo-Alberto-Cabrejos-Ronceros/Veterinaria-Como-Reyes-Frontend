@@ -42,9 +42,9 @@ defineProps<{
             :key="serviceSelected.id"
             :serviceId="serviceSelected.id"
             :serviceName="serviceSelected.name"
-            serviceImageUrl="Imagen"
-            specieName="Especie"
-            categoryName="Categoria"
+            :serviceImageUrl="serviceSelected.imageUrl"
+            :specieName="serviceSelected.specie.name"
+            :categoryName="serviceSelected.category.name"
             :duration="serviceSelected.duration"
             :price="serviceSelected.price"
           ></CardServicePrimary>

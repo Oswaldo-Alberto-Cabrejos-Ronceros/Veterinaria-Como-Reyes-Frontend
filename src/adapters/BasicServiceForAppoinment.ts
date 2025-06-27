@@ -6,11 +6,19 @@ export class BasicServiceForAppointmentAdapter {
     basicServiceForAppointment: BasicServiceForAppointment,
   ): BasicServiceForAppointmentView {
     return {
-      id: basicServiceForAppointment.headquarterServiceId,
+      headquarterServiceId: basicServiceForAppointment.headquarterServiceId,
+      id: basicServiceForAppointment.serviceId,
       name: basicServiceForAppointment.name,
       description: basicServiceForAppointment.description,
       price: basicServiceForAppointment.price,
       duration: basicServiceForAppointment.duration,
+      imageUrl: basicServiceForAppointment.serviceImageUrl,
+      category: {
+        name: basicServiceForAppointment.categoryName,
+      },
+      specie: {
+        name: basicServiceForAppointment.specieName,
+      },
     }
   }
 }

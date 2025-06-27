@@ -19,9 +19,9 @@ defineProps<{
           :key="service.id"
           :serviceId="service.id"
           :serviceName="service.name"
-          serviceImageUrl="Imagen"
-          specieName="Especie"
-          categoryName="Categoria"
+          :serviceImageUrl="service.imageUrl"
+          :specieName="service.specie.name"
+          :categoryName="service.category.name"
           :duration="service.duration"
           :price="service.price"
         ></CardServiceSecondary>
