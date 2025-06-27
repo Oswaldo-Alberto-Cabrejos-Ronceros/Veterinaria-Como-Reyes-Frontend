@@ -65,7 +65,7 @@ onMounted(()=>{
     <template #content>
       <form @submit.prevent="onSubmit" class="form-dialog-layout-flex-col">
         <!-- name -->
-        <div>
+        <div class="w-full">
           <label class="block mb-2">Nombre</label>
           <InputGroup>
             <InputGroupAddon class="text-neutral-400">
@@ -79,7 +79,7 @@ onMounted(()=>{
         </div>
 
                 <!-- image -->
-        <div>
+        <div class="w-full">
           <label class="block mb-2">Image</label>
           <InputGroup>
             <InputGroupAddon class="text-neutral-400">
@@ -92,7 +92,7 @@ onMounted(()=>{
           </Message>
         </div>
         <Button
-          class="w-full max-w-md"
+          class="w-full"
           :label="title"
           type="submit"
           severity="success"
