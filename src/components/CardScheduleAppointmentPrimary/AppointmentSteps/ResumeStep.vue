@@ -5,11 +5,13 @@ import CardPetPrimary from '@/components/CardPetPrimary.vue'
 import CardServicePrimary from '@/components/CardServicePrimary.vue'
 import type { PetByClient } from '@/models/PetByClient'
 import type { BasicServiceForAppointment } from '@/models/BasicServiceForAppointment'
+import type { FormatTime } from '@/models/FormatTime'
+import { DateAdapter } from '@/adapters/DateAdapter'
 defineProps<{
   petSelected?: PetByClient
   serviceSelected?: BasicServiceForAppointment
-  dateSelected?: string
-  scheduleSelected?: string
+  dateSelected?: Date
+  scheduleSelected?: FormatTime
 }>()
 </script>
 
@@ -53,9 +55,9 @@ defineProps<{
       <p>Horario</p>
       <div class="flex gap-2 my-4 items-center">
         <i class="pi pi-clock text-2xl"></i>
-        <p>{{ dateSelected }}</p>
+        <p v-if="dateSelected">{{ DateAdapter.fromDateToFormatLong(dateSelected) }}</p>
         <i class="pi pi-calendar text-2xl"></i>
-        <p>{{ scheduleSelected }}</p>
+        <p>{{ scheduleSelected?.timeRange }}</p>
       </div>
       <p>Pago</p>
     </div>

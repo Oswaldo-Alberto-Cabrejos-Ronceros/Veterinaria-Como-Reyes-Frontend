@@ -1,3 +1,5 @@
+import { optionsDatePeruLong } from "@/utilities/dateOptions"
+
 export class DateAdapter {
   static toDateYYYYmmDD(date: Date): string {
     const year = date.getFullYear()
@@ -31,5 +33,8 @@ export class DateAdapter {
     const date = new Date()
     date.setHours(hours, minutes, seconds, 0)
     return date
+  }
+  static fromDateToFormatLong(date:Date):string{
+    return date.toLocaleDateString('es-PE',optionsDatePeruLong)
   }
 }

@@ -7,18 +7,31 @@ import type { TimesForTurn } from '@/models/TimesForTurn'
 import Message from 'primevue/message'
 import DatePicker from 'primevue/datepicker'
 import { ref } from 'vue'
+import type { FormatTime } from '@/models/FormatTime'
 defineProps<{
   schedules?: TimesForTurn[]
 }>()
 //for date
 
 const date = ref<Date>(new Date())
-
+const timeSelected = ref<FormatTime | null>(null)
 //for emit
-const emit = defineEmits(['date-change'])
+const emit = defineEmits(['date-change', 'select-time'])
+const selectTime = (time: FormatTime) => {
+  console.log(time)
+  timeSelected.value = time
+}
 
+//for emit date change
 const emitDateChange = () => {
-  emit('date-change',date.value)
+  emit('date-change', date.value)
+}
+
+//for emit select time
+const emitSelectTime = () => {
+  if (timeSelected.value) {
+    emit('select-time', timeSelected.value)
+  }
 }
 </script>
 
@@ -28,7 +41,13 @@ const emitDateChange = () => {
     <div class="min-h-48">
       <div class="w-full flex justify-between items-center">
         <p>Escogue horario</p>
-        <DatePicker v-model="date" showIcon fluid iconDisplay="input" @value-change="emitDateChange()"/>
+        <DatePicker
+          v-model="date"
+          showIcon
+          fluid
+          iconDisplay="input"
+          @value-change="emitDateChange()"
+        />
       </div>
 
       <!-- for messague nothing  -->
@@ -55,6 +74,7 @@ const emitDateChange = () => {
               v-for="(schedule, index) of schedules[0].times"
               :key="index"
               :time="schedule.timeRange"
+              @click="selectTime(schedule)"
             ></CardScheduleUnitary>
           </div>
           <Message v-if="!schedules[0]" severity="error" size="small" variant="simple">
@@ -80,6 +100,7 @@ const emitDateChange = () => {
               v-for="(schedule, index) of schedules[1].times"
               :key="index"
               :time="schedule.timeRange"
+              @click="selectTime(schedule)"
             ></CardScheduleUnitary>
           </div>
           <Message v-if="!schedules[1]" severity="error" size="small" variant="simple">
@@ -106,6 +127,7 @@ const emitDateChange = () => {
               v-for="(schedule, index) of schedules[2].times"
               :key="index"
               :time="schedule.time"
+              @click="selectTime(schedule)"
             ></CardScheduleUnitary>
           </div>
           <Message v-if="!schedules[2]" severity="error" size="small" variant="simple">
@@ -127,7 +149,12 @@ const emitDateChange = () => {
         label="Siguiente"
         icon="pi pi-arrow-right"
         icon-pos="right"
-        @click="activateCallback('4')"
+        @click="
+          () => {
+            emitSelectTime()
+            activateCallback('4')
+          }
+        "
       />
     </div>
   </StepPanel>

@@ -9,6 +9,7 @@ import type { BasicServiceForAppointment } from '@/models/BasicServiceForAppoint
 import { useAppointment } from '@/composables/useAppointment'
 import { useClient } from '@/composables/useClient'
 import type { TimesForTurn } from '@/models/TimesForTurn'
+import type { FormatTime } from '@/models/FormatTime'
 
 //methods
 const { getEntityId } = useAuthentication()
@@ -24,10 +25,11 @@ const pets = ref<PetByClient[]>([])
 const services = ref<BasicServiceForAppointment[]>([])
 //for times for turn
 const timesTurn = ref<TimesForTurn[]>([])
-
 //for selected
 const petSelected = ref<PetByClient | null>(null)
 const serviceSelected = ref<BasicServiceForAppointment | null>(null)
+const timeSelected = ref<FormatTime | null>(null)
+const dateSelected = ref<Date | null>(null)
 
 //get all for view
 onMounted(() => {
@@ -75,6 +77,7 @@ const getPetSelected = (pet: PetByClient) => {
 const getServiceSelected = (service: BasicServiceForAppointment) => {
   console.log('Obteniendo padre', service)
   const today: Date = new Date()
+  dateSelected.value = today
   serviceSelected.value = service
   loadTimeTurn(service.headquarterServiceId, today)
 }
@@ -82,9 +85,15 @@ const getServiceSelected = (service: BasicServiceForAppointment) => {
 const getNewDate = (date: Date) => {
   console.log('Obtenido padre', date)
   if (serviceSelected.value) {
+    dateSelected.value = date
     loadTimeTurn(serviceSelected.value.headquarterServiceId, date)
     console.log('Nuevos valores', timesTurn.value)
   }
+}
+
+const getTimeSelected = (time: FormatTime) => {
+  console.log('Obtenido padre', time)
+  timeSelected.value = time
 }
 </script>
 
@@ -102,9 +111,14 @@ const getNewDate = (date: Date) => {
       @pet-selected="getPetSelected($event)"
       @service-selected="getServiceSelected($event)"
       @date-change="getNewDate($event)"
+      @time-selected="getTimeSelected($event)"
       :pets="pets"
       :services="services"
       :schedules="timesTurn"
+      :pet-selected="petSelected || undefined"
+      :serviceSelected="serviceSelected || undefined"
+      :date-selected="dateSelected || undefined"
+      :time-selected="timeSelected || undefined"
     >
     </CardScheduleAppointmentPrimary>
   </div>

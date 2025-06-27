@@ -13,11 +13,17 @@ import StepItem from 'primevue/stepitem'
 import type { PetByClient } from '@/models/PetByClient'
 import type { BasicServiceForAppointment } from '@/models/BasicServiceForAppointment'
 import type { TimesForTurn } from '@/models/TimesForTurn'
+import type { FormatTime } from '@/models/FormatTime'
 
 defineProps<{
   pets: PetByClient[]
   services?: BasicServiceForAppointment[]
   schedules?: TimesForTurn[]
+  //for selecteds
+  petSelected?: PetByClient
+  serviceSelected?: BasicServiceForAppointment
+  dateSelected?: Date
+  timeSelected?: FormatTime
 }>()
 
 //for small screen
@@ -31,18 +37,8 @@ onMounted(() => {
   checkSize()
   window.addEventListener('resize', checkSize)
 })
-// schedule morning
-// schedule afternoon
-const schedulesAfternoon: string[] = [
-  '12:15 - 12:45',
-  '13:00 - 13:30',
-  '13:45 - 14:15',
-  '14:30 - 15:00',
-  '15:15 - 15:45',
-  '16:00 - 16:30',
-]
 
-const emit = defineEmits(['pet-selected', 'service-selected', 'date-change'])
+const emit = defineEmits(['pet-selected', 'service-selected', 'date-change', 'time-selected'])
 
 //for get petSelected
 const getPetSelected = (pet: PetByClient) => {
@@ -60,6 +56,12 @@ const getServiceSelected = (service: BasicServiceForAppointment) => {
 const getDateAppointment = (date: Date) => {
   console.log('Obtenido', date)
   emit('date-change', date)
+}
+
+//for get timeSelected
+const getTimeSelected = (time: FormatTime) => {
+  console.log('Obtenido', time)
+  emit('time-selected', time)
 }
 </script>
 
@@ -92,14 +94,15 @@ const getDateAppointment = (date: Date) => {
           <ScheduleStep
             :schedules="schedules"
             @date-change="getDateAppointment($event)"
+            @select-time="getTimeSelected($event)"
           ></ScheduleStep>
           <!-- for resume -->
           <ResumeStep
             v-if="services"
-            :petSelected="pets[0]"
-            :serviceSelected="services[0]"
-            dateSelected="17 de junio del 2025"
-            :scheduleSelected="schedulesAfternoon[0]"
+            :petSelected="petSelected"
+            :serviceSelected="serviceSelected"
+            :dateSelected="dateSelected"
+            :scheduleSelected="timeSelected"
           ></ResumeStep>
         </StepPanels>
       </Stepper>
@@ -124,6 +127,7 @@ const getDateAppointment = (date: Date) => {
           <ScheduleStep
             :schedules="schedules"
             @date-change="getDateAppointment($event)"
+            @select-time="getTimeSelected($event)"
           ></ScheduleStep>
         </StepItem>
         <StepItem value="4">
@@ -131,10 +135,10 @@ const getDateAppointment = (date: Date) => {
           <!-- for resume -->
           <ResumeStep
             v-if="services"
-            :petSelected="pets[0]"
-            :serviceSelected="services[0]"
-            dateSelected="17 de junio del 2025"
-            :scheduleSelected="schedulesAfternoon[0]"
+            :petSelected="petSelected"
+            :serviceSelected="serviceSelected"
+            :dateSelected="dateSelected"
+            :scheduleSelected="timeSelected"
           ></ResumeStep>
         </StepItem>
       </Stepper>
