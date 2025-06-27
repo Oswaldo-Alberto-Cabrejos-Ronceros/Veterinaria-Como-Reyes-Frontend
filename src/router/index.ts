@@ -78,7 +78,7 @@ const router = createRouter({
           component: MyPetsPage,
         },
         {
-          path: 'my-pets/:id',
+          path: 'my-pets/:petId',
           name: 'client-pets-unitary-pet',
           component: PetUnitaryClientPage,
           props: true,
