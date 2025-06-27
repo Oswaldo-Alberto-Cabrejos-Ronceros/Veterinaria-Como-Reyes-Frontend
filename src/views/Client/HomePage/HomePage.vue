@@ -18,7 +18,7 @@ import type { BasicServiceForAppointment } from '@/models/BasicServiceForAppoint
 //methods
 const { getEntityId } = useAuthentication()
 
-const { error: petError, loading: petLoading, getPetByClientId, getPetById } = usePet()
+const { error: petError, loading: petLoading, getPetByClientId } = usePet()
 
 const {
   error: servicesError,
@@ -133,8 +133,7 @@ const loadServicesByHeadquarterSpecie = async () => {
     const headquarterId = infoClient.headquarter.id
     const pet = pets.value[0]
     if (pet) {
-      const petRaw = await getPetById(pet.id)
-      services.value = await getServicesByHeadquarterAndSpecies(headquarterId, petRaw.specie.id)
+      services.value = await getServicesByHeadquarterAndSpecies(headquarterId, pet.specieId)
     }
   }
 }

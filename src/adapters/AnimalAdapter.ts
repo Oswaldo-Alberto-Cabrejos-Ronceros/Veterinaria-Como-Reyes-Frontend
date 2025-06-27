@@ -54,6 +54,8 @@ export class AnimalAdapter {
       weight: animalByClient.weight,
       breedName: animalByClient.breedName,
       specieName: animalByClient.speciesName,
+      specieId: animalByClient.speciesId,
+      animalComment: animalByClient.animalComment,
     }
   }
   static fromAddMyPetSchemaToAnimalRequest(

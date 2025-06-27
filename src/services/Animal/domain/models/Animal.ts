@@ -39,5 +39,7 @@ export interface AnimalByClient{
   urlImage:string,
   weight:number,
   breedName:string,
-  speciesName:string
+  speciesId: number,
+  speciesName:string,
+  animalComment:string
 }
