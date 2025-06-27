@@ -34,8 +34,8 @@ export interface TimesForTurn {
 }
 
 export interface FormatTime {
-  getTime: string
-  getTimeRange: string
+  time: string
+  timeRange: string
 }
 
 export interface BasicServiceForAppointment {

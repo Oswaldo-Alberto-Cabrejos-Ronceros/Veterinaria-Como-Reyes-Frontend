@@ -12,10 +12,12 @@ import { onMounted, ref } from 'vue'
 import StepItem from 'primevue/stepitem'
 import type { PetByClient } from '@/models/PetByClient'
 import type { BasicServiceForAppointment } from '@/models/BasicServiceForAppointment'
+import type { TimesForTurn } from '@/models/TimesForTurn'
 
 defineProps<{
   pets: PetByClient[]
   services?: BasicServiceForAppointment[]
+  schedules?: TimesForTurn[]
 }>()
 
 //for small screen
@@ -30,13 +32,6 @@ onMounted(() => {
   window.addEventListener('resize', checkSize)
 })
 // schedule morning
-const schedulesMorning: string[] = [
-  '8:00 - 8:30',
-  '8:45 - 9:15',
-  '9:30 - 10:30',
-  '10:45 - 11:15',
-  '11:30 - 12:00',
-]
 // schedule afternoon
 const schedulesAfternoon: string[] = [
   '12:15 - 12:45',
@@ -47,19 +42,7 @@ const schedulesAfternoon: string[] = [
   '16:00 - 16:30',
 ]
 
-// schedule night
-const schedulesNight: string[] = [
-  '16:45 - 17:15',
-  '17:30 - 18:00',
-  '18:15 - 18:45',
-  '19:00 - 19:30',
-  '19:45 - 20:15',
-  '20:30 - 21:00',
-  '21:15 - 21:45',
-  '22:00 - 22:30',
-]
-
-const emit = defineEmits(['pet-selected', 'service-selected'])
+const emit = defineEmits(['pet-selected', 'service-selected', 'date-change'])
 
 //for get petSelected
 const getPetSelected = (pet: PetByClient) => {
@@ -71,6 +54,12 @@ const getPetSelected = (pet: PetByClient) => {
 const getServiceSelected = (service: BasicServiceForAppointment) => {
   console.log('Obtenido', service)
   emit('service-selected', service)
+}
+
+//for get dateAppointment
+const getDateAppointment = (date: Date) => {
+  console.log('Obtenido', date)
+  emit('date-change', date)
 }
 </script>
 
@@ -101,9 +90,8 @@ const getServiceSelected = (service: BasicServiceForAppointment) => {
           ></ServiceStep>
           <!-- for schedule -->
           <ScheduleStep
-            :schedules-morning="schedulesMorning"
-            :schedules-afternoon="schedulesAfternoon"
-            :schedules-night="schedulesNight"
+            :schedules="schedules"
+            @date-change="getDateAppointment($event)"
           ></ScheduleStep>
           <!-- for resume -->
           <ResumeStep
@@ -118,22 +106,24 @@ const getServiceSelected = (service: BasicServiceForAppointment) => {
       <Stepper v-if="isSmallScreen" value="1" linear>
         <!-- for pet -->
         <StepItem value="1">
-          <Step value="1"> Mascota </Step>
+          <Step value="1" @select-pet="getPetSelected($event)"> Mascota </Step>
           <!-- for pet -->
           <PetStep :pets="pets"></PetStep>
         </StepItem>
         <StepItem value="2">
           <Step value="2"> Servicio </Step>
           <!-- for service -->
-          <ServiceStep :services="services"></ServiceStep>
+          <ServiceStep
+            :services="services"
+            @select-service="getServiceSelected($event)"
+          ></ServiceStep>
         </StepItem>
         <StepItem value="3">
           <Step value="3"> Horario </Step>
           <!-- for schedule -->
           <ScheduleStep
-            :schedules-morning="schedulesMorning"
-            :schedules-afternoon="schedulesAfternoon"
-            :schedules-night="schedulesNight"
+            :schedules="schedules"
+            @date-change="getDateAppointment($event)"
           ></ScheduleStep>
         </StepItem>
         <StepItem value="4">

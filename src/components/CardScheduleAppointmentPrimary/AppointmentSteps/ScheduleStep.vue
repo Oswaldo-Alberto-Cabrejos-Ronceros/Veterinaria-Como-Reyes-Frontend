@@ -3,21 +3,41 @@ import StepPanel from 'primevue/steppanel'
 import Panel from 'primevue/panel'
 import Button from 'primevue/button'
 import CardScheduleUnitary from '@/components/CardScheduleUnitary.vue'
+import type { TimesForTurn } from '@/models/TimesForTurn'
+import Message from 'primevue/message'
+import DatePicker from 'primevue/datepicker'
+import { ref } from 'vue'
 defineProps<{
-  schedulesMorning?:string[],
-  schedulesAfternoon?:string[],
-  schedulesNight?:string[]
+  schedules?: TimesForTurn[]
 }>()
+//for date
+
+const date = ref<Date>(new Date())
+
+//for emit
+const emit = defineEmits(['date-change'])
+
+const emitDateChange = () => {
+  emit('date-change',date.value)
+}
 </script>
 
 <template>
   <!-- for schedule -->
   <StepPanel class="dark:bg-surface-800" v-slot="{ activateCallback }" value="3">
     <div class="min-h-48">
-      <p>Escogue horario</p>
-      <div class="w-full flex flex-col gap-2 my-4">
+      <div class="w-full flex justify-between items-center">
+        <p>Escogue horario</p>
+        <DatePicker v-model="date" showIcon fluid iconDisplay="input" @value-change="emitDateChange()"/>
+      </div>
+
+      <!-- for messague nothing  -->
+      <Message v-if="schedules?.length === 0" severity="error" size="small" variant="simple">
+        No hay horarios disponibles
+      </Message>
+      <div class="w-full flex flex-col gap-2 my-4" v-if="schedules">
         <!-- for morning -->
-        <Panel toggleable :collapsed="true">
+        <Panel toggleable>
           <template #header>
             <div class="flex gap-2 items-center">
               <i class="pi pi-sun text-2xl text-yellow-500"></i>
@@ -29,16 +49,20 @@ defineProps<{
           </template>
           <div
             class="w-full grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 my-2"
+            v-if="schedules[0]"
           >
             <CardScheduleUnitary
-              v-for="(schedule, index) of schedulesMorning"
+              v-for="(schedule, index) of schedules[0].times"
               :key="index"
-              :time="schedule"
+              :time="schedule.timeRange"
             ></CardScheduleUnitary>
           </div>
+          <Message v-if="!schedules[0]" severity="error" size="small" variant="simple">
+            No hay horarios disponibles en la mañana
+          </Message>
         </Panel>
         <!-- for afternoon -->
-        <Panel toggleable :collapsed="true">
+        <Panel toggleable>
           <template #header>
             <div class="flex gap-2 items-center">
               <i class="pi pi-cloud text-2xl text-orange-400"></i>
@@ -50,17 +74,21 @@ defineProps<{
           </template>
           <div
             class="w-full grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 my-2"
+            v-if="schedules[1]"
           >
             <CardScheduleUnitary
-              v-for="(schedule, index) of schedulesAfternoon"
+              v-for="(schedule, index) of schedules[1].times"
               :key="index"
-              :time="schedule"
+              :time="schedule.timeRange"
             ></CardScheduleUnitary>
           </div>
+          <Message v-if="!schedules[1]" severity="error" size="small" variant="simple">
+            No hay horarios disponibles en la tarde
+          </Message>
         </Panel>
 
         <!-- night -->
-        <Panel toggleable :collapsed="true">
+        <Panel toggleable>
           <template #header>
             <div class="flex gap-2 items-center">
               <i class="pi pi-moon text-2xl text-sky-700"></i>
@@ -72,13 +100,17 @@ defineProps<{
           </template>
           <div
             class="w-full grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 my-2"
+            v-if="schedules[2]"
           >
             <CardScheduleUnitary
-              v-for="(schedule, index) of schedulesNight"
+              v-for="(schedule, index) of schedules[2].times"
               :key="index"
-              :time="schedule"
+              :time="schedule.time"
             ></CardScheduleUnitary>
           </div>
+          <Message v-if="!schedules[2]" severity="error" size="small" variant="simple">
+            No hay horarios disponibles en la noche
+          </Message>
         </Panel>
       </div>
     </div>

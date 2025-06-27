@@ -8,6 +8,7 @@ import Message from 'primevue/message'
 import type { BasicServiceForAppointment } from '@/models/BasicServiceForAppointment'
 import { useAppointment } from '@/composables/useAppointment'
 import { useClient } from '@/composables/useClient'
+import type { TimesForTurn } from '@/models/TimesForTurn'
 
 //methods
 const { getEntityId } = useAuthentication()
@@ -16,14 +17,24 @@ const { myInfoAsClient } = useClient()
 
 const { error, loading, getPetByClientId } = usePet()
 
-const { getServicesByHeadquarterAndSpecies } = useAppointment()
+const { getServicesByHeadquarterAndSpecies, getAvailableTimes } = useAppointment()
 
 const pets = ref<PetByClient[]>([])
+//for services
+const services = ref<BasicServiceForAppointment[]>([])
+//for times for turn
+const timesTurn = ref<TimesForTurn[]>([])
+
+//for selected
+const petSelected = ref<PetByClient | null>(null)
+const serviceSelected = ref<BasicServiceForAppointment | null>(null)
+
 //get all for view
 onMounted(() => {
   loadPets()
 })
 
+//for load pets
 const loadPets = async () => {
   const clientId = getEntityId()
   if (clientId) {
@@ -31,6 +42,7 @@ const loadPets = async () => {
   }
 }
 
+//for load services
 const loadServices = async (pet: PetByClient) => {
   const clientId = getEntityId()
   console.log(clientId)
@@ -44,19 +56,35 @@ const loadServices = async (pet: PetByClient) => {
     console.log(services.value)
   }
 }
-//for services examples
-const services = ref<BasicServiceForAppointment[]>([])
+
+//for load times for turn
+const loadTimeTurn = async (headquarterServiceId: number, date: Date) => {
+  timesTurn.value = await getAvailableTimes(headquarterServiceId, date)
+  console.log(timesTurn.value)
+}
 
 //for get pet selected
 const getPetSelected = (pet: PetByClient) => {
   console.log('Obtenido padre', pet)
+  petSelected.value = pet
   loadServices(pet)
 }
 
 //for get service selected
 
-const getServiceSelected =(service:BasicServiceForAppointment)=>{
-  console.log('Obteniendo padre',service)
+const getServiceSelected = (service: BasicServiceForAppointment) => {
+  console.log('Obteniendo padre', service)
+  const today: Date = new Date()
+  serviceSelected.value = service
+  loadTimeTurn(service.headquarterServiceId, today)
+}
+
+const getNewDate = (date: Date) => {
+  console.log('Obtenido padre', date)
+  if (serviceSelected.value) {
+    loadTimeTurn(serviceSelected.value.headquarterServiceId, date)
+    console.log('Nuevos valores', timesTurn.value)
+  }
 }
 </script>
 
@@ -73,8 +101,10 @@ const getServiceSelected =(service:BasicServiceForAppointment)=>{
     <CardScheduleAppointmentPrimary
       @pet-selected="getPetSelected($event)"
       @service-selected="getServiceSelected($event)"
+      @date-change="getNewDate($event)"
       :pets="pets"
       :services="services"
+      :schedules="timesTurn"
     >
     </CardScheduleAppointmentPrimary>
   </div>

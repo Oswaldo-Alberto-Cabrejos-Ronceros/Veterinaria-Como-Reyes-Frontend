@@ -7,6 +7,7 @@ import type { TimesForTurn as TimesForTurnView } from '@/models/TimesForTurn'
 import { TimesForTurnAdapter } from '@/adapters/TimesForTurnAdapter'
 import type { BasicServiceForAppointment as BasicServiceForAppointmentView } from '@/models/BasicServiceForAppointment'
 import { BasicServiceForAppointmentAdapter } from '@/adapters/BasicServiceForAppoinment'
+import { DateAdapter } from '@/adapters/DateAdapter'
 
 export function useAppointment() {
   //get from useAsyncHandle
@@ -51,10 +52,11 @@ export function useAppointment() {
   }
   const getAvailableTimes = async (
     headquarterVetServiceId: number,
-    date: string,
+    date: Date,
   ): Promise<TimesForTurnView[]> => {
+    const dateParsed = DateAdapter.toDateYYYYmmDD(date)
     const times = await runUseCase('getAvailableTimes', () =>
-      appointmentUsesCases.getAvailableTimes.execute(headquarterVetServiceId, date),
+      appointmentUsesCases.getAvailableTimes.execute(headquarterVetServiceId, dateParsed),
     )
     return times.map((time) => TimesForTurnAdapter.toTimesForTurnView(time))
   }

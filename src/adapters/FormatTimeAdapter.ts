@@ -4,8 +4,8 @@ import type { FormatTime as FormatTimeView } from '@/models/FormatTime'
 export class FormatTimeAdapter {
   static toFormatTimeView(formatTime: FormatTime): FormatTimeView {
     return {
-      time: formatTime.getTime,
-      timeRange: formatTime.getTimeRange,
+      time: formatTime.time,
+      timeRange: formatTime.timeRange,
     }
   }
 }
