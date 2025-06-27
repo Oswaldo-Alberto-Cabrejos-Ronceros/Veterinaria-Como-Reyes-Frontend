@@ -63,9 +63,12 @@ export function useAppointment() {
     headquarterId: number,
     speciesId: number,
   ): Promise<BasicServiceForAppointmentView[]> => {
-    const services = await runUseCase('getServicesByHeadquarterAndSpecies', () =>
+    let services = await runUseCase('getServicesByHeadquarterAndSpecies', () =>
       appointmentUsesCases.getServicesByHeadquarterAndSpecies.execute(headquarterId, speciesId),
     )
+    if(!services){
+      services=[]
+    }
     return services.map((service) =>
       BasicServiceForAppointmentAdapter.toBasicServiceForAppointmentView(service),
     )

@@ -59,10 +59,15 @@ const schedulesNight: string[] = [
   '22:00 - 22:30',
 ]
 
+const emit= defineEmits(['pet-selected'])
+
 //for get petSelected
 const getPetSelected = (pet: PetByClient) => {
   console.log('Obtenido', pet)
+  emit('pet-selected',pet)
 }
+
+
 </script>
 
 <template>

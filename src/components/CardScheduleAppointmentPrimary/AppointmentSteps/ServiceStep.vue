@@ -2,7 +2,8 @@
 import StepPanel from 'primevue/steppanel'
 import Button from 'primevue/button'
 import CardServiceSecondary from '@/components/CardServiceSecondary.vue'
-import type { BasicServiceForAppointment } from '@/models/BasicServiceForAppointment';
+import type { BasicServiceForAppointment } from '@/models/BasicServiceForAppointment'
+import Message from 'primevue/message'
 defineProps<{
   services?: BasicServiceForAppointment[]
 }>()
@@ -25,6 +26,10 @@ defineProps<{
           :duration="service.duration"
           :price="service.price"
         ></CardServiceSecondary>
+        <!-- for messague nothing  -->
+        <Message v-if="services?.length === 0" severity="error" size="small" variant="simple">
+          No hay servicios para esta especie
+        </Message>
       </div>
     </div>
     <div class="flex justify-between">
