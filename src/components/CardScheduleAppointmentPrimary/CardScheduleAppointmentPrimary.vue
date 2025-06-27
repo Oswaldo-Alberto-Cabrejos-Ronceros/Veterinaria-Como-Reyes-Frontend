@@ -14,6 +14,7 @@ import type { PetByClient } from '@/models/PetByClient'
 import type { BasicServiceForAppointment } from '@/models/BasicServiceForAppointment'
 import type { TimesForTurn } from '@/models/TimesForTurn'
 import type { FormatTime } from '@/models/FormatTime'
+import type { PaymentMethod } from '@/models/PaymentMethod'
 
 defineProps<{
   pets: PetByClient[]
@@ -24,6 +25,7 @@ defineProps<{
   serviceSelected?: BasicServiceForAppointment
   dateSelected?: Date
   timeSelected?: FormatTime
+  paymentMethods:PaymentMethod[]
 }>()
 
 //for small screen
@@ -103,6 +105,7 @@ const getTimeSelected = (time: FormatTime) => {
             :serviceSelected="serviceSelected"
             :dateSelected="dateSelected"
             :scheduleSelected="timeSelected"
+            :payment-methods="paymentMethods"
           ></ResumeStep>
         </StepPanels>
       </Stepper>
@@ -139,6 +142,7 @@ const getTimeSelected = (time: FormatTime) => {
             :serviceSelected="serviceSelected"
             :dateSelected="dateSelected"
             :scheduleSelected="timeSelected"
+            :payment-methods="paymentMethods"
           ></ResumeStep>
         </StepItem>
       </Stepper>

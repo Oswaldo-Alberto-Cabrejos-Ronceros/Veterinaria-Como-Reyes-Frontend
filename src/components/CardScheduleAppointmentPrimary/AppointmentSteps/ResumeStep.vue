@@ -7,12 +7,39 @@ import type { PetByClient } from '@/models/PetByClient'
 import type { BasicServiceForAppointment } from '@/models/BasicServiceForAppointment'
 import type { FormatTime } from '@/models/FormatTime'
 import { DateAdapter } from '@/adapters/DateAdapter'
-defineProps<{
+import type { PaymentMethod } from '@/models/PaymentMethod'
+import Select from 'primevue/select'
+import type { OptionSelect } from '@/models/OptionSelect'
+import { ref, watch } from 'vue'
+const props = defineProps<{
   petSelected?: PetByClient
   serviceSelected?: BasicServiceForAppointment
   dateSelected?: Date
   scheduleSelected?: FormatTime
+  paymentMethods: PaymentMethod[]
 }>()
+
+const paymentMethodSelected = ref<number>(1)
+
+const paymentMethodsOptions = ref<OptionSelect[]>([])
+
+//observamos cambios en paymentMethos
+watch(
+  () => props.paymentMethods,
+  (newValue) => {
+    if (newValue && newValue.length > 0) {
+      paymentMethodsOptions.value = paymentMethodsToOptionsSelect(newValue)
+    }
+  },
+  { immediate: true },
+)
+
+const paymentMethodsToOptionsSelect = (paymentMethods: PaymentMethod[]): OptionSelect[] => {
+  return paymentMethods.map((paymentMethod) => ({
+    value: paymentMethod.id,
+    name: paymentMethod.name,
+  }))
+}
 </script>
 
 <template>
@@ -53,15 +80,23 @@ defineProps<{
         </div>
       </div>
       <p>Horario</p>
-      <div class="flex gap-2 my-4 items-center">
+      <div class="flex gap-3 my-4 items-center">
         <i class="pi pi-clock text-2xl"></i>
         <p v-if="dateSelected">{{ DateAdapter.fromDateToFormatLong(dateSelected) }}</p>
         <i class="pi pi-calendar text-2xl"></i>
         <p>{{ scheduleSelected?.timeRange }}</p>
       </div>
-      <p>Pago</p>
+      <p>Métodos de pago</p>
+      <Select
+      class=" min-w-3xs mt-2"
+        v-model="paymentMethodSelected"
+        :options="paymentMethodsOptions"
+        optionLabel="name"
+        optionValue="value"
+        placeholder="Selecciona método de pago"
+      />
     </div>
-    <div class="flex justify-between">
+    <div class="flex justify-between mt-2">
       <Button
         label="Atrás"
         severity="secondary"

@@ -10,9 +10,13 @@ import { useAppointment } from '@/composables/useAppointment'
 import { useClient } from '@/composables/useClient'
 import type { TimesForTurn } from '@/models/TimesForTurn'
 import type { FormatTime } from '@/models/FormatTime'
+import { usePaymentMethod } from '@/composables/usePaymentMethod'
+import type { PaymentMethod } from '@/models/PaymentMethod'
 
 //methods
 const { getEntityId } = useAuthentication()
+
+const { getAllPaymentMethods } = usePaymentMethod()
 
 const { myInfoAsClient } = useClient()
 
@@ -21,6 +25,7 @@ const { error, loading, getPetByClientId } = usePet()
 const { getServicesByHeadquarterAndSpecies, getAvailableTimes } = useAppointment()
 
 const pets = ref<PetByClient[]>([])
+const paymentMethods = ref<PaymentMethod[]>([])
 //for services
 const services = ref<BasicServiceForAppointment[]>([])
 //for times for turn
@@ -34,6 +39,7 @@ const dateSelected = ref<Date | null>(null)
 //get all for view
 onMounted(() => {
   loadPets()
+  loadPaymentMethods()
 })
 
 //for load pets
@@ -42,6 +48,11 @@ const loadPets = async () => {
   if (clientId) {
     pets.value = await getPetByClientId(clientId)
   }
+}
+
+const loadPaymentMethods = async () => {
+  paymentMethods.value = await getAllPaymentMethods()
+  console.log(paymentMethods.value)
 }
 
 //for load services
@@ -112,6 +123,7 @@ const getTimeSelected = (time: FormatTime) => {
       @service-selected="getServiceSelected($event)"
       @date-change="getNewDate($event)"
       @time-selected="getTimeSelected($event)"
+      :payment-methods="paymentMethods"
       :pets="pets"
       :services="services"
       :schedules="timesTurn"
