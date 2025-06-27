@@ -124,9 +124,9 @@ const getConfirm = (paymentMethodId: number) => {
       <Stepper v-if="isSmallScreen" value="1" linear>
         <!-- for pet -->
         <StepItem value="1">
-          <Step value="1" @select-pet="getPetSelected($event)"> Mascota </Step>
+          <Step value="1"> Mascota </Step>
           <!-- for pet -->
-          <PetStep :pets="pets"></PetStep>
+          <PetStep :pets="pets"  @select-pet="getPetSelected($event)"></PetStep>
         </StepItem>
         <StepItem value="2">
           <Step value="2"> Servicio </Step>
