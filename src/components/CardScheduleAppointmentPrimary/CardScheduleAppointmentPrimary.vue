@@ -59,15 +59,19 @@ const schedulesNight: string[] = [
   '22:00 - 22:30',
 ]
 
-const emit= defineEmits(['pet-selected'])
+const emit = defineEmits(['pet-selected', 'service-selected'])
 
 //for get petSelected
 const getPetSelected = (pet: PetByClient) => {
   console.log('Obtenido', pet)
-  emit('pet-selected',pet)
+  emit('pet-selected', pet)
 }
 
-
+//for get serviceSelected
+const getServiceSelected = (service: BasicServiceForAppointment) => {
+  console.log('Obtenido', service)
+  emit('service-selected', service)
+}
 </script>
 
 <template>
@@ -91,7 +95,10 @@ const getPetSelected = (pet: PetByClient) => {
           <!-- for pet -->
           <PetStep :pets="pets" @select-pet="getPetSelected($event)"></PetStep>
           <!-- for service -->
-          <ServiceStep :services="services"></ServiceStep>
+          <ServiceStep
+            :services="services"
+            @select-service="getServiceSelected($event)"
+          ></ServiceStep>
           <!-- for schedule -->
           <ScheduleStep
             :schedules-morning="schedulesMorning"

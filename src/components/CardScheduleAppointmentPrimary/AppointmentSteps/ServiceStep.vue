@@ -4,9 +4,26 @@ import Button from 'primevue/button'
 import CardServiceSecondary from '@/components/CardServiceSecondary.vue'
 import type { BasicServiceForAppointment } from '@/models/BasicServiceForAppointment'
 import Message from 'primevue/message'
+import { ref } from 'vue'
 defineProps<{
   services?: BasicServiceForAppointment[]
 }>()
+
+//service selected
+const serviceSelected = ref<BasicServiceForAppointment | null>(null)
+//function for select services
+const selectService = (service: BasicServiceForAppointment) => {
+  console.log(service)
+  serviceSelected.value = service
+}
+//for emit
+const emit = defineEmits(['select-service'])
+const emitSelectService = ()=>{
+  if(serviceSelected.value){
+    emit('select-service',serviceSelected.value)
+  }
+}
+
 </script>
 
 <template>
@@ -17,6 +34,7 @@ defineProps<{
       <div class="w-full grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 my-4">
         <CardServiceSecondary
           v-for="service in services"
+          @click="selectService(service)"
           :key="service.id"
           :serviceId="service.id"
           :serviceName="service.name"
@@ -45,7 +63,9 @@ defineProps<{
         label="Siguiente"
         icon="pi pi-arrow-right"
         icon-pos="right"
-        @click="activateCallback('3')"
+        @click="()=>{
+          emitSelectService()
+          activateCallback('3')}"
       />
     </div>
   </StepPanel>

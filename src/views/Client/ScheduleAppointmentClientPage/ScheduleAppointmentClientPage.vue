@@ -52,6 +52,12 @@ const getPetSelected = (pet: PetByClient) => {
   console.log('Obtenido padre', pet)
   loadServices(pet)
 }
+
+//for get service selected
+
+const getServiceSelected =(service:BasicServiceForAppointment)=>{
+  console.log('Obteniendo padre',service)
+}
 </script>
 
 <template>
@@ -66,6 +72,7 @@ const getPetSelected = (pet: PetByClient) => {
     </Message>
     <CardScheduleAppointmentPrimary
       @pet-selected="getPetSelected($event)"
+      @service-selected="getServiceSelected($event)"
       :pets="pets"
       :services="services"
     >
