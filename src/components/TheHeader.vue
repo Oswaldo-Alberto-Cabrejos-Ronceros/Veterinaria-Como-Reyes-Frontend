@@ -11,6 +11,18 @@ import Popover from 'primevue/popover'
 import { useAuthentication } from '@/composables/useAuthentication'
 import { useConfirm } from 'primevue'
 
+defineProps<{
+  role:string
+}>()
+
+const routeMap: Record<string, string> = {
+  ADMINISTRADOR: '/employee/administrator',
+  ENCARGADOSEDE: '/employee/maneger',
+  VETERINARIO: '/employee/veterinary',
+  RECEPCIONISTA: '/employee/receptionist',
+  CLIENTE:'/client'
+}
+
 const themeStore = useThemeStore()
 
 const iconTheme = computed(() => (themeStore.isDark ? 'pi-moon' : 'pi-sun'))
@@ -35,6 +47,7 @@ const { logoutUser } = useAuthentication()
 const confirm = useConfirm()
 
 const confirmLogout = async () => {
+  op.value.hide()
   confirm.require({
     group: 'confirmDialogGeneral',
     message: '¿Seguro que quieres cerrar sesión',
@@ -63,7 +76,7 @@ const confirmLogout = async () => {
             class="pi pi-bars text-xl text-surface-0 transition-colors duration-200 hover:text-surface-200 dark:hover:text-surface-300 cursor-pointer"
             @click="emitToggleMenu"
           />
-          <RouterLink to="home">
+          <RouterLink :to="routeMap[role]??'/'">
             <Image :src="LogoWhite" alt="Logo" width="48" />
           </RouterLink>
         </div>
@@ -102,7 +115,7 @@ const confirmLogout = async () => {
           />
           <Popover ref="op">
             <div class="w-44">
-              <RouterLink to="perfil">
+              <RouterLink :to="routeMap[role]?`${routeMap[role]}/perfil`:'/'" @click="()=>op.hide()">
                 <div
                   class="w-full flex items-center justify-between cursor-pointer rounded p-2 transition-colors hover:bg-surface-50 dark:hover:bg-surface-800"
                 >

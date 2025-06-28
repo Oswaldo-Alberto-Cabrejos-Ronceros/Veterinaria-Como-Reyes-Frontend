@@ -1,19 +1,33 @@
 <script setup lang="ts">
 import TheHeader from '@/components/TheHeader.vue'
 import type { MenuItem } from 'primevue/menuitem'
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import MenuNav from '@/components/MenuNav.vue'
+import { useAuthentication } from '@/composables/useAuthentication'
 
 //for now getting the role by router
 const route = useRoute()
 const role = ref(route.meta.role as string)
 
+const { getMainRole } = useAuthentication()
+
+const mainRole = ref<string>('')
+
+onMounted(() => {
+  const role = getMainRole()
+  if (role) mainRole.value = cleanRole(role)
+})
+
 const roleMap: Record<string, number> = {
-  ADMINISTRATOR: 0,
-  MANAGER: 1,
-  VETERINARY: 2,
-  RECEPTIONIST: 3,
+  ADMINISTRADOR: 0,
+  ENCARGADOSEDE: 1,
+  VETERINARIO: 2,
+  RECEPCIONISTA: 3,
+}
+
+const cleanRole = (role: string): string => {
+  return role.replace(/\s+/g, '').toUpperCase()
 }
 
 const items = ref<MenuItem[][]>([
@@ -154,7 +168,7 @@ watch(
   },
 )
 
-const itemsRole = computed(() => items.value[roleMap[role.value]] ?? [])
+const itemsRole = computed(() => items.value[roleMap[mainRole.value]] ?? [])
 
 const showMenu = ref(true)
 
@@ -164,7 +178,7 @@ const toggleMenu = () => {
 </script>
 <template>
   <div class="w-full min-h-screen flex flex-col">
-    <TheHeader @toggle-menu="toggleMenu" />
+    <TheHeader @toggle-menu="toggleMenu" :role="mainRole" />
 
     <main class="w-full flex-1 flex p-2 overflow-hidden">
       <MenuNav :items="itemsRole" :show-menu="showMenu" @update:show-menu="showMenu = $event" />

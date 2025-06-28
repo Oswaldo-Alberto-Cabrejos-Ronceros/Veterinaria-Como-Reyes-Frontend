@@ -31,7 +31,7 @@ const toggleMenu = () => {
 </script>
 <template>
   <div class="w-full min-h-screen flex flex-col">
-    <TheHeader @toggle-menu="toggleMenu" />
+    <TheHeader @toggle-menu="toggleMenu" role="CLIENTE" />
 
     <main class="w-full flex-1 flex p-2 overflow-hidden">
       <MenuNav :items="items" :show-menu="showMenu" @update:show-menu="showMenu = $event" />
