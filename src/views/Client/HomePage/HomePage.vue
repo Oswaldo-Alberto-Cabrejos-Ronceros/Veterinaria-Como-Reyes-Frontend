@@ -5,6 +5,28 @@ import ScrollPanel from 'primevue/scrollpanel'
 import CardTestPrimary from '@/components/CardTestPrimary.vue'
 import CardPetPrimary from '@/components/CardPetPrimary.vue'
 import CardServicePrimary from '@/components/CardServicePrimary.vue'
+import { useAuthentication } from '@/composables/useAuthentication'
+import { usePet } from '@/composables/usePet'
+import type { PetByClient } from '@/models/PetByClient'
+import { onMounted, ref } from 'vue'
+import Message from 'primevue/message'
+import { RouterLink } from 'vue-router'
+import { useClient } from '@/composables/useClient'
+import { useAppointment } from '@/composables/useAppointment'
+import type { BasicServiceForAppointment } from '@/models/BasicServiceForAppointment'
+
+//methods
+const { getEntityId } = useAuthentication()
+
+const { error: petError, loading: petLoading, getPetByClientId } = usePet()
+
+const {
+  error: servicesError,
+  loading: servicesLoading,
+  getServicesByHeadquarterAndSpecies,
+} = useAppointment()
+
+const { myInfoAsClient } = useClient()
 
 //examples for cardsAppointment
 const cardsAppointmentPrimaryPropsExamples = [
@@ -90,107 +112,33 @@ const testExamples = [
 ]
 
 //example for pet cards
-const pets = [
-  {
-    petId: 1,
-    petImageUrl:
-      'https://www.infobae.com/resizer/v2/https%3A%2F%2Fs3.amazonaws.com%2Farc-wordpress-client-uploads%2Finfobae-wp%2Fwp-content%2Fuploads%2F2017%2F04%2F06155038%2Fperro-beso-1024x576.jpg?auth=6df4e6dc984f247b317b99504b5a8a650bcd2a232b5d6684141c42a2e2c32577&smart=true&width=992&height=558&quality=85',
-    petName: 'Firulais',
-    petSpecie: 'Perro',
-    petBreed: 'Labrador Retriever',
-    petGender: 'M',
-    birthdate: '2020-03-15',
-  },
-  {
-    petId: 2,
-    petImageUrl:
-      'https://www.purina.es/sites/default/files/styles/ttt_image_510/public/2024-02/sitesdefaultfilesstylessquare_medium_440x440public2022-06Siamese201.jpg?itok=j9A2IvjN',
-    petName: 'Michi',
-    petSpecie: 'Gato',
-    petBreed: 'Siames',
-    petGender: 'H',
-    birthdate: '2019-11-02',
-  },
-  {
-    petId: 3,
-    petImageUrl:
-      'https://www.infobae.com/resizer/v2/https%3A%2F%2Fs3.amazonaws.com%2Farc-wordpress-client-uploads%2Finfobae-wp%2Fwp-content%2Fuploads%2F2017%2F04%2F06155038%2Fperro-beso-1024x576.jpg?auth=6df4e6dc984f247b317b99504b5a8a650bcd2a232b5d6684141c42a2e2c32577&smart=true&width=992&height=558&quality=85',
-    petName: 'Rocky',
-    petSpecie: 'Perro',
-    petBreed: 'Bulldog Francés',
-    petGender: 'M',
-    birthdate: '2021-01-20',
-  },
-  {
-    petId: 4,
-    petImageUrl:
-      'https://www.purina.es/sites/default/files/styles/ttt_image_510/public/2024-02/sitesdefaultfilesstylessquare_medium_440x440public2022-06Siamese201.jpg?itok=j9A2IvjN',
-    petName: 'Luna',
-    petSpecie: 'Gato',
-    petBreed: 'Persa',
-    petGender: 'H',
-    birthdate: '2022-06-10',
-  },
-  {
-    petId: 5,
-    petImageUrl:
-      'https://www.infobae.com/resizer/v2/https%3A%2F%2Fs3.amazonaws.com%2Farc-wordpress-client-uploads%2Finfobae-wp%2Fwp-content%2Fuploads%2F2017%2F04%2F06155038%2Fperro-beso-1024x576.jpg?auth=6df4e6dc984f247b317b99504b5a8a650bcd2a232b5d6684141c42a2e2c32577&smart=true&width=992&height=558&quality=85',
-    petName: 'Toby',
-    petSpecie: 'Perro',
-    petBreed: 'Beagle',
-    petGender: 'M',
-    birthdate: '2018-09-07',
-  },
-]
+const pets = ref<PetByClient[]>([])
+//get all for view
+onMounted(() => {
+  loadPets()
+  loadServicesByHeadquarterSpecie()
+})
 
-//for services examples
-const services = [
-  {
-    serviceId: 1,
-    serviceName: 'Baño Canino',
-    serviceImageUrl: 'https://enlinea.santotomas.cl/web/wp-content/uploads/sites/2/2016/08/vet-744x465.jpg',
-    specieName: 'Perro',
-    categoryName: 'Estética',
-    duration: '45 min',
-    price: 40.0,
-  },
-  {
-    serviceId: 2,
-    serviceName: 'Consulta Veterinaria Felina',
-    serviceImageUrl: 'https://enlinea.santotomas.cl/web/wp-content/uploads/sites/2/2016/08/vet-744x465.jpg',
-    specieName: 'Gato',
-    categoryName: 'Consulta',
-    duration: '30 min',
-    price: 50.0,
-  },
-  {
-    serviceId: 3,
-    serviceName: 'Vacunación Antirrábica',
-    serviceImageUrl: 'https://enlinea.santotomas.cl/web/wp-content/uploads/sites/2/2016/08/vet-744x465.jpg',
-    specieName: 'Perro',
-    categoryName: 'Vacunación',
-    duration: '15 min',
-    price: 25.0,
-  },
-  {
-    serviceId: 4,
-    serviceName: 'Corte de Uñas',
-    serviceImageUrl: 'https://enlinea.santotomas.cl/web/wp-content/uploads/sites/2/2016/08/vet-744x465.jpg',
-    specieName: 'Perro',
-    categoryName: 'Estética',
-    duration: '10 min',
-    price: 10.0,
-  },
-  {
-    serviceId: 5,
-    serviceName: 'Desparasitación Interna',
-    serviceImageUrl: 'https://enlinea.santotomas.cl/web/wp-content/uploads/sites/2/2016/08/vet-744x465.jpg',
-    specieName: 'Gato',
-    categoryName: 'Medicina Preventiva',
-    duration: '20 min',
-    price: 35.0,
-  },
-]
+const loadPets = async () => {
+  const clientId = getEntityId()
+  if (clientId) {
+    pets.value = await getPetByClientId(clientId)
+  }
+}
+
+const loadServicesByHeadquarterSpecie = async () => {
+  const clientId = getEntityId()
+  if (clientId) {
+    const infoClient = await myInfoAsClient(clientId)
+    const headquarterId = infoClient.headquarter.id
+    const pet = pets.value[0]
+    if (pet) {
+      services.value = await getServicesByHeadquarterAndSpecies(headquarterId, pet.specieId)
+    }
+  }
+}
+
+const services = ref<BasicServiceForAppointment[]>([])
 </script>
 
 <template>
@@ -200,7 +148,9 @@ const services = [
         <h3 class="h3">Bienvenido</h3>
       </template>
       <template #content>
-        <div class="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-2 gap-y-4 min-h-full">
+        <div
+          class="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-2 gap-y-4 min-h-full"
+        >
           <!-- apointments -->
           <div>
             <h3 class="text-xl mb-4">Citas Programadas</h3>
@@ -240,19 +190,38 @@ const services = [
           <!-- pets -->
           <div>
             <h3 class="text-xl mb-4">Mis Mascotas</h3>
-            <ScrollPanel class="max-h-96 pr-4">
+            <ScrollPanel class="h-96 pr-4">
               <div class="flex flex-col gap-2">
-                <CardPetPrimary
-                  v-for="pet in pets"
-                  :key="pet.petId"
-                  :petId="pet.petId"
-                  :petImageUrl="pet.petImageUrl"
-                  :petName="pet.petName"
-                  :petSpecie="pet.petSpecie"
-                  :petBreed="pet.petBreed"
-                  :petGender="pet.petGender"
-                  :birthdate="pet.birthdate"
-                ></CardPetPrimary>
+                <!-- for messague loading  -->
+                <Message
+                  v-if="petLoading.getPetByClientId"
+                  severity="warn"
+                  size="small"
+                  variant="simple"
+                >
+                  Cargando ...
+                </Message>
+                <!-- for messague error -->
+                <Message
+                  v-if="petError.getPetByClientId"
+                  severity="error"
+                  size="small"
+                  variant="simple"
+                >
+                  Error al cargar tus mascotas
+                </Message>
+                <RouterLink v-for="pet in pets" :key="pet.id" :to="`/client/my-pets/${pet.id}`">
+                  <CardPetPrimary v-ripple
+                    :key="pet.id"
+                    :petId="pet.id"
+                    :petImageUrl="pet.urlImage"
+                    :petName="pet.name"
+                    :petSpecie="pet.specieName"
+                    :petBreed="pet.breedName"
+                    :petGender="pet.gender"
+                    :birthdate="pet.birthdate"
+                  ></CardPetPrimary
+                ></RouterLink>
               </div>
             </ScrollPanel>
           </div>
@@ -261,16 +230,34 @@ const services = [
 
           <div>
             <h3 class="text-xl mb-4">Servicios disponibles</h3>
-            <ScrollPanel class="max-h-96 pr-4">
+            <ScrollPanel class="h-96 pr-4">
               <div class="flex flex-col gap-2">
+                <!-- for messague loading  -->
+                <Message
+                  v-if="servicesLoading.getServicesByHeadquarterAndSpecies"
+                  severity="warn"
+                  size="small"
+                  variant="simple"
+                >
+                  Cargando ...
+                </Message>
+                <!-- for messague error -->
+                <Message
+                  v-if="servicesError.getServicesByHeadquarterAndSpecies"
+                  severity="error"
+                  size="small"
+                  variant="simple"
+                >
+                  Error al cargar tus mascotas
+                </Message>
                 <CardServicePrimary
                   v-for="service in services"
-                  :key="service.serviceId"
-                  :serviceId="service.serviceId"
-                  :serviceName="service.serviceName"
-                  :serviceImageUrl="service.serviceImageUrl"
-                  :specieName="service.specieName"
-                  :categoryName="service.categoryName"
+                  :key="service.id"
+                  :serviceId="service.id"
+                  :serviceName="service.name"
+                  :serviceImageUrl="service.imageUrl"
+                  :specieName="service.specie.name"
+                  :categoryName="service.category.name"
                   :duration="service.duration"
                   :price="service.price"
                 ></CardServicePrimary>

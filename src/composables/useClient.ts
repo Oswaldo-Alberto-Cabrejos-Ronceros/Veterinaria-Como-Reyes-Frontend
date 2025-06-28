@@ -47,6 +47,7 @@ export function useClient() {
   }
 
   const myInfoAsClient = async (clientId: number): Promise<MyInfoClientView> => {
+    console.log(clientId)
     const myInfoClient: MyInfoClient = await runUseCase('myInfoAsClient', () =>
       clientUsesCases.myInfoAsClient.execute(clientId),
     )

@@ -10,26 +10,22 @@ import ServiceStep from './AppointmentSteps/ServiceStep.vue'
 import ResumeStep from './AppointmentSteps/ResumeStep.vue'
 import { onMounted, ref } from 'vue'
 import StepItem from 'primevue/stepitem'
+import type { PetByClient } from '@/models/PetByClient'
+import type { BasicServiceForAppointment } from '@/models/BasicServiceForAppointment'
+import type { TimesForTurn } from '@/models/TimesForTurn'
+import type { FormatTime } from '@/models/FormatTime'
+import type { PaymentMethod } from '@/models/PaymentMethod'
 
 defineProps<{
-  pets: {
-    petId: number
-    petImageUrl: string
-    petName: string
-    petSpecie: string
-    petBreed: string
-    petGender: string
-    birthdate: string
-  }[]
-  services?: {
-    serviceId: number
-    serviceName: string
-    serviceImageUrl: string
-    specieName: string
-    categoryName: string
-    duration: string
-    price: number
-  }[]
+  pets: PetByClient[]
+  services?: BasicServiceForAppointment[]
+  schedules?: TimesForTurn[]
+  //for selecteds
+  petSelected?: PetByClient
+  serviceSelected?: BasicServiceForAppointment
+  dateSelected?: Date
+  timeSelected?: FormatTime
+  paymentMethods: PaymentMethod[]
 }>()
 
 //for small screen
@@ -43,35 +39,43 @@ onMounted(() => {
   checkSize()
   window.addEventListener('resize', checkSize)
 })
-// schedule morning
-const schedulesMorning: string[] = [
-  '8:00 - 8:30',
-  '8:45 - 9:15',
-  '9:30 - 10:30',
-  '10:45 - 11:15',
-  '11:30 - 12:00',
-]
-// schedule afternoon
-const schedulesAfternoon: string[] = [
-  '12:15 - 12:45',
-  '13:00 - 13:30',
-  '13:45 - 14:15',
-  '14:30 - 15:00',
-  '15:15 - 15:45',
-  '16:00 - 16:30',
-]
 
-// schedule night
-const schedulesNight: string[] = [
-  '16:45 - 17:15',
-  '17:30 - 18:00',
-  '18:15 - 18:45',
-  '19:00 - 19:30',
-  '19:45 - 20:15',
-  '20:30 - 21:00',
-  '21:15 - 21:45',
-  '22:00 - 22:30',
-]
+const emit = defineEmits([
+  'pet-selected',
+  'service-selected',
+  'date-change',
+  'time-selected',
+  'confirm',
+])
+
+//for get petSelected
+const getPetSelected = (pet: PetByClient) => {
+  console.log('Obtenido', pet)
+  emit('pet-selected', pet)
+}
+
+//for get serviceSelected
+const getServiceSelected = (service: BasicServiceForAppointment) => {
+  console.log('Obtenido', service)
+  emit('service-selected', service)
+}
+
+//for get dateAppointment
+const getDateAppointment = (date: Date) => {
+  console.log('Obtenido', date)
+  emit('date-change', date)
+}
+
+//for get timeSelected
+const getTimeSelected = (time: FormatTime) => {
+  console.log('Obtenido', time)
+  emit('time-selected', time)
+}
+
+const getConfirm = (paymentMethodId: number) => {
+  console.log('Obteniendo', paymentMethodId)
+  emit('confirm', paymentMethodId)
+}
 </script>
 
 <template>
@@ -93,22 +97,27 @@ const schedulesNight: string[] = [
         <!-- panels -->
         <StepPanels>
           <!-- for pet -->
-          <PetStep :pets="pets"></PetStep>
+          <PetStep :pets="pets" @select-pet="getPetSelected($event)"></PetStep>
           <!-- for service -->
-          <ServiceStep :services="services"></ServiceStep>
+          <ServiceStep
+            :services="services"
+            @select-service="getServiceSelected($event)"
+          ></ServiceStep>
           <!-- for schedule -->
           <ScheduleStep
-            :schedules-morning="schedulesMorning"
-            :schedules-afternoon="schedulesAfternoon"
-            :schedules-night="schedulesNight"
+            :schedules="schedules"
+            @date-change="getDateAppointment($event)"
+            @select-time="getTimeSelected($event)"
           ></ScheduleStep>
           <!-- for resume -->
           <ResumeStep
             v-if="services"
-            :petSelected="pets[0]"
-            :serviceSelected="services[0]"
-            dateSelected="17 de junio del 2025"
-            :scheduleSelected="schedulesAfternoon[0]"
+            @confirm="getConfirm($event)"
+            :petSelected="petSelected"
+            :serviceSelected="serviceSelected"
+            :dateSelected="dateSelected"
+            :scheduleSelected="timeSelected"
+            :payment-methods="paymentMethods"
           ></ResumeStep>
         </StepPanels>
       </Stepper>
@@ -117,20 +126,23 @@ const schedulesNight: string[] = [
         <StepItem value="1">
           <Step value="1"> Mascota </Step>
           <!-- for pet -->
-          <PetStep :pets="pets"></PetStep>
+          <PetStep :pets="pets"  @select-pet="getPetSelected($event)"></PetStep>
         </StepItem>
         <StepItem value="2">
           <Step value="2"> Servicio </Step>
           <!-- for service -->
-          <ServiceStep :services="services"></ServiceStep>
+          <ServiceStep
+            :services="services"
+            @select-service="getServiceSelected($event)"
+          ></ServiceStep>
         </StepItem>
         <StepItem value="3">
           <Step value="3"> Horario </Step>
           <!-- for schedule -->
           <ScheduleStep
-            :schedules-morning="schedulesMorning"
-            :schedules-afternoon="schedulesAfternoon"
-            :schedules-night="schedulesNight"
+            :schedules="schedules"
+            @date-change="getDateAppointment($event)"
+            @select-time="getTimeSelected($event)"
           ></ScheduleStep>
         </StepItem>
         <StepItem value="4">
@@ -138,10 +150,12 @@ const schedulesNight: string[] = [
           <!-- for resume -->
           <ResumeStep
             v-if="services"
-            :petSelected="pets[0]"
-            :serviceSelected="services[0]"
-            dateSelected="17 de junio del 2025"
-            :scheduleSelected="schedulesAfternoon[0]"
+            @confirm="getConfirm($event)"
+            :petSelected="petSelected"
+            :serviceSelected="serviceSelected"
+            :dateSelected="dateSelected"
+            :scheduleSelected="timeSelected"
+            :payment-methods="paymentMethods"
           ></ResumeStep>
         </StepItem>
       </Stepper>

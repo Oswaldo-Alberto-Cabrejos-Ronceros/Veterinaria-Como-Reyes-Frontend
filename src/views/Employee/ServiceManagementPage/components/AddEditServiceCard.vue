@@ -5,7 +5,6 @@ import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
 import { schema } from '@/validation-schemas-forms/schema-add-edit-service'
 import type { FormValues } from '@/validation-schemas-forms/schema-add-edit-service'
-import DatePicker from 'primevue/datepicker'
 import Select from 'primevue/select'
 import InputNumber from 'primevue/inputnumber'
 import Textarea from 'primevue/textarea'
@@ -18,6 +17,7 @@ import { inject, onMounted } from 'vue'
 import type { Ref } from 'vue'
 import { ref } from 'vue'
 import type { OptionSelect } from '@/models/OptionSelect'
+
 //form
 
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
@@ -50,50 +50,46 @@ const onSubmit = handleSubmit((values) => {
   dialogRef.value.close(values)
 })
 
-
 //headquarter options
 const speciesOptions = ref<OptionSelect[]>([])
 
 //roles options
 const categoriesOptions = ref<OptionSelect[]>([])
 
-
-
 //for dialog
 
 const dialogRef = inject('dialogRef') as Ref<{
   close: (data?: FormValues) => void
-  data:{
-    serviceData?:FormValues,
-    speciesOptions?:OptionSelect[],
-    categoriesOptions?:OptionSelect[]
+  data: {
+    serviceData?: FormValues
+    speciesOptions?: OptionSelect[]
+    categoriesOptions?: OptionSelect[]
   }
 }>
-
 
 //title reactive
 const title = ref<string>('Agregar')
 
 //for edit
-onMounted(()=>{
-  if(dialogRef.value.data){
+onMounted(() => {
+  if (dialogRef.value.data) {
     const params = dialogRef.value.data.serviceData
     const speciesOptionsGet = dialogRef.value.data.speciesOptions
     const categoriesOptionsGet = dialogRef.value.data.categoriesOptions
-    if(params){
-      title.value='Editar'
-      name.value=params.name
-      description.value=params.description
-      price.value=params.price
-      duration.value=params.duration
-      dirImage.value=params.dirImage
+    if (params) {
+      title.value = 'Editar'
+      name.value = params.name
+      description.value = params.description
+      price.value = params.price
+      duration.value = params.duration
+      dirImage.value = params.dirImage
       specieId.value = params.specieId
-      categoryId.value= params.categoryId
+      categoryId.value = params.categoryId
     }
-    if(speciesOptionsGet){
+    if (speciesOptionsGet) {
       speciesOptions.value = speciesOptionsGet
     }
-    if(categoriesOptionsGet) {
+    if (categoriesOptionsGet) {
       categoriesOptions.value = categoriesOptionsGet
     }
   }
@@ -103,7 +99,7 @@ onMounted(()=>{
 <template>
   <Card class="card-dialog-form-layout">
     <template #title>
-      <h3 class="h3 text-center">{{title}} Servicio</h3>
+      <h3 class="h3 text-center">{{ title }} Servicio</h3>
     </template>
     <template #content>
       <form @submit.prevent="onSubmit" class="form-dialog-layout">
@@ -122,7 +118,7 @@ onMounted(()=>{
         </div>
         <!-- price -->
 
-                <div>
+        <div>
           <label class="block mb-2">Precio</label>
           <InputGroup>
             <InputGroupAddon class="text-neutral-400">
@@ -133,7 +129,7 @@ onMounted(()=>{
               v-bind="priceAttrs"
               fluid
               class="w-full"
-              placeholder="Price"
+              placeholder="Precio"
             />
           </InputGroup>
           <Message v-if="errors.price" severity="error" size="small" variant="simple">
@@ -143,29 +139,41 @@ onMounted(()=>{
 
         <!-- duration -->
 
-                <div>
+        <div>
           <label class="block mb-2">Duración</label>
-          <DatePicker
-          timeOnly
-            v-bind="durationAttrs"
-            v-model="duration"
-            showIcon
-            fluid
-            iconDisplay="input"
-          />
+          <InputGroup>
+            <InputGroupAddon class="text-neutral-400">
+              <i class="pi pi-clock"></i>
+            </InputGroupAddon>
+            <InputNumber
+            suffix=" minutos"
+              v-model="duration"
+              inputId="integeronly"
+              v-bind="durationAttrs"
+              class="w-full"
+              placeholder="Duración"
+              show-buttons
+              fluid
+            />
+          </InputGroup>
           <Message v-if="errors.duration" severity="error" size="small" variant="simple">
             {{ errors.duration }}
           </Message>
         </div>
 
-         <!-- image -->
+        <!-- image -->
         <div>
           <label class="block mb-2">Imagen</label>
           <InputGroup>
             <InputGroupAddon class="text-neutral-400">
               <i class="pi pi-image"></i>
             </InputGroupAddon>
-            <InputText v-model="dirImage" v-bind="dirImageAttrs" class="w-full" placeholder="Imagen" />
+            <InputText
+              v-model="dirImage"
+              v-bind="dirImageAttrs"
+              class="w-full"
+              placeholder="Imagen"
+            />
           </InputGroup>
           <Message v-if="errors.dirImage" severity="error" size="small" variant="simple">
             {{ errors.dirImage }}
@@ -174,7 +182,7 @@ onMounted(()=>{
 
         <!-- specie -->
 
-                <div>
+        <div>
           <label class="block mb-2">Especie</label>
           <Select
             class="w-full"
@@ -193,7 +201,7 @@ onMounted(()=>{
 
         <!-- category -->
 
-                <div>
+        <div>
           <label class="block mb-2">Categoria</label>
           <Select
             class="w-full"
@@ -212,7 +220,7 @@ onMounted(()=>{
 
         <!-- description -->
 
-                <div>
+        <div>
           <label class="block mb-2">Descripción</label>
 
           <IftaLabel>

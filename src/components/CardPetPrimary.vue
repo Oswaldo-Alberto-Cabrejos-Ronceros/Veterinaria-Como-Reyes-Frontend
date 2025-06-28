@@ -9,12 +9,24 @@ defineProps<{
   petBreed: string
   petGender: string
   birthdate: string
+  selected?: boolean
 }>()
 </script>
 <template>
-  <CardPrimary>
-    <div class="w-full flex justify-end">
-      <Image :src="petImageUrl" image-class="size-40 object-cover" :alt="petName" />
+  <CardPrimary
+    class="transition-opacity duration-300 hover:opacity-80 group cursor-pointer"
+    :class="
+      selected
+        ? ' bg-surface-100 hover:bg-surface-50 dark:bg-slate-950 hover:dark:bg-slate-900 border-primary-500 dark:border-primary-900'
+        : ''
+    "
+  >
+    <div class="w-full flex justify-end h-40">
+      <Image
+        :src="petImageUrl"
+        image-class="size-40 object-cover transition-transform duration-300 group-hover:scale-105"
+        :alt="petName"
+      />
       <div class="flex-1 flex flex-col gap-2 p-3">
         <div class="flex items-center justify-between">
           <p class="text-lg font-medium">{{ petName }}</p>

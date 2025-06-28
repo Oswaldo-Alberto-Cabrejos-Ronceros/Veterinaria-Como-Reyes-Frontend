@@ -78,13 +78,14 @@ onBeforeUnmount(() => {
   class="overflow-hidden"
 >
   <div class="w-2/3 sm:w-auto " ref="menuWrapperRef">
-    <Menu :model="props.items" class="h-screen sm:h-min">
+    <Menu :model="props.items" class="h-screen sm:h-min dark:bg-slate-900">
       <template #item="{ item, props }">
         <router-link
           v-if="item.to"
           v-slot="{ navigate,isActive }"
           :to="item.to"
           custom
+          v-ripple
         >
           <a
             v-bind="props.action"

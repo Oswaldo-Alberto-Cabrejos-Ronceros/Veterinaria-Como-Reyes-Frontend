@@ -10,14 +10,14 @@ import ConfirmationService from 'primevue/confirmationservice'
 import ToastService from 'primevue/toastservice'
 //import esLocale
 import esLocale from '@/assets/locale/es.json'
-
+import Ripple from 'primevue/ripple';
 import App from './App.vue'
 import router from './router'
 
 import { definePreset } from '@primeuix/themes'
 
 const app = createApp(App)
-
+app.directive('ripple', Ripple);
 const MyPreset = definePreset(Aura, {
   semantic: {
     primary: {
@@ -72,6 +72,7 @@ const MyPreset = definePreset(Aura, {
 
 app.use(createPinia())
 app.use(PrimeVue, {
+  ripple:true,
   theme: {
     preset: MyPreset,
     options: {

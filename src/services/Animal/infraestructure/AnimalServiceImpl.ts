@@ -1,5 +1,5 @@
 import type { HttpClient } from '@/services/Http/model/HttpClient'
-import type { Animal, AnimalRequest } from '../domain/models/Animal'
+import type { Animal, AnimalByClient, AnimalRequest } from '../domain/models/Animal'
 import type { AnimalService } from '../domain/services/AnimalService'
 
 export class AnimalServiceImpl implements AnimalService {
@@ -14,8 +14,8 @@ export class AnimalServiceImpl implements AnimalService {
     const response = await this.httpClient.get<Animal>(`${this.urlBase}/${animalId}`)
     return response.data
   }
-  async getAnimalByClientId(clientId: number): Promise<Animal[]> {
-    const response = await this.httpClient.get<Animal[]>(`${this.urlBase}/client/${clientId}`)
+  async getAnimalByClientId(clientId: number): Promise<AnimalByClient[]> {
+    const response = await this.httpClient.get<AnimalByClient[]>(`${this.urlBase}/client/${clientId}`)
     return response.data
   }
 
