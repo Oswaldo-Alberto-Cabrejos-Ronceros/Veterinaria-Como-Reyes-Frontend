@@ -71,12 +71,12 @@ const confirmLogout = async () => {
   <header>
     <Menubar class="bg-primary-900 dark:bg-primary-950 rounded-none border-0">
       <template #start>
-        <div class="flex items-center gap-3">
-          <i
+        <div class="flex items-center gap-3" >
+          <i v-ripple
             class="pi pi-bars text-xl text-surface-0 transition-colors duration-200 hover:text-surface-200 dark:hover:text-surface-300 cursor-pointer"
             @click="emitToggleMenu"
           />
-          <RouterLink :to="routeMap[role]??'/'">
+          <RouterLink v-ripple :to="routeMap[role]??'/'">
             <Image :src="LogoWhite" alt="Logo" width="48" />
           </RouterLink>
         </div>
