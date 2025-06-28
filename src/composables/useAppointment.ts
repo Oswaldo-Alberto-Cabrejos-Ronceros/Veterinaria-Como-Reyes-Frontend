@@ -35,7 +35,6 @@ export function useAppointment() {
   ): Promise<AppointmentView> => {
     const appointmentRequest: AppointmentRequest =
       AppointmentAdapter.fromAppoinmentRequestViewToAppoinmentRequest(appointmentRequestView)
-    console.log('Desde compose', appointmentRequest)
     const appointment = await runUseCase('createAppointment', () =>
       appointmentUsesCases.createAppointment.execute(appointmentRequest),
     )
