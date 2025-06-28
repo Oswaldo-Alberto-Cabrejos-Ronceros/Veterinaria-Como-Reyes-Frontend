@@ -30,7 +30,7 @@ const emitSelectPet = () => {
     <div class="min-h-48">
       <p>Escoga la mascota</p>
       <div class="w-full grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 my-4">
-        <CardPetPrimary
+        <CardPetPrimary v-ripple
           v-for="pet in pets"
           @click="selectPet(pet)"
           :key="pet.id"

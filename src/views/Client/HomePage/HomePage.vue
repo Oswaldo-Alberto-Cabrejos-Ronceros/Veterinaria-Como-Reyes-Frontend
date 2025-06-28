@@ -211,7 +211,7 @@ const services = ref<BasicServiceForAppointment[]>([])
                   Error al cargar tus mascotas
                 </Message>
                 <RouterLink v-for="pet in pets" :key="pet.id" :to="`/client/my-pets/${pet.id}`">
-                  <CardPetPrimary
+                  <CardPetPrimary v-ripple
                     :key="pet.id"
                     :petId="pet.id"
                     :petImageUrl="pet.urlImage"

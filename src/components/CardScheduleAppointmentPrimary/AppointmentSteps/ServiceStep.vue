@@ -32,7 +32,7 @@ const emitSelectService = ()=>{
     <div class="min-h-48">
       <p>Servicio</p>
       <div class="w-full grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 my-4">
-        <CardServiceSecondary
+        <CardServiceSecondary v-ripple
           v-for="service in services"
           @click="selectService(service)"
           :key="service.id"

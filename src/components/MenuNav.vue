@@ -78,18 +78,19 @@ onBeforeUnmount(() => {
   class="overflow-hidden"
 >
   <div class="w-2/3 sm:w-auto " ref="menuWrapperRef">
-    <Menu :model="props.items" class="h-screen sm:h-min dark:bg-slate-800">
+    <Menu :model="props.items" class="h-screen sm:h-min dark:bg-slate-900">
       <template #item="{ item, props }">
         <router-link
           v-if="item.to"
           v-slot="{ navigate,isActive }"
           :to="item.to"
           custom
+          v-ripple
         >
           <a
             v-bind="props.action"
             @click="handleMenuItemClick(navigate)"
-            :class="['flex align-items-center', isActive ? 'text-primary-600 bg-primary-100 dark:text-primary-300 dark:bg-slate-900':'']"
+            :class="['flex align-items-center', isActive ? 'text-primary-600 bg-primary-100 dark:text-primary-300 dark:bg-slate-800':'']"
           >
             <span v-if="item.icon" :class="item.icon" class="mr-2"></span>
             <span>{{ item.label }}</span>
