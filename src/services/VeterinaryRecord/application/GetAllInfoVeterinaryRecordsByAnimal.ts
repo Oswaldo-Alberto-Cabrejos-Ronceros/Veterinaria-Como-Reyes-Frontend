@@ -1,6 +1,6 @@
 import type { VeterinaryRecordService } from '../domain/services/VeterinaryRecordService'
 
-export class getAllInfoVeterinaryRecordsByAnimal {
+export class GetAllInfoVeterinaryRecordsByAnimal {
   constructor(private readonly veterinaryRecordService: VeterinaryRecordService) {}
   async execute(animalId: number, page?: number, size?: number) {
     return await this.veterinaryRecordService.getAllInfoVeterinaryRecordsByAnimal(
