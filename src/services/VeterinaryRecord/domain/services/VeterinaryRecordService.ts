@@ -2,7 +2,7 @@ import type { VeterinaryRecord, VeterinaryRecordRequest } from '../models/Veteri
 
 export interface VeterinaryRecordService {
   create(veterinaryRecordRequest: VeterinaryRecordRequest): Promise<VeterinaryRecord>
-  update(veterinaryRecordRequest: VeterinaryRecordRequest): Promise<VeterinaryRecord>
+  update(id:number,eterinaryRecordRequest: VeterinaryRecordRequest): Promise<VeterinaryRecord>
   findAll(): Promise<VeterinaryRecord[]>
   findById(id: number): Promise<VeterinaryRecord>
   setEnCurso(id: number): Promise<VeterinaryRecord>
