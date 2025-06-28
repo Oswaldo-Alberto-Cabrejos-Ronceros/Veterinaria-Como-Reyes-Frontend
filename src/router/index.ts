@@ -13,7 +13,6 @@ import ServiceManagementPage from '@/views/Employee/ServiceManagementPage/Servic
 import PaymentMethodManagementPage from '@/views/Employee/PaymentMethodManagementPage/PaymentMethodManagementPage.vue'
 import HeadquartersManagementPage from '@/views/Employee/HeadquartersManagementPage/HeadquartersManagementPage.vue'
 import CategoryManagementPage from '@/views/Employee/CategoryManagementPage/CategoryManagementPage.vue'
-import PetUnitaryPage from '@/views/Common/PetUnitaryPage/PetUnitaryPage.vue'
 import RolePermissionManagementPage from '@/views/Employee/RolePermissionManagementPage/RolePermissionManagementPage.vue'
 import SpecieManagementPage from '@/views/Employee/SpecieManagementPage/SpecieManagementPage.vue'
 import BreedManagementPage from '@/views/Employee/BreedManagementPage/BreedManagementPage.vue'
@@ -146,9 +145,9 @@ const router = createRouter({
               component: CategoryManagementPage,
             },
             {
-              path: 'pet/:id',
+              path: 'pets-management/pet/:petId',
               name: 'administrator-pets-unitary-pet',
-              component: PetUnitaryPage,
+              component: PetUnitaryClientPage,
               props: true,
             },
             {
@@ -213,7 +212,6 @@ const router = createRouter({
               name: 'manager-pets-management',
               component: PetsManagementPage,
             },
-
             {
               path: 'appoinment-management',
               name: 'manager-appoinment-management',

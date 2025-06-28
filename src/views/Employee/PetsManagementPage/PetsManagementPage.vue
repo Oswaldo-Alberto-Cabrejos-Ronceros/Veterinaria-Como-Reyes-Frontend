@@ -158,7 +158,7 @@ const router = useRouter()
 
 //for view
 const viewPet = (petData: Pet) => {
-  router.push({ name: 'administrator-pets-unitary-pet', params: { id: petData.id } })
+  router.push({ name: 'administrator-pets-unitary-pet', params: { petId: petData.id } })
 }
 
 const editPet = async (petData: Pet) => {
@@ -176,7 +176,7 @@ const editPet = async (petData: Pet) => {
         specieId: petData.specie.id,
         breedId: petData.breed.id,
         urlImage: petData.urlImage,
-        ownerDni: petData.clientId.toString(),
+        ownerDni: petData.clientId?.toString()||'', //fix
       } as AddEditPetSchema,
       speciesOptions: speciesToOptionsSelect(await getAllSpecies()),
       breedsOptions: breedsToOptionsSelect(await getAllBreeds()),
