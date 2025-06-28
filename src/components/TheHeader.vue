@@ -116,14 +116,14 @@ const confirmLogout = async () => {
           <Popover ref="op">
             <div class="w-44">
               <RouterLink :to="routeMap[role]?`${routeMap[role]}/perfil`:'/'" @click="()=>op.hide()">
-                <div
+                <div v-ripple
                   class="w-full flex items-center justify-between cursor-pointer rounded p-2 transition-colors hover:bg-surface-50 dark:hover:bg-surface-800"
                 >
                   <p>Perfil</p>
                   <i class="pi pi-user"></i></div
               ></RouterLink>
 
-              <div
+              <div v-ripple
                 class="w-full flex items-center justify-between cursor-pointer rounded p-2 transition-colors hover:bg-surface-50 dark:hover:bg-surface-800"
                 @click="confirmLogout()"
               >
