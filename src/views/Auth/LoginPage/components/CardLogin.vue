@@ -79,7 +79,7 @@ const onSubmit = handleSubmit((values) => {
     </template>
 
     <template #content>
-      <div v-if="loading" class=" min-h-96">
+      <div v-if="loading" class="min-h-96 w-full flex items-center justify-center">
         <ProgressSpinner/>
       </div>
       <form v-if="!loading"

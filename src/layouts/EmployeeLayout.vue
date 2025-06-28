@@ -97,6 +97,11 @@ const items = ref<MenuItem[][]>([
       icon: 'pi pi-receipt',
       to: '/employee/administrator/payment-management',
     },
+    {
+      label: 'Citas',
+      icon: 'pi pi-clipboard',
+      to: '/employee/administrator/appoinment-management',
+    },
   ],
   [
     {
@@ -118,6 +123,11 @@ const items = ref<MenuItem[][]>([
       label: 'Mascotas',
       icon: 'pi pi-github',
       to: '/employee/manager/pets-management',
+    },
+    {
+      label: 'Citas',
+      icon: 'pi pi-clipboard',
+      to: '/employee/manager/appoinment-management',
     },
   ],
   [
@@ -157,6 +167,11 @@ const items = ref<MenuItem[][]>([
       label: 'Pagos',
       icon: 'pi pi-receipt',
       to: '/employee/receptionist/payment-management',
+    },
+    {
+      label: 'Citas',
+      icon: 'pi pi-clipboard',
+      to: '/employee/receptionist/appoinment-management',
     },
   ],
 ])
