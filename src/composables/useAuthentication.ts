@@ -57,11 +57,13 @@ export function useAuthentication() {
 
   //para obtener el rol de un usuario
   const getMainRole = () => {
+    autenthenticationStore.recoverUserFromSession()
     return autenthenticationStore.userRole
   }
 
   //para obtener entityId de un usuario
   const getEntityId = () => {
+    autenthenticationStore.recoverUserFromSession()
     return autenthenticationStore.entityId
   }
 

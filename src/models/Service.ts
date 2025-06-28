@@ -3,7 +3,7 @@ export interface Service{
     name:string,
     description:string,
     price:number,
-    duration:string //format: HH/mm
+    duration:number
     dirImage:string,
     specie:string,
     specieId:number,

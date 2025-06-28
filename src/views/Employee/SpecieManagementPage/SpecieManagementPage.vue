@@ -115,6 +115,7 @@ const confirm = useConfirm()
 
 const deleteSpecieAction = (event: MouseEvent | KeyboardEvent, specieData: Specie) => {
   confirm.require({
+    group:'confirmPopupGeneral',
     target: event.currentTarget as HTMLElement,
     message: '¿Seguro que quiere eliminar esta especie?',
     icon: 'pi pi-exclamation-triangle',

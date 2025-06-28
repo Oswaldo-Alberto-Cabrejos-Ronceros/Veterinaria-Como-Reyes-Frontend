@@ -24,7 +24,6 @@ import type { OptionSelect } from '@/models/OptionSelect'
 import { useSpecie } from '@/composables/useSpecie'
 import type { Category } from '@/models/Category'
 import { useCategory } from '@/composables/useCategory'
-import { DateAdapter } from '@/adapters/DateAdapter'
 
 //toast
 const toast = useToast()
@@ -157,7 +156,7 @@ const editService = async (serviceData: Service) => {
         name: serviceData.name,
         description: serviceData.description,
         price: serviceData.price,
-        duration: DateAdapter.fromHHmmSSToDate(serviceData.duration),
+        duration: serviceData.duration,
         dirImage: serviceData.dirImage,
         specieId: serviceData.specieId,
         categoryId: serviceData.categoryId,
@@ -183,6 +182,7 @@ const confirm = useConfirm()
 //for delete with confirm popup
 const deleteService = (event: MouseEvent | KeyboardEvent, service: Service) => {
   confirm.require({
+    group:'confirmPopupGeneral',
     target: event.currentTarget as HTMLElement,
     message: '¿Seguro que quiere eliminar este servicio?',
     icon: 'pi pi-exclamation-triangle',

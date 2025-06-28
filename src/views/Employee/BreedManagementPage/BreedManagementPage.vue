@@ -135,6 +135,7 @@ const confirm = useConfirm()
 
 const deleteBreedAction = (event: MouseEvent | KeyboardEvent, breedData: Breed) => {
   confirm.require({
+    group:'confirmPopupGeneral',
     target: event.currentTarget as HTMLElement,
     message: '¿Seguro que quiere eliminar esta raza?',
     icon: 'pi pi-exclamation-triangle',

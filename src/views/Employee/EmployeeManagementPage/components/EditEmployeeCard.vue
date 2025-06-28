@@ -79,7 +79,7 @@ const textFields: { title: string; key: keyof typeof fieldMap; icon: string }[] 
     icon: 'pi-home',
   },
   {
-    title: 'Phone',
+    title: 'Celular',
     key: 'phone',
     icon: 'pi-mobile',
   },

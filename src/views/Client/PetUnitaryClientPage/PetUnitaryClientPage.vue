@@ -4,38 +4,22 @@ import Card from 'primevue/card'
 import { onMounted, ref } from 'vue'
 import Image from 'primevue/image'
 import DatePicker from 'primevue/datepicker'
+import Message from 'primevue/message'
 import CardAppointmentSecondary from '@/components/CardAppointmentSecondary.vue'
+import { usePet } from '@/composables/usePet'
 
 const props = defineProps<{
   petId: string
 }>()
 
+const { loading, error, getPetById } = usePet()
+
 const petData = ref<Pet | null>(null)
 
-onMounted(() => {
-  petData.value = {
-    id: 1,
-    name: 'Nico',
-    gender: 'M',
-    weight: 8.2,
-    birthdate: '2015-05-21',
-    comment: `"Milo es un gato de raza mestiza con un pelaje suave y denso de color gris con reflejos plateados que le dan una apariencia elegante.
-    Tiene ojos grandes y verdes que parecen escanear todo a su alrededor con curiosidad constante. Es un gato tranquilo, independiente y muy observador,
-    aunque cuando entra en confianza se vuelve extremadamente cariñoso y ronroneador. Le encanta observar desde las ventanas, dormir en lugares soleados
-    y jugar con juguetes que imitan plumas o ratones. Aunque es reservado al principio, crea lazos muy fuertes con quienes le brindan cariño y respeto. Se
-    adapta bien a espacios pequeños y es ideal para departamentos, ya que no necesita salir al exterior para estar feliz. Milo está completamente vacunado,
-    esterilizado y acostumbrado al arenero. `,
-    urlImage: 'https://optimumpet.com.br/media/uploads/2023/05/anos-vive-gato-01.webp',
-    specie: {
-      id: 1,
-      name: 'Gato',
-    },
-    breed: {
-      id: 1,
-      name: 'Persa',
-    },
-    clientId: 2,
-  }
+onMounted(async () => {
+  console.log(props.petId)
+  console.log(Number(props.petId))
+  petData.value = await getPetById(Number(props.petId))
   console.log(props.petId)
 })
 
@@ -88,6 +72,13 @@ const appointments = [
   <div class="layout-principal-flex">
     <Card class="card-principal-color-neutral">
       <template #title>
+        <Message v-if="loading.getPetById" severity="warn" size="small" variant="simple">
+          Cargando ...
+        </Message>
+        <!-- for messague error -->
+        <Message v-if="error.getPetById" severity="error" size="small" variant="simple">
+          Error al cargar la información de la mascota
+        </Message>
         <div class="textLg flex gap-2">
           <h3 class="h3">{{ petData?.name }}</h3>
           <p>{{ petData?.specie.name }}</p>
@@ -132,20 +123,19 @@ const appointments = [
               <DatePicker view="month" date-format="mm-yy"></DatePicker>
               <!-- for yerar -->
             </div>
-
           </div>
-                      <div class="w-full grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2">
-              <CardAppointmentSecondary
-                v-for="appointment in appointments"
-                :key="appointment.appointmentId"
-                :appointment-id="appointment.appointmentId"
-                :appointment-status="appointment.appointmentStatus"
-                :date="appointment.date"
-                :duration="appointment.duration"
-                :service-name="appointment.serviceName"
-                :service-description="appointment.serviceDescription"
-              ></CardAppointmentSecondary>
-            </div>
+          <div class="w-full grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2">
+            <CardAppointmentSecondary
+              v-for="appointment in appointments"
+              :key="appointment.appointmentId"
+              :appointment-id="appointment.appointmentId"
+              :appointment-status="appointment.appointmentStatus"
+              :date="appointment.date"
+              :duration="appointment.duration"
+              :service-name="appointment.serviceName"
+              :service-description="appointment.serviceDescription"
+            ></CardAppointmentSecondary>
+          </div>
         </div>
       </template>
     </Card>

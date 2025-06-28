@@ -74,9 +74,9 @@ onMounted(() => {
       <h3 class="h3 text-center">{{ title }} Raza</h3>
     </template>
     <template #content>
-      <form @submit.prevent="onSubmit" class="form-dialog-layout">
+      <form @submit.prevent="onSubmit" class="form-dialog-layout-flex-col">
         <!-- name -->
-        <div>
+        <div  class="w-full">
           <label class="block mb-2">Nombre</label>
           <InputGroup>
             <InputGroupAddon class="text-neutral-400">
@@ -89,7 +89,7 @@ onMounted(() => {
           </Message>
         </div>
         <!-- specie -->
-        <div>
+        <div class="w-full">
           <label class="block mb-2">Especie</label>
           <Select
             class="w-full"
@@ -105,9 +105,9 @@ onMounted(() => {
             {{ errors.specieId }}
           </Message>
         </div>
-        <div class="button-form-container-grid-end">
+        <div class="w-full">
           <Button
-            class="w-full max-w-md"
+            class="w-full"
             :label="title"
             type="submit"
             severity="success"
