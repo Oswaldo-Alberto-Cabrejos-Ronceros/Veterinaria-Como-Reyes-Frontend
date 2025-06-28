@@ -149,6 +149,7 @@ const emitSelectTime = () => {
       />
 
       <Button
+      :disabled="timeSelected===null"
         label="Siguiente"
         icon="pi pi-arrow-right"
         icon-pos="right"

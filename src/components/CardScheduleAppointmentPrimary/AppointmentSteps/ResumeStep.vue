@@ -10,7 +10,7 @@ import { DateAdapter } from '@/adapters/DateAdapter'
 import type { PaymentMethod } from '@/models/PaymentMethod'
 import Select from 'primevue/select'
 import type { OptionSelect } from '@/models/OptionSelect'
-import { ref, watch } from 'vue'
+import { computed, ref} from 'vue'
 const props = defineProps<{
   petSelected?: PetByClient
   serviceSelected?: BasicServiceForAppointment
@@ -21,25 +21,14 @@ const props = defineProps<{
 
 const paymentMethodSelected = ref<number>(1)
 
-const paymentMethodsOptions = ref<OptionSelect[]>([])
-
-//observamos cambios en paymentMethos
-watch(
-  () => props.paymentMethods,
-  (newValue) => {
-    if (newValue && newValue.length > 0) {
-      paymentMethodsOptions.value = paymentMethodsToOptionsSelect(newValue)
-    }
-  },
-  { immediate: true },
-)
-
-const paymentMethodsToOptionsSelect = (paymentMethods: PaymentMethod[]): OptionSelect[] => {
-  return paymentMethods.map((paymentMethod) => ({
+const paymentMethodsOptions = computed<OptionSelect[]>(()=>{
+  return props.paymentMethods.map((paymentMethod)=>({
     value: paymentMethod.id,
-    name: paymentMethod.name,
+    name:paymentMethod.name
   }))
-}
+})
+
+
 
 //for emitr
 const emit = defineEmits(['confirm'])
@@ -106,6 +95,7 @@ const emitConfirm = ()=>{
     </div>
     <div class="flex justify-between mt-2">
       <Button
+      :disabled="paymentMethodSelected===null"
         label="Atrás"
         severity="secondary"
         icon="pi pi-arrow-left"

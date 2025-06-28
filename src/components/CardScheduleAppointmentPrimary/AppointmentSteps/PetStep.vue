@@ -47,6 +47,7 @@ const emitSelectPet = () => {
     </div>
     <div class="flex justify-end">
       <Button
+        :disabled="petSelected===null"
         label="Siguiente"
         icon="pi pi-arrow-right"
         icon-pos="right"

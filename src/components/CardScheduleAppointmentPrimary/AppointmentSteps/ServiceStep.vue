@@ -61,6 +61,7 @@ const emitSelectService = ()=>{
       />
 
       <Button
+      :disabled="serviceSelected===null"
         label="Siguiente"
         icon="pi pi-arrow-right"
         icon-pos="right"
