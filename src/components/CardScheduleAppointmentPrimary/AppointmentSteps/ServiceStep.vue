@@ -43,6 +43,7 @@ const emitSelectService = ()=>{
           :categoryName="service.category.name"
           :duration="service.duration"
           :price="service.price"
+          :selected="serviceSelected?.headquarterServiceId==service.headquarterServiceId"
         ></CardServiceSecondary>
         <!-- for messague nothing  -->
         <Message v-if="services?.length === 0" severity="error" size="small" variant="simple">

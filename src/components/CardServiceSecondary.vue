@@ -9,13 +9,25 @@ defineProps<{
   categoryName: string
   duration: number
   price: string
+  selected?: boolean
 }>()
 </script>
 
 <template>
-  <Card class="overflow-hidden max-w-lg">
+  <Card
+    class="overflow-hidden border border-neutral-200 dark:border-neutral-50 shadow max-w-lg transition-opacity duration-300 hover:opacity-80 group cursor-pointer"
+    :class="
+      selected
+        ? ' bg-surface-100 hover:bg-surface-50 dark:bg-slate-950 hover:dark:bg-slate-900 border-primary-500 dark:border-primary-900'
+        : ''
+    "
+  >
     <template #header>
-      <Image :src="serviceImageUrl" image-class="w-full h-40 object-cover" :alt="serviceName" />
+      <Image
+        :src="serviceImageUrl"
+        image-class="w-full h-40 object-cover transition-transform duration-300 group-hover:scale-105"
+        :alt="serviceName"
+      />
     </template>
     <template #content>
       <div class="flex w-full flex-col gap-2">

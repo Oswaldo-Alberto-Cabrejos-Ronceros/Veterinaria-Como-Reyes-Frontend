@@ -41,6 +41,7 @@ const emitSelectPet = () => {
           :petBreed="pet.breedName"
           :petGender="pet.gender"
           :birthdate="pet.birthdate"
+          :selected="petSelected?.id==pet.id"
         ></CardPetPrimary>
       </div>
     </div>

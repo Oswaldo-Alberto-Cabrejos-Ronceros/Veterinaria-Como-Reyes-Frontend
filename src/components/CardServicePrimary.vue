@@ -14,8 +14,8 @@ defineProps<{
 
 <template>
   <CardPrimary>
-    <div class="w-full flex justify-end h-40">
-      <Image :src="serviceImageUrl" image-class="size-40 object-cover" :alt="serviceName" />
+    <div class="w-full flex justify-end h-40 transition-opacity duration-300 hover:opacity-80 group cursor-pointer">
+      <Image :src="serviceImageUrl" image-class="size-40 object-cover transition-transform duration-300 group-hover:scale-105" :alt="serviceName" />
       <div class="flex-1 flex flex-col gap-2 p-3">
         <p class="text-lg font-medium">{{ serviceName }}</p>
         <p>{{ specieName }}</p>

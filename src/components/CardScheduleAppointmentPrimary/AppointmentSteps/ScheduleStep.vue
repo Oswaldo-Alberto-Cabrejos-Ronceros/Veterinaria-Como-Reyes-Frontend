@@ -75,6 +75,7 @@ const emitSelectTime = () => {
               :key="index"
               :time="schedule.timeRange"
               @click="selectTime(schedule)"
+              :selected="timeSelected?.time===schedule.time"
             ></CardScheduleUnitary>
           </div>
           <Message v-if="!schedules[0]" severity="error" size="small" variant="simple">
@@ -101,6 +102,7 @@ const emitSelectTime = () => {
               :key="index"
               :time="schedule.timeRange"
               @click="selectTime(schedule)"
+              :selected="timeSelected?.time===schedule.time"
             ></CardScheduleUnitary>
           </div>
           <Message v-if="!schedules[1]" severity="error" size="small" variant="simple">
@@ -128,6 +130,7 @@ const emitSelectTime = () => {
               :key="index"
               :time="schedule.time"
               @click="selectTime(schedule)"
+              :selected="timeSelected?.time===schedule.time"
             ></CardScheduleUnitary>
           </div>
           <Message v-if="!schedules[2]" severity="error" size="small" variant="simple">
