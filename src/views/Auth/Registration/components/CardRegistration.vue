@@ -18,7 +18,12 @@ import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
 import { useThemeStore } from '@/stores/themeStore'
 import { computed } from 'vue'
+import ProgressSpinner from 'primevue/progressspinner';
 
+
+defineProps<{
+  loading?:boolean
+}>()
 
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
   validationSchema: toTypedSchema(schema),
@@ -86,7 +91,11 @@ const imageLogo=computed(()=>(
     </template>
     <template #title><h3 class="h3 text-center">Registro</h3></template>
     <template #content>
-      <form
+            <div v-if="loading" class=" min-h-96">
+        <ProgressSpinner/>
+      </div>
+
+      <form  v-if="!loading"
         @submit.prevent="onSubmit"
         class="flex flex-col gap-4 w-full max-w-xl xs:min-w-96 sm:min-w-md text-neutral-950 dark:text-surface-0"
       >
@@ -214,7 +223,7 @@ const imageLogo=computed(()=>(
 
         <!--headquarker-->
         <label>Sede</label>
-        <Select v-bind="headquarterAttrs" v-model="headquarter" :options="headquarkers" optionLabel="name" optionValue="value" placeholder="Selecciona headquarker"  />
+        <Select v-bind="headquarterAttrs" v-model="headquarter" :options="headquarkers" optionLabel="name" optionValue="value" placeholder="Selecciona sede"  />
 
         <Message v-if="errors.headquarter" severity="error" size="small" variant="simple">
           {{ errors.headquarter }}
