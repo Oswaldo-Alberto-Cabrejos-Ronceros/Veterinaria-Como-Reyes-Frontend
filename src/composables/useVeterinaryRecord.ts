@@ -30,11 +30,12 @@ export function useVeterinaryRecord() {
   }
 
   const getAllInfoVeterinaryRecordsByPet = async (petId: number) => {
-    const veterinaryRecords = await runUseCase('getAllInfoVeterinaryRecordsByPet', () =>
+    const pageVeterinaryRecords = await runUseCase('getAllInfoVeterinaryRecordsByPet', () =>
       veterinaryRecordUsesCases.getAllInfoVeterinaryRecordsByAnimal.execute(petId),
     )
+    const veterinaryRecords = pageVeterinaryRecords.content
     return veterinaryRecords.map((veterinaryRecord) =>
-      VeterinaryRecordAdapter.toVeterinaryRecordView(veterinaryRecord),
+      VeterinaryRecordAdapter.fromVetRecordInfoTableToVetRecorIndoTableView(veterinaryRecord),
     )
   }
 

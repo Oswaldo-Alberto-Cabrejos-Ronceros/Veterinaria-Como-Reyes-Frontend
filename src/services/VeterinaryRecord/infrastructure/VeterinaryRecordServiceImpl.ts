@@ -1,6 +1,7 @@
 import type { HttpClient } from '@/services/Http/model/HttpClient'
-import type { VeterinaryRecordRequest, VeterinaryRecord } from '../domain/models/VeterinaryRecord'
+import type { VeterinaryRecordRequest, VeterinaryRecord, VeterinaryRecordInfoTable } from '../domain/models/VeterinaryRecord'
 import type { VeterinaryRecordService } from '../domain/services/VeterinaryRecordService'
+import type { PageResponse } from '@/services/models/PageResponse'
 
 export class VeterinaryRecordServiceImpl implements VeterinaryRecordService {
   constructor(private readonly httpClient: HttpClient) {}
@@ -51,11 +52,11 @@ export class VeterinaryRecordServiceImpl implements VeterinaryRecordService {
     animalId: number,
     page?: number,
     size?: number,
-  ): Promise<VeterinaryRecord[]> {
+  ): Promise<PageResponse<VeterinaryRecordInfoTable>> {
     const params = new URLSearchParams()
     if (page) params.append('page', String(page))
     if (size) params.append('size', String(size))
-    const response = await this.httpClient.get<VeterinaryRecord[]>(
+    const response = await this.httpClient.get<PageResponse<VeterinaryRecordInfoTable>>(
       `${this.url}/${animalId}?${params.toString()}`,
     )
     return response.data

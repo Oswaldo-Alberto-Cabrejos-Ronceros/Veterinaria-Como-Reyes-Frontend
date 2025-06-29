@@ -1,8 +1,9 @@
-import type { VeterinaryRecord, VeterinaryRecordRequest } from '../models/VeterinaryRecord'
+import type { PageResponse } from '@/services/models/PageResponse'
+import type { VeterinaryRecord, VeterinaryRecordInfoTable, VeterinaryRecordRequest } from '../models/VeterinaryRecord'
 
 export interface VeterinaryRecordService {
   create(veterinaryRecordRequest: VeterinaryRecordRequest): Promise<VeterinaryRecord>
-  update(id:number,eterinaryRecordRequest: VeterinaryRecordRequest): Promise<VeterinaryRecord>
+  update(id: number, eterinaryRecordRequest: VeterinaryRecordRequest): Promise<VeterinaryRecord>
   findAll(): Promise<VeterinaryRecord[]>
   findById(id: number): Promise<VeterinaryRecord>
   setEnCurso(id: number): Promise<VeterinaryRecord>
@@ -12,5 +13,5 @@ export interface VeterinaryRecordService {
     animalId: number,
     page?: number,
     size?: number,
-  ): Promise<VeterinaryRecord[]>
+  ): Promise<PageResponse<VeterinaryRecordInfoTable>>
 }

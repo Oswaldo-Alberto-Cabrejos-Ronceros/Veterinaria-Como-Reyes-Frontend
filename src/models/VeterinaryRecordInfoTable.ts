@@ -1,8 +1,8 @@
-export interface VeterinaryRecord {
+export interface VeterinaryRecordInfoTable {
   id: number
-  careId:number
-  employeeId:number
   date: string
+  nameHeadquarter: string
+  nameEmployee: string
   diagnosis: string
   treatment: string
   observation: string
