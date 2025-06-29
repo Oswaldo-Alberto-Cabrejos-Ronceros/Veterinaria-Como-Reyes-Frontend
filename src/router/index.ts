@@ -13,12 +13,13 @@ import ServiceManagementPage from '@/views/Employee/ServiceManagementPage/Servic
 import PaymentMethodManagementPage from '@/views/Employee/PaymentMethodManagementPage/PaymentMethodManagementPage.vue'
 import HeadquartersManagementPage from '@/views/Employee/HeadquartersManagementPage/HeadquartersManagementPage.vue'
 import CategoryManagementPage from '@/views/Employee/CategoryManagementPage/CategoryManagementPage.vue'
-import PetUnitaryPage from '@/views/Common/PetUnitaryPage/PetUnitaryPage.vue'
 import RolePermissionManagementPage from '@/views/Employee/RolePermissionManagementPage/RolePermissionManagementPage.vue'
 import SpecieManagementPage from '@/views/Employee/SpecieManagementPage/SpecieManagementPage.vue'
 import BreedManagementPage from '@/views/Employee/BreedManagementPage/BreedManagementPage.vue'
 import ServicesHeadquarterManagementPage from '@/views/Employee/ServicesHeadquarterManagementPage/ServicesHeadquarterManagementPage.vue'
 import PaymentManagementPage from '@/views/Employee/PaymentManagementPage/PaymentManagementPage.vue'
+import AppointmentManagementPage from '@/views/Employee/AppointmentManagementPage/AppointmentManagementPage.vue'
+import CareManagementPage from '@/views/Employee/CareManagementPage/CareManagementPage.vue'
 //client
 import MyAppointmentsClientPage from '@/views/Client/MyAppointmentsClientPage/MyAppointmentsClientPage.vue'
 import MyPetsPage from '@/views/Client/MyPetsPage/MyPetsPage.vue'
@@ -145,9 +146,9 @@ const router = createRouter({
               component: CategoryManagementPage,
             },
             {
-              path: 'pet/:id',
+              path: 'pets-management/pet/:petId',
               name: 'administrator-pets-unitary-pet',
-              component: PetUnitaryPage,
+              component: PetUnitaryClientPage,
               props: true,
             },
             {
@@ -174,6 +175,16 @@ const router = createRouter({
               path: 'payment-management',
               name: 'administrator-payment-management',
               component: PaymentManagementPage,
+            },
+            {
+              path: 'appoinment-management',
+              name: 'administrator-appoinment-management',
+              component: AppointmentManagementPage,
+            },
+            {
+              path: 'care-management',
+              name: 'administrator-care-management',
+              component: CareManagementPage,
             },
           ],
         },
@@ -207,6 +218,16 @@ const router = createRouter({
               name: 'manager-pets-management',
               component: PetsManagementPage,
             },
+            {
+              path: 'appoinment-management',
+              name: 'manager-appoinment-management',
+              component: AppointmentManagementPage,
+            },
+            {
+              path: 'care-management',
+              name: 'manager-care-management',
+              component: CareManagementPage,
+            },
           ],
         },
         {
@@ -233,6 +254,17 @@ const router = createRouter({
               path: 'payment-management',
               name: 'receptionist-payment-management',
               component: PaymentManagementPage,
+            },
+
+            {
+              path: 'appoinment-management',
+              name: 'receptionist-appoinment-management',
+              component: AppointmentManagementPage,
+            },
+            {
+              path: 'care-management',
+              name: 'receptionist-care-management',
+              component: CareManagementPage,
             },
           ],
         },

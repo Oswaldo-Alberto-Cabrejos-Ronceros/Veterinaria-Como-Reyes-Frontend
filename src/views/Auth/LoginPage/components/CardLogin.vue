@@ -16,6 +16,14 @@ import { useForm } from 'vee-validate'
 import { useThemeStore } from '@/stores/themeStore'
 import { computed, ref } from 'vue'
 import { SelectButton } from 'primevue'
+import ProgressSpinner from 'primevue/progressspinner';
+
+//props
+
+defineProps<{
+  loading?:boolean
+}>()
+
 // Setup del formulario con tipado
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
   validationSchema: toTypedSchema(schema),
@@ -71,7 +79,10 @@ const onSubmit = handleSubmit((values) => {
     </template>
 
     <template #content>
-      <form
+      <div v-if="loading" class="min-h-96 w-full flex items-center justify-center">
+        <ProgressSpinner/>
+      </div>
+      <form v-if="!loading"
         @submit.prevent="onSubmit"
         class="flex flex-col gap-4 w-full max-w-lg xs:min-w-96 sm:min-w-md"
       >

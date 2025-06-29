@@ -108,7 +108,7 @@ const addPet = async () => {
             Error al cargar tus mascotas
           </Message>
           <RouterLink v-for="pet in pets" :key="pet.id" :to="`/client/my-pets/${pet.id}`">
-            <CardPetSecondary
+            <CardPetSecondary v-ripple
               :id="pet.id"
               :image-url="pet.urlImage"
               :name="pet.name"

@@ -3,7 +3,7 @@
 import type { MenuItem } from 'primevue/menuitem'
 import { ref } from 'vue'
 import Menu from 'primevue/menu'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRoute } from 'vue-router'
 import { onMounted, onBeforeUnmount } from 'vue'
 
 //define props
@@ -68,6 +68,16 @@ onBeforeUnmount(() => {
   document.removeEventListener('click', handleClick)
   window.removeEventListener('resize',handleResize)
 })
+
+//route
+
+const route = useRoute()
+
+//function for active route
+const isActive = (path:string)=>(
+  route.path.startsWith(path)
+)
+
 </script>
 
 <template>
@@ -82,7 +92,7 @@ onBeforeUnmount(() => {
       <template #item="{ item, props }">
         <router-link
           v-if="item.to"
-          v-slot="{ navigate,isActive }"
+          v-slot="{ navigate }"
           :to="item.to"
           custom
           v-ripple
@@ -90,7 +100,7 @@ onBeforeUnmount(() => {
           <a
             v-bind="props.action"
             @click="handleMenuItemClick(navigate)"
-            :class="['flex align-items-center', isActive ? 'text-primary-600 bg-primary-100 dark:text-primary-300 dark:bg-slate-800':'']"
+            :class="['flex align-items-center', isActive(item.to)? 'text-primary-600 bg-primary-100 dark:text-primary-300 dark:bg-slate-800':'']"
           >
             <span v-if="item.icon" :class="item.icon" class="mr-2"></span>
             <span>{{ item.label }}</span>

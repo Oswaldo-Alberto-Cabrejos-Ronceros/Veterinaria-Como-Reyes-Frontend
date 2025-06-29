@@ -18,7 +18,11 @@ import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
 import { useThemeStore } from '@/stores/themeStore'
 import { computed } from 'vue'
+import ProgressSpinner from 'primevue/progressspinner'
 
+defineProps<{
+  loading?: boolean
+}>()
 
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
   validationSchema: toTypedSchema(schema),
@@ -29,20 +33,19 @@ const { handleSubmit, errors, defineField } = useForm<FormValues>({
     email: '',
     address: '',
     phone: '',
-    birthdate:undefined,
-    headquarter:undefined,
+    birthdate: undefined,
+    headquarter: undefined,
     password: '',
     confirmPassword: '',
     term: false,
   },
 })
 
-
 //headquarkers
 const headquarkers = [
-  { name: 'Ica', value: 1},
+  { name: 'Ica', value: 1 },
   { name: 'Parcona', value: 2 },
-  { name: 'Tinguiña', value: 3 }
+  { name: 'Tinguiña', value: 3 },
 ]
 
 // binding
@@ -64,17 +67,13 @@ const emit = defineEmits(['register'])
 
 //for send
 const onSubmit = handleSubmit((values) => {
-  emit('register',values)
+  emit('register', values)
 })
-
 
 //for theme
 
-const storeTheme = useThemeStore();
-const imageLogo=computed(()=>(
-  storeTheme.isDark? LogoWhite: LogoRose
-))
-
+const storeTheme = useThemeStore()
+const imageLogo = computed(() => (storeTheme.isDark ? LogoWhite : LogoRose))
 </script>
 
 <template>
@@ -86,7 +85,12 @@ const imageLogo=computed(()=>(
     </template>
     <template #title><h3 class="h3 text-center">Registro</h3></template>
     <template #content>
+      <div v-if="loading" class="min-h-96 w-full flex items-center justify-center">
+        <ProgressSpinner />
+      </div>
+
       <form
+        v-if="!loading"
         @submit.prevent="onSubmit"
         class="flex flex-col gap-4 w-full max-w-xl xs:min-w-96 sm:min-w-md text-neutral-950 dark:text-surface-0"
       >
@@ -97,7 +101,7 @@ const imageLogo=computed(()=>(
           <InputGroupAddon class="text-neutral-400">
             <i class="pi pi-id-card"></i>
           </InputGroupAddon>
-          <InputText v-bind="dniAttrs" v-model="dni" type="text" placeholder="DNI"  />
+          <InputText v-bind="dniAttrs" v-model="dni" type="text" placeholder="DNI" />
         </InputGroup>
 
         <Message v-if="errors.dni" severity="error" size="small" variant="simple">
@@ -111,13 +115,7 @@ const imageLogo=computed(()=>(
           <InputGroupAddon class="text-neutral-400">
             <i class="pi pi-user"></i>
           </InputGroupAddon>
-          <InputText
-            v-bind="namesAttrs"
-            v-model="names"
-            type="text"
-            placeholder="Nombres"
-
-          />
+          <InputText v-bind="namesAttrs" v-model="names" type="text" placeholder="Nombres" />
         </InputGroup>
 
         <Message v-if="errors.names" severity="error" size="small" variant="simple">
@@ -136,7 +134,6 @@ const imageLogo=computed(()=>(
             v-model="lastnames"
             type="text"
             placeholder="Apellidos"
-
           />
         </InputGroup>
 
@@ -156,7 +153,6 @@ const imageLogo=computed(()=>(
             v-model="email"
             type="text"
             placeholder="Correo electrónico"
-
           />
         </InputGroup>
 
@@ -171,13 +167,7 @@ const imageLogo=computed(()=>(
           <InputGroupAddon class="text-neutral-400">
             <i class="pi pi-home"></i>
           </InputGroupAddon>
-          <InputText
-            v-bind="addressAttrs"
-            v-model="address"
-            type="text"
-            placeholder="Dirección"
-
-          />
+          <InputText v-bind="addressAttrs" v-model="address" type="text" placeholder="Dirección" />
         </InputGroup>
 
         <Message v-if="errors.address" severity="error" size="small" variant="simple">
@@ -191,13 +181,7 @@ const imageLogo=computed(()=>(
           <InputGroupAddon class="text-neutral-400">
             <i class="pi pi-mobile"></i>
           </InputGroupAddon>
-          <InputText
-            v-bind="phoneAttrs"
-            v-model="phone"
-            type="tel"
-            placeholder="Celular"
-
-          />
+          <InputText v-bind="phoneAttrs" v-model="phone" type="tel" placeholder="Celular" />
         </InputGroup>
 
         <Message v-if="errors.phone" severity="error" size="small" variant="simple">
@@ -207,19 +191,31 @@ const imageLogo=computed(()=>(
         <!-- birthDate -->
         <label>Fecha Nacimiento</label>
 
-        <DatePicker v-bind="birthdateAttrs" v-model="birthdate" showIcon fluid iconDisplay="input" />
+        <DatePicker
+          v-bind="birthdateAttrs"
+          v-model="birthdate"
+          showIcon
+          fluid
+          iconDisplay="input"
+        />
         <Message v-if="errors.birthdate" severity="error" size="small" variant="simple">
           {{ errors.birthdate }}
         </Message>
 
         <!--headquarker-->
         <label>Sede</label>
-        <Select v-bind="headquarterAttrs" v-model="headquarter" :options="headquarkers" optionLabel="name" optionValue="value" placeholder="Selecciona headquarker"  />
+        <Select
+          v-bind="headquarterAttrs"
+          v-model="headquarter"
+          :options="headquarkers"
+          optionLabel="name"
+          optionValue="value"
+          placeholder="Selecciona sede"
+        />
 
         <Message v-if="errors.headquarter" severity="error" size="small" variant="simple">
           {{ errors.headquarter }}
         </Message>
-
 
         <!-- password -->
         <label>Contraseña</label>
@@ -268,12 +264,7 @@ const imageLogo=computed(()=>(
         </Message>
         <!-- button -->
 
-          <Button
-            label="Registrar"
-            type="submit"
-            icon="pi pi-check-circle"
-            iconPos="right"
-          />
+        <Button label="Registrar" type="submit" icon="pi pi-check-circle" iconPos="right" />
       </form>
     </template>
   </Card>

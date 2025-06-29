@@ -4,11 +4,43 @@ import SwitchTheme from '@/components/SwitchTheme.vue'
 import type { FormValues as LoginSchema } from '@/validation-schemas-forms/schema-login'
 import { useAuthentication } from '@/composables/useAuthentication'
 import { useRouter } from 'vue-router'
+import { useToast } from 'primevue/usetoast'
+import { watch } from 'vue'
 
 //get methods for use
 const { loading, error, loginClient, loginEmployee } = useAuthentication()
 //for router
 const router = useRouter()
+
+const toast = useToast()
+
+const showToast = (message: string) => {
+  toast.add({
+    severity: 'error',
+    summary: 'Error',
+    detail: message,
+    life: 3000,
+  })
+}
+
+//for showToast error
+
+watch(()=>error.loginClient,
+(newVal)=>{
+  if(newVal){
+    showToast('Error al iniciar sesión como cliente')
+  }
+})
+
+watch(()=>error.loginEmployee,
+(newVal)=>{
+  if(newVal){
+    showToast('Error al iniciar sesión como empleado')
+  }
+})
+
+
+
 //fuction for get info for cardLogin
 const login = async (loginRequest: { loginRequest: LoginSchema; isEmployee: boolean }) => {
   if (loginRequest.isEmployee) {
@@ -45,8 +77,10 @@ const login = async (loginRequest: { loginRequest: LoginSchema; isEmployee: bool
     <div class="p-2 absolute top-0 w-full flex justify-end">
       <SwitchTheme />
     </div>
-    <CardLogin @login="login($event)" class="self-center" />
-    <p v-if="loading.loginClient || loading.loginEmployee">Cargando ...</p>
-    <p v-if="error.loginClient || error.loginEmployee">Error al iniciar sesion</p>
+    <CardLogin
+      :loading="Boolean(loading.loginClient) || Boolean(loading.loginEmployee)"
+      @login="login($event)"
+      class="self-center"
+    />
   </div>
 </template>

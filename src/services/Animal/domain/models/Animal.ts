@@ -14,7 +14,7 @@ export interface Animal {
       name: string
     }
   }
-  clientId: number
+  clientId?: number
 }
 
 export interface AnimalRequest {
