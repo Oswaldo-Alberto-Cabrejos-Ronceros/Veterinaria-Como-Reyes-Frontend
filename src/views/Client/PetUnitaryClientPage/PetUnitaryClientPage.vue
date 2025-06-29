@@ -5,78 +5,57 @@ import { onMounted, ref } from 'vue'
 import Image from 'primevue/image'
 import DatePicker from 'primevue/datepicker'
 import Message from 'primevue/message'
-import CardAppointmentSecondary from '@/components/CardAppointmentSecondary.vue'
 import { usePet } from '@/composables/usePet'
-
+import { useVeterinaryRecord } from '@/composables/useVeterinaryRecord'
+import type { VeterinaryRecordInfoTable } from '@/models/VeterinaryRecordInfoTable'
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
+import Button from 'primevue/button'
 const props = defineProps<{
   petId: string
 }>()
 
-const { loading, error, getPetById } = usePet()
+const { loading: petLoading, error: petError, getPetById } = usePet()
+
+const {
+  loading: veterinaryRecordLoading,
+  error: veterinaryRecordError,
+  getAllInfoVeterinaryRecordsByPet,
+} = useVeterinaryRecord()
 
 const petData = ref<Pet | null>(null)
+//for record
+const veterinaryRecords = ref<VeterinaryRecordInfoTable[]>([])
+
+//for loadVeterinaryRecords
+const loadVeterinaryRecords = async (petId: number) => {
+  veterinaryRecords.value = await getAllInfoVeterinaryRecordsByPet(petId)
+}
 
 onMounted(async () => {
   console.log(props.petId)
   console.log(Number(props.petId))
   petData.value = await getPetById(Number(props.petId))
   console.log(props.petId)
+  loadVeterinaryRecords(Number(props.petId))
 })
 
-//examples for appointments
-const appointments = [
-  {
-    appointmentId: 101,
-    appointmentStatus: 'Pendiente',
-    date: '2025-06-05',
-    duration: '45 min',
-    serviceName: 'Baño Canino',
-    serviceDescription: 'Baño completo con productos especiales para el cuidado del pelaje canino.',
-  },
-  {
-    appointmentId: 102,
-    appointmentStatus: 'Completado',
-    date: '2025-06-01',
-    duration: '30 min',
-    serviceName: 'Consulta Veterinaria',
-    serviceDescription:
-      'Evaluación médica general para detectar enfermedades y controlar el estado de salud.',
-  },
-  {
-    appointmentId: 103,
-    appointmentStatus: 'Cancelado',
-    date: '2025-05-29',
-    duration: '15 min',
-    serviceName: 'Vacunación Antirrábica',
-    serviceDescription: 'Aplicación de vacuna antirrábica según el calendario nacional.',
-  },
-  {
-    appointmentId: 104,
-    appointmentStatus: 'En progreso',
-    date: '2025-06-03',
-    duration: '20 min',
-    serviceName: 'Desparasitación Interna',
-    serviceDescription: 'Tratamiento para eliminar parásitos intestinales en mascotas.',
-  },
-  {
-    appointmentId: 105,
-    appointmentStatus: 'Pendiente',
-    date: '2025-06-06',
-    duration: '10 min',
-    serviceName: 'Corte de Uñas',
-    serviceDescription: 'Recorte de uñas para evitar lesiones o molestias al caminar.',
-  },
-]
+//for export
+
+const dt = ref()
+const exportCSV = () => {
+  dt.value.exportCSV()
+}
 </script>
 <template>
   <div class="layout-principal-flex">
     <Card class="card-principal-color-neutral">
       <template #title>
-        <Message v-if="loading.getPetById" severity="warn" size="small" variant="simple">
+        <Message v-if="petLoading.getPetById" severity="warn" size="small" variant="simple">
           Cargando ...
         </Message>
         <!-- for messague error -->
-        <Message v-if="error.getPetById" severity="error" size="small" variant="simple">
+        <Message v-if="petError.getPetById" severity="error" size="small" variant="simple">
           Error al cargar la información de la mascota
         </Message>
         <div class="textLg flex gap-2">
@@ -117,25 +96,123 @@ const appointments = [
           <!-- section appointements -->
           <!-- title and select -->
           <div class="w-full flex justify-between items-center">
-            <h3 class="h3">Mis citas</h3>
+            <h3 class="h3">Mis historial clínico</h3>
             <div>
               <!-- for month -->
               <DatePicker view="month" date-format="mm-yy"></DatePicker>
               <!-- for yerar -->
             </div>
           </div>
-          <div class="w-full grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2">
-            <CardAppointmentSecondary
-              v-for="appointment in appointments"
-              :key="appointment.appointmentId"
-              :appointment-id="appointment.appointmentId"
-              :appointment-status="appointment.appointmentStatus"
-              :date="appointment.date"
-              :duration="appointment.duration"
-              :service-name="appointment.serviceName"
-              :service-description="appointment.serviceDescription"
-            ></CardAppointmentSecondary>
-          </div>
+          <Message
+            v-if="veterinaryRecordLoading.getPetById"
+            severity="warn"
+            size="small"
+            variant="simple"
+          >
+            Cargando ...
+          </Message>
+          <!-- for messague error -->
+          <Message
+            v-if="veterinaryRecordError.getPetById"
+            severity="error"
+            size="small"
+            variant="simple"
+          >
+            Error al cargar el historial de la mascota
+          </Message>
+          <!-- table -->
+          <DataTable
+            v-if="veterinaryRecords"
+            :value="veterinaryRecords"
+            paginator
+            :rows="10"
+            :rows-per-page-options="[10, 15, 20, 25, 30]"
+            ref="dt"
+          >
+            <template #header>
+              <div class="w-full flex flex-col xs:flex-row justify-between gap-2 pb-4">
+                <Button
+                  icon="pi pi-plus-circle"
+                  iconPos="right"
+                  severity="success"
+                  label="Agregar ficha clínica"
+                />
+                <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
+              </div>
+            </template>
+            <Column field="date" sortable header="Fecha" style="width: 10%"></Column>
+            <Column
+              field="nameHeadquarter"
+              sortable
+              header="Sede"
+              class="hidden lg:table-cell"
+              style="width: 12%"
+            ></Column>
+            <Column
+              field="nameEmployee"
+              class="hidden xl:table-cell"
+              header="Empleado"
+              sortable
+              style="width: 15%"
+            ></Column>
+            <Column
+              field="diagnosis"
+              class="hidden xs:table-cell sm:hidden lg:table-cell"
+              header="Diagnostico"
+              sortable
+              style="width: 10%"
+            ></Column>
+            <Column
+              field="treatment"
+              class="hidden xl:table-cell"
+              header="Tratamiento"
+              sortable
+              style="width: 10%"
+            ></Column>
+            <Column
+              field="observation"
+              class="table-cell sm:hidden lg:table-cell"
+              header="Observación"
+              sortable
+              style="width: 10%"
+            ></Column>
+            <Column
+              field="status"
+              class="hidden md:table-cell"
+              header="Estado"
+              sortable
+              style="width: 12%"
+            ></Column>
+            <Column>
+              <template #body>
+                <div
+                  class="flex justify-between items-center flex-col sm:flex-row lg:flex-row gap-1"
+                >
+                  <Button
+                    icon="pi pi-eye"
+                    severity="info"
+                    variant="outlined"
+                    aria-label="Filter"
+                    rounded
+                  ></Button>
+                  <Button
+                    icon="pi pi-pencil"
+                    severity="warn"
+                    variant="outlined"
+                    aria-label="Filter"
+                    rounded
+                  ></Button>
+                  <Button
+                    icon="pi pi-file"
+                    severity="success"
+                    variant="outlined"
+                    aria-label="Filter"
+                    rounded
+                  ></Button>
+                </div>
+              </template>
+            </Column>
+          </DataTable>
         </div>
       </template>
     </Card>

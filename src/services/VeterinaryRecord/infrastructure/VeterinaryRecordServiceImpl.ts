@@ -57,7 +57,7 @@ export class VeterinaryRecordServiceImpl implements VeterinaryRecordService {
     if (page) params.append('page', String(page))
     if (size) params.append('size', String(size))
     const response = await this.httpClient.get<PageResponse<VeterinaryRecordInfoTable>>(
-      `${this.url}/${animalId}?${params.toString()}`,
+      `${this.url}/animal/${animalId}?${params.toString()}`,
     )
     return response.data
   }
