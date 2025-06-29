@@ -102,6 +102,11 @@ const items = ref<MenuItem[][]>([
       icon: 'pi pi-clipboard',
       to: '/employee/administrator/appoinment-management',
     },
+    {
+      label: 'Atenciones',
+      icon: 'pi pi-file-edit',
+      to: '/employee/administrator/care-management',
+    },
   ],
   [
     {
@@ -128,6 +133,11 @@ const items = ref<MenuItem[][]>([
       label: 'Citas',
       icon: 'pi pi-clipboard',
       to: '/employee/manager/appoinment-management',
+    },
+    {
+      label: 'Atenciones',
+      icon: 'pi pi-file-edit',
+      to: '/employee/manager/care-management',
     },
   ],
   [
@@ -172,6 +182,11 @@ const items = ref<MenuItem[][]>([
       label: 'Citas',
       icon: 'pi pi-clipboard',
       to: '/employee/receptionist/appoinment-management',
+    },
+    {
+      label: 'Atenciones',
+      icon: 'pi pi-file-edit',
+      to: '/employee/receptionist/care-management',
     },
   ],
 ])

@@ -14,15 +14,25 @@ import { useVeterinaryService } from '@/composables/useVeterinaryService'
 import { onMounted, ref } from 'vue'
 import type { Headquarter } from '@/models/Headquarter'
 import type { Service } from '@/models/Service'
+import { useCare } from '@/composables/useCare'
+import type { Care } from '@/models/Care'
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
 
 onMounted(async () => {
   loadCares()
 })
 
 //methods for care
+const { loading, error, getAllCares } = useCare()
+
+//for cares
+
+const cares = ref<Care[]>([])
 
 //for loads care
 const loadCares = async () => {
+  cares.value = await getAllCares()
   headquartersOptions.value = headquartersServicesToOptionsSelect(await getAllHeadquarters())
   servicesOptions.value = headquartersServicesToOptionsSelect(await getAllVeterinaryServices())
 }
@@ -72,6 +82,13 @@ const statusOptions: OptionSelect[] = [
     name: 'Completada',
   },
 ]
+
+//for export
+
+const dt = ref()
+const exportCSV = () => {
+  dt.value.exportCSV()
+}
 </script>
 <template>
   <div class="layout-principal-flex">
@@ -164,6 +181,79 @@ const statusOptions: OptionSelect[] = [
               />
             </div>
           </form>
+
+          <!-- for messague loading  -->
+          <Message v-if="loading.getAllCares" severity="warn" size="small" variant="simple">
+            Cargando ...
+          </Message>
+          <!-- for messague error -->
+          <Message v-if="error.getAllCares" severity="error" size="small" variant="simple">
+            Error al cargar las atenciones
+          </Message>
+          <!-- table -->
+          <DataTable
+            v-if="cares"
+            :value="cares"
+            paginator
+            :rows="10"
+            :rows-per-page-options="[10, 15, 20, 25, 30]"
+            ref="dt"
+          >
+            <template #header>
+              <div class="w-full flex flex-col xs:flex-row justify-between gap-2 pb-4">
+                <Button
+                  icon="pi pi-plus-circle"
+                  iconPos="right"
+                  severity="success"
+                  label="Agregar Cita"
+                />
+                <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
+              </div>
+            </template>
+            <Column
+              field="dateTime"
+              sortable
+              header="Dia programado"
+              class="hidden lg:table-cell"
+              style="width: 30%"
+            ></Column>
+            <Column
+              field="statusCare"
+              sortable
+              header="Estado"
+              class="hidden lg:table-cell"
+              style="width: 30%"
+            ></Column>
+            <Column>
+              <template #body>
+                <div
+                  class="flex justify-between items-center flex-row lg:flex-col xl:flex-row gap-1"
+                >
+                  <Button
+                    icon="pi pi-eye"
+                    severity="info"
+                    variant="outlined"
+                    aria-label="Filter"
+                    rounded
+                  ></Button>
+                  <Button
+                    icon="pi pi-pencil"
+                    severity="warn"
+                    variant="outlined"
+                    aria-label="Filter"
+                    rounded
+                  ></Button>
+                  <Button
+                    icon="pi pi-trash"
+                    severity="danger"
+                    variant="outlined"
+                    aria-label="Filter"
+                    rounded
+                  ></Button>
+                </div>
+              </template>
+            </Column>
+          </DataTable>
         </div>
       </template>
     </Card>

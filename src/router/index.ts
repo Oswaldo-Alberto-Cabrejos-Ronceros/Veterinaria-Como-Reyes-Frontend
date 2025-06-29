@@ -19,6 +19,7 @@ import BreedManagementPage from '@/views/Employee/BreedManagementPage/BreedManag
 import ServicesHeadquarterManagementPage from '@/views/Employee/ServicesHeadquarterManagementPage/ServicesHeadquarterManagementPage.vue'
 import PaymentManagementPage from '@/views/Employee/PaymentManagementPage/PaymentManagementPage.vue'
 import AppointmentManagementPage from '@/views/Employee/AppointmentManagementPage/AppointmentManagementPage.vue'
+import CareManagementPage from '@/views/Employee/CareManagementPage/CareManagementPage.vue'
 //client
 import MyAppointmentsClientPage from '@/views/Client/MyAppointmentsClientPage/MyAppointmentsClientPage.vue'
 import MyPetsPage from '@/views/Client/MyPetsPage/MyPetsPage.vue'
@@ -180,6 +181,11 @@ const router = createRouter({
               name: 'administrator-appoinment-management',
               component: AppointmentManagementPage,
             },
+            {
+              path: 'care-management',
+              name: 'administrator-care-management',
+              component: CareManagementPage,
+            },
           ],
         },
         {
@@ -217,6 +223,11 @@ const router = createRouter({
               name: 'manager-appoinment-management',
               component: AppointmentManagementPage,
             },
+            {
+              path: 'care-management',
+              name: 'manager-care-management',
+              component: CareManagementPage,
+            },
           ],
         },
         {
@@ -249,6 +260,11 @@ const router = createRouter({
               path: 'appoinment-management',
               name: 'receptionist-appoinment-management',
               component: AppointmentManagementPage,
+            },
+            {
+              path: 'care-management',
+              name: 'receptionist-care-management',
+              component: CareManagementPage,
             },
           ],
         },
