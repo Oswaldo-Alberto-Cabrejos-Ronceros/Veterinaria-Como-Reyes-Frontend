@@ -8,8 +8,8 @@ export interface Payment {
   amount: number
   paymentMethod: string
   paymentMethodId: number
-  date: string | Date
-  time: string | Date
+  date: string
+  time: string
   state: string
   employeeAssigned: string
 }
