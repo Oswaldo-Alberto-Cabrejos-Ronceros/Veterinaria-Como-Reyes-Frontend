@@ -5,6 +5,7 @@ import type {
   AppointmentRequest,
   TimesForTurn,
   BasicServiceForAppointment,
+  InfoBasicAppointment,
 } from '../domain/models/Appointment'
 
 export class AppointmentServiceImpl implements AppointmentService {
@@ -63,9 +64,18 @@ export class AppointmentServiceImpl implements AppointmentService {
     speciesId: number,
   ): Promise<BasicServiceForAppointment[]> {
     const params = new URLSearchParams()
-    params.append('headquarterId',headquarterId.toString())
-    params.append('speciesId',speciesId.toString())
-    const response = await this.httpClient.get<BasicServiceForAppointment[]>(`${this.url}/services?${params.toString()}`)
+    params.append('headquarterId', headquarterId.toString())
+    params.append('speciesId', speciesId.toString())
+    const response = await this.httpClient.get<BasicServiceForAppointment[]>(
+      `${this.url}/services?${params.toString()}`,
+    )
+    return response.data
+  }
+
+  async getAppointmentsForClient(clientId: number): Promise<InfoBasicAppointment[]> {
+    const response = await this.httpClient.get<InfoBasicAppointment[]>(
+      `${this.url}/client/${clientId}/panel`,
+    )
     return response.data
   }
 }
