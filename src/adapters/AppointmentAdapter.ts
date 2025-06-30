@@ -4,6 +4,8 @@ import { EmployeeAdapter } from './EmployeeAdapter'
 import { AnimalAdapter } from './AnimalAdapter'
 import type { AppointmentRequest } from '@/services/Appointment/domain/models/Appointment'
 import type { AppointmentRequest as AppointmentRequestView } from '@/models/AppointmentRequest'
+import type { InfoBasicAppointment } from '@/services/Appointment/domain/models/Appointment'
+import type { InfoBasicAppointmentClient } from '@/models/InfoBasicAppointmentClient'
 import { DateAdapter } from './DateAdapter'
 
 export class AppointmentAdapter {
@@ -33,6 +35,29 @@ export class AppointmentAdapter {
       headquarterVetServiceId: appointmentRequest.headquarterVetServiceId,
       animalId: appointmentRequest.petId,
       paymentMethodId: appointmentRequest.paymentMethodId,
+    }
+  }
+
+  static fromInfoBasicAppointmentToInfoBasicAppointmentInfoClient(
+    infoBasicAppointment: InfoBasicAppointment,
+  ): InfoBasicAppointmentClient {
+    return {
+      id: infoBasicAppointment.id,
+      date: infoBasicAppointment.date,
+      time: infoBasicAppointment.time,
+      animal: {
+        name: infoBasicAppointment.animalName,
+      },
+      service: {
+        name: infoBasicAppointment.serviceName,
+        description: infoBasicAppointment.serviceDescription,
+        image: infoBasicAppointment.serviceImage,
+      },
+      categoryService: {
+        name: infoBasicAppointment.categoryServiceName,
+      },
+      status: infoBasicAppointment.status,
+      duration: infoBasicAppointment.duration,
     }
   }
 }

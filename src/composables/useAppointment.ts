@@ -9,6 +9,7 @@ import type { BasicServiceForAppointment as BasicServiceForAppointmentView } fro
 import { BasicServiceForAppointmentAdapter } from '@/adapters/BasicServiceForAppoinment'
 import { DateAdapter } from '@/adapters/DateAdapter'
 import type { AppointmentRequest as AppointmentRequestView } from '@/models/AppointmentRequest'
+import type { InfoBasicAppointmentClient } from '@/models/InfoBasicAppointmentClient'
 
 export function useAppointment() {
   //get from useAsyncHandle
@@ -89,6 +90,17 @@ export function useAppointment() {
     return AppointmentAdapter.toAppointmentView(appointment)
   }
 
+  const getAppointmentsForClient = async (
+    clientId: number,
+  ): Promise<InfoBasicAppointmentClient[]> => {
+    const appointments = await runUseCase('getAppointmentsForClient', () =>
+      appointmentUsesCases.getAppointmentsForClient.execute(clientId),
+    )
+    return appointments.map((appointment) =>
+      AppointmentAdapter.fromInfoBasicAppointmentToInfoBasicAppointmentInfoClient(appointment),
+    )
+  }
+
   return {
     loading,
     error,
@@ -100,5 +112,6 @@ export function useAppointment() {
     getAvailableTimes,
     getServicesByHeadquarterAndSpecies,
     updateAppointment,
+    getAppointmentsForClient,
   }
 }
