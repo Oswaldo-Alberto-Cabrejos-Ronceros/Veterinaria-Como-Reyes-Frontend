@@ -1,11 +1,18 @@
 import type { PageResponse } from '@/services/models/PageResponse'
-import type { Client,ClientRequest, ClientUpdateAsClient, MyInfoClient } from '../domain/models/Client'
+import type {
+  Client,
+  ClientBasicInfoByDni,
+  ClientRequest,
+  ClientUpdateAsClient,
+  MyInfoClient,
+} from '../domain/models/Client'
 import type { ClientService } from '../domain/services/ClientService'
 import type { HttpClient } from '@/services/Http/model/HttpClient'
 
 export class ClientServiceImpl implements ClientService {
   //inject httpClient
   constructor(private readonly httpClient: HttpClient) {}
+
   private urlBase = '/client'
 
   async getClientById(clientId: number): Promise<Client> {
@@ -51,7 +58,7 @@ export class ClientServiceImpl implements ClientService {
     const response = await this.httpClient.get<Client[]>(this.urlBase)
     return response.data
   }
-  async updateClient(clientId: number,clientRequest: ClientRequest): Promise<Client> {
+  async updateClient(clientId: number, clientRequest: ClientRequest): Promise<Client> {
     const response = await this.httpClient.put<Client>(`${this.urlBase}/${clientId}`, clientRequest)
     return response.data
   }
@@ -67,7 +74,10 @@ export class ClientServiceImpl implements ClientService {
     const response = this.httpClient.get<MyInfoClient>(`${this.urlBase}/${clientId}/my-info`)
     return (await response).data
   }
-  async updateClientAsClient(clientId: number, clientUpdateAsClient: ClientUpdateAsClient): Promise<string> {
+  async updateClientAsClient(
+    clientId: number,
+    clientUpdateAsClient: ClientUpdateAsClient,
+  ): Promise<string> {
     const response = await this.httpClient.put<string>(
       `${this.urlBase}/${clientId}/update-my-info`,
       clientUpdateAsClient,
@@ -78,6 +88,15 @@ export class ClientServiceImpl implements ClientService {
     const response = await this.httpClient.patch<string>(`${this.urlBase}/${clientId}/blockNote`, {
       blockNote: blockNote,
     })
+    return response.data
+  }
+
+  async getClientByDni(dni: string): Promise<ClientBasicInfoByDni> {
+    const params = new URLSearchParams()
+    params.append('dni', dni)
+    const response = await this.httpClient.get<ClientBasicInfoByDni>(
+      `${this.urlBase}/by-dni?${params.toString()}`,
+    )
     return response.data
   }
 }
