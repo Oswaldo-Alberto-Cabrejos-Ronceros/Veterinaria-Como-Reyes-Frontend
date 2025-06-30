@@ -4,7 +4,7 @@ export interface Payment {
   paymentDateTime: string
   status: string
   appointmentId: number
-  careId: number
+  careId?: number
   paymentMethodId: number
 }
 
@@ -13,7 +13,7 @@ export interface PaymentRequest {
   paymentDateTime: string
   status: string
   appointmentId: number
-  careId: number
+  careId?: number
   paymentMethodId: number
 }
 
