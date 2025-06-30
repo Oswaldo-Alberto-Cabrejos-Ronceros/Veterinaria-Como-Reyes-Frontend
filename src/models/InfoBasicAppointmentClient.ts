@@ -2,7 +2,7 @@ export interface InfoBasicAppointmentClient{
     id:number
   date:string
   time:string
-  animal:{
+  pet:{
     name:string
   }
   service:{

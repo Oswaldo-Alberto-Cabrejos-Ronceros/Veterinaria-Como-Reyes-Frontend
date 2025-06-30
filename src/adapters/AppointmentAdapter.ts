@@ -45,7 +45,7 @@ export class AppointmentAdapter {
       id: infoBasicAppointment.id,
       date: infoBasicAppointment.date,
       time: infoBasicAppointment.time,
-      animal: {
+      pet: {
         name: infoBasicAppointment.animalName,
       },
       service: {

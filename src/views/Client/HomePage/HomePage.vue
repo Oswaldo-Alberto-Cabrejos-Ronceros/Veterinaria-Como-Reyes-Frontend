@@ -14,6 +14,7 @@ import { RouterLink } from 'vue-router'
 import { useClient } from '@/composables/useClient'
 import { useAppointment } from '@/composables/useAppointment'
 import type { BasicServiceForAppointment } from '@/models/BasicServiceForAppointment'
+import type { InfoBasicAppointmentClient } from '@/models/InfoBasicAppointmentClient'
 
 //methods
 const { getEntityId } = useAuthentication()
@@ -21,61 +22,13 @@ const { getEntityId } = useAuthentication()
 const { error: petError, loading: petLoading, getPetByClientId } = usePet()
 
 const {
-  error: servicesError,
-  loading: servicesLoading,
+  error: appointmentError,
+  loading: appointmentLoading,
   getServicesByHeadquarterAndSpecies,
+  getAppointmentsForClient,
 } = useAppointment()
 
 const { myInfoAsClient } = useClient()
-
-//examples for cardsAppointment
-const cardsAppointmentPrimaryPropsExamples = [
-  {
-    serviceImageUrl:
-      'https://cdn-3.expansion.mx/dims4/default/de4dfa6/2147483647/resize/1280x/quality/90/?url=https%3A%2F%2Fcdn-3.expansion.mx%2F25%2F6d%2Fa3d0b9864c02ac9012d14c2885c1%2Fistock-1489457497.jpg',
-    serviceName: 'Grooming',
-    petName: 'Firulais',
-    date: '2025-06-05',
-    time: '10:00 AM',
-    appointmentId: 0,
-  },
-  {
-    serviceImageUrl:
-      'https://cdn-3.expansion.mx/dims4/default/de4dfa6/2147483647/resize/1280x/quality/90/?url=https%3A%2F%2Fcdn-3.expansion.mx%2F25%2F6d%2Fa3d0b9864c02ac9012d14c2885c1%2Fistock-1489457497.jpg',
-    serviceName: 'Vacunación',
-    petName: 'Misha',
-    date: '2025-06-06',
-    time: '02:30 PM',
-    appointmentId: 1,
-  },
-  {
-    serviceImageUrl:
-      'https://cdn-3.expansion.mx/dims4/default/de4dfa6/2147483647/resize/1280x/quality/90/?url=https%3A%2F%2Fcdn-3.expansion.mx%2F25%2F6d%2Fa3d0b9864c02ac9012d14c2885c1%2Fistock-1489457497.jpg',
-    serviceName: 'Consulta general',
-    petName: 'Rocky',
-    date: '2025-06-07',
-    time: '11:15 AM',
-    appointmentId: 2,
-  },
-  {
-    serviceImageUrl:
-      'https://cdn-3.expansion.mx/dims4/default/de4dfa6/2147483647/resize/1280x/quality/90/?url=https%3A%2F%2Fcdn-3.expansion.mx%2F25%2F6d%2Fa3d0b9864c02ac9012d14c2885c1%2Fistock-1489457497.jpg',
-    serviceName: 'Desparasitación',
-    petName: 'Luna',
-    date: '2025-06-08',
-    time: '09:45 AM',
-    appointmentId: 3,
-  },
-  {
-    serviceImageUrl:
-      'https://cdn-3.expansion.mx/dims4/default/de4dfa6/2147483647/resize/1280x/quality/90/?url=https%3A%2F%2Fcdn-3.expansion.mx%2F25%2F6d%2Fa3d0b9864c02ac9012d14c2885c1%2Fistock-1489457497.jpg',
-    serviceName: 'Baño medicado',
-    petName: 'Thor',
-    date: '2025-06-09',
-    time: '04:00 PM',
-    appointmentId: 3,
-  },
-]
 
 //examples for testCards
 const testExamples = [
@@ -113,10 +66,13 @@ const testExamples = [
 
 //example for pet cards
 const pets = ref<PetByClient[]>([])
+const services = ref<BasicServiceForAppointment[]>([])
+const appointments = ref<InfoBasicAppointmentClient[]>([])
 //get all for view
 onMounted(() => {
   loadPets()
   loadServicesByHeadquarterSpecie()
+  loadAppointments()
 })
 
 const loadPets = async () => {
@@ -138,7 +94,12 @@ const loadServicesByHeadquarterSpecie = async () => {
   }
 }
 
-const services = ref<BasicServiceForAppointment[]>([])
+const loadAppointments = async () => {
+  const clientId = getEntityId()
+  if (clientId) {
+    appointments.value = await getAppointmentsForClient(clientId)
+  }
+}
 </script>
 
 <template>
@@ -154,17 +115,35 @@ const services = ref<BasicServiceForAppointment[]>([])
           <!-- apointments -->
           <div>
             <h3 class="text-xl mb-4">Citas Programadas</h3>
-            <ScrollPanel class="max-h-96 pr-4">
+            <ScrollPanel class="h-96 pr-4">
               <div class="flex flex-col gap-2">
+                                <!-- for messague loading  -->
+                <Message
+                  v-if="appointmentLoading.getAppointmentsForClient"
+                  severity="warn"
+                  size="small"
+                  variant="simple"
+                >
+                  Cargando ...
+                </Message>
+                <!-- for messague error -->
+                <Message
+                  v-if="appointmentError.getAppointmentsForClient"
+                  severity="error"
+                  size="small"
+                  variant="simple"
+                >
+                  Error al cargar tus citas
+                </Message>
                 <CardAppointmentPrimary
-                  v-for="example in cardsAppointmentPrimaryPropsExamples"
-                  :key="example.appointmentId"
-                  :appointmentId="example.appointmentId"
-                  :serviceImageUrl="example.serviceImageUrl"
-                  :serviceName="example.serviceName"
-                  :petName="example.serviceName"
-                  :date="example.date"
-                  :time="example.time"
+                  v-for="appointment in appointments"
+                  :key="appointment.id"
+                  :appointmentId="appointment.id"
+                  :serviceImageUrl="appointment.service.image"
+                  :serviceName="appointment.service.name"
+                  :petName="appointment.pet.name"
+                  :date="appointment.date"
+                  :time="appointment.time"
                 ></CardAppointmentPrimary>
               </div>
             </ScrollPanel>
@@ -211,7 +190,8 @@ const services = ref<BasicServiceForAppointment[]>([])
                   Error al cargar tus mascotas
                 </Message>
                 <RouterLink v-for="pet in pets" :key="pet.id" :to="`/client/my-pets/${pet.id}`">
-                  <CardPetPrimary v-ripple
+                  <CardPetPrimary
+                    v-ripple
                     :key="pet.id"
                     :petId="pet.id"
                     :petImageUrl="pet.urlImage"
@@ -234,7 +214,7 @@ const services = ref<BasicServiceForAppointment[]>([])
               <div class="flex flex-col gap-2">
                 <!-- for messague loading  -->
                 <Message
-                  v-if="servicesLoading.getServicesByHeadquarterAndSpecies"
+                  v-if="appointmentLoading.getServicesByHeadquarterAndSpecies"
                   severity="warn"
                   size="small"
                   variant="simple"
@@ -243,12 +223,12 @@ const services = ref<BasicServiceForAppointment[]>([])
                 </Message>
                 <!-- for messague error -->
                 <Message
-                  v-if="servicesError.getServicesByHeadquarterAndSpecies"
+                  v-if="appointmentError.getServicesByHeadquarterAndSpecies"
                   severity="error"
                   size="small"
                   variant="simple"
                 >
-                  Error al cargar tus mascotas
+                  Error al cargar los servicios
                 </Message>
                 <CardServicePrimary
                   v-for="service in services"
