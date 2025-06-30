@@ -41,9 +41,11 @@ export class AxiosHttpClient implements HttpClient {
     )
   }
 
-  async get<T>(url: string): Promise<{ data: T }> {
+  async get<T>(url: string,params?:Record<string,string>): Promise<{ data: T }> {
     try {
-      const response = await this.axiosInstance.get<T>(url)
+      const response = await this.axiosInstance.get<T>(url,{
+        params
+      })
       return { data: response.data }
     } catch (e) {
       this.handleError(e as Error)

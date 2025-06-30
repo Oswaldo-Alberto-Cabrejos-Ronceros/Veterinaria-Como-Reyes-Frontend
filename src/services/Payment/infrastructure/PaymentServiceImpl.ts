@@ -1,6 +1,6 @@
 import type { HttpClient } from '@/services/Http/model/HttpClient'
 import type { PaymentService } from '../domain/services/PaymentService'
-import type { Payment } from '../domain/models/Payment'
+import type { Payment, PaymentList } from '../domain/models/Payment'
 
 export class PaymentServiceImpl implements PaymentService {
   constructor(private readonly httpClient: HttpClient) {}
