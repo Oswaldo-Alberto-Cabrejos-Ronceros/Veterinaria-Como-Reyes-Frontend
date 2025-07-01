@@ -16,5 +16,16 @@ export class PaymentAdapter {
     }
   }
 
-  
+  static fromPaymentListToPaymentListView(paymentList: PaymentList): PaymentListView {
+    return {
+      id: paymentList.id,
+      headquarterName: paymentList.headquarterName,
+      serviceName: paymentList.serviceName,
+      clientDni: paymentList.clientDni,
+      amount: paymentList.amount,
+      status: paymentList.status,
+      paymentMethod: paymentList.paymentMethod,
+      paymentDate: paymentList.paymentDate,
+    }
+  }
 }

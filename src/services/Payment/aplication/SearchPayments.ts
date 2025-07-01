@@ -2,7 +2,7 @@ import type { PaymentService } from "../domain/services/PaymentService";
 
 export class SearchPayments{
   constructor(private readonly paymentService: PaymentService) {}
-  async execute(    page: number,
+  async execute(page: number,
     size: number,
     options: {
       dni?: string
