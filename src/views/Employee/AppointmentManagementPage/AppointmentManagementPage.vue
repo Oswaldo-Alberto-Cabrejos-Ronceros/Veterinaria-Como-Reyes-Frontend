@@ -19,6 +19,7 @@ import { useAppointment } from '@/composables/useAppointment'
 import type { Appointment } from '@/models/Appointment'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
+import { useDialog } from 'primevue/usedialog'
 
 onMounted(async () => {
   loadAppoinments()
@@ -103,6 +104,11 @@ const dt = ref()
 const exportCSV = () => {
   dt.value.exportCSV()
 }
+
+//for dialog
+//for dialog
+const dialog = useDialog()
+
 </script>
 
 <template>
