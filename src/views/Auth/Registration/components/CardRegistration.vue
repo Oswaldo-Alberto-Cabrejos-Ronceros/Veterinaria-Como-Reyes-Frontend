@@ -19,9 +19,11 @@ import InputGroupAddon from 'primevue/inputgroupaddon'
 import { useThemeStore } from '@/stores/themeStore'
 import { computed } from 'vue'
 import ProgressSpinner from 'primevue/progressspinner'
+import type { OptionSelect } from '@/models/OptionSelect'
 
 defineProps<{
-  loading?: boolean
+  loading?: boolean,
+  headquartersOptions:OptionSelect[]
 }>()
 
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
@@ -41,12 +43,6 @@ const { handleSubmit, errors, defineField } = useForm<FormValues>({
   },
 })
 
-//headquarkers
-const headquarkers = [
-  { name: 'Ica', value: 1 },
-  { name: 'Parcona', value: 2 },
-  { name: 'Tinguiña', value: 3 },
-]
 
 // binding
 
@@ -207,7 +203,7 @@ const imageLogo = computed(() => (storeTheme.isDark ? LogoWhite : LogoRose))
         <Select
           v-bind="headquarterAttrs"
           v-model="headquarter"
-          :options="headquarkers"
+          :options="headquartersOptions"
           optionLabel="name"
           optionValue="value"
           placeholder="Selecciona sede"

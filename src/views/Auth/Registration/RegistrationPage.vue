@@ -6,9 +6,34 @@ import { useAuthentication } from '@/composables/useAuthentication'
 import type { UserClientRegister } from '@/models/UserClientRegister'
 import { useRouter } from 'vue-router'
 import { useToast } from 'primevue/usetoast'
-import { watch } from 'vue'
+import {  onMounted, ref,watch } from 'vue'
+import {useHeadquarter} from '@/composables/useHeadquarter'
+import type { OptionSelect } from '@/models/OptionSelect'
+import type { Headquarter } from '@/models/Headquarter'
 
 const { loading, error, registerUserClient } = useAuthentication()
+
+const { getAllHeadquarters } = useHeadquarter()
+
+const headquartersOptions = ref<OptionSelect[]>([])
+
+onMounted(async () => {
+  loadHeadquarters()
+})
+
+//for get options from headquarters
+
+const headquartersToOptionsSelect = (headquarters: Headquarter[]): OptionSelect[] => {
+  return headquarters.map((headquarter) => ({
+    value: headquarter.id,
+    name: headquarter.name,
+  }))
+}
+
+
+const loadHeadquarters= async()=>{
+    headquartersOptions.value = headquartersToOptionsSelect(await getAllHeadquarters())
+}
 
 const router = useRouter()
 
@@ -42,6 +67,6 @@ const register = async (registerRequest: RegisterRequest) => {
     <div class="p-2 absolute top-0 w-full flex justify-end">
       <SwitchTheme />
     </div>
-    <CardRegistration :loading="Boolean(loading.registerUserClient)" @register="register($event)" />
+    <CardRegistration :headquartersOptions="headquartersOptions" :loading="Boolean(loading.registerUserClient)" @register="register($event)" />
   </div>
 </template>
