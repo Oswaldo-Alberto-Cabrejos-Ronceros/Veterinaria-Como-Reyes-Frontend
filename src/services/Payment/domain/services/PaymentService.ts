@@ -1,3 +1,4 @@
+import type { PageResponse } from '@/services/models/PageResponse'
 import type { Payment, PaymentList } from '../models/Payment'
 
 export interface PaymentService {
@@ -6,7 +7,7 @@ export interface PaymentService {
   createPayment(paymentRequest: PaymentRequest): Promise<Payment>
   updatePayment(id: number, paymentRequest: PaymentRequest): Promise<Payment>
   deletePayment(id: number): Promise<void>
-  getAllPaymentsForTable(page: number, size: number, sort?: string): Promise<PaymentList[]>
+  getAllPaymentsForTable(page: number, size: number, sort?: string): Promise<PageResponse<PaymentList>>
   searchPayments(
     page: number,
     size: number,
@@ -19,5 +20,5 @@ export interface PaymentService {
       endDate?: string
     },
     sort?: string,
-  ): Promise<PaymentList[]>
+  ): Promise<PageResponse<PaymentList>>
 }

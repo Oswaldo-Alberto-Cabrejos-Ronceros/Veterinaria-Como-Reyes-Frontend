@@ -11,13 +11,25 @@ import Message from 'primevue/message'
 import Select from 'primevue/select'
 import DatePicker from 'primevue/datepicker'
 import Button from 'primevue/button'
-import Payments from '@/assets/data/payments.json'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import { ref } from 'vue'
-import { useDialog } from 'primevue'
-import ViewPaymentCard from './components/ViewPaymentCard.vue'
-import type { Payment } from '@/models/Payment'
+import { onMounted, ref } from 'vue'
+import { usePayment } from '@/composables/usePayment'
+import type { PaymentList } from '@/models/PaymentList'
+
+//methods
+
+const { error, loading, getAllPaymentsForTable } = usePayment()
+
+const payments = ref<PaymentList[]>([])
+
+const loadPayment = async () => {
+  payments.value = await getAllPaymentsForTable(1, 5)
+}
+
+onMounted(() => {
+  loadPayment()
+})
 
 //form
 const { handleSubmit, errors, defineField } = useForm<SearchPaymentMethodSchema>({
@@ -52,24 +64,6 @@ const services = [
   { name: 'Cirugía', value: 2 },
   { name: 'Radiografía', value: 3 },
 ]
-
-
-
-//for dialog
-const dialog = useDialog()
-
-
-const viewPayment=(paymentData:Payment)=>{
-  dialog.open(ViewPaymentCard,{
-    props:{
-      modal:true
-    },
-    data:{
-      paymentData:paymentData
-    }
-  })
-}
-
 
 //for export
 
@@ -139,7 +133,7 @@ const exportCSV = () => {
             </div>
 
             <div>
-              <label class="block mb-2">Fecha de nacimiento</label>
+              <label class="block mb-2">Fecha</label>
               <DatePicker v-bind="dateAttrs" v-model="date" showIcon fluid iconDisplay="input" />
               <Message v-if="errors.date" severity="error" size="small" variant="simple">
                 {{ errors.date }}
@@ -158,36 +152,49 @@ const exportCSV = () => {
             </div>
           </form>
 
+          <!-- for messague loading  -->
+          <Message
+            v-if="loading.getAllPaymentsForTable"
+            severity="warn"
+            size="small"
+            variant="simple"
+          >
+            Cargando ...
+          </Message>
+          <!-- for messague error -->
+          <Message
+            v-if="error.getAllPaymentsForTable"
+            severity="error"
+            size="small"
+            variant="simple"
+          >
+            Error al cargar los pagos
+          </Message>
+
           <!-- tabla -->
 
           <DataTable
-            :value="Payments"
+            :value="payments"
             paginator
             :rows="10"
             :rows-per-page-options="[10, 15, 20, 25, 30]"
             ref="dt"
           >
             <template #header>
-              <div class="w-full flex flex-col xs:flex-row justify-between gap-2 pb-4">
-                <Button
-                  icon="pi pi-file-plus"
-                  iconPos="right"
-                  severity="success"
-                  label="Agregar Pago"
-                />
+              <div class="w-full flex flex-col xs:flex-row justify-end gap-2 pb-4">
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
             </template>
             <Column field="clientDni" sortable header="Cliente" style="width: 10%"></Column>
             <Column
-              field="headquarter"
+              field="headquarterName"
               sortable
               header="Sede"
               class="hidden lg:table-cell"
               style="width: 12%"
             ></Column>
             <Column
-              field="service"
+              field="serviceName"
               class="hidden xl:table-cell"
               header="Servicio"
               sortable
@@ -208,21 +215,21 @@ const exportCSV = () => {
               style="width: 10%"
             ></Column>
             <Column
-              field="date"
+              field="paymentDate"
               class="table-cell sm:hidden lg:table-cell"
               header="Fecha"
               sortable
               style="width: 10%"
             ></Column>
             <Column
-              field="state"
+              field="status"
               class="hidden md:table-cell"
               header="Estado"
               sortable
               style="width: 12%"
             ></Column>
             <Column>
-              <template #body="{data}">
+              <template #body>
                 <div
                   class="flex justify-between items-center flex-col sm:flex-row lg:flex-row gap-1"
                 >
@@ -232,7 +239,6 @@ const exportCSV = () => {
                     variant="outlined"
                     aria-label="Filter"
                     rounded
-                    @click="viewPayment(data)"
                   ></Button>
                   <Button
                     icon="pi pi-pencil"

@@ -47,10 +47,10 @@ export function usePayment() {
     size: number,
     sort?: string,
   ): Promise<PaymentListView[]> => {
-    const payments = await runUseCase('getAllPaymentsForTable', () =>
+    const paymentsPage = await runUseCase('getAllPaymentsForTable', () =>
       paymentUsesCases.getAllPaymentsForTable.execute(page, size, sort),
     )
-    return payments.map((payment) => PaymentAdapter.fromPaymentListToPaymentListView(payment))
+    return paymentsPage.content.map((payment) => PaymentAdapter.fromPaymentListToPaymentListView(payment))
   }
 
   const searchPayments = async (
@@ -66,10 +66,10 @@ export function usePayment() {
     },
     sort?: string,
   ): Promise<PaymentListView[]> => {
-    const payments = await runUseCase('searchPayments', () =>
+    const paymentsPage = await runUseCase('searchPayments', () =>
       paymentUsesCases.searchPayments.execute(page, size, options, sort),
     )
-    return payments.map((payment) => PaymentAdapter.fromPaymentListToPaymentListView(payment))
+    return paymentsPage.content.map((payment) => PaymentAdapter.fromPaymentListToPaymentListView(payment))
   }
 
   return {

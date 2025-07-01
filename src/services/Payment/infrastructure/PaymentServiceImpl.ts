@@ -1,6 +1,7 @@
 import type { HttpClient } from '@/services/Http/model/HttpClient'
 import type { PaymentService } from '../domain/services/PaymentService'
 import type { Payment, PaymentList } from '../domain/models/Payment'
+import type { PageResponse } from '@/services/models/PageResponse'
 
 export class PaymentServiceImpl implements PaymentService {
   constructor(private readonly httpClient: HttpClient) {}
@@ -26,7 +27,7 @@ export class PaymentServiceImpl implements PaymentService {
   async deletePayment(id: number): Promise<void> {
     await this.httpClient.delete<void>(`${this.urlBase}/${id}`)
   }
-  async getAllPaymentsForTable(page: number, size: number, sort?: string): Promise<PaymentList[]> {
+  async getAllPaymentsForTable(page: number, size: number, sort?: string): Promise<PageResponse<PaymentList>> {
     const params: Record<string, string | number> = {
       page: page,
       size: size,
@@ -35,7 +36,7 @@ export class PaymentServiceImpl implements PaymentService {
     if (sort) {
       params.sort = sort
     }
-    const response = await this.httpClient.get<PaymentList[]>(`${this.urlBase}/list`, params)
+    const response = await this.httpClient.get<Promise<PageResponse<PaymentList>> >(`${this.urlBase}/list`, params)
     return response.data
   }
   async searchPayments(
@@ -50,7 +51,7 @@ export class PaymentServiceImpl implements PaymentService {
       endDate?: string
     },
     sort?: string,
-  ): Promise<PaymentList[]> {
+  ): Promise<PageResponse<PaymentList>>  {
     const params: Record<string, string | number> = {
       page,
       size,
@@ -84,7 +85,7 @@ export class PaymentServiceImpl implements PaymentService {
       params.sort = sort
     }
 
-    const response = await this.httpClient.get<PaymentList[]>(`${this.urlBase}/search`, params)
+    const response = await this.httpClient.get<PageResponse<PaymentList>>(`${this.urlBase}/search`, params)
     return response.data
   }
 }

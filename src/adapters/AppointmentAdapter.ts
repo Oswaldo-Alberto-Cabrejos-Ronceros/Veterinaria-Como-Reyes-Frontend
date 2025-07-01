@@ -12,8 +12,8 @@ export class AppointmentAdapter {
   static toAppointmentView(appoinment: Appointment): AppointmentView {
     return {
       id: appoinment.appointmentId,
-      scheduleDateTime: appoinment.scheduleDateTime,
-      creationDate: appoinment.creationDate,
+      scheduleDateTime: DateAdapter.fromISOFormalToStringFull(appoinment.scheduleDateTime),
+      creationDate: DateAdapter.fromISOFormalToStringFull(appoinment.creationDate) ,
       cancellationNote: appoinment.cancellationNote,
       statusAppointment: appoinment.statusAppointment,
       headquarterVetService: { id: appoinment.headquarterVetService.id },
