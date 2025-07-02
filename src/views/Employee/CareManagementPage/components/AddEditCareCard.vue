@@ -20,6 +20,7 @@ import { useAuthentication } from '@/composables/useAuthentication'
 import { usePet } from '@/composables/usePet'
 import { useEmployee } from '@/composables/useEmployee'
 import { useAppointment } from '@/composables/useAppointment'
+import type { Employee } from '@/models/Employee'
 
 
 //for methods
@@ -29,7 +30,7 @@ const { getClientByDni } = useClient()
 
 const { getPetByClientId } = usePet()
 
-const { getEmployeeById } = useEmployee()
+const { getAllEmployees,getEmployeeById } = useEmployee()
 
 const { getServicesByHeadquarterAndSpecies } = useAppointment()
 
@@ -41,6 +42,7 @@ const { handleSubmit, errors, defineField } = useForm<FormValues>({
     ownerId: undefined,
     ownerName: '',
     petId: undefined,
+    employeeId:undefined
   },
 })
 
@@ -51,6 +53,8 @@ const [ownerDni, ownerDniAttrs] = defineField('ownerDni')
 const [ownerId, ownerIdAttrs] = defineField('ownerId')
 const [ownerName, ownerNameAttrs] = defineField('ownerName')
 const [petId, petIdAttrs] = defineField('petId')
+const [employeeId, employeeIdAttrs] = defineField('employeeId')
+
 
 
 //for dynamicDialog
@@ -68,7 +72,7 @@ const petsOptions = ref<OptionSelect[]>([])
 const petsClient = ref<PetByClient[]>([])
 const serviceHeadquarterOptions = ref<OptionSelect[]>([])
 const headquarterId = ref<number | null>(null)
-
+const employeesOptions = ref<OptionSelect[]>([])
 
 //for search client
 
@@ -122,11 +126,20 @@ const serviceHeadquartersToOptionsSelect = (
     name: item.name,
   }))
 }
+//for obtain options from pet
+const employeeToOptionsSelect = (items: Employee[]): OptionSelect[] => {
+  return items.map((item) => ({
+    value: item.employeeId,
+    name: `${item.lastnames} ${item.names}`,
+  }))
+}
+
 onMounted(async () => {
   const employeeId = getEntityId()
   if (employeeId) {
     headquarterId.value = (await getEmployeeById(employeeId)).headquarter.headquarterId
   }
+   employeesOptions.value=employeeToOptionsSelect(await getAllEmployees())
 })
 
 
@@ -225,6 +238,22 @@ onMounted(async () => {
             variant="simple"
           >
             {{ errors.headquarterVetServiceId }}
+          </Message>
+        </div>
+                <div>
+          <label class="block mb-2">Empleado</label>
+          <Select
+            class="w-full"
+            v-bind="employeeIdAttrs"
+            v-model="employeeId"
+            :options="employeesOptions"
+            optionLabel="name"
+            optionValue="value"
+            placeholder="Selecciona Empleado"
+          />
+
+          <Message v-if="errors.employeeId" severity="error" size="small" variant="simple">
+            {{ errors.employeeId }}
           </Message>
         </div>
         <div class="button-form-container-grid-end">
