@@ -18,6 +18,8 @@ import { useCare } from '@/composables/useCare'
 import type { Care } from '@/models/Care'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
+import { useDialog } from 'primevue/usedialog'
+import AddEditCareCard from './components/AddEditCareCard.vue'
 
 onMounted(async () => {
   loadCares()
@@ -88,6 +90,22 @@ const statusOptions: OptionSelect[] = [
 const dt = ref()
 const exportCSV = () => {
   dt.value.exportCSV()
+}
+
+//for dialog
+const dialog = useDialog()
+
+//for add
+const addCare = async () => {
+  dialog.open(AddEditCareCard, {
+    props: {
+      modal: true,
+    },
+    onClose: async (options) => {
+      const data = options?.data
+      console.log(data)
+    },
+  })
 }
 </script>
 <template>
@@ -206,6 +224,7 @@ const exportCSV = () => {
                   iconPos="right"
                   severity="success"
                   label="Agregar Atencíon"
+                  @click="addCare()"
                 />
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>

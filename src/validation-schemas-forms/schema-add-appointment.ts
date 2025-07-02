@@ -6,7 +6,7 @@ export const schema = yup.object({
   comment: yup.string(),
   headquarterVetServiceId: yup.number().required('El servicio es obligatorio'),
   ownerDni:yup.string().matches(/^\d{8}$/, 'Dni inválido (debe tener 8 dígitos)'),
-  ownerId:yup.number().required('El animal es obligatorio'),
+  ownerId:yup.number().required('El animal es obligatorio').required('DNI es obligatorio'),
   ownerName:yup.string().required('Busque un cliente'),
   petId: yup.number().required('El animal es obligatorio'),
   paymentMethodId: yup.number().required('El metodo de pago es obligatorio'),
