@@ -20,13 +20,21 @@ import type { Appointment } from '@/models/Appointment'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import { useDialog } from 'primevue/usedialog'
+import AddEditAppointementCard from './components/AddEditAppointementCard.vue'
+import type { FormValues as AddEditPaymentSchema } from '@/validation-schemas-forms/schema-add-appointment'
+import type { PaymentMethod } from '@/models/PaymentMethod'
+import { usePaymentMethod } from '@/composables/usePaymentMethod'
+import type { AppointmentRequest } from '@/models/AppointmentRequest'
+import { useToast } from 'primevue/usetoast'
 
 onMounted(async () => {
   loadAppoinments()
 })
 
 //methods for appointments
-const { loading, error, getAllAppointments } = useAppointment()
+const { loading, error, getAllAppointments,createAppointment } = useAppointment()
+
+const {getAllPaymentMethods}=usePaymentMethod()
 
 //for appoinments
 
@@ -69,7 +77,7 @@ const categoriesOptions = ref<OptionSelect[]>([])
 //for get options from headquarters
 
 const headquartersCategoriesToOptionsSelect = (
-  items: Headquarter[] | Category[],
+  items: Headquarter[] | Category[]|PaymentMethod[],
 ): OptionSelect[] => {
   return items.map((item) => ({
     value: item.id,
@@ -106,8 +114,65 @@ const exportCSV = () => {
 }
 
 //for dialog
-//for dialog
 const dialog = useDialog()
+//toast
+const toast = useToast()
+
+const showToast = (message: string) => {
+  toast.add({
+    severity: 'success',
+    summary: 'Éxito',
+    detail: message,
+    life: 3000,
+  })
+}
+
+//for send
+
+const sendConfirm = async (
+  petId: number,
+  headquarterServiceId: number,
+  time: string,
+  date: Date,
+  paymentMethodId: number,
+  comment?:string
+) => {
+  console.log(petId, headquarterServiceId, time, date, paymentMethodId)
+  const appointmentRequest: AppointmentRequest = {
+    date: date,
+    time: time,
+    headquarterVetServiceId: headquarterServiceId,
+    petId: petId,
+    paymentMethodId: paymentMethodId,
+    comment:comment
+  }
+  console.log(appointmentRequest)
+  const appointment = await createAppointment(appointmentRequest)
+  if (appointment) {
+    showToast(`Cita creada exitosamente: ${appointment.scheduleDateTime}`)
+    loadAppoinments()
+  }
+}
+
+//for add
+const addAppointment = async () => {
+  dialog.open(AddEditAppointementCard, {
+    props: {
+      modal: true,
+    },
+    data: {
+      paymentMethodsOptions:headquartersCategoriesToOptionsSelect(await getAllPaymentMethods()),
+    },
+    onClose: async (options) => {
+      const data = options?.data as AddEditPaymentSchema
+      if (data) {
+          console.log(data)
+          sendConfirm(data.petId,data.headquarterVetServiceId,data.scheduleDateTime,data.date,data.paymentMethodId,data.comment)
+      }
+    },
+  })
+}
+
 
 </script>
 
@@ -225,6 +290,7 @@ const dialog = useDialog()
                   iconPos="right"
                   severity="success"
                   label="Agregar Cita"
+                  @click="addAppointment()"
                 />
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>

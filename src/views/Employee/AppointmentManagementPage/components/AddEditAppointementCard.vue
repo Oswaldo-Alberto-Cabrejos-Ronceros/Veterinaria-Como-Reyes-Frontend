@@ -1,4 +1,3 @@
-
 <script setup lang="ts">
 import { inject, onMounted, ref, type Ref } from 'vue'
 import Card from 'primevue/card'
@@ -15,31 +14,51 @@ import Button from 'primevue/button'
 import Message from 'primevue/message'
 import type { OptionSelect } from '@/models/OptionSelect'
 import { useClient } from '@/composables/useClient'
-import {schema} from '@/validation-schemas-forms/schema-add-appointment'
-import type {FormValues} from '@/validation-schemas-forms/schema-add-appointment'
+import { schema } from '@/validation-schemas-forms/schema-add-appointment'
+import type { FormValues } from '@/validation-schemas-forms/schema-add-appointment'
 import { usePet } from '@/composables/usePet'
 import { useAppointment } from '@/composables/useAppointment'
 import { useHeadquarter } from '@/composables/useHeadquarter'
+import type { Headquarter } from '@/models/Headquarter'
+import DatePicker from 'primevue/datepicker'
+import type { PetByClient } from '@/models/PetByClient'
+import { useAuthentication } from '@/composables/useAuthentication'
+import { useEmployee } from '@/composables/useEmployee'
+import type { BasicServiceForAppointment } from '@/models/BasicServiceForAppointment'
+import type { TimesForTurn } from '@/models/TimesForTurn'
+import CascadeSelect from 'primevue/cascadeselect';
+
+const { getEntityId } = useAuthentication()
 
 const { getClientByDni } = useClient()
 
 const { getAllHeadquarters } = useHeadquarter()
 
+const { getPetByClientId } = usePet()
 
-const {getPetByClientId} = usePet()
+const { getEmployeeById } = useEmployee()
 
-const {getAvailableTimes,getServicesByHeadquarterAndSpecies} = useAppointment()
-
-onMounted(async ()=>{
-  loadHeadquarter()
-})
+const { getAvailableTimes, getServicesByHeadquarterAndSpecies } = useAppointment()
 
 const headquartersOptions = ref<OptionSelect[]>([])
 
+const headquarterId = ref<number | null>(null)
+
+const timesForTurn = ref<TimesForTurn[]>([])
+
+const petsClient = ref<PetByClient[]>([])
 //for get options from headquarters
 
-const loadHeadquarter = async()=>{
-    headquartersOptions.value = headquartersToOptionsSelect(await getAllHeadquarters())
+onMounted(async () => {
+  loadHeadquarter()
+  const employeeId = getEntityId()
+  if (employeeId) {
+    headquarterId.value = (await getEmployeeById(employeeId)).headquarter.headquarterId
+  }
+})
+
+const loadHeadquarter = async () => {
+  headquartersOptions.value = headquartersToOptionsSelect(await getAllHeadquarters())
 }
 
 const headquartersToOptionsSelect = (headquarters: Headquarter[]): OptionSelect[] => {
@@ -52,15 +71,15 @@ const headquartersToOptionsSelect = (headquarters: Headquarter[]): OptionSelect[
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
-    scheduleDateTime:'',
-    date:new Date(),
-    comment:'',
-    headquarterVetServiceId:undefined,
-    ownerDni:undefined,
-    ownerId:undefined,
-    ownerName:'',
-    petId:undefined,
-    paymentMethodId:undefined
+    scheduleDateTime: '',
+    date: new Date(),
+    comment: '',
+    headquarterVetServiceId: undefined,
+    ownerDni: undefined,
+    ownerId: undefined,
+    ownerName: '',
+    petId: undefined,
+    paymentMethodId: undefined,
   },
 })
 
@@ -68,11 +87,12 @@ const { handleSubmit, errors, defineField } = useForm<FormValues>({
 const [scheduleDateTime, scheduleDateTimeAttrs] = defineField('scheduleDateTime')
 const [date, dateAttrs] = defineField('date')
 const [comment, commentAttrs] = defineField('comment')
-const [headquarterVetServiceId, headquarterVetServiceIdAttrs] = defineField('headquarterVetServiceId')
+const [headquarterVetServiceId, headquarterVetServiceIdAttrs] =
+  defineField('headquarterVetServiceId')
 const [ownerDni, ownerDniAttrs] = defineField('ownerDni')
 const [ownerId, ownerIdAttrs] = defineField('ownerId')
 const [ownerName, ownerNameAttrs] = defineField('ownerName')
-const [petId,petIdAttrs] = defineField('petId')
+const [petId, petIdAttrs] = defineField('petId')
 const [paymentMethodId, paymentMethodIdAttrs] = defineField('paymentMethodId')
 
 const onSubmit = handleSubmit((values) => {
@@ -85,7 +105,6 @@ const onSubmit = handleSubmit((values) => {
 const paymentMethodsOptions = ref<OptionSelect[]>([])
 const petsOptions = ref<OptionSelect[]>([])
 const serviceHeadquarterOptions = ref<OptionSelect[]>([])
-const scheduleDateTimeOptions = ref<OptionSelect[]>([])
 
 //for dynamicDialog
 const dialogRef = inject('dialogRef') as Ref<{
@@ -95,42 +114,78 @@ const dialogRef = inject('dialogRef') as Ref<{
   }
 }>
 
-
 //for search client
 
 const searchClient = async () => {
-  if (ownerDni.value &&  ownerDni.value.length === 8) {
+  if (ownerDni.value && ownerDni.value.length === 8) {
     try {
       const getOwner = await getClientByDni(ownerDni.value)
 
       ownerName.value = getOwner.fullName
       ownerId.value = getOwner.id
+      const petsGet = await getPetByClientId(ownerId.value)
+      petsOptions.value = petToOptionsSelect(petsGet)
+      petsClient.value = petsGet
     } catch (e) {
       console.error('Error al obtener el nombre del dueño', e)
       ownerName.value = ''
       ownerId.value = 0
+      petsOptions.value = []
+      petsClient.value = []
     }
   }
 }
 
-onMounted(()=>{
+const loadAvariablesTimes = async () => {
+  if (headquarterVetServiceId && date.value) {
+    console.log(await getAvailableTimes(headquarterVetServiceId.value, date.value))
+    timesForTurn.value = await getAvailableTimes(headquarterVetServiceId.value, date.value)
+  }
+}
+
+const loadHeadquartersService = async () => {
+  if (headquarterId.value) {
+    const petClient = petsClient.value.find((pet) => pet.id === petId.value)
+    if (petClient) {
+      serviceHeadquarterOptions.value = serviceHeadquartersToOptionsSelect(
+        await getServicesByHeadquarterAndSpecies(headquarterId.value, petClient.specieId),
+      )
+    }
+  }
+}
+
+const petToOptionsSelect = (items: PetByClient[]): OptionSelect[] => {
+  return items.map((item) => ({
+    value: item.id,
+    name: item.name,
+  }))
+}
+
+const serviceHeadquartersToOptionsSelect = (
+  items: BasicServiceForAppointment[],
+): OptionSelect[] => {
+  return items.map((item) => ({
+    value: item.headquarterServiceId,
+    name: item.name,
+  }))
+}
+
+onMounted(() => {
   if (dialogRef.value.data) {
     console.log(dialogRef.value.data)
     const paymentMethodsOptionsGet = dialogRef.value.data.paymentMethodsOptions
-    if(paymentMethodsOptionsGet) paymentMethodsOptions.value=paymentMethodsOptionsGet
+    if (paymentMethodsOptionsGet) paymentMethodsOptions.value = paymentMethodsOptionsGet
   }
 })
-
 </script>
 
 <template>
-<Card class="card-dialog-form-layout">
-      <template #title>
-        <h3 class="h3 text-center">Agendar cita</h3>
-      </template>
-      <template #content>
+  <Card class="card-dialog-form-layout">
+    <template #title>
+      <h3 class="h3 text-center">Agendar cita</h3>
+    </template>
+    <template #content>
       <form @submit.prevent="onSubmit" class="form-dialog-layout">
-              <form @submit.prevent="onSubmit" class="form-dialog-layout">
         <!-- owner dni -->
         <div>
           <label class="block mb-2">Dni del dueño</label>
@@ -177,11 +232,10 @@ onMounted(()=>{
           <Message v-if="errors.ownerName" severity="error" size="small" variant="simple">
             {{ errors.ownerName }}
           </Message>
-
         </div>
-         <InputNumber v-model="ownerId" v-bind="ownerIdAttrs" hidden />
+        <InputNumber v-model="ownerId" v-bind="ownerIdAttrs" hidden />
 
-                 <div>
+        <div>
           <label class="block mb-2">Mascota</label>
           <Select
             class="w-full"
@@ -191,6 +245,7 @@ onMounted(()=>{
             optionLabel="name"
             optionValue="value"
             placeholder="Selecciona Mascota"
+            @change="loadHeadquartersService()"
           />
 
           <Message v-if="errors.petId" severity="error" size="small" variant="simple">
@@ -198,8 +253,7 @@ onMounted(()=>{
           </Message>
         </div>
 
-
-                         <div>
+        <div>
           <label class="block mb-2">Servicio</label>
           <Select
             class="w-full"
@@ -209,38 +263,41 @@ onMounted(()=>{
             optionLabel="name"
             optionValue="value"
             placeholder="Selecciona Servicio"
+            @change="loadAvariablesTimes()"
           />
 
-          <Message v-if="errors.petId" severity="error" size="small" variant="simple">
-            {{ errors.petId }}
+          <Message
+            v-if="errors.headquarterVetServiceId"
+            severity="error"
+            size="small"
+            variant="simple"
+          >
+            {{ errors.headquarterVetServiceId }}
           </Message>
         </div>
 
-               <div>
+        <div>
           <label class="block mb-2">Fecha</label>
-          <DatePicker
-            v-bind="dateAttrs"
-            v-model="date"
-            showIcon
-            fluid
-            iconDisplay="input"
-          />
+          <DatePicker v-bind="dateAttrs" v-model="date" showIcon fluid iconDisplay="input" @value-change="loadAvariablesTimes()" />
 
           <Message v-if="errors.date" severity="error" size="small" variant="simple">
             {{ errors.date }}
           </Message>
         </div>
 
-                                 <div>
+        <div>
           <label class="block mb-2">Horario</label>
-          <Select
+          <CascadeSelect
             class="w-full"
             v-bind="scheduleDateTimeAttrs"
             v-model="scheduleDateTime"
-            :options="scheduleDateTimeOptions"
-            optionLabel="name"
-            optionValue="value"
-            placeholder="Selecciona Servicio"
+            :options="timesForTurn"
+            optionLabel="time"
+            optionGroupLabel="turn"
+            :optionGroupChildren="['times']"
+            optionValue="time"
+            placeholder="Selecciona Horario"
+            showClear
           />
 
           <Message v-if="errors.scheduleDateTime" severity="error" size="small" variant="simple">
@@ -248,7 +305,7 @@ onMounted(()=>{
           </Message>
         </div>
 
-                                         <div>
+        <div>
           <label class="block mb-2">Método de pago</label>
           <Select
             class="w-full"
@@ -257,7 +314,7 @@ onMounted(()=>{
             :options="paymentMethodsOptions"
             optionLabel="name"
             optionValue="value"
-            placeholder="Selecciona Servicio"
+            placeholder="Selecciona Método"
           />
 
           <Message v-if="errors.paymentMethodId" severity="error" size="small" variant="simple">
@@ -265,7 +322,7 @@ onMounted(()=>{
           </Message>
         </div>
 
-                <div>
+        <div>
           <label class="block mb-2">Comentario</label>
 
           <IftaLabel>
@@ -293,7 +350,7 @@ onMounted(()=>{
             iconPos="right"
           />
         </div>
-        </form>
-      </template>
-</Card>
+      </form>
+    </template>
+  </Card>
 </template>

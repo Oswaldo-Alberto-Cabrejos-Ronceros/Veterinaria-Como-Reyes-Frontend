@@ -2,7 +2,7 @@ import * as yup from 'yup'
 
 export const schema = yup.object({
   scheduleDateTime: yup.string().required('El horario es obligatorio'),
-  date:yup.date().min(new Date()),
+  date:yup.date().min(new Date(new Date().setHours(0, 0, 0, 0)),'La fecha debe ser posterior').required('Fecha es obligatoria'),
   comment: yup.string(),
   headquarterVetServiceId: yup.number().required('El servicio es obligatorio'),
   ownerDni:yup.string().matches(/^\d{8}$/, 'Dni inválido (debe tener 8 dígitos)'),
