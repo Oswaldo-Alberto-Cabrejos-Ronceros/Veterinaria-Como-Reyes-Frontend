@@ -140,8 +140,7 @@ const addPet = async () => {
       modal: true,
     },
     data: {
-      speciesOptions: speciesToOptionsSelect(await getAllSpecies()),
-      breedsOptions: breedsToOptionsSelect(await getAllBreeds()),
+      speciesOptions: speciesToOptionsSelect(await getAllSpecies())
     },
     onClose: async (options) => {
       const data = options?.data as AddEditPetSchema
@@ -178,8 +177,7 @@ const editPet = async (petData: Pet) => {
         urlImage: petData.urlImage,
         ownerDni: petData.clientId?.toString()||'', //fix
       } as AddEditPetSchema,
-      speciesOptions: speciesToOptionsSelect(await getAllSpecies()),
-      breedsOptions: breedsToOptionsSelect(await getAllBreeds()),
+      speciesOptions: speciesToOptionsSelect(await getAllSpecies())
     },
     onClose: async (options) => {
       const data = options?.data as AddEditPetSchema

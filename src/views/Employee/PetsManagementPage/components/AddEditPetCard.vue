@@ -17,8 +17,12 @@ import Button from 'primevue/button'
 import Message from 'primevue/message'
 import type { OptionSelect } from '@/models/OptionSelect'
 import { useClient } from '@/composables/useClient'
+import type { Breed } from '@/models/Breed'
+import { useBreed } from '@/composables/useBreed'
 
 const { getClientByDni } = useClient()
+const {getBreedsBySpecie} = useBreed()
+
 
 //form
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
@@ -69,7 +73,6 @@ const dialogRef = inject('dialogRef') as Ref<{
   data: {
     petData?: FormValues
     speciesOptions?: OptionSelect[]
-    breedsOptions?: OptionSelect[]
   }
 }>
 
@@ -97,13 +100,26 @@ const searchClient = async () => {
     }
   }
 }
+const loadsBreed=async()=>{
+  if(specieId.value){
+  breedsOptions.value= breedsToOptionsSelect(await getBreedsBySpecie(specieId.value))
+}
+}
+
+const breedsToOptionsSelect = (breeds: Breed[]): OptionSelect[] => {
+  return breeds.map((breed) => ({
+    value: breed.id,
+    name: breed.name,
+  }))
+}
+
 
 onMounted(() => {
   if (dialogRef.value.data) {
     console.log(dialogRef.value.data)
     const params = dialogRef.value.data.petData
     const speciesOptionsGet = dialogRef.value.data.speciesOptions
-    const breedsOptionsGet = dialogRef.value.data.breedsOptions
+loadsBreed()
     //set data if edit
     if (params) {
       title.value = 'Editar'
@@ -118,7 +134,6 @@ onMounted(() => {
       ownerDni.value = params.ownerDni
     }
     if (speciesOptionsGet) speciesOptions.value = speciesOptionsGet
-    if (breedsOptionsGet) breedsOptions.value = breedsOptionsGet
   }
 })
 </script>
@@ -258,6 +273,7 @@ onMounted(() => {
             optionLabel="name"
             optionValue="value"
             placeholder="Selecciona Especie"
+            @change="loadsBreed()"
           />
 
           <Message v-if="errors.specieId" severity="error" size="small" variant="simple">

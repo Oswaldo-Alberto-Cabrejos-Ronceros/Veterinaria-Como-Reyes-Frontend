@@ -62,6 +62,7 @@ export function useAppointment() {
     const times = await runUseCase('getAvailableTimes', () =>
       appointmentUsesCases.getAvailableTimes.execute(headquarterVetServiceId, dateParsed),
     )
+    console.log(times)
     return times.map((time) => TimesForTurnAdapter.toTimesForTurnView(time))
   }
 

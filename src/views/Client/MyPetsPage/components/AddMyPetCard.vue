@@ -13,6 +13,15 @@ import DatePicker from 'primevue/datepicker'
 import Select from 'primevue/select'
 import Button from 'primevue/button'
 import Message from 'primevue/message'
+import type { Breed } from '@/models/Breed'
+import { useBreed } from '@/composables/useBreed'
+
+
+//methods
+const {getBreedsBySpecie} = useBreed()
+
+
+
 //form
 
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
@@ -46,13 +55,25 @@ const speciesOptions = ref<OptionSelect[]>([])
 //breeds options
 const breedsOptions = ref<OptionSelect[]>([])
 
+const loadsBreed=async()=>{
+  if(specieId.value){
+  breedsOptions.value= breedsToOptionsSelect(await getBreedsBySpecie(specieId.value))
+}
+}
+
+const breedsToOptionsSelect = (breeds: Breed[]): OptionSelect[] => {
+  return breeds.map((breed) => ({
+    value: breed.id,
+    name: breed.name,
+  }))
+}
+
 //for dynamicDialog
 const dialogRef = inject('dialogRef') as Ref<{
   close: (data?: FormValues) => void
   data: {
     petData?: FormValues
     speciesOptions?: OptionSelect[]
-    breedsOptions?: OptionSelect[]
   }
 }>
 
@@ -65,10 +86,9 @@ const genders = [
 onMounted(() => {
   if (dialogRef.value.data) {
     const speciesOptionsGet = dialogRef.value.data.speciesOptions
-    const breedsOptionsGet = dialogRef.value.data.breedsOptions
     if (speciesOptionsGet) speciesOptions.value = speciesOptionsGet
-    if (breedsOptionsGet) breedsOptions.value = breedsOptionsGet
   }
+  loadsBreed()
 })
 </script>
 <template>
@@ -134,6 +154,7 @@ onMounted(() => {
             optionLabel="name"
             optionValue="value"
             placeholder="Selecciona Especie"
+            @change="loadsBreed()"
           />
 
           <Message v-if="errors.specieId" severity="error" size="small" variant="simple">
