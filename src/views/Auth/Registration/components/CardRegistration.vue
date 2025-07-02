@@ -261,6 +261,9 @@ const imageLogo = computed(() => (storeTheme.isDark ? LogoWhite : LogoRose))
         <!-- button -->
 
         <Button label="Registrar" type="submit" icon="pi pi-check-circle" iconPos="right" />
+              <div class="flex w-full items-center justify-center gap-2">
+          <p>¿Ya tienes cuenta?</p> <router-link class=" transition-colors duration-150 hover:text-red-500 dark:hover:text-red-400" to="/auth/login">Inicia Sesión </router-link>
+        </div>
       </form>
     </template>
   </Card>

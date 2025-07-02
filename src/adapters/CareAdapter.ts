@@ -4,13 +4,14 @@ import type { FormValues as AddCareFromAppoinmentSchema } from '@/validation-sch
 import type { FormValues as AddCareFromRequestSchema } from '@/validation-schemas-forms/schema-add-care'
 import type { CreateCareFromAppointmentRequest } from '@/services/Care/domain/models/Care'
 import type { CareRequestCreate } from '@/services/Care/domain/models/Care'
+import { FormatAdapter } from './FormatAdapter'
 
 export class CareAdapter {
   static toView(care: Care): CareView {
     return {
       id: care.careId,
       dateTime: care.dateTime,
-      statusCare: care.statusCare,
+      statusCare: FormatAdapter.toCaptalizeCaseWithout_(care.statusCare),
       headquarterVetService: {
         id: care.headquarterVetServiceId,
       },
