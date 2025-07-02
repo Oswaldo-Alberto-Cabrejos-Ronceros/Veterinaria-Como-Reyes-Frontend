@@ -4,6 +4,8 @@ import { GetCareByAppointment } from '@/services/Care/aplication/GetCareByAppoin
 import { CreateCare } from '@/services/Care/aplication/CreateCare'
 import { CompleteCare } from '@/services/Care/aplication/CompleteCare'
 import { UpdateCare } from '@/services/Care/aplication/UpdateCare'
+import { CreateCareFromAppointment } from '@/services/Care/aplication/CreateCareFromAppointment'
+import { CreateCareFromRequest } from '@/services/Care/aplication/CreateCareFromRequest'
 
 import { CareServiceImpl } from '@/services/Care/infrastructure/CardServiceImpl'
 import { AxiosHttpClient } from '@/services/Http/infrastructure/AxiosHttpClient'
@@ -22,4 +24,6 @@ export const careUsesCases = {
   createCare: new CreateCare(careService),
   completeCare: new CompleteCare(careService),
   updateCare: new UpdateCare(careService),
+  createCareFromAppointment: new CreateCareFromAppointment(careService),
+  createCareFromRequest: new CreateCareFromRequest(careService),
 }

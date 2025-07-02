@@ -1,4 +1,4 @@
-import type { Care, CareRequest, CreateCareFromAppointmentRequest } from '../models/Care'
+import type { Care, CareRequest,CareRequestCreate, CreateCareFromAppointmentRequest } from '../models/Care'
 
 export interface CareService {
   getAllCares(): Promise<Care[]>
@@ -8,5 +8,5 @@ export interface CareService {
   completeCare(id: number): Promise<Care>
   updateCare(id: number, careRequest: CareRequest): Promise<Care>
   createCareFromAppointment(createCareFromAppointment: CreateCareFromAppointmentRequest): Promise<Care>
-  createCareFromRequest(careRequest:CareRequest):Promise<Care>
+  createCareFromRequest(careRequest:CareRequestCreate):Promise<Care>
 }

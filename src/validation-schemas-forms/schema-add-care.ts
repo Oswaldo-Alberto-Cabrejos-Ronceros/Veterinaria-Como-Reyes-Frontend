@@ -6,6 +6,6 @@ export const schema = yup.object({
   ownerId: yup.number().required('El animal es obligatorio'),
   ownerName: yup.string().required('Busque un cliente'),
   petId: yup.number().required('El animal es obligatorio'),
-    employeeId: yup.number().required('El empleado es obligatorio'),
+  employeeId: yup.number().required('El empleado es obligatorio'),
 })
 export type FormValues = yup.InferType<typeof schema>

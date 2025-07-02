@@ -1,5 +1,5 @@
 import type { HttpClient } from '@/services/Http/model/HttpClient'
-import type { Care, CareRequest, CreateCareFromAppointmentRequest } from '../domain/models/Care'
+import type { Care, CareRequest, CareRequestCreate, CreateCareFromAppointmentRequest } from '../domain/models/Care'
 import type { CareService } from '../domain/services/CareService'
 
 export class CareServiceImpl implements CareService {
@@ -40,7 +40,7 @@ export class CareServiceImpl implements CareService {
     return response.data
   }
 
-  async  createCareFromRequest(careRequest: CareRequest): Promise<Care> {
+  async  createCareFromRequest(careRequest: CareRequestCreate): Promise<Care> {
     const response = await this.httpClient.post<Care>(`${this.urlBase}/from-request`,careRequest)
     return response.data
   }
