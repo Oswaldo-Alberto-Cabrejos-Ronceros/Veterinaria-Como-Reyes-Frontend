@@ -1,9 +1,11 @@
 import type { HttpClient } from '@/services/Http/model/HttpClient'
-import type { Care, CareRequest } from '../domain/models/Care'
+import type { Care, CareRequest, CreateCareFromAppointmentRequest } from '../domain/models/Care'
 import type { CareService } from '../domain/services/CareService'
 
 export class CareServiceImpl implements CareService {
   constructor(private readonly httpClient: HttpClient) {}
+
+
 
   private readonly urlBase = `/cares`
 
@@ -30,6 +32,16 @@ export class CareServiceImpl implements CareService {
   }
   async updateCare(id: number, careRequest: CareRequest): Promise<Care> {
     const response = await this.httpClient.put<Care>(`${this.urlBase}/${id}`, careRequest)
+    return response.data
+  }
+
+  async  createCareFromAppointment(createCareFromAppointment: CreateCareFromAppointmentRequest): Promise<Care> {
+    const response = await this.httpClient.post<Care>(`${this.urlBase}/from-appointment`,createCareFromAppointment)
+    return response.data
+  }
+
+  async  createCareFromRequest(careRequest: CareRequest): Promise<Care> {
+    const response = await this.httpClient.post<Care>(`${this.urlBase}/from-request`,careRequest)
     return response.data
   }
 }
