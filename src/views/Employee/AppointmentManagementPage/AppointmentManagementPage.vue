@@ -334,7 +334,7 @@ const addAppointment = async () => {
                     rounded
                   ></Button>
                   <Button
-                    icon="pi pi-pencil"
+                    icon="pi pi-calendar-clock"
                     severity="warn"
                     variant="outlined"
                     aria-label="Filter"
