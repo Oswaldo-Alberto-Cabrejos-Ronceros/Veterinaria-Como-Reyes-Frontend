@@ -174,7 +174,7 @@ onMounted(() => {
           </Message>
         </div>
         <div>
-          <label class="block mb-2">Sede</label>
+          <label class="block mb-2">Rol</label>
           <Select
             class="w-full"
             v-bind="roleIdAttrs"
