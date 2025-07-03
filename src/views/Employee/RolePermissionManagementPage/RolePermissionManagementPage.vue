@@ -94,6 +94,7 @@ const addRole = () => {
   dialog.open(AddEditRoleCard, {
     props: {
       modal: true,
+      header:'Agregar rol'
     },
     onClose: async (options) => {
       const data = options?.data as AddEditRoleSchema
@@ -112,6 +113,7 @@ const editRole = (roleData: Role) => {
   dialog.open(AddEditRoleCard, {
     props: {
       modal: true,
+      header:`${roleData.name}`
     },
     data: {
       roleData: roleData as AddEditRoleSchema,
