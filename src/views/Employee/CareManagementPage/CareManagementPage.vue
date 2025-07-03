@@ -117,6 +117,7 @@ const addCare = async () => {
   dialog.open(AddEditCareCard, {
     props: {
       modal: true,
+      header:'Agendar atención'
     },
     onClose: async (options) => {
       const data = options?.data as AddCareFromRequestSchema

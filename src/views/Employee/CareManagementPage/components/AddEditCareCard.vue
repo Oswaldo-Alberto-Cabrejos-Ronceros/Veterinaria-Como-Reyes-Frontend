@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { inject,onMounted,ref, type Ref } from 'vue'
-import Card from 'primevue/card'
 import InputText from 'primevue/inputtext'
 import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
@@ -146,15 +145,12 @@ onMounted(async () => {
 </script>
 
 <template>
-  <Card class="card-dialog-form-layout">
-        <template #title>
-      <h3 class="h3 text-center">Registrar Atención</h3>
-    </template>
-    <template #content>
+  <div class="card-dialog-form-layout">
+
             <form @submit.prevent="onSubmit" class="form-dialog-layout">
                       <!-- owner dni -->
         <div>
-          <label class="block mb-2">Dni del dueño</label>
+          <label class="block mb-2">Busque dueño por DNI</label>
           <InputGroup>
             <InputGroupAddon class="text-neutral-400">
               <i class="pi pi-user"></i>
@@ -267,8 +263,7 @@ onMounted(async () => {
           />
         </div>
             </form>
-    </template>
-  </Card>
+  </div>
 </template>
 
 
