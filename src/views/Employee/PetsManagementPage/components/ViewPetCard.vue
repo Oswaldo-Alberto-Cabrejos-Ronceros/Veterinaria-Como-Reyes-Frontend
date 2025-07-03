@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, onMounted, inject, type Ref } from 'vue'
-import Card from 'primevue/card'
 import InputText from 'primevue/inputtext'
 import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
@@ -63,12 +62,7 @@ const elements: { title: string; key: keyof Pet; icon: string }[] = [
 </script>
 
 <template>
-  <Card class="card-dialog-form-layout">
-    <template #title>
-      <h3 class="h3 text-center">Mascota: {{ petData?.name }}</h3>
-    </template>
-
-    <template #content v-if="petData">
+  <div class="card-dialog-form-layout" v-if="petData">
       <div class="flex-1 space-y-6">
         <div class="form-dialog-layout">
           <div v-for="(element, id) in elements" :key="id">
@@ -90,7 +84,7 @@ const elements: { title: string; key: keyof Pet; icon: string }[] = [
               class="resize-none w-full"
             />
           </div>
-          
+
 
           <div >
             <label class="block mb-2">Dueño</label>
@@ -101,9 +95,7 @@ const elements: { title: string; key: keyof Pet; icon: string }[] = [
               <InputText :value="petData.clientId" disabled class="w-full" />
             </InputGroup>
           </div>
-
         </div>
       </div>
-    </template>
-  </Card>
+  </div>
 </template>

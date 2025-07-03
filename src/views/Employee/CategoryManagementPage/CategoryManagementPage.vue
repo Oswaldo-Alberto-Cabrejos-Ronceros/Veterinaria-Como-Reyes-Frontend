@@ -73,6 +73,7 @@ const addCategory = () => {
   dialog.open(AddEditCategoryCard, {
     props: {
       modal: true,
+      header: 'Agregar categoria'
     },
     onClose: async (options) => {
       const data = options?.data as AddEditCategorySchema
@@ -92,6 +93,7 @@ const editCategory = (categoryData: Category) => {
   dialog.open(AddEditCategoryCard, {
     props: {
       modal: true,
+      header:`${categoryData.name}`
     },
     data: {
       categoryData: categoryData as AddEditCategorySchema,
@@ -112,6 +114,7 @@ const viewCategory = (categoryData: Category) => {
   dialog.open(ViewCategoryCard, {
     props: {
       modal: true,
+      header:`${categoryData.name}`
     },
     data: {
       categoryData: categoryData,
@@ -174,7 +177,7 @@ const exportCSV = () => {
                 <InputGroupAddon class="text-neutral-400">
                   <i class="pi pi-info"></i>
                 </InputGroupAddon>
-                <InputText v-model="name" v-bind="nameAttrs" class="w-full" placeholder="Nombre" />
+                <InputText v-model="name" v-bind="nameAttrs" class="w-full" placeholder="Nombre de la categoria" />
               </InputGroup>
               <Message v-if="errors.name" severity="error" size="small" variant="simple">
                 {{ errors.name }}

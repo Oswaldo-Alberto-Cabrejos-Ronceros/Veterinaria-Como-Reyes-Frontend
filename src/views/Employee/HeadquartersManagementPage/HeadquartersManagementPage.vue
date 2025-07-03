@@ -34,8 +34,14 @@ const showToast = (message: string) => {
 }
 
 //get from compose
-const { loading, error, getAllHeadquarters, createHeadquarter, updateHeadquarter,deleteHeadquarter } =
-  useHeadquarter()
+const {
+  loading,
+  error,
+  getAllHeadquarters,
+  createHeadquarter,
+  updateHeadquarter,
+  deleteHeadquarter,
+} = useHeadquarter()
 
 //headquarters
 const headquarters = ref<Headquarter[]>([])
@@ -133,6 +139,7 @@ const addHeadquarter = () => {
   dialog.open(AddEditHeadquarterCard, {
     props: {
       modal: true,
+      header: 'Agregar sede',
     },
     onClose: async (options) => {
       const data = options?.data as HeadquarterAddEditSchema
@@ -151,6 +158,7 @@ const viewHeadquarter = (headquarterData: Headquarter) => {
   dialog.open(ViewHeadquaterCard, {
     props: {
       modal: true,
+      header: `${headquarterData.name}`,
     },
     data: {
       headquarterData: headquarterData,
@@ -164,6 +172,7 @@ const editHeadquarter = (headquarterData: Headquarter) => {
   dialog.open(AddEditHeadquarterCard, {
     props: {
       modal: true,
+      header: `${headquarterData.name}`,
     },
     data: {
       headquarterData: headquarterData as AddEditHeadquarterSchema,
@@ -187,7 +196,7 @@ const confirm = useConfirm()
 
 const deleteHeadquarterAction = (event: MouseEvent | KeyboardEvent, headquarter: Headquarter) => {
   confirm.require({
-    group:'confirmPopupGeneral',
+    group: 'confirmPopupGeneral',
     target: event.currentTarget as HTMLElement,
     message: '¿Seguro que quiere eliminar esta sede?',
     icon: 'pi pi-exclamation-triangle',

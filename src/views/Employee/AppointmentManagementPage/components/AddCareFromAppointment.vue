@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { inject, onMounted, ref, type Ref } from 'vue'
-import Card from 'primevue/card'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/yup'
 import { schema } from '@/validation-schemas-forms/schema-add-care-from-appointment'
@@ -70,11 +69,8 @@ onMounted(async () => {
 })
 </script>
 <template>
-  <Card class="card-dialog-form-layout">
-    <template #title>
-      <h3 class="h3 text-center">Agendar Atención</h3>
-    </template>
-    <template #content>
+  <div class="card-dialog-form-layout">
+
       <form @submit.prevent="onSubmit" class="form-dialog-layout-flex-col">
         <div>
           <label class="block mb-2">Empleado</label>
@@ -103,6 +99,5 @@ onMounted(async () => {
             iconPos="right"
           />
       </form>
-    </template>
-  </Card>
+    </div>
 </template>

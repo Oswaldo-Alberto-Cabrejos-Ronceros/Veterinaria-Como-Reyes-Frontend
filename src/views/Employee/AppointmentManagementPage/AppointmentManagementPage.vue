@@ -159,6 +159,7 @@ const addAppointment = async () => {
   dialog.open(AddEditAppointementCard, {
     props: {
       modal: true,
+      header:'Agendar cita'
     },
     data: {
       paymentMethodsOptions:headquartersCategoriesToOptionsSelect(await getAllPaymentMethods()),
