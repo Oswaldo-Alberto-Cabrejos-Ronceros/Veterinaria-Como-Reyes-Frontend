@@ -78,6 +78,7 @@ const addPaymentMethod = () => {
   dialog.open(AddEditPaymentMethodCard, {
     props: {
       modal: true,
+      header:'Agregar método de pago'
     },
     onClose: async (options) => {
       const data = options?.data as AddEditPaymentMethodSchema
@@ -95,6 +96,7 @@ const viewPaymentMethod = (paymentMethodData: PaymentMethod) => {
   dialog.open(ViewPaymentMethodCard, {
     props: {
       modal: true,
+      header:`${paymentMethodData.name}`
     },
     data: {
       paymentMethodData: paymentMethodData,
@@ -106,6 +108,7 @@ const editPaymentMethod = (paymentMethodData: PaymentMethod) => {
   dialog.open(AddEditPaymentMethodCard, {
     props: {
       modal: true,
+      header:`${paymentMethodData.name}`
     },
     data: {
       paymentMethodData: paymentMethodData as AddEditPaymentMethodSchema,
