@@ -1,18 +1,33 @@
 <script setup lang="ts">
 import type { MenuItem } from 'primevue/menuitem'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import Menu from 'primevue/menu'
 import { RouterLink, useRoute } from 'vue-router'
 import { onMounted, onBeforeUnmount } from 'vue'
 import Image from 'primevue/image'
 import LogoRose from '@/assets/images/logos/logo-rose.png'
+import LogoWhite from '@/assets/images/logos/logo-white.png'
 import Button from 'primevue/button'
+import { useThemeStore } from '@/stores/themeStore'
 
 //define props
 const props = defineProps<{
   items: MenuItem[]
   showMenu: boolean
+  role: string
 }>()
+
+//for theme
+const storeTheme = useThemeStore()
+const imageLogo = computed(() => (storeTheme.isDark ? LogoWhite : LogoRose))
+
+const routeMap: Record<string, string> = {
+  ADMINISTRADOR: '/employee/administrator',
+  ENCARGADOSEDE: '/employee/maneger',
+  VETERINARIO: '/employee/veterinary',
+  RECEPCIONISTA: '/employee/receptionist',
+  CLIENTE: '/client',
+}
 
 //emits
 const emit = defineEmits<{
@@ -87,18 +102,27 @@ const isActive = (path: string) => route.path.startsWith(path)
   <aside
     ref="asideRef"
     :class="[
-      'transition-all duration-200 ease-out fixed top-0 left-0 h-screen max-h-screen z-40 backdrop-blur-xs bg-surface-0 dark:bg-surface-800 border-r border-neutral-200 dark:border-neutral-800 ',
-      showMenu ? ' w-screen sm:w-52 md:w-64' : 'w-20',
+      'transition-all duration-200 ease-out fixed top-0 left-0 h-screen max-h-screen z-30 backdrop-blur-xs bg-surface-0 dark:bg-surface-800 border-r border-neutral-200 dark:border-neutral-800 ',
+      showMenu ? ' w-screen md:w-64' : 'w-0 sm:w-20 overflow-hidden',
     ]"
   >
-    <div class="w-2/3 sm:w-auto" ref="menuWrapperRef">
-      <div
-        :class="['w-full h-16 flex items-center px-3 border-b-1 border-neutral-200 dark:border-neutral-700',showMenu?'justify-between':'justify-center']"
-      >
-        <Image v-if="showMenu" :src="LogoRose" alt="Logo" width="48" />
 
+    <!--    <div
+      class="w-full bg-primary z-40 h-screen block sm:hidden fixed top-0 left-0 brightness-50"
+      v-if="showMenu"
+    ></div>  -->
+    <div class="w-2/3 sm:w-auto h-screen bg-surface-0 z-50" ref="menuWrapperRef">
+      <div
+        :class="[
+          'w-full h-16 flex items-center px-3 border-b-1 border-neutral-200 dark:border-neutral-700',
+          showMenu ? 'justify-between' : 'justify-center',
+        ]"
+      >
+        <RouterLink v-if="showMenu" v-ripple :to="routeMap[role] ?? '/'">
+          <Image :src="imageLogo" alt="Logo" width="48" />
+        </RouterLink>
         <Button
-          icon="pi pi-chevron-left"
+          :icon="`pi ${props.showMenu ? 'pi-chevron-left' : 'pi-chevron-right'}`"
           severity="primary"
           variant="text"
           size="small"
@@ -153,10 +177,10 @@ const isActive = (path: string) => route.path.startsWith(path)
           </template>
         </Menu>
 
-                <div
+        <div
           v-if="!showMenu"
           :model="props.items"
-          class="sm:h-min border-none  shadow-none py-1 dark:bg-neutral-800 flex flex-col justify-center gap-2"
+          class="sm:h-min border-none shadow-none py-1 dark:bg-neutral-800 flex flex-col justify-center gap-2"
         >
           <div v-for="item in items" :key="item.to">
             <router-link
@@ -182,14 +206,15 @@ const isActive = (path: string) => route.path.startsWith(path)
                   :class="[
                     item.icon,
                     ' text-lg dark:bg-primary-300 text-neutral-700 dark:text-neutral-800 p-4 cursor-pointer ',
-                    isActive(item.to) ? 'bg-primary-300 dark:bg-primary-400 text-surface-0 dark:text-surface-0' : '',
+                    isActive(item.to)
+                      ? 'bg-primary-300 dark:bg-primary-400 text-surface-0 dark:text-surface-0'
+                      : '',
                   ]"
                 ></span>
               </a>
             </router-link>
           </div>
         </div>
-
       </div>
     </div>
   </aside>
