@@ -116,6 +116,7 @@ const viewService = (serviceData: Service) => {
   dialog.open(ViewServiceCard, {
     props: {
       modal: true,
+            header:`${serviceData.name}`
     },
     data: {
       serviceData: serviceData,
@@ -127,6 +128,7 @@ const addService = async () => {
   dialog.open(AddEditServiceCard, {
     props: {
       modal: true,
+      header:'Agregar servicio'
     },
     data: {
       speciesOptions: speciesToOptionsSelect(await getAllSpecies()),
@@ -150,6 +152,7 @@ const editService = async (serviceData: Service) => {
   dialog.open(AddEditServiceCard, {
     props: {
       modal: true,
+      header:`${serviceData.name}`
     },
     data: {
       serviceData: {
