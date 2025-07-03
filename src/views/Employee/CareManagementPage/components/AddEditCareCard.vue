@@ -150,7 +150,7 @@ onMounted(async () => {
             <form @submit.prevent="onSubmit" class="form-dialog-layout">
                       <!-- owner dni -->
         <div>
-          <label class="block mb-2">Busque dueño por DNI</label>
+          <label class="block mb-2">DNI del dueño</label>
           <InputGroup>
             <InputGroupAddon class="text-neutral-400">
               <i class="pi pi-user"></i>
@@ -159,7 +159,7 @@ onMounted(async () => {
               v-model="ownerDni"
               v-bind="ownerDniAttrs"
               class="w-full"
-              placeholder="Dueño DNI"
+              placeholder="Busque dueño por DNI"
             />
             <InputGroupAddon>
               <Button

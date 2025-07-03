@@ -4,7 +4,7 @@ import EmployeeLayout from '@/layouts/EmployeeLayout.vue'
 import LoginPage from '@/views/Auth/LoginPage/LoginPage.vue'
 import RegistrationPage from '@/views/Auth/Registration/RegistrationPage.vue'
 import HomePageClient from '@/views/Client/HomePage/HomePage.vue'
-import HomePageEmployee from '@/views/Employee/HomePage/HomePage.vue'
+import HomePageAdministrador from '@/views/Employee/HomePageAdministrador/HomePageAdministrador.vue'
 import PerfilPage from '@/views/Common/PerfilPage/PerfilPage.vue'
 import EmployeeManagementPage from '@/views/Employee/EmployeeManagementPage/EmployeeManagementPage.vue'
 import ClientManagementPage from '@/views/Employee/ClientManagementPage/ClientManagementPage.vue'
@@ -117,7 +117,7 @@ const router = createRouter({
             {
               path: 'home',
               name: 'administrator-home',
-              component: HomePageEmployee,
+              component: HomePageAdministrador,
               meta: { requiresAuth: true, roles: ['Administrador'] },
             },
             {
@@ -227,7 +227,7 @@ const router = createRouter({
             {
               path: 'home',
               name: 'manager-home',
-              component: HomePageEmployee,
+              component: HomePageAdministrador,
               meta: { requiresAuth: true, roles: ['Encargado Sede'] },
             },
             {
@@ -276,7 +276,7 @@ const router = createRouter({
             {
               path: 'home',
               name: 'receptionist-home',
-              component: HomePageEmployee,
+              component: HomePageAdministrador,
               meta: { requiresAuth: true, roles: ['Recepcionista'] },
             },
             {
@@ -320,7 +320,7 @@ const router = createRouter({
             {
               path: 'home',
               name: 'veterinary-home',
-              component: HomePageEmployee,
+              component: HomePageAdministrador,
               meta: { requiresAuth: true, roles: ['Veterinario'] },
             },
             {
