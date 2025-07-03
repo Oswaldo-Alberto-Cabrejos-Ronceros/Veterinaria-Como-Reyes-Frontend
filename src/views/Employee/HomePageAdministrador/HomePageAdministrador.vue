@@ -8,6 +8,7 @@ import { onMounted, ref } from 'vue'
 import CardNewsPrimary from '@/components/CardNewsPrimary.vue'
 import Button from 'primevue/button'
 import CardAppintmentTerciary from '@/components/CardAppintmentTerciary.vue'
+import ServiceRankingItem from '@/components/ServiceRankingItem.vue'
 
 const { getEntityId } = useAuthentication()
 const { getEmployeeMyInfo } = useEmployee()
@@ -45,34 +46,78 @@ const news: { title: string; icon: string; content: string; plus?: string }[] = 
   },
 ]
 
-const appointments:{  petName: string
+const appointments: {
+  petName: string
   serviceName: string
   ownerName: string
   time: string
-  status: string}[]=[
-    {
-      petName: 'Toby',
-      serviceName: 'Baño antipulgas',
-      ownerName: 'Oswaldo Cabrejos',
-      time: '09:30',
-      status: 'Completado'
-    },
-    {
-      petName: 'Lucky',
-      serviceName: 'Vacunación distemper',
-      ownerName: 'Diego Aguilar',
-      time: '10:30',
-      status: 'Confirmado'
-    },
-    {
-            petName: 'Negro',
-      serviceName: 'Spa canino',
-      ownerName: 'Juan Huacacchi',
-      time: '13:30',
-      status: 'Confirmado'
-    }
-  ]
+  status: string
+}[] = [
+  {
+    petName: 'Toby',
+    serviceName: 'Baño antipulgas',
+    ownerName: 'Oswaldo Cabrejos',
+    time: '09:30',
+    status: 'Completado',
+  },
+  {
+    petName: 'Lucky',
+    serviceName: 'Vacunación distemper',
+    ownerName: 'Diego Aguilar',
+    time: '10:30',
+    status: 'Confirmado',
+  },
+  {
+    petName: 'Negro',
+    serviceName: 'Spa canino',
+    ownerName: 'Juan Huacacchi',
+    time: '13:30',
+    status: 'Confirmado',
+  },
+]
 
+const serviceStadistics: {
+  serviceName: string
+  serviceImageUrl: string
+  categoryName: string
+  value: number
+}[] = [
+  {
+    serviceName: 'Consulta general',
+    serviceImageUrl:
+      'https://clinicaveterinarium.es/wp-content/uploads/2019/11/Realmente-es-necesario-llevar-el-gato-al-veterinario.jpg',
+    categoryName: 'Salud',
+    value: 25,
+  },
+  {
+    serviceName: 'Vacunación',
+    serviceImageUrl:
+      'https://www.animalshealth.es/fileuploads/news/perro-vacunacion-guia-mascota-veterinaria-216624624471.jpg',
+    categoryName: 'Prevención',
+    value: 20,
+  },
+  {
+    serviceName: 'Desparasitación',
+    serviceImageUrl:
+      'https://petvet.cl/cdn/shop/articles/Guia-completa-de-desparasitacion-para-perros-y-gatos-en-Chile_4000x.jpg?v=1739239655',
+    categoryName: 'Prevención',
+    value: 18,
+  },
+  {
+    serviceName: 'Cirugía menor',
+    serviceImageUrl:
+      'https://images.ctfassets.net/denf86kkcx7r/5O20xRkP4ICjnSqkX8zr5z/25e2f3f24f2bafe01dee49ae54bacc99/precio_cirugi_a_canina_-_image_2.jpg?fit=fill&w=1024&q=80',
+    categoryName: 'Tratamiento',
+    value: 22,
+  },
+  {
+    serviceName: 'Chequeo dental',
+    serviceImageUrl:
+      'https://cdn.shopify.com/s/files/1/0268/6861/files/How-to-clean-your-dogs-teeth_grande.jpg?v=1528464965',
+    categoryName: 'Higiene',
+    value: 15,
+  },
+]
 
 onMounted(() => {
   loadMyInfo()
@@ -118,8 +163,7 @@ const loadMyInfo = async () => {
             <template #title>
               <div class="w-full flex justify-between items-baseline">
                 <h2 class="h3 font-semibold">Proximas citas</h2>
-              <Button label="Nueva Cita" icon="pi pi-plus" >
-              </Button>
+                <Button label="Nueva Cita" icon="pi pi-plus"> </Button>
               </div>
             </template>
             <template #subtitle>
@@ -127,17 +171,47 @@ const loadMyInfo = async () => {
             </template>
             <template #content>
               <div class="w-full flex flex-col gap-1.5">
-                <CardAppintmentTerciary v-for=" (appointment,index) of appointments" :key="index"
-                :pet-name="appointment.petName" :service-name="appointment.serviceName" :owner-name="appointment.ownerName" :time="appointment.time"
-                :status="appointment.status"
+                <CardAppintmentTerciary
+                  v-for="(appointment, index) of appointments"
+                  :key="index"
+                  :pet-name="appointment.petName"
+                  :service-name="appointment.serviceName"
+                  :owner-name="appointment.ownerName"
+                  :time="appointment.time"
+                  :status="appointment.status"
                 >
-
                 </CardAppintmentTerciary>
-                              <Button label="Ver todas las citas"  variant="text" icon="pi pi-eye" size="small" class="mt-2" >
-              </Button>
+                <Button
+                  label="Ver todas las citas"
+                  variant="text"
+                  icon="pi pi-eye"
+                  size="small"
+                  class="mt-2"
+                >
+                </Button>
               </div>
             </template>
           </Card>
+          <div class="grid grid-cols-2 gap-x-12">
+         <Card class="card-primary min-h-24 max-h-full">
+            <template #title>
+              <p>Servicios más perdidos</p>
+            </template>
+            <template #content>
+            <ServiceRankingItem
+              v-for="(service, index) of serviceStadistics"
+              :key="index"
+              :serviceName="service.serviceName"
+              :serviceImageUrl="service.serviceImageUrl"
+              :categoryName="service.categoryName"
+              :value="service.value"
+            >
+            </ServiceRankingItem>
+            </template>
+
+          </Card>
+          </div>
+
         </div>
       </template>
     </Card>
