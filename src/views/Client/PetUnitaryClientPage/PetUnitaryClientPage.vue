@@ -28,6 +28,7 @@ const petData = ref<Pet | null>(null)
 const veterinaryRecords = ref<VeterinaryRecordInfoTable[]>([])
 
 //for loadVeterinaryRecords
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const loadVeterinaryRecords = async (petId: number) => {
   veterinaryRecords.value = await getAllInfoVeterinaryRecordsByPet(petId)
 }
