@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { inject, onMounted, ref, type Ref } from 'vue'
-import Card from 'primevue/card'
 import InputText from 'primevue/inputtext'
 import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
@@ -139,12 +138,8 @@ loadsBreed()
 </script>
 
 <template>
-  <Card class="card-dialog-form-layout">
-    <template #title>
-      <h3 class="h3 text-center">{{ title }} Mascota</h3>
-    </template>
+  <div class="card-dialog-form-layout">
 
-    <template #content>
       <form @submit.prevent="onSubmit" class="form-dialog-layout">
         <!-- owner dni -->
         <div>
@@ -157,7 +152,7 @@ loadsBreed()
               v-model="ownerDni"
               v-bind="ownerDniAttrs"
               class="w-full"
-              placeholder="Dueño DNI"
+              placeholder="Busque dueño por DNI"
             />
             <InputGroupAddon>
               <Button
@@ -202,7 +197,7 @@ loadsBreed()
             <InputGroupAddon class="text-neutral-400">
               <i class="pi pi-info"></i>
             </InputGroupAddon>
-            <InputText v-model="name" v-bind="nameAttrs" class="w-full" placeholder="Nombre" />
+            <InputText v-model="name" v-bind="nameAttrs" class="w-full" placeholder="Nombre de la mascota" />
           </InputGroup>
           <Message v-if="errors.name" severity="error" size="small" variant="simple">
             {{ errors.name }}
@@ -345,6 +340,5 @@ loadsBreed()
           />
         </div>
       </form>
-    </template>
-  </Card>
+  </div>
 </template>

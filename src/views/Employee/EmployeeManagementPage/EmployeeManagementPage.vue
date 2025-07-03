@@ -168,6 +168,7 @@ const addEmployee = async () => {
   dialog.open(AddEmployeeCard, {
     props: {
       modal: true,
+      header:'Agregar empleado',
     },
     data: {
       headquartersOptions: headquartersToOptionsSelect(await getAllHeadquarters()),
@@ -188,11 +189,13 @@ const addEmployee = async () => {
 //for view
 const viewEmployee = (employeeData: Employee) => {
   dialog.open(ViewEmployeeCard, {
+
     data: {
       employeeData: employeeData,
     },
     props: {
       modal: true,
+            header:`${employeeData.lastnames} ,${employeeData.names}`
     },
   })
 }
@@ -218,6 +221,7 @@ const editEmployee = async (employeeData: Employee) => {
     },
     props: {
       modal: true,
+      header:`${employeeData.lastnames} , ${employeeData.names}`
     },
     onClose: async (options) => {
       const data = options?.data as EditEmployeeSchema

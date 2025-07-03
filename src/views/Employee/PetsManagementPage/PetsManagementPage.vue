@@ -138,6 +138,7 @@ const addPet = async () => {
   dialog.open(AddEditPetCard, {
     props: {
       modal: true,
+      header:'Agregar mascota'
     },
     data: {
       speciesOptions: speciesToOptionsSelect(await getAllSpecies())
@@ -164,6 +165,7 @@ const editPet = async (petData: Pet) => {
   dialog.open(AddEditPetCard, {
     props: {
       modal: true,
+      header:`${petData.name}`
     },
     data: {
       petData: {
