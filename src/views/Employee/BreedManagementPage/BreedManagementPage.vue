@@ -88,6 +88,7 @@ const addBreed = () => {
   dialog.open(AddEditBreedCard, {
     props: {
       modal: true,
+      header:'Agregar raza'
     },
     data: {
       speciesOptions: speciesOptions,
@@ -108,6 +109,7 @@ const editBreed = (breedData: Breed) => {
   dialog.open(AddEditBreedCard, {
     props: {
       modal: true,
+      header:`${breedData.name}`
     },
     data: {
       breedData: {

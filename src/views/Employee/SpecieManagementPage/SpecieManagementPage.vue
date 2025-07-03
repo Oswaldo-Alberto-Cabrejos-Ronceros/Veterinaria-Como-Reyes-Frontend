@@ -75,6 +75,7 @@ const addSpecie = () => {
   dialog.open(AddEditSpecie, {
     props: {
       modal: true,
+      header:'Agregar especie'
     },
     onClose: async (options) => {
       const data = options?.data as AddEditSpecieSchema
@@ -92,6 +93,7 @@ const editPaymentMethod = (specieData: Specie) => {
   dialog.open(AddEditSpecie, {
     props: {
       modal: true,
+      header:`${specieData.name}`
     },
     data: {
       specieData: specieData as AddEditSpecieSchema,
