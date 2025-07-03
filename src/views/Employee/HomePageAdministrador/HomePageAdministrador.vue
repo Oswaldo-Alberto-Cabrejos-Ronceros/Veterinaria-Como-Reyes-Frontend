@@ -7,6 +7,7 @@ import Card from 'primevue/card'
 import { onMounted, ref } from 'vue'
 import CardNewsPrimary from '@/components/CardNewsPrimary.vue'
 import Button from 'primevue/button'
+import CardAppintmentTerciary from '@/components/CardAppintmentTerciary.vue'
 
 const { getEntityId } = useAuthentication()
 const { getEmployeeMyInfo } = useEmployee()
@@ -43,6 +44,35 @@ const news: { title: string; icon: string; content: string; plus?: string }[] = 
     plus: '+15% vs mes anterior',
   },
 ]
+
+const appointments:{  petName: string
+  serviceName: string
+  ownerName: string
+  time: string
+  status: string}[]=[
+    {
+      petName: 'Toby',
+      serviceName: 'Baño antipulgas',
+      ownerName: 'Oswaldo Cabrejos',
+      time: '09:30',
+      status: 'Completado'
+    },
+    {
+      petName: 'Lucky',
+      serviceName: 'Vacunación distemper',
+      ownerName: 'Diego Aguilar',
+      time: '10:30',
+      status: 'Confirmado'
+    },
+    {
+            petName: 'Negro',
+      serviceName: 'Spa canino',
+      ownerName: 'Juan Huacacchi',
+      time: '13:30',
+      status: 'Confirmado'
+    }
+  ]
+
 
 onMounted(() => {
   loadMyInfo()
@@ -89,12 +119,23 @@ const loadMyInfo = async () => {
               <div class="w-full flex justify-between items-baseline">
                 <h2 class="h3 font-semibold">Proximas citas</h2>
               <Button label="Nueva Cita" icon="pi pi-plus" >
-
               </Button>
               </div>
             </template>
             <template #subtitle>
               <p>Citas programadas para hoy</p>
+            </template>
+            <template #content>
+              <div class="w-full flex flex-col gap-1.5">
+                <CardAppintmentTerciary v-for=" (appointment,index) of appointments" :key="index"
+                :pet-name="appointment.petName" :service-name="appointment.serviceName" :owner-name="appointment.ownerName" :time="appointment.time"
+                :status="appointment.status"
+                >
+
+                </CardAppintmentTerciary>
+                              <Button label="Ver todas las citas"  variant="text" icon="pi pi-eye" size="small" class="mt-2" >
+              </Button>
+              </div>
             </template>
           </Card>
         </div>
