@@ -5,16 +5,19 @@ defineProps<{
   clientLastname: string
   petName: string
   serviceName: string
+  breedName: string
 }>()
 </script>
 
 <template>
   <div class="card-primary flex w-full p-2 items-center gap-3">
-    <Avatar class="size-10" shape="circle" :label="clientLastname.charAt(0) + clientName.charAt(0)">
-    </Avatar>
+    <Avatar class="size-10" shape="circle" :label="petName.slice(0,2)"> </Avatar>
     <div class="flex-1 flex flex-col justify-center items-start">
-      <p>{{ clientName }} {{ clientLastname }}</p>
-      <p class="text-neutral-500 text-sm">{{ petName }} - {{ serviceName }}</p>
+      <p>{{ petName }}</p>
+      <p class="text-neutral-500 text-sm">
+        {{ breedName }} - {{ clientName }} {{ clientLastname }}
+      </p>
+      <p>{{ serviceName }}</p>
     </div>
     <i class="pi pi-clock ml-4 text-lg"> </i>
   </div>

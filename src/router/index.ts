@@ -22,6 +22,8 @@ import AppointmentManagementPage from '@/views/Employee/AppointmentManagementPag
 import CareManagementPage from '@/views/Employee/CareManagementPage/CareManagementPage.vue'
 import PageNotFound from '@/views/Common/PageNotFound/PageNotFound.vue'
 import HomePageRecepcionist from '@/views/Employee/HomePageRecepcionist/HomePageRecepcionist.vue'
+import HomePageVeterinary from '@/views/Employee/HomePageVeterinary/HomePageVeterinary.vue'
+
 //client
 import MyAppointmentsClientPage from '@/views/Client/MyAppointmentsClientPage/MyAppointmentsClientPage.vue'
 import MyPetsPage from '@/views/Client/MyPetsPage/MyPetsPage.vue'
@@ -321,7 +323,7 @@ const router = createRouter({
             {
               path: 'home',
               name: 'veterinary-home',
-              component: HomePageAdministrador,
+              component: HomePageVeterinary,
               meta: { requiresAuth: true, roles: ['Veterinario'] },
             },
             {

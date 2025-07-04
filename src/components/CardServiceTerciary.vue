@@ -29,7 +29,7 @@ defineProps<{
           <i class="pi pi-clock"></i>
           <p>{{ duration }} min</p>
         </div>
-        <Button class=" py-1.5" size="small" label="Agendar" icon="pi pi-plus" icon-pos="left"></Button>
+        <Button class="py-1.5" size="small" label="Agendar" icon="pi pi-plus" icon-pos="left"></Button>
       </div>
     </div>
   </div>
