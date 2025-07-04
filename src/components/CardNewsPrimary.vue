@@ -10,9 +10,9 @@ defineProps<{
 </script>
 
 <template>
-  <Card class="card-primary min-w-56 min-h-40 p-1">
+  <Card class="card-primary min-w-40 min-h-40 p-1">
     <template #content>
-      <div class="w-full flex items-center justify-between">
+      <div class="w-full flex items-center gap-1 justify-between">
         <p class=" font-semibold">{{ title }}</p>
         <i :class="`pi ${icon} text-neutral-500`"> </i>
       </div>
