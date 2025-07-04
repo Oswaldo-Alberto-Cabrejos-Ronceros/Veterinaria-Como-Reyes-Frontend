@@ -9,6 +9,8 @@ import CardNewsPrimary from '@/components/CardNewsPrimary.vue'
 import Button from 'primevue/button'
 import CardAppintmentTerciary from '@/components/CardAppintmentTerciary.vue'
 import ServiceRankingItem from '@/components/ServiceRankingItem.vue'
+import ClientRankingItem from '@/components/ClientRankingItem.vue'
+import Chart from 'primevue/chart'
 
 const { getEntityId } = useAuthentication()
 const { getEmployeeMyInfo } = useEmployee()
@@ -119,8 +121,40 @@ const serviceStadistics: {
   },
 ]
 
+const clientsRecent: { clientName: string; clientLastname: string; clientDni: string }[] = [
+  {
+    clientName: 'Lucía',
+    clientLastname: 'Ramírez',
+    clientDni: '48392157',
+  },
+  {
+    clientName: 'Carlos',
+    clientLastname: 'Fernández',
+    clientDni: '72918364',
+  },
+  {
+    clientName: 'María',
+    clientLastname: 'Gómez',
+    clientDni: '81629475',
+  },
+  {
+    clientName: 'Jorge',
+    clientLastname: 'Castro',
+    clientDni: '50318249',
+  },
+  {
+    clientName: 'Diana',
+    clientLastname: 'Vargas',
+    clientDni: '61284793',
+  },
+]
+
 onMounted(() => {
   loadMyInfo()
+  chartData.value = setChartData()
+  chartOptions.value = setChartOptions()
+  chartDataSpecie.value = setChartDataSpecies()
+  chartOptionsSpecie.value = setChartOptionsSpecies()
 })
 
 const loadMyInfo = async () => {
@@ -128,6 +162,128 @@ const loadMyInfo = async () => {
   entityId.value = entityIdGet
   if (entityIdGet) {
     myInfoEmployee.value = await getEmployeeMyInfo(entityIdGet)
+  }
+}
+
+const chartData = ref()
+const chartOptions = ref()
+const chartDataSpecie = ref()
+const chartOptionsSpecie = ref()
+
+//data and options for sales
+const setChartData = () => {
+  const documentStyle = getComputedStyle(document.documentElement)
+
+  return {
+    labels: ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'],
+    datasets: [
+      {
+        label: 'Ingresos',
+        data: [65, 59, 80, 81, 56, 55, 40],
+        fill: false,
+        borderColor: documentStyle.getPropertyValue('--p-pink-500'),
+        tension: 0.4,
+      },
+    ],
+  }
+}
+
+const setChartOptions = () => {
+  const documentStyle = getComputedStyle(document.documentElement)
+  const textColor = documentStyle.getPropertyValue('--p-text-color')
+  const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color')
+  const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color')
+
+  return {
+    maintainAspectRatio: false,
+    aspectRatio: 0.6,
+    plugins: {
+      legend: {
+        labels: {
+          color: textColor,
+        },
+      },
+    },
+    scales: {
+      x: {
+        ticks: {
+          color: textColorSecondary,
+        },
+        grid: {
+          color: surfaceBorder,
+        },
+      },
+      y: {
+        ticks: {
+          color: textColorSecondary,
+        },
+        grid: {
+          color: surfaceBorder,
+        },
+      },
+    },
+  }
+}
+
+//data and options for species
+
+const setChartDataSpecies = () => {
+  return {
+    labels: ['Gallo', 'Gato', 'Perro', 'Loro'],
+    datasets: [
+      {
+        label: 'Citas',
+        data: [54, 60, 100, 20],
+        backgroundColor: [
+          'rgba(249, 115, 22, 0.2)',
+          'rgba(6, 182, 212, 0.2)',
+          'rgb(107, 114, 128, 0.2)',
+          'rgba(139, 92, 246 0.2)',
+        ],
+        borderColor: [
+          'rgb(249, 115, 22)',
+          'rgb(6, 182, 212)',
+          'rgb(107, 114, 128)',
+          'rgb(139, 92, 246)',
+        ],
+        borderWidth: 1,
+      },
+    ],
+  }
+}
+const setChartOptionsSpecies = () => {
+  const documentStyle = getComputedStyle(document.documentElement)
+  const textColor = documentStyle.getPropertyValue('--p-text-color')
+  const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color')
+  const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color')
+
+  return {
+    plugins: {
+      legend: {
+        labels: {
+          color: textColor,
+        },
+      },
+    },
+    scales: {
+      x: {
+        ticks: {
+          color: textColorSecondary,
+        },
+        grid: {
+          color: surfaceBorder,
+        },
+      },
+      y: {
+        beginAtZero: true,
+        ticks: {
+          color: textColorSecondary,
+        },
+        grid: {
+          color: surfaceBorder,
+        },
+      },
+    },
   }
 }
 </script>
@@ -193,25 +349,86 @@ const loadMyInfo = async () => {
             </template>
           </Card>
           <div class="grid grid-cols-2 gap-x-12">
-         <Card class="card-primary min-h-24 max-h-full">
+            <!-- servicios mas pedidos -->
+            <Card class="card-primary min-h-24 max-h-full">
+              <template #title>
+                <p>Servicios más perdidos</p>
+              </template>
+              <template #content>
+                <ServiceRankingItem
+                  v-for="(service, index) of serviceStadistics"
+                  :key="index"
+                  :serviceName="service.serviceName"
+                  :serviceImageUrl="service.serviceImageUrl"
+                  :categoryName="service.categoryName"
+                  :value="service.value"
+                >
+                </ServiceRankingItem>
+              </template>
+            </Card>
+            <!-- clientes recientes -->
+            <Card class="card-primary min-h-24 max-h-full">
+              <template #title>
+                <div class="w-full flex items-center justify-between">
+                  <p>Clientes recientes</p>
+                  <Button
+                    variant="outlined"
+                    rounded
+                    icon="pi pi-plus"
+                    v-tooltip.left="`Agregar cliente`"
+                  >
+                  </Button>
+                </div>
+              </template>
+              <template #content>
+                <ClientRankingItem
+                  v-for="(client, index) of clientsRecent"
+                  :key="index"
+                  :clientName="client.clientName"
+                  :clientLastname="client.clientLastname"
+                  :clientDni="client.clientDni"
+                ></ClientRankingItem>
+              </template>
+              <template #footer>
+                <Button
+                  label="Ver todos los clientes"
+                  variant="text"
+                  icon="pi pi-users"
+                  size="small"
+                  class="mt-2 w-full"
+                >
+                </Button>
+              </template>
+            </Card>
+          </div>
+        </div>
+        <!-- seccion 3 -->
+        <div class="grid grid-cols-2 gap-x-12 mt-4">
+          <Card class="card-primary">
             <template #title>
-              <p>Servicios más perdidos</p>
+              <p>Ingresos de la última semana</p>
             </template>
             <template #content>
-            <ServiceRankingItem
-              v-for="(service, index) of serviceStadistics"
-              :key="index"
-              :serviceName="service.serviceName"
-              :serviceImageUrl="service.serviceImageUrl"
-              :categoryName="service.categoryName"
-              :value="service.value"
-            >
-            </ServiceRankingItem>
+              <Chart type="line" :data="chartData" :options="chartOptions" class="h-[30rem]" />
             </template>
-
           </Card>
-          </div>
 
+          <Card class="card-primary">
+            <template #title>
+              <p>Especies por citas</p>
+            </template>
+            <template #content>
+              <div class="w-full min-h-full flex items-end justify-center">
+              <Chart
+                type="bar"
+                :data="chartDataSpecie"
+                :options="chartOptionsSpecie"
+                class="h-[30rem] w-full flex items-center"
+              />
+              </div>
+
+            </template>
+          </Card>
         </div>
       </template>
     </Card>
