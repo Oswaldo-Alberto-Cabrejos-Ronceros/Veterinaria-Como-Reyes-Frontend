@@ -16,7 +16,7 @@ defineProps<{
   <i class="pi pi-clock mr-4 text-lg"> </i>
 <div class="flex-1 flex flex-col justify-between">
   <p class=" font-semibold"> {{ `${time} - ${petName} (${petBreed}) . ${ownerName} ` }}</p>
-   <p class="text-neutral-500">{{ `${serviceName} - Dr. ${employeeName}` }}</p>
+   <p class="text-neutral-500 text-sm">{{ `${serviceName} - Dr. ${employeeName}` }}</p>
 </div>
   <Tag :value="status" severity="secondary"> </Tag>
 </div>

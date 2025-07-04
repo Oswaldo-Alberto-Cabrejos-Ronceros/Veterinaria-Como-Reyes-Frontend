@@ -14,6 +14,7 @@ import InputText from 'primevue/inputtext'
 import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
 import CardServiceTerciary from '@/components/CardServiceTerciary.vue'
+import CardClientWaiting from '@/components/CardClientWaiting.vue'
 
 const { getEntityId } = useAuthentication()
 const { getEmployeeMyInfo } = useEmployee()
@@ -241,6 +242,44 @@ const services: {
     price: '100.00',
   },
 ]
+
+const clientWaiting: {
+  clientName: string
+  clientLastname: string
+  petName: string
+  serviceName: string
+}[] = [
+  {
+    clientName: 'Carlos',
+    clientLastname: 'Ramírez',
+    petName: 'Toby',
+    serviceName: 'Consulta general',
+  },
+  {
+    clientName: 'Andrea',
+    clientLastname: 'Mendoza',
+    petName: 'Luna',
+    serviceName: 'Vacunación',
+  },
+  {
+    clientName: 'Luis',
+    clientLastname: 'García',
+    petName: 'Rocky',
+    serviceName: 'Corte de uñas',
+  },
+  {
+    clientName: 'María',
+    clientLastname: 'Lopez',
+    petName: 'Mimi',
+    serviceName: 'Desparasitación',
+  },
+  {
+    clientName: 'Pedro',
+    clientLastname: 'Fernández',
+    petName: 'Max',
+    serviceName: 'Control dental',
+  },
+]
 </script>
 
 <template>
@@ -348,9 +387,38 @@ const services: {
                 </div>
               </template>
               <template #subtitle>
-               <p>Clientes en espera</p>
+                <p>Clientes en espera</p>
+              </template>
+              <template #content>
+                <div class="w-full flex flex-col gap-1">
+                  <CardClientWaiting
+                    v-for="(client, index) of clientWaiting"
+                    :key="index"
+                    :clientName="client.clientName"
+                    :clientLastname="client.clientLastname"
+                    :petName="client.petName"
+                    :serviceName="client.serviceName"
+                  ></CardClientWaiting>
+                </div>
               </template>
             </Card>
+            <!-- payments -->
+
+                        <Card class="card-primary min-h-24 max-h-full">
+              <template #title>
+                <div class="w-full flex justify-between items-baseline">
+                  <h2 class="h3 font-semibold">Ultimos pagos</h2>
+                  <Tag value="2 pendientes" severity="secondary" class="self-start"></Tag>
+                </div>
+              </template>
+              <template #content>
+                <div class="w-full flex flex-col gap-1">
+
+                  
+                </div>
+              </template>
+            </Card>
+
           </div>
         </div>
         <!-- for services -->
