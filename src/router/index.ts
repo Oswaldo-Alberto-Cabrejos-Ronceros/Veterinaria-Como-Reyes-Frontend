@@ -21,6 +21,7 @@ import PaymentManagementPage from '@/views/Employee/PaymentManagementPage/Paymen
 import AppointmentManagementPage from '@/views/Employee/AppointmentManagementPage/AppointmentManagementPage.vue'
 import CareManagementPage from '@/views/Employee/CareManagementPage/CareManagementPage.vue'
 import PageNotFound from '@/views/Common/PageNotFound/PageNotFound.vue'
+import HomePageRecepcionist from '@/views/Employee/HomePageRecepcionist/HomePageRecepcionist.vue'
 //client
 import MyAppointmentsClientPage from '@/views/Client/MyAppointmentsClientPage/MyAppointmentsClientPage.vue'
 import MyPetsPage from '@/views/Client/MyPetsPage/MyPetsPage.vue'
@@ -276,7 +277,7 @@ const router = createRouter({
             {
               path: 'home',
               name: 'receptionist-home',
-              component: HomePageAdministrador,
+              component: HomePageRecepcionist,
               meta: { requiresAuth: true, roles: ['Recepcionista'] },
             },
             {

@@ -21,6 +21,23 @@ const entityId = ref<number | null>(null)
 
 const today = DateAdapter.toFormatView(new Date())
 
+onMounted(() => {
+  loadMyInfo()
+  chartData.value = setChartData()
+  chartOptions.value = setChartOptions()
+  chartDataSpecie.value = setChartDataSpecies()
+  chartOptionsSpecie.value = setChartOptionsSpecies()
+})
+
+const loadMyInfo = async () => {
+  const entityIdGet = getEntityId()
+  entityId.value = entityIdGet
+  if (entityIdGet) {
+    myInfoEmployee.value = await getEmployeeMyInfo(entityIdGet)
+  }
+}
+
+
 const news: { title: string; icon: string; content: string; plus?: string }[] = [
   {
     title: 'Citas hoy',
@@ -149,21 +166,6 @@ const clientsRecent: { clientName: string; clientLastname: string; clientDni: st
   },
 ]
 
-onMounted(() => {
-  loadMyInfo()
-  chartData.value = setChartData()
-  chartOptions.value = setChartOptions()
-  chartDataSpecie.value = setChartDataSpecies()
-  chartOptionsSpecie.value = setChartOptionsSpecies()
-})
-
-const loadMyInfo = async () => {
-  const entityIdGet = getEntityId()
-  entityId.value = entityIdGet
-  if (entityIdGet) {
-    myInfoEmployee.value = await getEmployeeMyInfo(entityIdGet)
-  }
-}
 
 const chartData = ref()
 const chartOptions = ref()
