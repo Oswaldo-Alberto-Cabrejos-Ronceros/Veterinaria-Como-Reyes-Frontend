@@ -5,7 +5,7 @@ export class ReniecAdapter {
     reniecResponse: ReniecResponseSimple,
   ): BasicInfoByReniec {
     return {
-      names: reniecResponse.name,
+      names: reniecResponse.names,
       lastnames: reniecResponse.lastName,
     }
   }

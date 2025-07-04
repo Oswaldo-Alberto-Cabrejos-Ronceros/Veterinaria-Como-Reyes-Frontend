@@ -28,7 +28,6 @@ import type { OptionSelect } from '@/models/OptionSelect'
 import type { Role } from '@/models/Role'
 import { useHeadquarter } from '@/composables/useHeadquarter'
 import type { Headquarter } from '@/models/Headquarter'
-
 //toast
 const toast = useToast()
 

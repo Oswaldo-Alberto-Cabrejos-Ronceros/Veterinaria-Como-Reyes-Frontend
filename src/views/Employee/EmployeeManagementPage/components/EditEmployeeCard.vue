@@ -13,6 +13,12 @@ import DatePicker from 'primevue/datepicker'
 import type { Ref } from 'vue'
 import { inject, onMounted, ref } from 'vue'
 import type { OptionSelect } from '@/models/OptionSelect'
+import { useReniec } from '@/composables/useReniec'
+
+//methods
+
+const { getInfoSimpleByReniec } = useReniec()
+
 //form
 
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
@@ -135,6 +141,24 @@ onMounted(() => {
     }
   }
 })
+
+//for search
+
+const searchInfoReniec = async () => {
+  if (dni.value?.length === 8) {
+    try {
+      const infoGet = await getInfoSimpleByReniec(dni.value)
+      console.log(infoGet)
+      fieldMap.names[0].value = infoGet.names
+      fieldMap.lastnames[0].value = infoGet.lastnames
+    } catch (e) {
+      console.error('Error al obtener la informacion', e)
+
+      fieldMap.names[0].value = ''
+      fieldMap.lastnames[0].value = ''
+    }
+  }
+}
 </script>
 
 <template>
@@ -149,6 +173,14 @@ onMounted(() => {
             <i class="pi pi-id-card"></i>
           </InputGroupAddon>
           <InputText v-bind="dniAttrs" v-model="dni" type="text" placeholder="Ej: 74512351" />
+                  <InputGroupAddon>
+            <Button
+              icon="pi pi-search"
+              severity="secondary"
+              variant="text"
+              @click="searchInfoReniec()"
+            />
+          </InputGroupAddon>
         </InputGroup>
 
         <Message v-if="errors.dni" severity="error" size="small" variant="simple">

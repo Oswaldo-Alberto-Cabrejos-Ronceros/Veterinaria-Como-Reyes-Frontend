@@ -1,4 +1,4 @@
 export interface ReniecResponseSimple {
-  name: string
+  names: string
   lastName: string
 }

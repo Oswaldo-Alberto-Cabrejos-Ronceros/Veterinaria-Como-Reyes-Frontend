@@ -14,6 +14,12 @@ import DatePicker from 'primevue/datepicker'
 import type { Ref } from 'vue'
 import { inject, onMounted, ref } from 'vue'
 import type { OptionSelect } from '@/models/OptionSelect'
+import { useReniec } from '@/composables/useReniec'
+
+//methods
+
+const { getInfoSimpleByReniec } = useReniec()
+
 //form
 
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
@@ -53,36 +59,41 @@ const [password, passwordAttrs] = defineField('password')
 const [confirmPassword, confirmPasswordAttrs] = defineField('confirmPassword')
 //first elements
 
-const textFields: { title: string; key: keyof typeof fieldMap; icon: string, placeholder:string }[] = [
+const textFields: {
+  title: string
+  key: keyof typeof fieldMap
+  icon: string
+  placeholder: string
+}[] = [
   {
     title: 'Nombres',
     key: 'names',
     icon: 'pi-user',
-    placeholder:'Nombres del empleado'
+    placeholder: 'Nombres del empleado',
   },
   {
     title: 'Apellidos',
     key: 'lastnames',
     icon: 'pi-user',
-    placeholder:'Apellidos del empleado'
+    placeholder: 'Apellidos del empleado',
   },
   {
     title: 'Dirección',
     key: 'address',
     icon: 'pi-home',
-    placeholder:'Avenida, calle , número'
+    placeholder: 'Avenida, calle , número',
   },
   {
     title: 'Celular',
     key: 'phone',
     icon: 'pi-mobile',
-    placeholder:'Ej: 945156123'
+    placeholder: 'Ej: 945156123',
   },
   {
     title: 'Imagen',
     key: 'dirImage',
     icon: 'pi-image',
-    placeholder:'Imagen del empleado'
+    placeholder: 'Imagen del empleado',
   },
 ]
 
@@ -120,6 +131,24 @@ onMounted(() => {
     }
   }
 })
+
+//for search
+
+const searchInfoReniec = async () => {
+  if (dni.value?.length === 8) {
+    try {
+      const infoGet = await getInfoSimpleByReniec(dni.value)
+      console.log(infoGet)
+      fieldMap.names[0].value = infoGet.names
+      fieldMap.lastnames[0].value = infoGet.lastnames
+    } catch (e) {
+      console.error('Error al obtener la informacion', e)
+
+      fieldMap.names[0].value = ''
+      fieldMap.lastnames[0].value = ''
+    }
+  }
+}
 </script>
 
 <template>
@@ -134,7 +163,15 @@ onMounted(() => {
           <InputGroupAddon class="text-neutral-400">
             <i class="pi pi-id-card"></i>
           </InputGroupAddon>
-          <InputText v-bind="dniAttrs" v-model="dni" type="text" placeholder="Ej: 74512351"  />
+          <InputText v-bind="dniAttrs" v-model="dni" type="text" placeholder="Ej: 74512351" />
+          <InputGroupAddon>
+            <Button
+              icon="pi pi-search"
+              severity="secondary"
+              variant="text"
+              @click="searchInfoReniec()"
+            />
+          </InputGroupAddon>
         </InputGroup>
 
         <Message v-if="errors.dni" severity="error" size="small" variant="simple">
@@ -161,14 +198,20 @@ onMounted(() => {
         </Message>
       </div>
 
-            <div>
+      <div>
         <label class="block mb-2">CMVP</label>
 
         <InputGroup>
           <InputGroupAddon class="text-neutral-400">
             <i class="pi pi-id-card"></i>
           </InputGroupAddon>
-          <InputText v-bind="cmvpAttrs" v-model="cmvp" type="text" placeholder="Ej: 14125" :disabled="roleId!==2" />
+          <InputText
+            v-bind="cmvpAttrs"
+            v-model="cmvp"
+            type="text"
+            placeholder="Ej: 14125"
+            :disabled="roleId !== 2"
+          />
         </InputGroup>
 
         <Message v-if="errors.cmvp" severity="error" size="small" variant="simple">
