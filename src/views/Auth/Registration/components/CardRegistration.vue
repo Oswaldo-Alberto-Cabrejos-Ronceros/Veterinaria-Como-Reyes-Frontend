@@ -22,8 +22,8 @@ import ProgressSpinner from 'primevue/progressspinner'
 import type { OptionSelect } from '@/models/OptionSelect'
 
 defineProps<{
-  loading?: boolean,
-  headquartersOptions:OptionSelect[]
+  loading?: boolean
+  headquartersOptions: OptionSelect[]
 }>()
 
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
@@ -42,7 +42,6 @@ const { handleSubmit, errors, defineField } = useForm<FormValues>({
     term: false,
   },
 })
-
 
 // binding
 
@@ -74,12 +73,15 @@ const imageLogo = computed(() => (storeTheme.isDark ? LogoWhite : LogoRose))
 
 <template>
   <Card
-    class="h-auto w-[90%] sm:w-xl flex flex-col items-center justify-center dark:bg-surface-800"
+    class="h-auto w-[90vw] max-w-3xl flex flex-col items-center justify-center dark:bg-surface-800"
   >
     <template #header>
-      <Image :src="imageLogo" alt="Logo" width="220" />
+      <Image :src="imageLogo" alt="Logo" width="110" />
     </template>
-    <template #title><h3 class="h3 text-center">Registro</h3></template>
+    <template #title><h3 class="h1 text-primary text-center font-bold">Registro</h3></template>
+    <template #subtitle>
+      <p class="text-neutral-500 text-center">Crea tu cuenta para acceder al portal del cliente</p>
+    </template>
     <template #content>
       <div v-if="loading" class="min-h-96 w-full flex items-center justify-center">
         <ProgressSpinner />
@@ -88,7 +90,7 @@ const imageLogo = computed(() => (storeTheme.isDark ? LogoWhite : LogoRose))
       <form
         v-if="!loading"
         @submit.prevent="onSubmit"
-        class="flex flex-col gap-4 w-full max-w-xl xs:min-w-96 sm:min-w-md text-neutral-950 dark:text-surface-0"
+        class="flex flex-col gap-1.5 w-[83vw] md:w-[85vw] max-w-2xl text-neutral-950 dark:text-surface-0"
       >
         <!-- DNI -->
         <label>DNI</label>
@@ -97,45 +99,55 @@ const imageLogo = computed(() => (storeTheme.isDark ? LogoWhite : LogoRose))
           <InputGroupAddon class="text-neutral-400">
             <i class="pi pi-id-card"></i>
           </InputGroupAddon>
-          <InputText v-bind="dniAttrs" v-model="dni" type="text" placeholder="DNI" />
+          <InputText v-bind="dniAttrs" v-model="dni" type="text" placeholder="Ej: 74512351" />
         </InputGroup>
 
         <Message v-if="errors.dni" severity="error" size="small" variant="simple">
           {{ errors.dni }}
         </Message>
+        <div class="w-full grid grid-cols-2 gap-4">
+          <!-- names -->
+          <div>
+            <label>Nombres</label>
 
-        <!-- names -->
-        <label>Nombres</label>
+            <InputGroup class="my-1">
+              <InputGroupAddon class="text-neutral-400">
+                <i class="pi pi-user"></i>
+              </InputGroupAddon>
+              <InputText
+                v-bind="namesAttrs"
+                v-model="names"
+                type="text"
+                placeholder="Escribe tus nombres"
+              />
+            </InputGroup>
 
-        <InputGroup>
-          <InputGroupAddon class="text-neutral-400">
-            <i class="pi pi-user"></i>
-          </InputGroupAddon>
-          <InputText v-bind="namesAttrs" v-model="names" type="text" placeholder="Nombres" />
-        </InputGroup>
+            <Message v-if="errors.names" severity="error" size="small" variant="simple">
+              {{ errors.names }}
+            </Message>
+          </div>
 
-        <Message v-if="errors.names" severity="error" size="small" variant="simple">
-          {{ errors.names }}
-        </Message>
+          <div>
+            <!-- last names -->
+            <label>Apellidos</label>
 
-        <!-- last names -->
-        <label>Apellidos</label>
+            <InputGroup class="my-1">
+              <InputGroupAddon class="text-neutral-400">
+                <i class="pi pi-user"></i>
+              </InputGroupAddon>
+              <InputText
+                v-bind="lastnamesAttrs"
+                v-model="lastnames"
+                type="text"
+                placeholder="Escribe tus apellidos"
+              />
+            </InputGroup>
 
-        <InputGroup>
-          <InputGroupAddon class="text-neutral-400">
-            <i class="pi pi-user"></i>
-          </InputGroupAddon>
-          <InputText
-            v-bind="lastnamesAttrs"
-            v-model="lastnames"
-            type="text"
-            placeholder="Apellidos"
-          />
-        </InputGroup>
-
-        <Message v-if="errors.lastnames" severity="error" size="small" variant="simple">
-          {{ errors.lastnames }}
-        </Message>
+            <Message v-if="errors.lastnames" severity="error" size="small" variant="simple">
+              {{ errors.lastnames }}
+            </Message>
+          </div>
+        </div>
 
         <!-- email -->
         <label>Email</label>
@@ -148,7 +160,7 @@ const imageLogo = computed(() => (storeTheme.isDark ? LogoWhite : LogoRose))
             v-bind="emailAttrs"
             v-model="email"
             type="text"
-            placeholder="Correo electrónico"
+            placeholder="Ej: example@gmail.com"
           />
         </InputGroup>
 
@@ -156,6 +168,45 @@ const imageLogo = computed(() => (storeTheme.isDark ? LogoWhite : LogoRose))
           {{ errors.email }}
         </Message>
 
+        <div class="w-full grid grid-cols-2 gap-4">
+          <!-- cell phone -->
+          <div>
+            <label>Celular</label>
+
+            <InputGroup class="my-1">
+              <InputGroupAddon class="text-neutral-400">
+                <i class="pi pi-mobile"></i>
+              </InputGroupAddon>
+              <InputText
+                v-bind="phoneAttrs"
+                v-model="phone"
+                type="tel"
+                placeholder="Ej: 945215562"
+              />
+            </InputGroup>
+
+            <Message v-if="errors.phone" severity="error" size="small" variant="simple">
+              {{ errors.phone }}
+            </Message>
+          </div>
+
+          <!-- birthDate -->
+          <div>
+            <label>Fecha Nacimiento</label>
+
+            <DatePicker
+              class="my-1"
+              v-bind="birthdateAttrs"
+              v-model="birthdate"
+              showIcon
+              fluid
+              iconDisplay="input"
+            />
+            <Message v-if="errors.birthdate" severity="error" size="small" variant="simple">
+              {{ errors.birthdate }}
+            </Message>
+          </div>
+        </div>
         <!-- address -->
         <label>Dirección</label>
 
@@ -163,39 +214,16 @@ const imageLogo = computed(() => (storeTheme.isDark ? LogoWhite : LogoRose))
           <InputGroupAddon class="text-neutral-400">
             <i class="pi pi-home"></i>
           </InputGroupAddon>
-          <InputText v-bind="addressAttrs" v-model="address" type="text" placeholder="Dirección" />
+          <InputText
+            v-bind="addressAttrs"
+            v-model="address"
+            type="text"
+            placeholder="Ej: Av. Ejemplo N°"
+          />
         </InputGroup>
 
         <Message v-if="errors.address" severity="error" size="small" variant="simple">
           {{ errors.address }}
-        </Message>
-
-        <!-- cell phone -->
-        <label>Celular</label>
-
-        <InputGroup>
-          <InputGroupAddon class="text-neutral-400">
-            <i class="pi pi-mobile"></i>
-          </InputGroupAddon>
-          <InputText v-bind="phoneAttrs" v-model="phone" type="tel" placeholder="Celular" />
-        </InputGroup>
-
-        <Message v-if="errors.phone" severity="error" size="small" variant="simple">
-          {{ errors.phone }}
-        </Message>
-
-        <!-- birthDate -->
-        <label>Fecha Nacimiento</label>
-
-        <DatePicker
-          v-bind="birthdateAttrs"
-          v-model="birthdate"
-          showIcon
-          fluid
-          iconDisplay="input"
-        />
-        <Message v-if="errors.birthdate" severity="error" size="small" variant="simple">
-          {{ errors.birthdate }}
         </Message>
 
         <!--headquarker-->
@@ -213,42 +241,47 @@ const imageLogo = computed(() => (storeTheme.isDark ? LogoWhite : LogoRose))
           {{ errors.headquarter }}
         </Message>
 
-        <!-- password -->
-        <label>Contraseña</label>
-        <InputGroup>
-          <InputGroupAddon class="text-neutral-400">
-            <i class="pi pi-lock"></i>
-          </InputGroupAddon>
-          <Password
-            v-bind="passwordAttrs"
-            v-model="password"
-            toggleMask
-            :feedback="false"
-            placeholder="Contraseña"
-          />
-        </InputGroup>
-        <Message v-if="errors.password" severity="error" size="small" variant="simple">
-          {{ errors.password }}
-        </Message>
+        <div class="w-full grid grid-cols-2 gap-4">
+          <!-- password -->
+          <div>
+            <label>Contraseña</label>
+            <InputGroup class="my-1">
+              <InputGroupAddon class="text-neutral-400">
+                <i class="pi pi-lock"></i>
+              </InputGroupAddon>
+              <Password
+                v-bind="passwordAttrs"
+                v-model="password"
+                toggleMask
+                placeholder="Mínimo 6 caracteres"
+              />
+            </InputGroup>
+            <Message v-if="errors.password" severity="error" size="small" variant="simple">
+              {{ errors.password }}
+            </Message>
+          </div>
+          <!-- confirm password -->
+          <div>
+            <label>Confirmar Contraseña</label>
 
-        <!-- confirm password -->
-        <label>Confirmar Contraseña</label>
+            <InputGroup class="my-1">
+              <InputGroupAddon class="text-neutral-400">
+                <i class="pi pi-lock"></i>
+              </InputGroupAddon>
+              <Password
+                v-bind="confirmPasswordAttrs"
+                v-model="confirmPassword"
+                :feedback="false"
+                toggleMask
+                placeholder="Repite tu contraseña"
+              />
+            </InputGroup>
 
-        <InputGroup>
-          <InputGroupAddon class="text-neutral-400">
-            <i class="pi pi-lock"></i>
-          </InputGroupAddon>
-          <Password
-            v-bind="confirmPasswordAttrs"
-            v-model="confirmPassword"
-            toggleMask
-            placeholder="Confirmar contraseña"
-          />
-        </InputGroup>
-
-        <Message v-if="errors.confirmPassword" severity="error" size="small" variant="simple">
-          {{ errors.confirmPassword }}
-        </Message>
+            <Message v-if="errors.confirmPassword" severity="error" size="small" variant="simple">
+              {{ errors.confirmPassword }}
+            </Message>
+          </div>
+        </div>
 
         <!-- terms -->
         <div class="col-span-2 flex items-center gap-2">
@@ -260,9 +293,14 @@ const imageLogo = computed(() => (storeTheme.isDark ? LogoWhite : LogoRose))
         </Message>
         <!-- button -->
 
-        <Button label="Registrar" type="submit" icon="pi pi-check-circle" iconPos="right" />
-              <div class="flex w-full items-center justify-center gap-2">
-          <p>¿Ya tienes cuenta?</p> <router-link class=" transition-colors duration-150 hover:text-red-500 dark:hover:text-red-400" to="/auth/login">Inicia Sesión </router-link>
+        <Button class="mt-2" label="Crear cuenta" type="submit" icon="pi pi-user-plus" iconPos="left" />
+        <div class="flex w-full items-center justify-center gap-2">
+          <p>¿Ya tienes cuenta?</p>
+          <router-link
+            class="transition-colors duration-150 hover:text-red-500 dark:hover:text-red-400"
+            to="/auth/login"
+            >Inicia Sesión
+          </router-link>
         </div>
       </form>
     </template>

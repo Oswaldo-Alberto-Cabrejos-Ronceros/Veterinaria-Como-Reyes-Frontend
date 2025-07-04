@@ -50,36 +50,41 @@ const [roleId, roleIdAttrs] = defineField('roleId')
 
 //first elements
 
-const textFields: { title: string; key: keyof typeof fieldMap; icon: string, placeholder:string }[] = [
+const textFields: {
+  title: string
+  key: keyof typeof fieldMap
+  icon: string
+  placeholder: string
+}[] = [
   {
     title: 'Nombres',
     key: 'names',
     icon: 'pi-user',
-    placeholder:'Nombres del empleado'
+    placeholder: 'Nombres del empleado',
   },
   {
     title: 'Apellidos',
     key: 'lastnames',
     icon: 'pi-user',
-    placeholder:'Apellidos del empleado'
+    placeholder: 'Apellidos del empleado',
   },
   {
     title: 'Dirección',
     key: 'address',
     icon: 'pi-home',
-    placeholder:'Avenida, calle , número'
+    placeholder: 'Avenida, calle , número',
   },
   {
     title: 'Celular',
     key: 'phone',
     icon: 'pi-mobile',
-    placeholder:'Ej: 945156123'
+    placeholder: 'Ej: 945156123',
   },
   {
     title: 'Imagen',
     key: 'dirImage',
     icon: 'pi-image',
-    placeholder:'Imagen del empleado'
+    placeholder: 'Imagen del empleado',
   },
 ]
 
@@ -117,8 +122,9 @@ onMounted(() => {
       headquarterId.value = params.headquarterId
       birthdate.value = params.birthdate
       roleId.value = params.roleId
-      if(params.cmvp){
-        cmvp.value=params.cmvp
+      dni.value = params.dni
+      if (params.cmvp) {
+        cmvp.value = params.cmvp
       }
     }
     if (headquartersOptionsGet) {
@@ -181,7 +187,7 @@ onMounted(() => {
             v-model="cmvp"
             type="text"
             placeholder="Ej: 14125"
-            :disabled="roleId !== 4"
+            :disabled="roleId !== 2"
           />
         </InputGroup>
 
@@ -219,22 +225,6 @@ onMounted(() => {
 
         <Message v-if="errors.birthdate" severity="error" size="small" variant="simple">
           {{ errors.birthdate }}
-        </Message>
-      </div>
-      <div>
-        <label class="block mb-2">Rol</label>
-        <Select
-          class="w-full"
-          v-bind="roleIdAttrs"
-          v-model="roleId"
-          :options="rolesOptions"
-          optionLabel="name"
-          optionValue="value"
-          placeholder="Selecciona Rol"
-        />
-
-        <Message v-if="errors.roleId" severity="error" size="small" variant="simple">
-          {{ errors.roleId }}
         </Message>
       </div>
       <div>

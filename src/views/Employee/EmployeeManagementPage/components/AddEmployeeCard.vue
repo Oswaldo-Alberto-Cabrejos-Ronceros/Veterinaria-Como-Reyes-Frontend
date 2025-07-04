@@ -168,7 +168,7 @@ onMounted(() => {
           <InputGroupAddon class="text-neutral-400">
             <i class="pi pi-id-card"></i>
           </InputGroupAddon>
-          <InputText v-bind="cmvpAttrs" v-model="cmvp" type="text" placeholder="Ej: 14125" :disabled="roleId!==4" />
+          <InputText v-bind="cmvpAttrs" v-model="cmvp" type="text" placeholder="Ej: 14125" :disabled="roleId!==2" />
         </InputGroup>
 
         <Message v-if="errors.cmvp" severity="error" size="small" variant="simple">
