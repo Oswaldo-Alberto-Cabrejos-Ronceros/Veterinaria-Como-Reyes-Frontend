@@ -61,7 +61,7 @@ const showEditClient = async () => {
   dialog.open(EditClientCard, {
     data: {
       clientSelfData: {
-        address: myInfoClient.value?.user.email,
+        address: myInfoClient.value?.address,
         headquarterId: myInfoClient.value?.headquarter.id,
         phone: myInfoClient.value?.phone,
       } as SchemaEditSelfClient,
@@ -69,6 +69,7 @@ const showEditClient = async () => {
     },
     props: {
       modal: true,
+      header:'Editar mis datos'
     },
     onClose: async (options) => {
       const data = options?.data as SchemaEditSelfClient
