@@ -15,6 +15,7 @@ import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
 import CardServiceTerciary from '@/components/CardServiceTerciary.vue'
 import CardClientWaiting from '@/components/CardClientWaiting.vue'
+import CardPaymentPrimary from '@/components/CardPaymentPrimary.vue'
 
 const { getEntityId } = useAuthentication()
 const { getEmployeeMyInfo } = useEmployee()
@@ -280,6 +281,74 @@ const clientWaiting: {
     serviceName: 'Control dental',
   },
 ]
+
+const payments: {
+  clientName: string
+  clientLastname: string
+  petName: string
+  serviceName: string
+  clientDni: string
+  date: string
+  time: string
+  amount: number
+  status: string
+}[] = [
+  {
+    clientName: 'Ana',
+    clientLastname: 'Gómez',
+    petName: 'Luna',
+    serviceName: 'Consulta general',
+    clientDni: '72839471',
+    date: '2025-07-03',
+    time: '09:00 AM',
+    amount: 50.0,
+    status: 'Pagado',
+  },
+  {
+    clientName: 'Luis',
+    clientLastname: 'Ramírez',
+    petName: 'Toby',
+    serviceName: 'Vacunación',
+    clientDni: '71583924',
+    date: '2025-07-02',
+    time: '10:30 AM',
+    amount: 25.0,
+    status: 'Pendiente',
+  },
+  {
+    clientName: 'María',
+    clientLastname: 'Fernández',
+    petName: 'Nina',
+    serviceName: 'Desparasitación',
+    clientDni: '74920385',
+    date: '2025-07-01',
+    time: '11:15 AM',
+    amount: 30.0,
+    status: 'Pagado',
+  },
+  {
+    clientName: 'Pedro',
+    clientLastname: 'Sánchez',
+    petName: 'Rocky',
+    serviceName: 'Control dental',
+    clientDni: '73819264',
+    date: '2025-07-03',
+    time: '01:45 PM',
+    amount: 45.0,
+    status: 'Pagado',
+  },
+  {
+    clientName: 'Laura',
+    clientLastname: 'Vargas',
+    petName: 'Mimi',
+    serviceName: 'Corte de uñas',
+    clientDni: '76283917',
+    date: '2025-07-03',
+    time: '03:00 PM',
+    amount: 15.0,
+    status: 'Pendiente',
+  },
+]
 </script>
 
 <template>
@@ -404,7 +473,7 @@ const clientWaiting: {
             </Card>
             <!-- payments -->
 
-                        <Card class="card-primary min-h-24 max-h-full">
+            <Card class="card-primary min-h-24 max-h-full">
               <template #title>
                 <div class="w-full flex justify-between items-baseline">
                   <h2 class="h3 font-semibold">Ultimos pagos</h2>
@@ -413,12 +482,22 @@ const clientWaiting: {
               </template>
               <template #content>
                 <div class="w-full flex flex-col gap-1">
-
-                  
+                  <CardPaymentPrimary
+                    v-for="(payment, index) in payments"
+                    :key="index"
+                    :clientName="payment.clientName"
+                    :clientLastname="payment.clientLastname"
+                    :petName="payment.petName"
+                    :serviceName="payment.serviceName"
+                    :clientDni="payment.clientDni"
+                    :date="payment.date"
+                    :time="payment.time"
+                    :amount="payment.amount"
+                    :status="payment.status"
+                  />
                 </div>
               </template>
             </Card>
-
           </div>
         </div>
         <!-- for services -->
