@@ -49,7 +49,7 @@ onMounted(() => {
           <i :class="`${item.icon} self-center`"></i>
           <div class="flex-1">
             <p>{{ item.title }}</p>
-            <p class="text-neutral-500">{{ item.content }}</p>
+            <p class="text-neutral-500 dark:text-neutral-300">{{ item.content }}</p>
           </div>
         </div>
       </div>
