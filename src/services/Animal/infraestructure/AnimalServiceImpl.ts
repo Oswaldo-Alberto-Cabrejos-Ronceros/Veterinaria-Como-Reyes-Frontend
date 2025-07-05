@@ -28,4 +28,7 @@ export class AnimalServiceImpl implements AnimalService {
   async deleteAnimal(animalId: number): Promise<void> {
     await this.httpClient.delete<void>(`${this.urlBase}/${animalId}`)
   }
+  async activateAnimal(animalId: number): Promise<void> {
+    await this.httpClient.put<void>(`${this.urlBase}/${animalId}/activate`, {})
+  }
 }
