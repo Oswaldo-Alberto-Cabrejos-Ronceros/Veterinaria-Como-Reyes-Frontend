@@ -1,6 +1,8 @@
 import type { BreedService } from '../domain/services/BreedService'
 import type { Breed, BreedRequest } from '../domain/models/Breed'
 import type { HttpClient } from '@/services/Http/model/HttpClient'
+import type { PageResponse } from '@/services/models/PageResponse'
+import type { SearchBreedParams } from '../domain/models/SearchBreedParams'
 
 export class BreedServiceImpl implements BreedService {
   constructor(private readonly httpClient: HttpClient) {}
@@ -37,5 +39,18 @@ export class BreedServiceImpl implements BreedService {
   }
   async activateBreed(breedId: number): Promise<void> {
     await this.httpClient.put<void>(`${this.url}/${breedId}/activate`, {})
+  }
+  async searchBreeds(params: SearchBreedParams): Promise<PageResponse<Breed>> {
+    const queryParams: Record<string, string | number> = {}
+
+    if (params.name) queryParams.name = params.name
+    if (params.specieName) queryParams.specieName = params.specieName
+    if (typeof params.status === 'boolean') queryParams.status = String(params.status)
+    if (typeof params.page === 'number') queryParams.page = params.page
+    if (typeof params.size === 'number') queryParams.size = params.size
+    if (params.sort) queryParams.sort = params.sort
+
+    const response = await this.httpClient.get<PageResponse<Breed>>(`${this.url}/search`, queryParams)
+    return response.data
   }
 }

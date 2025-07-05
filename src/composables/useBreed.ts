@@ -4,6 +4,8 @@ import type { Breed } from '@/services/Breed/domain/models/Breed'
 import type { Breed as BreedView } from '@/models/Breed'
 import { BreedAdapter } from '@/adapters/BreedAdapter'
 import type { FormValues as BreedAddEditSchema } from '@/validation-schemas-forms/schema-add-edit-breed'
+import type { SearchBreedParams } from '@/services/Breed/domain/models/SearchBreedParams'
+import type { PageResponse } from '@/services/models/PageResponse'
 
 export function useBreed() {
   //get from useAsyncHandle
@@ -61,6 +63,18 @@ export function useBreed() {
     await runUseCase('activateBreed', () => breedUsesCases.activateBreed.execute(breedId))
   }
 
+  const searchBreeds = async (
+    params: SearchBreedParams,
+  ): Promise<PageResponse<BreedView>> => {
+    const page = await runUseCase('searchBreeds', () =>
+      breedUsesCases.searchBreeds.execute(params),
+    )
+    return {
+      ...page,
+      content: page.content.map((breed) => BreedAdapter.toBreedView(breed)),
+    }
+  }
+
   return {
     loading,
     error,
@@ -71,5 +85,6 @@ export function useBreed() {
     getBreedsBySpecie,
     updateBreed,
     activateBreed,
+    searchBreeds,
   }
 }
