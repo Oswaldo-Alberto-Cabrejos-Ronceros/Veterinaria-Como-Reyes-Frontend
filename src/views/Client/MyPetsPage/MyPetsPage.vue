@@ -65,6 +65,7 @@ const addPet = async () => {
   dialog.open(AddMyPetCard, {
     props: {
       modal: true,
+      header:'Agregue a su mascota'
     },
     data: {
       speciesOptions: speciesToOptionsSelect(await getAllSpecies()),
