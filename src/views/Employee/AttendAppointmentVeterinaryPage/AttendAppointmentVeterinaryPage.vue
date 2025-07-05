@@ -9,7 +9,7 @@ import Tab from 'primevue/tab'
 import TabPanels from 'primevue/tabpanels'
 import TabPanel from 'primevue/tabpanel'
 import Card from 'primevue/card'
-
+import CardVitalSigns from './components/CardVitalSigns.vue'
 const props = defineProps<{
   appointmentId: string
 }>()
@@ -83,7 +83,7 @@ const ownerInfo: {
             <Tab value="2"> <i class="pi pi-pen-to-square"> </i> <span>Diagnóstico</span> </Tab>
           </TabList>
           <TabPanels>
-            <TabPanel value="0"></TabPanel>
+            <TabPanel value="0"><CardVitalSigns></CardVitalSigns></TabPanel>
             <TabPanel value="1"></TabPanel>
             <TabPanel value="2"></TabPanel>
           </TabPanels>
