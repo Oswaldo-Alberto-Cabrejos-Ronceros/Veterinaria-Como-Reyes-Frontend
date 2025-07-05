@@ -14,7 +14,8 @@ import { useConfirm } from 'primevue'
 
 defineProps<{
   role: string
-  showMenu: boolean
+  showMenu?: boolean
+  isClient?:boolean
 }>()
 
 const routeMap: Record<string, string> = {
@@ -76,7 +77,7 @@ const confirmLogout = async () => {
 
 <template>
   <header class="sticky top-0 left-0 z-50">
-    <Menubar class="h-16 py-4 bg-surface-0 dark:bg-neutral-900 border-b-1 border-neutral-200 dark:border-neutral-700 rounded-none border-0">
+    <Menubar :class="['h-16 py-4 bg-surface-0 dark:bg-neutral-900 border-b-1 border-neutral-200 dark:border-neutral-700 rounded-none border-0',isClient?'px-12':'']">
       <template #start>
         <div class="flex items-center gap-0.5">
                     <Button
