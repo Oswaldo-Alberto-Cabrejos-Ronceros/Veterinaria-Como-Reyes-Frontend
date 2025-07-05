@@ -8,4 +8,5 @@ export interface VeterinaryServiceService {
   createVeterinaryService(service: VeterinaryServiceRequest): Promise<VeterinaryService>;
   updateVeterinaryService(id: number, service: VeterinaryServiceRequest): Promise<VeterinaryService>;
   deleteVeterinaryService(id: number): Promise<void>;
+  activateVeterinaryService(serviceId: number): Promise<void>
 }
