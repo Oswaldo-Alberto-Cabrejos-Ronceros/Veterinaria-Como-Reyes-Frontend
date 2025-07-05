@@ -11,6 +11,10 @@ import TabPanel from 'primevue/tabpanel'
 import Card from 'primevue/card'
 import CardVitalSigns from './components/CardVitalSigns.vue'
 import CardHistoryVeterinaryRecord from './components/CardHistoryVeterinaryRecord.vue'
+import CardAddVeterinaryRecord from './components/CardAddVeterinaryRecord.vue'
+import Divider from 'primevue/divider'
+import Button from 'primevue/button'
+
 const props = defineProps<{
   appointmentId: string
 }>()
@@ -135,9 +139,18 @@ const records = [
             <TabPanel value="1">
               <CardHistoryVeterinaryRecord :veterinaryRecords="records" />
             </TabPanel>
-            <TabPanel value="2"></TabPanel>
+            <TabPanel value="2"><CardAddVeterinaryRecord /></TabPanel>
           </TabPanels>
         </Tabs>
+        <Divider />
+        <div class="w-full flex justify-end">
+          <Button
+            severity="success"
+            icon-pos="left"
+            icon="pi pi-check-circle"
+            label="Finalizar consulta"
+          />
+        </div>
       </template>
     </Card>
   </div>
