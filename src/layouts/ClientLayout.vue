@@ -18,7 +18,7 @@ const items = ref<MenuItem[]>([
   },
     {
     label: 'Mis mascotas',
-    icon: 'pi pi-github',
+    icon: 'fa-solid fa-paw',
     to: '/client/my-pets',
   }
 ])
