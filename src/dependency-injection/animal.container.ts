@@ -6,6 +6,7 @@ import { GetAnimalByClientId } from '@/services/Animal/aplication/GetAnimalByCli
 import { GetAnimalById } from '@/services/Animal/aplication/GetAnimalById'
 import { UpdateAnimal } from '@/services/Animal/aplication/UpdateAnimal'
 import { ActivateAnimal } from '@/services/Animal/aplication/ActivateAnimal'
+import { SearchAnimals } from '@/services/Animal/aplication/SearchAnimals'
 //import axiosHttpClient
 import { AxiosHttpClient } from '@/services/Http/infrastructure/AxiosHttpClient'
 import { AnimalServiceImpl } from '@/services/Animal/infraestructure/AnimalServiceImpl'
@@ -27,4 +28,5 @@ export const animalUsesCases = {
   getAnimalById: new GetAnimalById(animalService),
   updateAnimal: new UpdateAnimal(animalService),
   activateAnimal: new ActivateAnimal(animalService),
+  searchAnimals: new SearchAnimals(animalService),
 }
