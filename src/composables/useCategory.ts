@@ -4,6 +4,8 @@ import { CategoryAdapter } from '@/adapters/CategoryAdapter'
 import type { Category } from '@/services/Category/domain/models/Category'
 import type { Category as CategoryView } from '@/models/Category'
 import type { FormValues as CategoryAddEditSchema } from '@/validation-schemas-forms/schema-add-edit-category'
+import type { SearchCategoryParams } from '@/services/Category/domain/models/SearchCategoryParams'
+import type { PageResponse } from '@/services/models/PageResponse'
 
 export function useCategory() {
   const { loading, error, runUseCase } = useAsyncHandler()
@@ -59,6 +61,18 @@ export function useCategory() {
     )
   }
 
+  const searchCategories = async (
+    params: SearchCategoryParams,
+  ): Promise<PageResponse<CategoryView>> => {
+    const page = await runUseCase('searchCategories', () =>
+      categoryUsesCases.searchCategories.execute(params),
+    )
+    return {
+      ...page,
+      content: page.content.map(CategoryAdapter.toCategoryView),
+    }
+  }
+
   return {
     loading,
     error,
@@ -68,5 +82,6 @@ export function useCategory() {
     createCategory,
     updateCategory,
     activateCategory,
+    searchCategories,
   }
 }

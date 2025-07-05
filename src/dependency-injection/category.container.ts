@@ -6,6 +6,7 @@ import { UpdateCategory } from '@/services/Category/aplication/UpdateCategory'
 import { ActivateCategory } from '@/services/Category/aplication/ActivateCategory'
 import { CategoryServiceImpl } from '@/services/Category/infrastructure/CategoryServiceImpl'
 import { AxiosHttpClient } from '@/services/Http/infrastructure/AxiosHttpClient'
+import { SearchCategories } from '@/services/Category/aplication/SearchCategories'
 
 //instantiete AxiosHttpCliente
 const axiosHttpClient = new AxiosHttpClient()
@@ -22,4 +23,5 @@ export const categoryUsesCases = {
   getCategoryById: new GetCategoryById(categoryService),
   updateCategory: new UpdateCategory(categoryService),
   activateCategory: new ActivateCategory(categoryService),
+  searchCategories: new SearchCategories(categoryService),
 }

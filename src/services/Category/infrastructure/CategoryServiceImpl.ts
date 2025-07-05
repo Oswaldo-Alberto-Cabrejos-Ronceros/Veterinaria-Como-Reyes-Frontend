@@ -1,6 +1,8 @@
 import type { HttpClient } from '@/services/Http/model/HttpClient'
 import type { Category, CategoryRequest } from '../domain/models/Category'
 import type { CategoryService } from '../domain/services/CategoryService'
+import type { PageResponse } from '@/services/models/PageResponse'
+import type { SearchCategoryParams } from '../domain/models/SearchCategoryParams'
 
 export class CategoryServiceImpl implements CategoryService {
   constructor(private readonly httpClient: HttpClient) {}
@@ -33,5 +35,18 @@ export class CategoryServiceImpl implements CategoryService {
 
   async activateCategory(categoryId: number): Promise<void> {
     await this.httpClient.put<void>(`${this.urlBase}/${categoryId}/activate`, {})
+  }
+
+  async searchCategories(params: SearchCategoryParams): Promise<PageResponse<Category>> {
+    const queryParams: Record<string, string | number> = {}
+
+    if (params.name) queryParams.name = params.name
+    if (typeof params.status === 'boolean') queryParams.status = String(params.status)
+    if (typeof params.page === 'number') queryParams.page = params.page
+    if (typeof params.size === 'number') queryParams.size = params.size
+    if (params.sort) queryParams.sort = params.sort
+
+    const response = await this.httpClient.get<PageResponse<Category>>(`${this.urlBase}/search`, queryParams)
+    return response.data
   }
 }
