@@ -10,6 +10,8 @@ import { BasicServiceForAppointmentAdapter } from '@/adapters/BasicServiceForApp
 import { DateAdapter } from '@/adapters/DateAdapter'
 import type { AppointmentRequest as AppointmentRequestView } from '@/models/AppointmentRequest'
 import type { InfoBasicAppointmentClient } from '@/models/InfoBasicAppointmentClient'
+import type { PageResponse } from '@/services/models/PageResponse'
+import type { SearchAppointmentParams } from '@/services/Appointment/domain/models/SearchAppointmentParams'
 
 export function useAppointment() {
   //get from useAsyncHandle
@@ -101,6 +103,19 @@ export function useAppointment() {
       AppointmentAdapter.fromInfoBasicAppointmentToInfoBasicAppointmentInfoClient(appointment),
     )
   }
+  const searchAppointments = async (
+    params: SearchAppointmentParams,
+  ): Promise<PageResponse<AppointmentView>> => {
+    const page = await runUseCase('searchAppointments', () =>
+      appointmentUsesCases.searchAppointment.execute(params),
+    )
+    return {
+      ...page,
+      content: page.content.map((appointment) =>
+        AppointmentAdapter.toAppointmentView(appointment),
+      ),
+    }
+  }
 
   return {
     loading,
@@ -114,5 +129,6 @@ export function useAppointment() {
     getServicesByHeadquarterAndSpecies,
     updateAppointment,
     getAppointmentsForClient,
+    searchAppointments,
   }
 }

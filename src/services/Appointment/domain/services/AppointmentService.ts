@@ -1,3 +1,6 @@
+import type { PageResponse } from '@/services/models/PageResponse'
+import type { SearchAppointmentParams } from '../models/SearchAppointmentParams'
+
 import type {
   Appointment,
   AppointmentRequest,
@@ -23,4 +26,5 @@ export interface AppointmentService {
     speciesId: number,
   ): Promise<BasicServiceForAppointment[]>
   getAppointmentsForClient(clientId: number): Promise<InfoBasicAppointment[]>
+  searchAppointments(params: SearchAppointmentParams): Promise<PageResponse<Appointment>>
 }
