@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import Card from 'primevue/card'
 import InputText from 'primevue/inputtext'
 import Select from 'primevue/select'
 import Message from 'primevue/message'
@@ -57,96 +56,86 @@ onMounted(() => {
 </script>
 
 <template>
-  <Card class="card-dialog-form-layout">
-    <template #title>
-      <h3 class="h3 text-center">Editar Datos</h3>
-    </template>
-    <template #content>
-      <form @submit.prevent="onSubmit" class="form-dialog-layout">
-        <!-- cell phone -->
-        <div>
-          <label class="block mb-2">Celular</label>
+  <div class="card-dialog-form-layout">
+    <form @submit.prevent="onSubmit" class="form-dialog-layout">
+      <!-- cell phone -->
+      <div>
+        <label class="block mb-2">Celular</label>
 
-          <InputGroup>
-            <InputGroupAddon class="text-neutral-400">
-              <i class="pi pi-mobile"></i>
-            </InputGroupAddon>
-            <InputText v-bind="phoneAttrs" v-model="phone" type="tel" placeholder="Celular" />
-          </InputGroup>
+        <InputGroup>
+          <InputGroupAddon class="text-neutral-400">
+            <i class="pi pi-mobile"></i>
+          </InputGroupAddon>
+          <InputText v-bind="phoneAttrs" v-model="phone" type="tel" placeholder="Celular" />
+        </InputGroup>
 
-          <Message v-if="errors.phone" severity="error" size="small" variant="simple">
-            {{ errors.phone }}
-          </Message>
-        </div>
+        <Message v-if="errors.phone" severity="error" size="small" variant="simple">
+          {{ errors.phone }}
+        </Message>
+      </div>
 
-        <div>
-          <!-- address -->
-          <label class="block mb-2">Dirección</label>
+      <div>
+        <!-- address -->
+        <label class="block mb-2">Dirección</label>
 
-          <InputGroup>
-            <InputGroupAddon class="text-neutral-400">
-              <i class="pi pi-home"></i>
-            </InputGroupAddon>
-            <InputText
-              v-bind="addressAttrs"
-              v-model="address"
-              type="text"
-              placeholder="Dirección"
-            />
-          </InputGroup>
+        <InputGroup>
+          <InputGroupAddon class="text-neutral-400">
+            <i class="pi pi-home"></i>
+          </InputGroupAddon>
+          <InputText v-bind="addressAttrs" v-model="address" type="text" placeholder="Dirección" />
+        </InputGroup>
 
-          <Message v-if="errors.address" severity="error" size="small" variant="simple">
-            {{ errors.address }}
-          </Message>
-        </div>
+        <Message v-if="errors.address" severity="error" size="small" variant="simple">
+          {{ errors.address }}
+        </Message>
+      </div>
 
-        <div>
-          <!--for headquarte-->
-          <label class="block mb-2">Sede</label>
-          <Select
-            class="w-full"
-            v-bind="headquarterIdAttrs"
-            v-model="headquarterId"
-            :options="headquarkers"
-            optionLabel="name"
-            optionValue="value"
-            placeholder="Selecciona Sede"
-          />
+      <div>
+        <!--for headquarte-->
+        <label class="block mb-2">Sede</label>
+        <Select
+          class="w-full"
+          v-bind="headquarterIdAttrs"
+          v-model="headquarterId"
+          :options="headquarkers"
+          optionLabel="name"
+          optionValue="value"
+          placeholder="Selecciona Sede"
+        />
 
-          <Message v-if="errors.headquarterId" severity="error" size="small" variant="simple">
-            {{ errors.headquarterId }}
-          </Message>
-        </div>
+        <Message v-if="errors.headquarterId" severity="error" size="small" variant="simple">
+          {{ errors.headquarterId }}
+        </Message>
+      </div>
 
-        <!-- dir image -->
+      <!-- dir image -->
 
-        <div>
-          <label class="block mb-2">Imagen</label>
+      <div>
+        <label class="block mb-2">Imagen</label>
 
-          <InputGroup>
-            <InputGroupAddon class="text-neutral-400">
-              <i class="pi pi-image"></i>
-            </InputGroupAddon>
-            <InputText v-bind="dirImageAttrs" v-model="dirImage" type="text" placeholder="Imagen" />
-          </InputGroup>
+        <InputGroup>
+          <InputGroupAddon class="text-neutral-400">
+            <i class="pi pi-image"></i>
+          </InputGroupAddon>
+          <InputText v-bind="dirImageAttrs" v-model="dirImage" type="text" placeholder="Imagen" />
+        </InputGroup>
 
-          <Message v-if="errors.dirImage" severity="error" size="small" variant="simple">
-            {{ errors.dirImage }}
-          </Message>
-        </div>
+        <Message v-if="errors.dirImage" severity="error" size="small" variant="simple">
+          {{ errors.dirImage }}
+        </Message>
+      </div>
 
-        <!-- button -->
-        <div class="button-form-container-grid-end">
-          <Button
-            label="Editar"
-            type="submit"
-            severity="success"
-            icon="pi pi-save"
-            iconPos="right"
-            class="w-full max-w-md"
-          />
-        </div>
-      </form>
-    </template>
-  </Card>
+      <!-- button -->
+      <div class="button-form-container-grid-end">
+        <Button
+          label="Editar"
+          type="submit"
+          severity="success"
+          icon="pi pi-save"
+          iconPos="right"
+          class="w-full max-w-md"
+        />
+      </div>
+    </form>
+  </div>
 </template>

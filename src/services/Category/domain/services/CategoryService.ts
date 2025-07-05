@@ -1,4 +1,6 @@
 import type { Category, CategoryRequest } from '../models/Category'
+import type { PageResponse } from '@/services/models/PageResponse'
+import type { SearchCategoryParams } from '../models/SearchCategoryParams'
 
 export interface CategoryService {
   getAllCategories(): Promise<Category[]>
@@ -10,4 +12,8 @@ export interface CategoryService {
   updateCategory(id: number, categoryRequest: CategoryRequest): Promise<Category>
 
   deleteCategory(id: number): Promise<void>
+
+  activateCategory(categoryId: number): Promise<void>
+
+  searchCategories(params: SearchCategoryParams): Promise<PageResponse<Category>>
 }

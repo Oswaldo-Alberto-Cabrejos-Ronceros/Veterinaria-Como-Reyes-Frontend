@@ -37,7 +37,7 @@ const showToast = (message: string) => {
 
 //get from compose
 
-const { loading, error, getAllBreeds, createBreed, updateBreed, deleteBreed } = useBreed()
+const { loading, error, getAllBreeds, createBreed, updateBreed, deleteBreed, activateBreed } = useBreed()
 
 const { getAllSpecies } = useSpecie()
 
@@ -88,6 +88,7 @@ const addBreed = () => {
   dialog.open(AddEditBreedCard, {
     props: {
       modal: true,
+      header:'Agregar raza'
     },
     data: {
       speciesOptions: speciesOptions,
@@ -108,6 +109,7 @@ const editBreed = (breedData: Breed) => {
   dialog.open(AddEditBreedCard, {
     props: {
       modal: true,
+      header:`${breedData.name}`
     },
     data: {
       breedData: {
@@ -159,6 +161,35 @@ const deleteBreedAction = (event: MouseEvent | KeyboardEvent, breedData: Breed) 
     },
   })
 }
+
+//for activate
+
+const activateBreedAction = (event: MouseEvent | KeyboardEvent, breed: Breed) => {
+  confirm.require({
+    group: 'confirmPopupGeneral',
+    target: event.currentTarget as HTMLElement,
+    message: '¿Seguro que quiere activar esta raza?',
+    icon: 'pi pi-exclamation-triangle',
+    rejectProps: {
+      label: 'Cancelar',
+      severity: 'secondary',
+      outlined: true,
+    },
+    acceptProps: {
+      label: 'Activar',
+      severity: 'success',
+    },
+    accept: async () => {
+      await activateBreed(breed.id)
+      loadBreeds()
+      showToast('Raza activada exitosamente: ' + breed.name)
+    },
+    reject: () => {
+      console.log('Cancelando activación')
+    },
+  })
+}
+
 
 //for export
 
@@ -282,6 +313,13 @@ const exportCSV = () => {
                     aria-label="Filter"
                     rounded
                     @click="deleteBreedAction($event, data)"
+                  ></Button>
+                  <Button
+                    icon="pi pi-power-off"
+                    severity="success"
+                    variant="outlined"
+                    rounded
+                    @click="activateBreedAction($event, data)"
                   ></Button>
                 </div>
               </template>

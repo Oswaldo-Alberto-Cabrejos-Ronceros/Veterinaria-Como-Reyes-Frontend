@@ -3,56 +3,29 @@ import Card from 'primevue/card'
 import CardAppointmentSecondary from '@/components/CardAppointmentSecondary.vue'
 import Button from 'primevue/button'
 import { useRouter } from 'vue-router'
-//examples for cardAppointments
-const appointments = [
-  {
-    appointmentId: 101,
-    appointmentStatus: 'Pendiente',
-    date: '2025-06-05',
-    petName: 'Max',
-    duration: '45 min',
-    serviceName: 'Baño Canino',
-    serviceDescription: 'Baño completo con productos especiales para el cuidado del pelaje canino.',
-  },
-  {
-    appointmentId: 102,
-    appointmentStatus: 'Completado',
-    date: '2025-06-01',
-    petName: 'Luna',
-    duration: '30 min',
-    serviceName: 'Consulta Veterinaria',
-    serviceDescription:
-      'Evaluación médica general para detectar enfermedades y controlar el estado de salud.',
-  },
-  {
-    appointmentId: 103,
-    appointmentStatus: 'Cancelado',
-    date: '2025-05-29',
-    petName: 'Milo',
-    duration: '15 min',
-    serviceName: 'Vacunación Antirrábica',
-    serviceDescription: 'Aplicación de vacuna antirrábica según el calendario nacional.',
-  },
-  {
-    appointmentId: 104,
-    appointmentStatus: 'En progreso',
-    date: '2025-06-03',
-    petName: 'Nina',
-    duration: '20 min',
-    serviceName: 'Desparasitación Interna',
-    serviceDescription: 'Tratamiento para eliminar parásitos intestinales en mascotas.',
-  },
-  {
-    appointmentId: 105,
-    appointmentStatus: 'Pendiente',
-    date: '2025-06-06',
-    petName: 'Toby',
-    duration: '10 min',
-    serviceName: 'Corte de Uñas',
-    serviceDescription: 'Recorte de uñas para evitar lesiones o molestias al caminar.',
-  },
-]
+import { useAppointment } from '@/composables/useAppointment'
+import type { InfoBasicAppointmentClient } from '@/models/InfoBasicAppointmentClient'
+import { onMounted, ref } from 'vue'
+import { useAuthentication } from '@/composables/useAuthentication'
 
+//methods
+const { getEntityId } = useAuthentication()
+
+const {error,loading,getAppointmentsForClient } = useAppointment()
+
+//for get info
+const appointments = ref<InfoBasicAppointmentClient[]>([])
+
+const loadAppointments = async () => {
+  const clientId = getEntityId()
+  if (clientId) {
+    appointments.value = await getAppointmentsForClient(clientId)
+  }
+}
+
+onMounted(()=>{
+  loadAppointments()
+})
 //for router
 const router = useRouter()
 
@@ -77,17 +50,35 @@ const redirectToScheduleAppointment = () => {
         </div>
       </template>
       <template #content>
-        <div class="flex flex-col gap-6">
+        <div class="flex flex-col gap-6 mt-2">
+                                          <!-- for messague loading  -->
+                <Message
+                  v-if="loading.getAppointmentsForClient"
+                  severity="warn"
+                  size="small"
+                  variant="simple"
+                >
+                  Cargando ...
+                </Message>
+                <!-- for messague error -->
+                <Message
+                  v-if="error.getAppointmentsForClient"
+                  severity="error"
+                  size="small"
+                  variant="simple"
+                >
+                  Error al cargar tus citas
+                </Message>
           <CardAppointmentSecondary
             v-for="appointment in appointments"
-            :key="appointment.appointmentId"
-            :appointment-id="appointment.appointmentId"
-            :appointment-status="appointment.appointmentStatus"
-            :date="appointment.date"
-            :pet-name="appointment.petName"
+            :key="appointment.id"
+            :appointment-id="appointment.id"
+            :appointment-status="appointment.status"
+            :date="`${appointment.date} ${appointment.time}`"
+            :pet-name="appointment.pet.name"
             :duration="appointment.duration"
-            :service-name="appointment.serviceName"
-            :service-description="appointment.serviceDescription"
+            :service-name="appointment.service.name"
+            :service-description="appointment.service.description"
           ></CardAppointmentSecondary>
         </div>
       </template>

@@ -41,6 +41,7 @@ const {
   createPaymentMethod,
   updatePaymentMethod,
   deletePaymentMethod,
+  activatePaymentMethod,
 } = usePaymentMethod()
 
 //payment methods
@@ -78,6 +79,7 @@ const addPaymentMethod = () => {
   dialog.open(AddEditPaymentMethodCard, {
     props: {
       modal: true,
+      header:'Agregar método de pago'
     },
     onClose: async (options) => {
       const data = options?.data as AddEditPaymentMethodSchema
@@ -95,6 +97,7 @@ const viewPaymentMethod = (paymentMethodData: PaymentMethod) => {
   dialog.open(ViewPaymentMethodCard, {
     props: {
       modal: true,
+      header:`${paymentMethodData.name}`
     },
     data: {
       paymentMethodData: paymentMethodData,
@@ -106,6 +109,7 @@ const editPaymentMethod = (paymentMethodData: PaymentMethod) => {
   dialog.open(AddEditPaymentMethodCard, {
     props: {
       modal: true,
+      header:`${paymentMethodData.name}`
     },
     data: {
       paymentMethodData: paymentMethodData as AddEditPaymentMethodSchema,
@@ -155,6 +159,15 @@ const deletePaymentMethodAction = (
     },
   })
 }
+
+//for activate
+
+const activatePaymentMethodAction = async (id: number) => {
+  await activatePaymentMethod(id)
+  loadPaymentMethods()
+  showToast('Método de pago activado exitosamente')
+}
+
 
 //for export
 
@@ -267,6 +280,14 @@ const exportCSV = () => {
                     aria-label="Filter"
                     rounded
                     @click="deletePaymentMethodAction($event, data)"
+                  ></Button>
+                  <Button
+                    icon="pi pi-check"
+                    severity="success"
+                    variant="outlined"
+                    aria-label="Activar"
+                    rounded
+                    @click="activatePaymentMethodAction(data.id)"
                   ></Button>
                 </div>
               </template>

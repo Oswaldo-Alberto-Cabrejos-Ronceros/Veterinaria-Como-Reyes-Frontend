@@ -4,7 +4,9 @@ import { DeletePaymentMethod } from '@/services/PaymentMethod/aplication/DeleteP
 import { GetAllPaymentMethods } from '@/services/PaymentMethod/aplication/GetAllPaymentMethod'
 import { GetPaymentMethodById } from '@/services/PaymentMethod/aplication/GetPaymentMethodById'
 import { UpdatePaymentMethod } from '@/services/PaymentMethod/aplication/UpdatePaymentMethod'
+import { ActivatePaymentMethod } from '@/services/PaymentMethod/aplication/ActivatePaymentMethod'
 import { PaymentMethodServiceImpl } from '@/services/PaymentMethod/infrastructure/PaymentMethodServiceImpl'
+import { SearchPaymentMethod } from '@/services/PaymentMethod/aplication/SearchPaymentMethod'
 
 // Instanciar cliente HTTP
 const axiosHttpClient = new AxiosHttpClient()
@@ -18,4 +20,6 @@ export const paymentMethodUseCases = {
   getAllPaymentMethods: new GetAllPaymentMethods(paymentMethodService),
   getPaymentMethodById: new GetPaymentMethodById(paymentMethodService),
   updatePaymentMethod: new UpdatePaymentMethod(paymentMethodService),
+  activatePaymentMethod: new ActivatePaymentMethod(paymentMethodService),
+  searchPaymentMethod: new SearchPaymentMethod(paymentMethodService),
 }

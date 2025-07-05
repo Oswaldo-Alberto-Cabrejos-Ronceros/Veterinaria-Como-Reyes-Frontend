@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { inject, onMounted, type Ref } from 'vue'
-import Card from 'primevue/card'
 import InputText from 'primevue/inputtext'
 import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
@@ -29,11 +28,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <Card class="card-dialog-form-layout">
-    <template #title>
-      <h3 class="h3 text-center">{{ categoryData?.name }}</h3>
-    </template>
-    <template #content>
+  <div class="card-dialog-form-layout">
+
       <div class="form-dialog-layout-col-2">
         <!-- name -->
         <div>
@@ -59,6 +55,5 @@ onMounted(() => {
           />
         </div>
       </div>
-    </template>
-  </Card>
+  </div>
 </template>

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import Card from 'primevue/card'
 import InputText from 'primevue/inputtext'
 import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
@@ -97,11 +96,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <Card class="card-dialog-form-layout">
-    <template #title>
-      <h3 class="h3 text-center">{{ title }} Servicio</h3>
-    </template>
-    <template #content>
+  <div class="card-dialog-form-layout">
       <form @submit.prevent="onSubmit" class="form-dialog-layout">
         <!-- name -->
         <div>
@@ -110,7 +105,7 @@ onMounted(() => {
             <InputGroupAddon class="text-neutral-400">
               <i class="pi pi-info"></i>
             </InputGroupAddon>
-            <InputText v-model="name" v-bind="nameAttrs" class="w-full" placeholder="Nombre" />
+            <InputText v-model="name" v-bind="nameAttrs" class="w-full" placeholder="Nombre del servicio" />
           </InputGroup>
           <Message v-if="errors.name" severity="error" size="small" variant="simple">
             {{ errors.name }}
@@ -129,7 +124,7 @@ onMounted(() => {
               v-bind="priceAttrs"
               fluid
               class="w-full"
-              placeholder="Precio"
+              placeholder="Precio del servicio"
             />
           </InputGroup>
           <Message v-if="errors.price" severity="error" size="small" variant="simple">
@@ -249,6 +244,6 @@ onMounted(() => {
           />
         </div>
       </form>
-    </template>
-  </Card>
+
+  </div>
 </template>

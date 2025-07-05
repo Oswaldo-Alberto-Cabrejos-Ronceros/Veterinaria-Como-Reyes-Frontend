@@ -1,13 +1,30 @@
-import type { Appointment, AppointmentRequest, BasicServiceForAppointment, TimesForTurn } from "../models/Appointment";
+import type { PageResponse } from '@/services/models/PageResponse'
+import type { SearchAppointmentParams } from '../models/SearchAppointmentParams'
 
-export interface AppointmentService{
-  getAllAppointments():Promise<Appointment[]>
-  getAppointmentById(appointmentId:number):Promise<Appointment>
-  createAppointment(appointmentRequest:AppointmentRequest):Promise<Appointment>
-  updateAppointment(appoinmentId:number,appointmentRequest:AppointmentRequest):Promise<Appointment>
-  deleteAppointment(appoinmentId:number):Promise<void>
-  confirmAppointment(appoinmentId:number):Promise<Appointment>
-  completeAppointment(appoinmentId:number):Promise<Appointment>
-  getAvailableTimes(headquarterVetServiceId:number,date:string):Promise<TimesForTurn[]>
-  getServicesByHeadquarterAndSpecies(headquarterId:number,speciesId:number):Promise<BasicServiceForAppointment[]>
+import type {
+  Appointment,
+  AppointmentRequest,
+  BasicServiceForAppointment,
+  InfoBasicAppointment,
+  TimesForTurn,
+} from '../models/Appointment'
+
+export interface AppointmentService {
+  getAllAppointments(): Promise<Appointment[]>
+  getAppointmentById(appointmentId: number): Promise<Appointment>
+  createAppointment(appointmentRequest: AppointmentRequest): Promise<Appointment>
+  updateAppointment(
+    appoinmentId: number,
+    appointmentRequest: AppointmentRequest,
+  ): Promise<Appointment>
+  deleteAppointment(appoinmentId: number): Promise<void>
+  confirmAppointment(appoinmentId: number): Promise<Appointment>
+  completeAppointment(appoinmentId: number): Promise<Appointment>
+  getAvailableTimes(headquarterVetServiceId: number, date: string): Promise<TimesForTurn[]>
+  getServicesByHeadquarterAndSpecies(
+    headquarterId: number,
+    speciesId: number,
+  ): Promise<BasicServiceForAppointment[]>
+  getAppointmentsForClient(clientId: number): Promise<InfoBasicAppointment[]>
+  searchAppointments(params: SearchAppointmentParams): Promise<PageResponse<Appointment>>
 }

@@ -4,6 +4,8 @@ import { DeleteVeterinaryService } from '@/services/VeterinaryService/aplication
 import { GetAllVeterinaryServices } from '@/services/VeterinaryService/aplication/GetAllVeterinaryService'
 import { GetVeterinaryServiceById } from '@/services/VeterinaryService/aplication/GetVeterinaryServiceById'
 import { UpdateVeterinaryService } from '@/services/VeterinaryService/aplication/UpdateVeterinaryService'
+import { ActivateVeterinaryService } from '@/services/VeterinaryService/aplication/ActivateVeterinaryService'
+import { SearchVeterinaryServices } from '@/services/VeterinaryService/aplication/SearchVeterinaryServices'
 import { VeterinaryServiceServiceImpl } from '@/services/VeterinaryService/infrastructure/VeterinaryServiceServiceImpl'
 
 const axiosHttpClient = new AxiosHttpClient()
@@ -15,4 +17,6 @@ export const veterinaryServiceUsesCases = {
   getAllVeterinaryServices: new GetAllVeterinaryServices(veterinaryServiceService),
   getVeterinaryServiceById: new GetVeterinaryServiceById(veterinaryServiceService),
   updateVeterinaryService: new UpdateVeterinaryService(veterinaryServiceService),
+  activateVeterinaryService: new ActivateVeterinaryService(veterinaryServiceService),
+  searchVeterinaryServices: new SearchVeterinaryServices(veterinaryServiceService),
 }

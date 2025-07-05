@@ -7,7 +7,8 @@ import { GetAppointmentById } from '@/services/Appointment/aplication/GetAppoint
 import { GetAvailableTimes } from '@/services/Appointment/aplication/GetAvailableTimes'
 import { GetServicesByHeadquarterAndSpecies } from '@/services/Appointment/aplication/GetServicesByHeadquarterAndSpecies'
 import { UpdateAppointment } from '@/services/Appointment/aplication/UpdateAppointment'
-
+import { GetAppointmentsForClient } from '@/services/Appointment/aplication/GetAppointmentsForClient'
+import { SearchAppointments } from '@/services/Appointment/aplication/SearchAppointment'
 import { AppointmentServiceImpl } from '@/services/Appointment/infrastructure/AppointmentServiceImpl'
 import { AxiosHttpClient } from '@/services/Http/infrastructure/AxiosHttpClient'
 
@@ -28,4 +29,6 @@ export const appointmentUsesCases = {
   getAvailableTimes: new GetAvailableTimes(appointmentService),
   getServicesByHeadquarterAndSpecies: new GetServicesByHeadquarterAndSpecies(appointmentService),
   updateAppointment: new UpdateAppointment(appointmentService),
+  getAppointmentsForClient: new GetAppointmentsForClient(appointmentService),
+  searchAppointment: new SearchAppointments(appointmentService),
 }

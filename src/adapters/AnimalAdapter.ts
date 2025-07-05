@@ -41,7 +41,7 @@ export class AnimalAdapter {
         breedId: schemaAddEdit.breedId,
       },
       //fix
-      clientId: Number(schemaAddEdit.ownerDni),
+      clientId: schemaAddEdit.ownerId,
     }
   }
   static fromAnimalByClientToPetByClient(animalByClient: AnimalByClient): PetByClient {

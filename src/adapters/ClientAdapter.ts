@@ -5,6 +5,9 @@ import type { FormValues as ClientEditSchema } from '@/validation-schemas-forms/
 import type { MyInfoClient as MyInfoClientView } from '@/models/MyInfoClient'
 import type { FormValues as SchemaEditSelfClient } from '@/validation-schemas-forms/schema-edit-self-client'
 import type { ClientUpdateAsClient } from '@/services/Client/domain/models/Client'
+import type { ClientBasicInfoByDni } from '@/services/Client/domain/models/Client'
+import type { ClientBasicInfoByDni as ClientBasicInfoByDniView } from '@/models/ClientBasicInfoByDni'
+
 import { DateAdapter } from './DateAdapter'
 
 export class ClientAdapter {
@@ -88,6 +91,15 @@ export class ClientAdapter {
       address: schemaEditSelfClient.address,
       phone: schemaEditSelfClient.phone,
       headquarterId: schemaEditSelfClient.headquarterId,
+    }
+  }
+
+  static fromClientBasicInfoByDniToClientBasicInfoByDniView(
+    clientBasicInfoByDni: ClientBasicInfoByDni,
+  ): ClientBasicInfoByDniView {
+    return {
+      id: clientBasicInfoByDni.id,
+      fullName: clientBasicInfoByDni.fullName,
     }
   }
 }

@@ -5,7 +5,6 @@ import type { FormValues } from '@/validation-schemas-forms/schema-add-pet-clien
 import { toTypedSchema } from '@vee-validate/yup'
 import { useForm } from 'vee-validate'
 import { inject, onMounted, ref, type Ref } from 'vue'
-import Card from 'primevue/card'
 import InputText from 'primevue/inputtext'
 import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
@@ -13,6 +12,15 @@ import DatePicker from 'primevue/datepicker'
 import Select from 'primevue/select'
 import Button from 'primevue/button'
 import Message from 'primevue/message'
+import type { Breed } from '@/models/Breed'
+import { useBreed } from '@/composables/useBreed'
+
+
+//methods
+const {getBreedsBySpecie} = useBreed()
+
+
+
 //form
 
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
@@ -46,13 +54,25 @@ const speciesOptions = ref<OptionSelect[]>([])
 //breeds options
 const breedsOptions = ref<OptionSelect[]>([])
 
+const loadsBreed=async()=>{
+  if(specieId.value){
+  breedsOptions.value= breedsToOptionsSelect(await getBreedsBySpecie(specieId.value))
+}
+}
+
+const breedsToOptionsSelect = (breeds: Breed[]): OptionSelect[] => {
+  return breeds.map((breed) => ({
+    value: breed.id,
+    name: breed.name,
+  }))
+}
+
 //for dynamicDialog
 const dialogRef = inject('dialogRef') as Ref<{
   close: (data?: FormValues) => void
   data: {
     petData?: FormValues
     speciesOptions?: OptionSelect[]
-    breedsOptions?: OptionSelect[]
   }
 }>
 
@@ -65,18 +85,14 @@ const genders = [
 onMounted(() => {
   if (dialogRef.value.data) {
     const speciesOptionsGet = dialogRef.value.data.speciesOptions
-    const breedsOptionsGet = dialogRef.value.data.breedsOptions
     if (speciesOptionsGet) speciesOptions.value = speciesOptionsGet
-    if (breedsOptionsGet) breedsOptions.value = breedsOptionsGet
   }
+  loadsBreed()
 })
 </script>
+
 <template>
-  <Card class="card-dialog-form-layout">
-    <template #title>
-      <h3 class="h3 text-center">Agrega a tu mascota</h3>
-    </template>
-    <template #content>
+  <div class="card-dialog-form-layout">
       <form @submit.prevent="onSubmit" class="form-dialog-layout">
         <!-- name -->
         <div>
@@ -134,6 +150,7 @@ onMounted(() => {
             optionLabel="name"
             optionValue="value"
             placeholder="Selecciona Especie"
+            @change="loadsBreed()"
           />
 
           <Message v-if="errors.specieId" severity="error" size="small" variant="simple">
@@ -168,6 +185,6 @@ onMounted(() => {
           />
         </div>
       </form>
-    </template>
-  </Card>
+
+  </div>
 </template>

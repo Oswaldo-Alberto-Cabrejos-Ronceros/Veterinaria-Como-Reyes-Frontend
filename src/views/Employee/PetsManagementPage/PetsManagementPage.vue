@@ -18,7 +18,7 @@ import { onMounted, ref } from 'vue'
 import { useDialog, useToast } from 'primevue'
 import AddEditPetCard from './components/AddEditPetCard.vue'
 import type { FormValues as AddEditPetSchema } from '@/validation-schemas-forms/schema-add-edit-pet'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { usePet } from '@/composables/usePet'
 import { useSpecie } from '@/composables/useSpecie'
 import type { OptionSelect } from '@/models/OptionSelect'
@@ -40,7 +40,7 @@ const showToast = (message: string) => {
 
 //methods
 
-const { loading, error, getAllPets, createPet, updatePet, deletePet } = usePet()
+const { loading, error, getAllPets, createPet, updatePet, deletePet, activatePet } = usePet()
 
 const { getAllSpecies } = useSpecie()
 
@@ -138,10 +138,10 @@ const addPet = async () => {
   dialog.open(AddEditPetCard, {
     props: {
       modal: true,
+      header:'Agregar mascota'
     },
     data: {
-      speciesOptions: speciesToOptionsSelect(await getAllSpecies()),
-      breedsOptions: breedsToOptionsSelect(await getAllBreeds()),
+      speciesOptions: speciesToOptionsSelect(await getAllSpecies())
     },
     onClose: async (options) => {
       const data = options?.data as AddEditPetSchema
@@ -155,16 +155,17 @@ const addPet = async () => {
 }
 
 const router = useRouter()
-
+const route = useRoute()
 //for view
 const viewPet = (petData: Pet) => {
-  router.push({ name: 'administrator-pets-unitary-pet', params: { id: petData.id } })
+  router.push(`${route.fullPath}/pet/${petData.id}`)
 }
 
 const editPet = async (petData: Pet) => {
   dialog.open(AddEditPetCard, {
     props: {
       modal: true,
+      header:`${petData.name}`
     },
     data: {
       petData: {
@@ -176,10 +177,9 @@ const editPet = async (petData: Pet) => {
         specieId: petData.specie.id,
         breedId: petData.breed.id,
         urlImage: petData.urlImage,
-        ownerDni: petData.clientId.toString(),
+        ownerDni: petData.clientId?.toString()||'', //fix
       } as AddEditPetSchema,
-      speciesOptions: speciesToOptionsSelect(await getAllSpecies()),
-      breedsOptions: breedsToOptionsSelect(await getAllBreeds()),
+      speciesOptions: speciesToOptionsSelect(await getAllSpecies())
     },
     onClose: async (options) => {
       const data = options?.data as AddEditPetSchema
@@ -218,6 +218,35 @@ const confirmDeletePet = (event: MouseEvent | KeyboardEvent, pet: Pet) => {
     },
     reject: () => {
       console.log('Cancelando eliminación')
+    },
+  })
+}
+
+//for active pet
+
+const confirmActivatePet = (event: MouseEvent | KeyboardEvent, pet: Pet) => {
+  confirm.require({
+    group: 'confirmPopupGeneral',
+    target: event.currentTarget as HTMLElement,
+    message: '¿Seguro que desea activar esta mascota?',
+    icon: 'pi pi-exclamation-triangle',
+    rejectProps: {
+      label: 'Cancelar',
+      severity: 'secondary',
+      outlined: true,
+    },
+    acceptProps: {
+      label: 'Activar',
+      severity: 'success',
+    },
+    accept: async () => {
+      console.log('Activando mascota: ', pet.id)
+      await activatePet(pet.id)
+      loadPets()
+      showToast('Mascota activada exitosamente: ' + pet.name)
+    },
+    reject: () => {
+      console.log('Cancelando activación')
     },
   })
 }
@@ -400,6 +429,14 @@ const exportCSV = () => {
                     aria-label="Filter"
                     rounded
                     @click="confirmDeletePet($event, data)"
+                  ></Button>
+                  <Button
+                    icon="pi pi-refresh"
+                    severity="success"
+                    variant="outlined"
+                    aria-label="Activar"
+                    rounded
+                    @click="confirmActivatePet($event, data)"
                   ></Button>
                 </div>
               </template>

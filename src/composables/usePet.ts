@@ -6,7 +6,8 @@ import type { Pet as PetView } from '@/models/Pet'
 import type { FormValues as PetAddEditSchema } from '@/validation-schemas-forms/schema-add-edit-pet'
 import type { PetByClient } from '@/models/PetByClient'
 import type { FormValues as AddMyPetSchema } from '@/validation-schemas-forms/schema-add-pet-client'
-
+import type { SearchAnimalParams } from '@/services/Animal/domain/models/SearchAnimalParams'
+import type { PageResponse } from '@/services/models/PageResponse'
 export function usePet() {
   const { loading, error, runUseCase } = useAsyncHandler()
 
@@ -58,6 +59,23 @@ export function usePet() {
     await runUseCase('updatePet', () => animalUsesCases.updateAnimal.execute(petId, animalRequest))
   }
 
+  const activatePet = async (petId: number): Promise<void> => {
+    await runUseCase('activatePet', () => animalUsesCases.activateAnimal.execute(petId))
+  }
+
+  const searchPets = async (
+    params: SearchAnimalParams,
+  ): Promise<PageResponse<PetView>> => {
+      const page: PageResponse<Animal> = await runUseCase('searchAnimals', () =>
+        animalUsesCases.searchAnimals.execute(params),
+      )
+
+      return {
+        ...page,
+        content: page.content.map((animal) => AnimalAdapter.toPetView(animal)),
+      }
+    }
+
   return {
     loading,
     error,
@@ -68,5 +86,7 @@ export function usePet() {
     getPetByClientId,
     getPetById,
     updatePet,
+    activatePet,
+    searchPets,
   }
 }

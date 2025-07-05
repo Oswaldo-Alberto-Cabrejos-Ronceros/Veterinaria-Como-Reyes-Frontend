@@ -46,6 +46,7 @@ const {
   createVeterinaryService,
   updateVeterinaryService,
   deleteVeterinaryService,
+  activateVeterinaryService,
 } = useVeterinaryService()
 
 const { getAllSpecies } = useSpecie()
@@ -116,6 +117,7 @@ const viewService = (serviceData: Service) => {
   dialog.open(ViewServiceCard, {
     props: {
       modal: true,
+            header:`${serviceData.name}`
     },
     data: {
       serviceData: serviceData,
@@ -127,6 +129,7 @@ const addService = async () => {
   dialog.open(AddEditServiceCard, {
     props: {
       modal: true,
+      header:'Agregar servicio'
     },
     data: {
       speciesOptions: speciesToOptionsSelect(await getAllSpecies()),
@@ -150,6 +153,7 @@ const editService = async (serviceData: Service) => {
   dialog.open(AddEditServiceCard, {
     props: {
       modal: true,
+      header:`${serviceData.name}`
     },
     data: {
       serviceData: {
@@ -204,6 +208,13 @@ const deleteService = (event: MouseEvent | KeyboardEvent, service: Service) => {
       console.log('Cancelando')
     },
   })
+}
+
+//for activate service
+const activarServicio = async (service: Service) => {
+  await activateVeterinaryService(service.id)
+  showToast('Servicio activado exitosamente: ' + service.name)
+  loadServices()
 }
 
 //for export
@@ -377,6 +388,14 @@ const exportCSV = () => {
                     aria-label="Filter"
                     rounded
                     @click="deleteService($event, data)"
+                  ></Button>
+                  <Button
+                    icon="pi pi-check-circle"
+                    severity="success"
+                    variant="outlined"
+                    aria-label="Activar"
+                    rounded
+                    @click="activarServicio(data)"
                   ></Button>
                 </div>
               </template>

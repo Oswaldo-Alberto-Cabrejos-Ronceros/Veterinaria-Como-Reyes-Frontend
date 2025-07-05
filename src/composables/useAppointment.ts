@@ -9,6 +9,9 @@ import type { BasicServiceForAppointment as BasicServiceForAppointmentView } fro
 import { BasicServiceForAppointmentAdapter } from '@/adapters/BasicServiceForAppoinment'
 import { DateAdapter } from '@/adapters/DateAdapter'
 import type { AppointmentRequest as AppointmentRequestView } from '@/models/AppointmentRequest'
+import type { InfoBasicAppointmentClient } from '@/models/InfoBasicAppointmentClient'
+import type { PageResponse } from '@/services/models/PageResponse'
+import type { SearchAppointmentParams } from '@/services/Appointment/domain/models/SearchAppointmentParams'
 
 export function useAppointment() {
   //get from useAsyncHandle
@@ -35,7 +38,6 @@ export function useAppointment() {
   ): Promise<AppointmentView> => {
     const appointmentRequest: AppointmentRequest =
       AppointmentAdapter.fromAppoinmentRequestViewToAppoinmentRequest(appointmentRequestView)
-    console.log('Desde compose', appointmentRequest)
     const appointment = await runUseCase('createAppointment', () =>
       appointmentUsesCases.createAppointment.execute(appointmentRequest),
     )
@@ -62,6 +64,7 @@ export function useAppointment() {
     const times = await runUseCase('getAvailableTimes', () =>
       appointmentUsesCases.getAvailableTimes.execute(headquarterVetServiceId, dateParsed),
     )
+    console.log(times)
     return times.map((time) => TimesForTurnAdapter.toTimesForTurnView(time))
   }
 
@@ -90,6 +93,36 @@ export function useAppointment() {
     return AppointmentAdapter.toAppointmentView(appointment)
   }
 
+  const getAppointmentsForClient = async (
+    clientId: number,
+  ): Promise<InfoBasicAppointmentClient[]> => {
+    const appointments = await runUseCase('getAppointmentsForClient', () =>
+      appointmentUsesCases.getAppointmentsForClient.execute(clientId),
+    )
+    return appointments.map((appointment) =>
+      AppointmentAdapter.fromInfoBasicAppointmentToInfoBasicAppointmentInfoClient(appointment),
+    )
+  }
+  const searchAppointments = async (
+    params: SearchAppointmentParams,
+  ): Promise<PageResponse<AppointmentView>> => {
+    const page = await runUseCase('searchAppointments', () =>
+      appointmentUsesCases.searchAppointment.execute(params),
+    )
+    return {
+      ...page,
+      content: page.content.map((appointment) =>
+        AppointmentAdapter.toAppointmentView(appointment),
+      ),
+    }
+  }
+
+  const getAppointmentById = async (appointmentId: number): Promise<AppointmentView> => {
+    const appointment = await runUseCase('getAppointmentById', () =>
+      appointmentUsesCases.getAppointmentById.execute(appointmentId),
+    )
+    return AppointmentAdapter.toAppointmentView(appointment)
+  }
   return {
     loading,
     error,
@@ -101,5 +134,9 @@ export function useAppointment() {
     getAvailableTimes,
     getServicesByHeadquarterAndSpecies,
     updateAppointment,
+    getAppointmentsForClient,
+    getAppointmentById
+    searchAppointments,
+
   }
 }

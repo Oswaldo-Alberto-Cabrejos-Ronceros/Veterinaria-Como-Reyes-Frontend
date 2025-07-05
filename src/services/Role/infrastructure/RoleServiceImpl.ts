@@ -27,4 +27,7 @@ export class RoleServiceImpl implements RoleService {
   async deleteRole(roleId: number): Promise<void> {
     await this.httpClient.delete<void>(`${this.urlBase}/${roleId}`)
   }
+  async activateRole(roleId: number): Promise<void> {
+    await this.httpClient.put(`${this.urlBase}/${roleId}/activate`, {})
+  }
 }

@@ -34,8 +34,15 @@ const showToast = (message: string) => {
 }
 
 //get from compose
-const { loading, error, getAllHeadquarters, createHeadquarter, updateHeadquarter,deleteHeadquarter } =
-  useHeadquarter()
+const {
+  loading,
+  error,
+  getAllHeadquarters,
+  createHeadquarter,
+  updateHeadquarter,
+  deleteHeadquarter,
+  activateHeadquarter,
+} = useHeadquarter()
 
 //headquarters
 const headquarters = ref<Headquarter[]>([])
@@ -133,6 +140,7 @@ const addHeadquarter = () => {
   dialog.open(AddEditHeadquarterCard, {
     props: {
       modal: true,
+      header: 'Agregar sede',
     },
     onClose: async (options) => {
       const data = options?.data as HeadquarterAddEditSchema
@@ -151,6 +159,7 @@ const viewHeadquarter = (headquarterData: Headquarter) => {
   dialog.open(ViewHeadquaterCard, {
     props: {
       modal: true,
+      header: `${headquarterData.name}`,
     },
     data: {
       headquarterData: headquarterData,
@@ -164,6 +173,7 @@ const editHeadquarter = (headquarterData: Headquarter) => {
   dialog.open(AddEditHeadquarterCard, {
     props: {
       modal: true,
+      header: `${headquarterData.name}`,
     },
     data: {
       headquarterData: headquarterData as AddEditHeadquarterSchema,
@@ -187,7 +197,7 @@ const confirm = useConfirm()
 
 const deleteHeadquarterAction = (event: MouseEvent | KeyboardEvent, headquarter: Headquarter) => {
   confirm.require({
-    group:'confirmPopupGeneral',
+    group: 'confirmPopupGeneral',
     target: event.currentTarget as HTMLElement,
     message: '¿Seguro que quiere eliminar esta sede?',
     icon: 'pi pi-exclamation-triangle',
@@ -210,6 +220,13 @@ const deleteHeadquarterAction = (event: MouseEvent | KeyboardEvent, headquarter:
       console.log('Cancelando')
     },
   })
+}
+
+//for activate headquarter
+const activateHeadquarterAction = async (headquarter: Headquarter) => {
+  await activateHeadquarter(headquarter.id)
+  showToast('Sede activada exitosamente: ' + headquarter.name)
+  loadHeadquarters()
 }
 
 //for export
@@ -374,6 +391,14 @@ const exportCSV = () => {
                     aria-label="Filter"
                     rounded
                     @click="deleteHeadquarterAction($event, data)"
+                  ></Button>
+                  <Button
+                    icon="pi pi-check-circle"
+                    severity="success"
+                    variant="outlined"
+                    aria-label="Activar"
+                    rounded
+                    @click="activateHeadquarterAction(data)"
                   ></Button>
                 </div>
               </template>

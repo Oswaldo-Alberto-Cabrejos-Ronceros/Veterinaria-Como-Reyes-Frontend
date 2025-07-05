@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import Card from 'primevue/card'
 import InputText from 'primevue/inputtext'
 import Select from 'primevue/select'
 import Message from 'primevue/message'
@@ -59,11 +58,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <Card class="card-dialog-form-layout">
-    <template #title>
-      <h3 class="h3 text-center">Editar Datos</h3>
-    </template>
-    <template #content>
+  <div class="card-dialog-form-layout">
+
       <form @submit.prevent="onSubmit" class="form-dialog-layout">
         <!-- cell phone -->
         <div>
@@ -131,6 +127,6 @@ onMounted(() => {
           />
         </div>
       </form>
-    </template>
-  </Card>
+
+    </div>
 </template>

@@ -16,25 +16,33 @@ import { useForm } from 'vee-validate'
 import { useThemeStore } from '@/stores/themeStore'
 import { computed, ref } from 'vue'
 import { SelectButton } from 'primevue'
+import ProgressSpinner from 'primevue/progressspinner'
+
+//props
+
+defineProps<{
+  loading?: boolean
+}>()
+
 // Setup del formulario con tipado
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
     email: '',
     password: '',
+    type: 'Cliente',
   },
 })
 
 // Campos individuales con binding
 const [email, emailAttrs] = defineField('email')
 const [password, passwordAttrs] = defineField('password')
+const [type, typeAttrs] = defineField('type')
 
 //for theme
 const storeTheme = useThemeStore()
 const imageLogo = computed(() => (storeTheme.isDark ? LogoWhite : LogoRose))
 
-//is employee or client
-const isEmployee = ref<string>('Cliente')
 //options for selectButton
 const options = ref(['Cliente', 'Empleado'])
 
@@ -47,7 +55,7 @@ const onSubmit = handleSubmit((values) => {
       email: values.email,
       password: values.password,
     },
-    isEmployee: isEmployee.value === 'Cliente' ? false : true,
+    isEmployee: type.value === 'Cliente' ? false : true,
   })
 })
 </script>
@@ -64,17 +72,21 @@ const onSubmit = handleSubmit((values) => {
       <h3 class="h3 text-center">Iniciar Sesión</h3>
     </template>
 
-    <template #subtitle>
-      <div class="w-full flex justify-center">
-        <SelectButton v-model="isEmployee" :options="options" />
-      </div>
-    </template>
-
     <template #content>
+      <div v-if="loading" class="min-h-96 w-full flex items-center justify-center">
+        <ProgressSpinner />
+      </div>
       <form
+        v-if="!loading"
         @submit.prevent="onSubmit"
         class="flex flex-col gap-4 w-full max-w-lg xs:min-w-96 sm:min-w-md"
       >
+        <div class="w-full flex flex-col gap-1 items-center justify-center">
+          <SelectButton v-bind="typeAttrs" v-model="type" :options="options" />
+          <Message v-if="errors.type" severity="error" size="small" variant="simple">
+            {{ errors.type }}
+          </Message>
+        </div>
         <!-- email -->
         <label>Email</label>
         <InputGroup>
@@ -108,7 +120,12 @@ const onSubmit = handleSubmit((values) => {
         <!-- button -->
         <Button label="Ingresar" type="submit" icon="pi pi-sign-in" iconPos="right" class="mt-4" />
         <div class="flex w-full items-center justify-center gap-2">
-          <p>¿No tienes cuenta?</p> <router-link class=" transition-colors duration-150 hover:text-red-500 dark:hover:text-red-400" to="/auth/registration">Registrate</router-link>
+          <p>¿No tienes cuenta?</p>
+          <router-link
+            class="transition-colors duration-150 hover:text-red-500 dark:hover:text-red-400"
+            to="/auth/registration"
+            >Registrate</router-link
+          >
         </div>
       </form>
     </template>

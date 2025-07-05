@@ -1,19 +1,33 @@
 <script setup lang="ts">
 import TheHeader from '@/components/TheHeader.vue'
 import type { MenuItem } from 'primevue/menuitem'
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import MenuNav from '@/components/MenuNav.vue'
+import { useAuthentication } from '@/composables/useAuthentication'
 
 //for now getting the role by router
 const route = useRoute()
 const role = ref(route.meta.role as string)
 
+const { getMainRole } = useAuthentication()
+
+const mainRole = ref<string>('')
+
+onMounted(() => {
+  const role = getMainRole()
+  if (role) mainRole.value = cleanRole(role)
+})
+
 const roleMap: Record<string, number> = {
-  ADMINISTRATOR: 0,
-  MANAGER: 1,
-  VETERINARY: 2,
-  RECEPTIONIST: 3,
+  ADMINISTRADOR: 0,
+  ENCARGADOSEDE: 1,
+  VETERINARIO: 2,
+  RECEPCIONISTA: 3,
+}
+
+const cleanRole = (role: string): string => {
+  return role.replace(/\s+/g, '').toUpperCase()
 }
 
 const items = ref<MenuItem[][]>([
@@ -83,6 +97,16 @@ const items = ref<MenuItem[][]>([
       icon: 'pi pi-receipt',
       to: '/employee/administrator/payment-management',
     },
+    {
+      label: 'Citas',
+      icon: 'pi pi-clipboard',
+      to: '/employee/administrator/appoinment-management',
+    },
+    {
+      label: 'Atenciones',
+      icon: 'pi pi-file-edit',
+      to: '/employee/administrator/care-management',
+    },
   ],
   [
     {
@@ -104,6 +128,16 @@ const items = ref<MenuItem[][]>([
       label: 'Mascotas',
       icon: 'pi pi-github',
       to: '/employee/manager/pets-management',
+    },
+    {
+      label: 'Citas',
+      icon: 'pi pi-clipboard',
+      to: '/employee/manager/appoinment-management',
+    },
+    {
+      label: 'Atenciones',
+      icon: 'pi pi-file-edit',
+      to: '/employee/manager/care-management',
     },
   ],
   [
@@ -144,6 +178,16 @@ const items = ref<MenuItem[][]>([
       icon: 'pi pi-receipt',
       to: '/employee/receptionist/payment-management',
     },
+    {
+      label: 'Citas',
+      icon: 'pi pi-clipboard',
+      to: '/employee/receptionist/appoinment-management',
+    },
+    {
+      label: 'Atenciones',
+      icon: 'pi pi-file-edit',
+      to: '/employee/receptionist/care-management',
+    },
   ],
 ])
 
@@ -154,7 +198,7 @@ watch(
   },
 )
 
-const itemsRole = computed(() => items.value[roleMap[role.value]] ?? [])
+const itemsRole = computed(() => items.value[roleMap[mainRole.value]] ?? [])
 
 const showMenu = ref(true)
 
@@ -163,13 +207,11 @@ const toggleMenu = () => {
 }
 </script>
 <template>
-  <div class="w-full min-h-screen flex flex-col">
-    <TheHeader @toggle-menu="toggleMenu" />
-
-    <main class="w-full flex-1 flex p-2 overflow-hidden">
-      <MenuNav :items="itemsRole" :show-menu="showMenu" @update:show-menu="showMenu = $event" />
-
-      <section class="flex-1 h-auto px-0.5 xs:px-4 transition-all duration-200 ease-out">
+  <div class="w-full min-h-screen flex">
+    <MenuNav :role="mainRole" :items="itemsRole" :show-menu="showMenu" @update:show-menu="toggleMenu()" />
+    <main :class="['w-full flex-1 flex flex-col transition-all duration-200 ease-out' ,showMenu?'ml-64':'ml-0 sm:ml-20']">
+      <TheHeader @show-menu="toggleMenu()" :show-menu="showMenu" :role="mainRole" />
+      <section class="flex-1 h-auto py-1 px-0.5 xs:px-4 transition-all duration-200 ease-out">
         <router-view />
       </section>
     </main>

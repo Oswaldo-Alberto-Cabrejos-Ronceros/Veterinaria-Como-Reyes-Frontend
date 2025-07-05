@@ -33,7 +33,7 @@ const showToast = (message: string) => {
 
 //for get species
 
-const { loading, error, getAllSpecies, createSpecie, updateSpecie,deleteSpecie } = useSpecie()
+const { loading, error, getAllSpecies, createSpecie, updateSpecie, deleteSpecie, activateSpecie } = useSpecie()
 
 const species = ref<Specie[]>([])
 
@@ -75,6 +75,7 @@ const addSpecie = () => {
   dialog.open(AddEditSpecie, {
     props: {
       modal: true,
+      header:'Agregar especie'
     },
     onClose: async (options) => {
       const data = options?.data as AddEditSpecieSchema
@@ -92,6 +93,7 @@ const editPaymentMethod = (specieData: Specie) => {
   dialog.open(AddEditSpecie, {
     props: {
       modal: true,
+      header:`${specieData.name}`
     },
     data: {
       specieData: specieData as AddEditSpecieSchema,
@@ -142,6 +144,35 @@ const deleteSpecieAction = (event: MouseEvent | KeyboardEvent, specieData: Speci
     },
   })
 }
+
+//for activate specie
+const confirmActivateSpecie = (event: MouseEvent | KeyboardEvent, specie: Specie) => {
+  confirm.require({
+    group: 'confirmPopupGeneral',
+    target: event.currentTarget as HTMLElement,
+    message: '¿Seguro que desea activar esta especie?',
+    icon: 'pi pi-exclamation-triangle',
+    rejectProps: {
+      label: 'Cancelar',
+      severity: 'secondary',
+      outlined: true,
+    },
+    acceptProps: {
+      label: 'Activar',
+      severity: 'success',
+    },
+    accept: async () => {
+      console.log('Activando especie: ', specie.id)
+      await activateSpecie(specie.id)
+      showToast('Especie activada exitosamente: ' + specie.name)
+      loadSpecies()
+    },
+    reject: () => {
+      console.log('Cancelando activación')
+    },
+  })
+}
+
 </script>
 
 <template>
@@ -227,6 +258,14 @@ const deleteSpecieAction = (event: MouseEvent | KeyboardEvent, specieData: Speci
                     aria-label="Filter"
                     rounded
                     @click="deleteSpecieAction($event, data)"
+                  ></Button>
+                  <Button
+                    icon="pi pi-refresh"
+                    severity="success"
+                    variant="outlined"
+                    aria-label="Activar"
+                    rounded
+                    @click="confirmActivateSpecie($event, data)"
                   ></Button>
                 </div>
               </template>

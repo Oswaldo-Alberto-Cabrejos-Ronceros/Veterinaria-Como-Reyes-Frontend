@@ -1,6 +1,7 @@
 import type { VeterinaryServiceService } from '../domain/services/VeterinaryServiceService'
 import type { VeterinaryService, VeterinaryServiceRequest } from '../domain/models/VeterinaryService'
 import type { HttpClient } from '@/services/Http/model/HttpClient'
+import type { PageResponse } from '@/services/models/PageResponse'
 
 export class VeterinaryServiceServiceImpl implements VeterinaryServiceService {
   constructor(private readonly httpClient: HttpClient) {}
@@ -40,4 +41,37 @@ export class VeterinaryServiceServiceImpl implements VeterinaryServiceService {
   async deleteVeterinaryService(serviceId: number): Promise<void> {
     await this.httpClient.delete(`${this.url}/${serviceId}`)
   }
+  async activateVeterinaryService(serviceId: number): Promise<void> {
+    await this.httpClient.put(`${this.url}/${serviceId}/activate`, {})
+  }
+
+  async searchVeterinaryServices(
+    page: number,
+    size: number,
+    filters: {
+      name?: string
+      specie?: string
+      category?: string
+      status?: boolean
+    },
+    sort?: string
+  ): Promise<PageResponse<VeterinaryService>> {
+    const params: Record<string, string | number> = {
+      page,
+      size,
+    }
+
+    if (filters.name) params.name = filters.name
+    if (filters.specie) params.specie = filters.specie
+    if (filters.category) params.category = filters.category
+    if (filters.status !== undefined) params.status = String(filters.status)
+    if (sort) params.sort = sort
+
+    const response = await this.httpClient.get<PageResponse<VeterinaryService>>(
+      `${this.url}/search`,
+      params
+    )
+    return response.data
+  }
+
 }

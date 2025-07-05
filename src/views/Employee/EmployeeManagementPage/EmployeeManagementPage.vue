@@ -28,7 +28,6 @@ import type { OptionSelect } from '@/models/OptionSelect'
 import type { Role } from '@/models/Role'
 import { useHeadquarter } from '@/composables/useHeadquarter'
 import type { Headquarter } from '@/models/Headquarter'
-
 //toast
 const toast = useToast()
 
@@ -153,12 +152,6 @@ const onSubmit = handleSubmit(async (values) => {
   employees.value = employeesSearch
 })
 
-const rolesMap: Record<string, number> = {
-  Recepcionista: 1,
-  Veterinario: 2,
-  'Encargado Sede': 3,
-  Administrador: 4,
-}
 
 //for dialog
 const dialog = useDialog()
@@ -168,6 +161,7 @@ const addEmployee = async () => {
   dialog.open(AddEmployeeCard, {
     props: {
       modal: true,
+      header:'Agregar empleado',
     },
     data: {
       headquartersOptions: headquartersToOptionsSelect(await getAllHeadquarters()),
@@ -188,11 +182,13 @@ const addEmployee = async () => {
 //for view
 const viewEmployee = (employeeData: Employee) => {
   dialog.open(ViewEmployeeCard, {
+
     data: {
       employeeData: employeeData,
     },
     props: {
       modal: true,
+            header:`${employeeData.lastnames} ,${employeeData.names}`
     },
   })
 }
@@ -211,13 +207,14 @@ const editEmployee = async (employeeData: Employee) => {
         headquarterId: employeeData.headquarter.headquarterId,
         birthdate: new Date(employeeData.birthdate),
         dirImage: employeeData.dirImage,
-        roleId: rolesMap[employeeData.roles[0].name],
+        roleId: employeeData.roles[0].roleId,
       } as EditEmployeeSchema,
       headquartersOptions: headquartersToOptionsSelect(await getAllHeadquarters()),
       rolesOptions: rolesToOptionsSelect(await getAllRoles()),
     },
     props: {
       modal: true,
+      header:`${employeeData.lastnames} , ${employeeData.names}`
     },
     onClose: async (options) => {
       const data = options?.data as EditEmployeeSchema
@@ -237,7 +234,7 @@ const confirm = useConfirm()
 //for delete with confirm popup
 const deleteEmployee = (event: MouseEvent | KeyboardEvent, employee: Employee) => {
   confirm.require({
-    group:'confirmPopupGeneral',
+    group: 'confirmPopupGeneral',
     target: event.currentTarget as HTMLElement,
     message: '¿Seguro que quiere eliminar a este empleado?',
     icon: 'pi pi-exclamation-triangle',
@@ -322,7 +319,7 @@ const exportCSV = () => {
                 :options="headquartersOptions"
                 optionLabel="name"
                 optionValue="value"
-                placeholder="Selecciona Rol"
+                placeholder="Selecciona Sede"
               />
 
               <Message v-if="errors.headquarter" severity="error" size="small" variant="simple">

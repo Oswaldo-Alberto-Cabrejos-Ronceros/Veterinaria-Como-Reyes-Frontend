@@ -6,4 +6,5 @@ export interface RoleService {
   createRole(roleRequest: RoleRequest): Promise<Role>
   updateRole(roleId: number, roleRequest: RoleRequest): Promise<Role>
   deleteRole(roleId: number): Promise<void>
+  activateRole(roleId: number): Promise<void>
 }

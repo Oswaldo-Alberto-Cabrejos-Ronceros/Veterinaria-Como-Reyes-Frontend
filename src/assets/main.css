@@ -63,7 +63,7 @@ body {
 }
 
 .card-dialog-form-layout{
-  @apply h-auto w-[80vw] md:w-auto lg:w-[80vw] xl:w-auto bg-transparent shadow-none
+  @apply h-auto w-[80vw] md:w-auto lg:w-[80vw] xl:w-auto bg-transparent shadow-none p-0
 }
 
 .form-dialog-layout{
@@ -88,4 +88,8 @@ body {
 
 .form-button-search-container-grid-col-5{
   @apply flex items-end justify-center md:col-start-2 lg:col-start-3 xl:col-start-4 2xl:col-start-5
+}
+
+.card-primary{
+  @apply shadow-none border-1 border-neutral-200 dark:border-neutral-700
 }

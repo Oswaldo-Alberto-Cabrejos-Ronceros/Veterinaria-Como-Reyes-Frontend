@@ -65,6 +65,7 @@ const addPet = async () => {
   dialog.open(AddMyPetCard, {
     props: {
       modal: true,
+      header:'Agregue a su mascota'
     },
     data: {
       speciesOptions: speciesToOptionsSelect(await getAllSpecies()),
@@ -98,7 +99,7 @@ const addPet = async () => {
         </div>
       </template>
       <template #content>
-        <div class="flex flex-col gap-6">
+        <div class="flex flex-col gap-6 mt-2">
           <!-- for messague loading  -->
           <Message v-if="loading.getPetByClientId" severity="warn" size="small" variant="simple">
             Cargando ...
@@ -108,7 +109,7 @@ const addPet = async () => {
             Error al cargar tus mascotas
           </Message>
           <RouterLink v-for="pet in pets" :key="pet.id" :to="`/client/my-pets/${pet.id}`">
-            <CardPetSecondary
+            <CardPetSecondary v-ripple
               :id="pet.id"
               :image-url="pet.urlImage"
               :name="pet.name"

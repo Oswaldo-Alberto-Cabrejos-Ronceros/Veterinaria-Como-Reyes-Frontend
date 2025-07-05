@@ -81,6 +81,7 @@ const viewClient = (clientData: Client) => {
     },
     props: {
       modal: true,
+      header: `${clientData.lastnames}, ${clientData.names}`,
     },
   })
 }
@@ -89,6 +90,7 @@ const addClient = () => {
   dialog.open(AddClientCard, {
     props: {
       modal: true,
+      header: 'Agregar cliente',
     },
     onClose: async (options) => {
       const data = options?.data as SchemaClientAdd
@@ -117,6 +119,7 @@ const editClient = (clientData: Client) => {
     },
     props: {
       modal: true,
+      header: `${clientData.lastnames}, ${clientData.names}`,
     },
     onClose: async (options) => {
       const data = options?.data as SchemaEditClient
@@ -137,7 +140,7 @@ const confirm = useConfirm()
 //for delete with confirm popup
 const deleteClientAction = (event: MouseEvent | KeyboardEvent, client: Client) => {
   confirm.require({
-    group:'confirmPopupGeneral',
+    group: 'confirmPopupGeneral',
     target: event.currentTarget as HTMLElement,
     message: '¿Seguro que quiere eliminar a este empleado?',
     icon: 'pi pi-exclamation-triangle',

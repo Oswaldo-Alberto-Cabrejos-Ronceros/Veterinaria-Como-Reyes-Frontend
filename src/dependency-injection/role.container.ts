@@ -4,6 +4,7 @@ import { DeleteRole } from '@/services/Role/aplication/DeleteRole'
 import { GetAllRoles } from '@/services/Role/aplication/GetAllRoles'
 import { GetRoleById } from '@/services/Role/aplication/GetRoleById'
 import { UpdateRole } from '@/services/Role/aplication/UpdateRole'
+import { ActivateRole } from '@/services/Role/aplication/ActivateRole'
 import { RoleServiceImpl } from '@/services/Role/infrastructure/RoleServiceImpl'
 
 //instantiete AxiosHttpCliente
@@ -20,4 +21,5 @@ export const roleUsesCases = {
   createRole: new CreateRole(roleService),
   updateRole: new UpdateRole(roleService),
   deleteRole: new DeleteRole(roleService),
+  activateRole: new ActivateRole(roleService)
 }

@@ -14,5 +14,5 @@ export interface Pet {
     id:number,
     name:string
   }
-  clientId: number
+  clientId?: number
 }

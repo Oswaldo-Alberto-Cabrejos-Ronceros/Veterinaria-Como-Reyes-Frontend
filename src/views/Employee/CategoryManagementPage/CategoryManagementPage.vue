@@ -34,7 +34,7 @@ const showToast = (message: string) => {
 
 //methods
 
-const { loading, error, getAllCategories, createCategory, updateCategory, deleteCategory } =
+const { loading, error, getAllCategories, createCategory, updateCategory, deleteCategory, activateCategory } =
   useCategory()
 
 //categories
@@ -73,6 +73,7 @@ const addCategory = () => {
   dialog.open(AddEditCategoryCard, {
     props: {
       modal: true,
+      header: 'Agregar categoria'
     },
     onClose: async (options) => {
       const data = options?.data as AddEditCategorySchema
@@ -92,6 +93,7 @@ const editCategory = (categoryData: Category) => {
   dialog.open(AddEditCategoryCard, {
     props: {
       modal: true,
+      header:`${categoryData.name}`
     },
     data: {
       categoryData: categoryData as AddEditCategorySchema,
@@ -112,6 +114,7 @@ const viewCategory = (categoryData: Category) => {
   dialog.open(ViewCategoryCard, {
     props: {
       modal: true,
+      header:`${categoryData.name}`
     },
     data: {
       categoryData: categoryData,
@@ -151,6 +154,14 @@ const deleteCategoryAction = (event: MouseEvent | KeyboardEvent, category: Categ
   })
 }
 
+//for activate
+
+const activateCategoryAction = async (categoryId: number) => {
+  await activateCategory(categoryId)
+  loadCategories()
+  showToast('Categoría activada exitosamente')
+}
+
 //for export
 
 const dt = ref()
@@ -174,7 +185,7 @@ const exportCSV = () => {
                 <InputGroupAddon class="text-neutral-400">
                   <i class="pi pi-info"></i>
                 </InputGroupAddon>
-                <InputText v-model="name" v-bind="nameAttrs" class="w-full" placeholder="Nombre" />
+                <InputText v-model="name" v-bind="nameAttrs" class="w-full" placeholder="Nombre de la categoria" />
               </InputGroup>
               <Message v-if="errors.name" severity="error" size="small" variant="simple">
                 {{ errors.name }}
@@ -255,6 +266,14 @@ const exportCSV = () => {
                     aria-label="Filter"
                     rounded
                     @click="deleteCategoryAction($event, data)"
+                  ></Button>
+                  <Button
+                    icon="pi pi-check"
+                    severity="success"
+                    variant="outlined"
+                    aria-label="Activar"
+                    rounded
+                    @click="() => activateCategoryAction(data.id)"
                   ></Button>
                 </div>
               </template>

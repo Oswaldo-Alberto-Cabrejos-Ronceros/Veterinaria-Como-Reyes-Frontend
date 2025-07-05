@@ -1,4 +1,5 @@
-<script lang="ts" setup>
+ <script lang="ts" setup>
+ /*
 import { ref, onMounted, inject } from 'vue'
 import Card from 'primevue/card'
 import InputText from 'primevue/inputtext'
@@ -68,10 +69,12 @@ const elements: { title: string; key: keyof Payment; icon: string }[] = [
     key: 'employeeAssigned',
     icon: 'pi-user',
   },
-]
+]*/
 </script>
 
 <template>
+  <div></div>
+  <!--
   <Card class="card-dialog-form-layout">
     <template #title>
       <h3 class="h3 text-center">Pago: {{ paymentData?.id }}</h3>
@@ -92,4 +95,5 @@ const elements: { title: string; key: keyof Payment; icon: string }[] = [
       </div>
     </template>
   </Card>
+  -->
 </template>

@@ -4,6 +4,7 @@ import type { Specie } from '@/services/Specie/domain/models/Specie'
 import { SpecieAdapter } from '@/adapters/SpecieAdapter'
 import type { Specie as SpecieView } from '@/models/Specie'
 import type { FormValues as SpecieAddEditSchema } from '@/validation-schemas-forms/schema-add-edit-specie'
+import type { PageResponse } from '@/services/models/PageResponse'
 
 export function useSpecie() {
   //get from useAsyncHandle
@@ -52,6 +53,26 @@ export function useSpecie() {
     return SpecieAdapter.toSpecieView(specie)
   }
 
+  const activateSpecie = async (specieId: number): Promise<void> => {
+    await runUseCase('activateSpecie', () =>
+      specieUsesCases.activateSpecie.execute(specieId))
+  }
+
+  const searchSpecies = async (
+    page: number,
+    size: number,
+    name?: string,
+    status?: boolean
+  ): Promise<PageResponse<SpecieView>> => {
+    const result = await runUseCase('searchSpecies', () =>
+      specieUsesCases.searchSpecies.execute(page, size, name, status)
+    )
+    return {
+      ...result,
+      content: result.content.map(SpecieAdapter.toSpecieView),
+    }
+  }
+
   return {
     loading,
     error,
@@ -60,5 +81,7 @@ export function useSpecie() {
     getAllSpecies,
     getSpecieById,
     updateSpecie,
+    activateSpecie,
+    searchSpecies,
   }
 }
