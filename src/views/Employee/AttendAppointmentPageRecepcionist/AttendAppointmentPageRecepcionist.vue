@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import CardAppointmentInfo from '@/components/CardAppointmentInfo.vue'
 import CardPetInfo from '@/components/CardPetInfo.vue'
 import CardOwnerInfo from '@/components/CardOwnerInfo.vue'
@@ -7,27 +7,39 @@ import Card from 'primevue/card'
 import Button from 'primevue/button'
 import Divider from 'primevue/divider'
 import Select from 'primevue/select'
+import { useAppointment } from '@/composables/useAppointment'
+import type { Appointment } from '@/models/Appointment'
 
 const props = defineProps<{
   appointmentId: string
 }>()
 
+//methods
+
+const { getAppointmentById } = useAppointment()
+
+//ref
+const appointmentBasicInfo = ref<Appointment | null>(null)
+
 onMounted(async () => {
   console.log(props.appointmentId)
+  appointmentBasicInfo.value = await getAppointmentById(Number(props.appointmentId))
 })
 
 const appointmentInfo: {
   time: string
   serviceDuration: number
   serviceName: string
-  veterinaryName: string
+  veterinaryName?: string
   comentario?: string
+  status: string
 } = {
   time: '9:30',
   serviceDuration: 30,
   serviceName: 'Consulta general',
   veterinaryName: 'Paolo Cueva',
   comentario: 'Consulta de rutina',
+  status: 'Programada',
 }
 
 const petInfo: {
@@ -67,7 +79,7 @@ const ownerInfo: {
 
 <template>
   <div class="layout-principal-flex flex-col gap-2">
-    <CardAppointmentInfo v-bind="appointmentInfo" />
+    <CardAppointmentInfo v-if="appointmentBasicInfo" :time="appointmentBasicInfo.scheduleDateTime" :serviceDuration="appointmentInfo.serviceDuration" :serviceName="appointmentInfo.serviceName" :veterinaryName="appointmentBasicInfo.assignedEmployee?.names" :comentario="appointmentInfo.comentario" :status="appointmentBasicInfo.statusAppointment"  />
     <div class="w-full grid grid-cols-2 gap-4">
       <CardPetInfo v-bind="petInfo"></CardPetInfo>
       <CardOwnerInfo v-bind="ownerInfo" />
@@ -91,7 +103,7 @@ const ownerInfo: {
           >
             <div class="text-blue-600 dark:text-blue-400">
               <p>Hora de llegada</p>
-              <p class="textLg font-bold">10:30</p>
+              <p class="textLg font-bold">{{appointmentBasicInfo?.scheduleDateTime}}</p>
             </div>
             <Button
               size="small"
@@ -102,7 +114,7 @@ const ownerInfo: {
             />
           </div>
           <!-- time -->
-          <div
+          <div v-if="appointmentBasicInfo?.statusAppointment==='Programada'"
             class="p-4 shadow-none border-1 rounded-sm border-green-500 bg-green-50 dark:bg-transparent w-full flex justify-between items-center"
           >
             <div class="text-green-600 dark:text-green-400">
@@ -151,7 +163,7 @@ const ownerInfo: {
           <p>S/ 80</p>
         </div>
         <p>Método de pago</p>
-        <Select placeholder="Seleccione método de pago" class="w-full mt-4" fluid/>
+        <Select placeholder="Seleccione método de pago" class="w-full mt-4" fluid />
         <div class="w-full flex gap-4 mt-4">
           <Button
             severity="success"

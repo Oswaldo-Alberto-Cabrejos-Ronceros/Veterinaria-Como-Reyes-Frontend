@@ -102,6 +102,12 @@ export function useAppointment() {
     )
   }
 
+  const getAppointmentById = async (appointmentId: number): Promise<AppointmentView> => {
+    const appointment = await runUseCase('getAppointmentById', () =>
+      appointmentUsesCases.getAppointmentById.execute(appointmentId),
+    )
+    return AppointmentAdapter.toAppointmentView(appointment)
+  }
   return {
     loading,
     error,
@@ -114,5 +120,6 @@ export function useAppointment() {
     getServicesByHeadquarterAndSpecies,
     updateAppointment,
     getAppointmentsForClient,
+    getAppointmentById
   }
 }

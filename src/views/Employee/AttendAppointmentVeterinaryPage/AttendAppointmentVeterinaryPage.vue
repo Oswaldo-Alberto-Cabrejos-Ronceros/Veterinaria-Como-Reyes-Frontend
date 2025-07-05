@@ -26,14 +26,16 @@ const appointmentInfo: {
   time: string
   serviceDuration: number
   serviceName: string
-  veterinaryName: string
-  comentario?: string
+  veterinaryName?: string
+  comentario?: string,
+  status:string
 } = {
   time: '9:30',
   serviceDuration: 30,
   serviceName: 'Consulta general',
   veterinaryName: 'Paolo Cueva',
   comentario: 'Consulta de rutina',
+  status: 'Confirmado'
 }
 
 const petInfo: {

@@ -7,15 +7,16 @@ import type { AppointmentRequest as AppointmentRequestView } from '@/models/Appo
 import type { InfoBasicAppointment } from '@/services/Appointment/domain/models/Appointment'
 import type { InfoBasicAppointmentClient } from '@/models/InfoBasicAppointmentClient'
 import { DateAdapter } from './DateAdapter'
+import { FormatAdapter } from './FormatAdapter'
 
 export class AppointmentAdapter {
   static toAppointmentView(appoinment: Appointment): AppointmentView {
     return {
       id: appoinment.appointmentId,
       scheduleDateTime: DateAdapter.fromISOFormalToStringFull(appoinment.scheduleDateTime),
-      creationDate: DateAdapter.fromISOFormalToStringFull(appoinment.creationDate) ,
+      creationDate: DateAdapter.fromISOFormalToStringFull(appoinment.creationDate),
       cancellationNote: appoinment.cancellationNote,
-      statusAppointment: appoinment.statusAppointment,
+      statusAppointment: FormatAdapter.toCaptalizeCaseWithout_(appoinment.statusAppointment),
       headquarterVetService: { id: appoinment.headquarterVetService.id },
       assignedEmployee: appoinment.assignedEmployee
         ? EmployeeAdapter.toEmployeeView(appoinment.assignedEmployee)

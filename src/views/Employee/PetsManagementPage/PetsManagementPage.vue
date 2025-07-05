@@ -18,7 +18,7 @@ import { onMounted, ref } from 'vue'
 import { useDialog, useToast } from 'primevue'
 import AddEditPetCard from './components/AddEditPetCard.vue'
 import type { FormValues as AddEditPetSchema } from '@/validation-schemas-forms/schema-add-edit-pet'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { usePet } from '@/composables/usePet'
 import { useSpecie } from '@/composables/useSpecie'
 import type { OptionSelect } from '@/models/OptionSelect'
@@ -155,10 +155,10 @@ const addPet = async () => {
 }
 
 const router = useRouter()
-
+const route = useRoute()
 //for view
 const viewPet = (petData: Pet) => {
-  router.push({ name: 'administrator-pets-unitary-pet', params: { petId: petData.id } })
+  router.push(`${route.fullPath}/pet/${petData.id}`)
 }
 
 const editPet = async (petData: Pet) => {

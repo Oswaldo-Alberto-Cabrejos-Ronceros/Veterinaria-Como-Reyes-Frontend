@@ -26,6 +26,7 @@ import type { PaymentMethod } from '@/models/PaymentMethod'
 import { usePaymentMethod } from '@/composables/usePaymentMethod'
 import type { AppointmentRequest } from '@/models/AppointmentRequest'
 import { useToast } from 'primevue/usetoast'
+import { useRoute, useRouter } from 'vue-router'
 
 onMounted(async () => {
   loadAppoinments()
@@ -189,6 +190,13 @@ const addAppointment = async () => {
   })
 }
 
+const router = useRouter()
+const route = useRoute()
+
+//for attend
+const attendAppointment = (appointmentId:number)=>{
+  router.push(`${route.fullPath}/attend/${appointmentId}`)
+}
 
 </script>
 
@@ -351,7 +359,8 @@ const addAppointment = async () => {
                     icon="pi pi-calendar-clock"
                     severity="warn"
                     variant="outlined"
-                    aria-label="Editar"
+                    aria-label="Atender"
+                    @click="attendAppointment(data.id)"
                     rounded
                   />
                   <Button
