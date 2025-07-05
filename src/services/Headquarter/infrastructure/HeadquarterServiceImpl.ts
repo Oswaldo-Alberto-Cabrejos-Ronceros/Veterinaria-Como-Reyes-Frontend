@@ -30,4 +30,8 @@ export class HeadquarterServiceImpl implements HeadquarterService {
   async deleteHeadquarter(id: number): Promise<void> {
     await this.httpClient.delete<void>(`${this.urlBase}/${id}`)
   }
+
+  async activateHeadquarter(id: number): Promise<void> {
+    await this.httpClient.put<void>(`${this.urlBase}/${id}/activate`, {})
+  }
 }
