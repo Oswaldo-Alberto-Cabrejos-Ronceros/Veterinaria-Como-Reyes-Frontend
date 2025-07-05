@@ -23,7 +23,7 @@ import CareManagementPage from '@/views/Employee/CareManagementPage/CareManageme
 import PageNotFound from '@/views/Common/PageNotFound/PageNotFound.vue'
 import HomePageRecepcionist from '@/views/Employee/HomePageRecepcionist/HomePageRecepcionist.vue'
 import HomePageVeterinary from '@/views/Employee/HomePageVeterinary/HomePageVeterinary.vue'
-
+import AttendAppointmentPageRecepcionist from '@/views/Employee/AttendAppointmentPageRecepcionist/AttendAppointmentPageRecepcionist.vue'
 //client
 import MyAppointmentsClientPage from '@/views/Client/MyAppointmentsClientPage/MyAppointmentsClientPage.vue'
 import MyPetsPage from '@/views/Client/MyPetsPage/MyPetsPage.vue'
@@ -303,8 +303,14 @@ const router = createRouter({
 
             {
               path: 'appoinment-management',
-              name: 'receptionist-appoinment-management',
+              name: 'receptionist-appointment-management',
               component: AppointmentManagementPage,
+              meta: { requiresAuth: true, roles: ['Recepcionista'] },
+            },
+            {
+              path: 'appoinment-management/attend/:appointmentId',
+              name: 'receptionist-appointment-management-attend',
+              component: AttendAppointmentPageRecepcionist,
               meta: { requiresAuth: true, roles: ['Recepcionista'] },
             },
             {

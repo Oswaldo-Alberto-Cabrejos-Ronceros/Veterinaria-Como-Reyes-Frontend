@@ -33,7 +33,7 @@ onMounted(async () => {
 
 //methods for appointments
 
-const { loading, error, getAllAppointments, confirmAppointment, completeAppointment } = useAppointment()
+const { loading, error, getAllAppointments,createAppointment, confirmAppointment, completeAppointment } = useAppointment()
 
 const {getAllPaymentMethods}=usePaymentMethod()
 
