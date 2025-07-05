@@ -6,6 +6,7 @@ import { GetPaymentMethodById } from '@/services/PaymentMethod/aplication/GetPay
 import { UpdatePaymentMethod } from '@/services/PaymentMethod/aplication/UpdatePaymentMethod'
 import { ActivatePaymentMethod } from '@/services/PaymentMethod/aplication/ActivatePaymentMethod'
 import { PaymentMethodServiceImpl } from '@/services/PaymentMethod/infrastructure/PaymentMethodServiceImpl'
+import { SearchPaymentMethod } from '@/services/PaymentMethod/aplication/SearchPaymentMethod'
 
 // Instanciar cliente HTTP
 const axiosHttpClient = new AxiosHttpClient()
@@ -20,4 +21,5 @@ export const paymentMethodUseCases = {
   getPaymentMethodById: new GetPaymentMethodById(paymentMethodService),
   updatePaymentMethod: new UpdatePaymentMethod(paymentMethodService),
   activatePaymentMethod: new ActivatePaymentMethod(paymentMethodService),
+  searchPaymentMethod: new SearchPaymentMethod(paymentMethodService),
 }
