@@ -32,9 +32,11 @@ onMounted(async () => {
 })
 
 //methods for appointments
-const { loading, error, getAllAppointments,createAppointment } = useAppointment()
+
+const { loading, error, getAllAppointments, confirmAppointment, completeAppointment } = useAppointment()
 
 const {getAllPaymentMethods}=usePaymentMethod()
+
 
 //for appoinments
 
@@ -46,6 +48,19 @@ const loadAppoinments = async () => {
   appointments.value = await getAllAppointments()
   headquartersOptions.value = headquartersCategoriesToOptionsSelect(await getAllHeadquarters())
   categoriesOptions.value = headquartersCategoriesToOptionsSelect(await getAllCategories())
+}
+
+const handleChangeStatus = async (appointmentId: number, status: string) => {
+  try {
+    if (status === 'CONFIRMADA') {
+      await confirmAppointment(appointmentId)
+    } else if (status === 'COMPLETADA') {
+      await completeAppointment(appointmentId)
+    }
+    await loadAppoinments()
+  } catch (err) {
+    console.error('Error al cambiar estado de la cita:', err)
+  }
 }
 
 //form
@@ -322,32 +337,46 @@ const addAppointment = async () => {
                 {{ data.pet.name }}
               </template></Column
             >
-            <Column >
-              <template #body >
-                <div
-                  class="flex justify-between items-center flex-row lg:flex-col xl:flex-row gap-1"
-                >
+            <Column>
+              <template #body="{ data }">
+                <div class="flex justify-between items-center flex-row lg:flex-col xl:flex-row gap-1">
                   <Button
                     icon="pi pi-eye"
                     severity="info"
                     variant="outlined"
-                    aria-label="Filter"
+                    aria-label="Ver"
                     rounded
-                  ></Button>
+                  />
                   <Button
                     icon="pi pi-calendar-clock"
                     severity="warn"
                     variant="outlined"
-                    aria-label="Filter"
+                    aria-label="Editar"
                     rounded
-                  ></Button>
+                  />
                   <Button
                     icon="pi pi-trash"
                     severity="danger"
                     variant="outlined"
-                    aria-label="Filter"
+                    aria-label="Eliminar"
                     rounded
-                  ></Button>
+                  />
+                  <Button
+                    icon="pi pi-check"
+                    severity="success"
+                    variant="outlined"
+                    aria-label="Confirmar"
+                    rounded
+                    @click="handleChangeStatus(data.id, 'CONFIRMADA')"
+                  />
+                  <Button
+                    icon="pi pi-calendar-check"
+                    severity="help"
+                    variant="outlined"
+                    aria-label="Completar"
+                    rounded
+                    @click="handleChangeStatus(data.id, 'COMPLETADA')"
+                  />
                 </div>
               </template>
             </Column>
