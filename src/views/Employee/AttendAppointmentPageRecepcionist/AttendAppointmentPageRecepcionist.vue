@@ -2,6 +2,7 @@
 import { onMounted } from 'vue'
 import CardAppointmentInfo from '@/components/CardAppointmentInfo.vue'
 import CardPetInfo from '@/components/CardPetInfo.vue'
+import CardOwnerInfo from '@/components/CardOwnerInfo.vue'
 
 const props = defineProps<{
   appointmentId: string
@@ -33,7 +34,7 @@ const petInfo: {
   birthdate: string
   gender: string
   comment: string
-  urlImage:string
+  urlImage: string
 } = {
   name: 'Thor',
   specieName: 'Perro',
@@ -42,7 +43,21 @@ const petInfo: {
   birthdate: '05/12/2023',
   gender: 'Macho',
   comment: 'Perro juguetón, le encanta correr, celoso, no le gusta que se le acerquen al dueño',
-  urlImage: 'https://www.hola.com/horizon/43/d1eaad20c4c6-adobestock47432136.jpg'
+  urlImage: 'https://www.hola.com/horizon/43/d1eaad20c4c6-adobestock47432136.jpg',
+}
+
+const ownerInfo: {
+  name: string
+  lastname: string
+  phone: string
+  email: string
+  address: string
+} = {
+  name: 'Oswaldo Alberto',
+  lastname: 'Cabrejos Ronceros',
+  phone: '984156123',
+  email: 'oswaldocabrejosr@gmail.com',
+  address: 'Av. Brasil',
 }
 </script>
 
@@ -50,8 +65,8 @@ const petInfo: {
   <div class="layout-principal-flex flex-col gap-2">
     <CardAppointmentInfo v-bind="appointmentInfo" />
     <div class="w-full grid grid-cols-2 gap-4">
-    <CardPetInfo v-bind="petInfo"></CardPetInfo>
+      <CardPetInfo v-bind="petInfo"></CardPetInfo>
+      <CardOwnerInfo v-bind="ownerInfo" />
     </div>
-
   </div>
 </template>
