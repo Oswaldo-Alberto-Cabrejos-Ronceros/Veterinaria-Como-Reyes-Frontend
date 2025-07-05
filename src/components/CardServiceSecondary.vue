@@ -15,10 +15,10 @@ defineProps<{
 
 <template>
   <Card
-    class="overflow-hidden border border-neutral-200 dark:border-neutral-50 shadow max-w-lg transition-opacity duration-300 hover:opacity-80 group cursor-pointer"
+    class="overflow-hidden card-primary max-w-lg transition-opacity duration-300 hover:opacity-80 group cursor-pointer"
     :class="
       selected
-        ? ' bg-surface-100 hover:bg-surface-50 dark:bg-slate-950 hover:dark:bg-slate-900 border-primary-500 dark:border-primary-900'
+        ? ' bg-surface-100 hover:bg-surface-50 dark:bg-surface-950 hover:dark:bg-surface-900 !border-primary-500 !dark:border-primary-900'
         : ''
     "
   >
