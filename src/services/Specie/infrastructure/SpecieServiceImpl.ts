@@ -1,6 +1,7 @@
 import type { SpecieService } from '../domain/services/SpecieService'
 import type { Specie, SpecieRequest } from '../domain/models/Specie'
 import type { HttpClient } from '@/services/Http/model/HttpClient'
+import type { PageResponse } from '@/services/models/PageResponse'
 
 export class SpecieServiceImpl implements SpecieService {
   constructor(private readonly httpClient: HttpClient) {}
@@ -32,5 +33,26 @@ export class SpecieServiceImpl implements SpecieService {
   }
   async activateSpecie(specieId: number): Promise<void> {
     await this.httpClient.put(`${this.url}/${specieId}/activate`, {})
+  }
+
+  async searchSpecies(
+    page: number,
+    size: number,
+    name?: string,
+    status?: boolean
+  ): Promise<PageResponse<Specie>> {
+    const params: Record<string, string | number> = {
+      page,
+      size,
+    }
+
+    if (name) params.name = name
+    if (status !== undefined) params.status = String(status)
+
+    const response = await this.httpClient.get<PageResponse<Specie>>(
+      `${this.url}/search`,
+      params
+    )
+    return response.data
   }
 }
