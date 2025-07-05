@@ -24,6 +24,7 @@ import PageNotFound from '@/views/Common/PageNotFound/PageNotFound.vue'
 import HomePageRecepcionist from '@/views/Employee/HomePageRecepcionist/HomePageRecepcionist.vue'
 import HomePageVeterinary from '@/views/Employee/HomePageVeterinary/HomePageVeterinary.vue'
 import AttendAppointmentPageRecepcionist from '@/views/Employee/AttendAppointmentPageRecepcionist/AttendAppointmentPageRecepcionist.vue'
+import AttendAppointmentVeterinaryPage from '@/views/Employee/AttendAppointmentVeterinaryPage/AttendAppointmentVeterinaryPage.vue'
 //client
 import MyAppointmentsClientPage from '@/views/Client/MyAppointmentsClientPage/MyAppointmentsClientPage.vue'
 import MyPetsPage from '@/views/Client/MyPetsPage/MyPetsPage.vue'
@@ -342,6 +343,12 @@ const router = createRouter({
               path: 'pets-management',
               name: 'veterinary-pets-management',
               component: PetsManagementPage,
+              meta: { requiresAuth: true, roles: ['Veterinario'] },
+            },
+            {
+              path: 'appoinments/attend/:appointmentId',
+              name: 'veterinary-appointments-attend',
+              component: AttendAppointmentVeterinaryPage,
               meta: { requiresAuth: true, roles: ['Veterinario'] },
             },
           ],
