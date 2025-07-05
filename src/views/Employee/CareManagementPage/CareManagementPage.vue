@@ -18,19 +18,16 @@ import { useCare } from '@/composables/useCare'
 import type { Care } from '@/models/Care'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import { useDialog } from 'primevue/usedialog'
+import { useDialog, useToast } from 'primevue'
 import AddEditCareCard from './components/AddEditCareCard.vue'
 import type { FormValues as AddCareFromRequestSchema } from '@/validation-schemas-forms/schema-add-care'
-import { useToast } from 'primevue/usetoast'
 
 onMounted(async () => {
   loadCares()
 })
 
 //methods for care
-const { loading, error, getAllCares } = useCare()
-
-const {createCareFromRequest} = useCare()
+const { loading, error, getAllCares, completeCare,createCareFromRequest } = useCare()
 
 //for cares
 
@@ -41,6 +38,15 @@ const loadCares = async () => {
   cares.value = await getAllCares()
   headquartersOptions.value = headquartersServicesToOptionsSelect(await getAllHeadquarters())
   servicesOptions.value = headquartersServicesToOptionsSelect(await getAllVeterinaryServices())
+}
+
+const onCompleteCare = async (careId: number) => {
+  try {
+    await completeCare(careId)
+    await loadCares()
+  } catch (err) {
+    console.error('Error al completar atención', err)
+  }
 }
 
 const { handleSubmit, errors, defineField } = useForm<SearchCareSchema>({
@@ -117,7 +123,6 @@ const addCare = async () => {
   dialog.open(AddEditCareCard, {
     props: {
       modal: true,
-      header:'Agendar atención'
     },
     onClose: async (options) => {
       const data = options?.data as AddCareFromRequestSchema
@@ -267,7 +272,7 @@ const addCare = async () => {
               style="width: 30%"
             ></Column>
             <Column>
-              <template #body>
+              <template #body="slotProps">
                 <div
                   class="flex justify-between items-center flex-row lg:flex-col xl:flex-row gap-1"
                 >
@@ -289,9 +294,19 @@ const addCare = async () => {
                     icon="pi pi-trash"
                     severity="danger"
                     variant="outlined"
-                    aria-label="Filter"
+                    aria-label="Eliminar"
                     rounded
                   ></Button>
+                  <!-- completar si esta en curso -->
+                  <Button
+                    v-if="slotProps.data.statusCare === 'EN_CURSO'"
+                    icon="pi pi-check-circle"
+                    severity="success"
+                    variant="outlined"
+                    aria-label="Completar"
+                    rounded
+                    @click="onCompleteCare(slotProps.data.id)"
+                  />
                 </div>
               </template>
             </Column>

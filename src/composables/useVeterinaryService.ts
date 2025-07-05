@@ -49,6 +49,12 @@ export function useVeterinaryService() {
     return VeterinaryServiceAdapter.toView(updated)
   }
 
+  const activateVeterinaryService = async (serviceId: number): Promise<void> => {
+    await runUseCase('activateVeterinaryService', () =>
+      veterinaryServiceUsesCases.activateVeterinaryService.execute(serviceId),
+    )
+  }
+
   return {
     loading,
     error,
@@ -57,5 +63,6 @@ export function useVeterinaryService() {
     getAllVeterinaryServices,
     getVeterinaryServiceById,
     updateVeterinaryService,
+    activateVeterinaryService,
   }
 }

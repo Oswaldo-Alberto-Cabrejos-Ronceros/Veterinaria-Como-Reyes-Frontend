@@ -10,4 +10,6 @@ export interface CategoryService {
   updateCategory(id: number, categoryRequest: CategoryRequest): Promise<Category>
 
   deleteCategory(id: number): Promise<void>
+
+  activateCategory(categoryId: number): Promise<void>
 }

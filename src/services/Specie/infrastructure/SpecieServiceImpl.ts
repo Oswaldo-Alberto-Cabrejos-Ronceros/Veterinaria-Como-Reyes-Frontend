@@ -30,4 +30,7 @@ export class SpecieServiceImpl implements SpecieService {
   async deleteSpecie(specieId: number): Promise<void> {
     await this.httpClient.delete(`${this.url}/${specieId}`)
   }
+  async activateSpecie(specieId: number): Promise<void> {
+    await this.httpClient.put(`${this.url}/${specieId}/activate`, {})
+  }
 }

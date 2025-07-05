@@ -41,6 +41,7 @@ const {
   createPaymentMethod,
   updatePaymentMethod,
   deletePaymentMethod,
+  activatePaymentMethod,
 } = usePaymentMethod()
 
 //payment methods
@@ -159,6 +160,15 @@ const deletePaymentMethodAction = (
   })
 }
 
+//for activate
+
+const activatePaymentMethodAction = async (id: number) => {
+  await activatePaymentMethod(id)
+  loadPaymentMethods()
+  showToast('Método de pago activado exitosamente')
+}
+
+
 //for export
 
 const dt = ref()
@@ -270,6 +280,14 @@ const exportCSV = () => {
                     aria-label="Filter"
                     rounded
                     @click="deletePaymentMethodAction($event, data)"
+                  ></Button>
+                  <Button
+                    icon="pi pi-check"
+                    severity="success"
+                    variant="outlined"
+                    aria-label="Activar"
+                    rounded
+                    @click="activatePaymentMethodAction(data.id)"
                   ></Button>
                 </div>
               </template>

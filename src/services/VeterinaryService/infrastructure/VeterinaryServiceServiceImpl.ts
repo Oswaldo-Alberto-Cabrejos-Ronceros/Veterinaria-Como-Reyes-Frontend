@@ -40,4 +40,7 @@ export class VeterinaryServiceServiceImpl implements VeterinaryServiceService {
   async deleteVeterinaryService(serviceId: number): Promise<void> {
     await this.httpClient.delete(`${this.url}/${serviceId}`)
   }
+  async activateVeterinaryService(serviceId: number): Promise<void> {
+    await this.httpClient.put(`${this.url}/${serviceId}/activate`, {})
+  }
 }

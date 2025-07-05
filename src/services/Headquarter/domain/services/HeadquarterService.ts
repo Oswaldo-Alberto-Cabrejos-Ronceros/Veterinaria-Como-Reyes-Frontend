@@ -10,4 +10,6 @@ export interface HeadquarterService {
   updateHeadquarter(id: number, headquarterRequest: HeadquarterRequest): Promise<Headquarter>
 
   deleteHeadquarter(id: number): Promise<void>
+
+  activateHeadquarter(id: number): Promise<void>
 }

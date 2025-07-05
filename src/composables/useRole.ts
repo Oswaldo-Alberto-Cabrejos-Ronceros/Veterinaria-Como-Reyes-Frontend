@@ -46,6 +46,10 @@ export function useRole() {
     await runUseCase('deleteRole', () => roleUsesCases.deleteRole.execute(roleId))
   }
 
+  const activateRole = async (roleId: number): Promise<void> => {
+    await runUseCase('activateRole', () => roleUsesCases.activateRole.execute(roleId))
+  }
+
   return {
     loading,
     error,
@@ -54,5 +58,6 @@ export function useRole() {
     createRole,
     updateRole,
     deleteRole,
+    activateRole,
   }
 }

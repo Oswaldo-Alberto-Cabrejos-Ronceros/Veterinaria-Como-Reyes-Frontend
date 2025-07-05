@@ -59,6 +59,12 @@ export function useHeadquarter() {
     return HeadquarterAdapter.toHeadquarterView(headquarter)
   }
 
+  const activateHeadquarter = async (headquarterId: number) => {
+    await runUseCase('activateHeadquarter', () =>
+      headquarterUsesCases.activateHeadquarter.execute(headquarterId),
+    )
+  }
+
   return {
     loading,
     error,
@@ -67,5 +73,6 @@ export function useHeadquarter() {
     getHeadquarterById,
     createHeadquarter,
     updateHeadquarter,
+    activateHeadquarter,
   }
 }

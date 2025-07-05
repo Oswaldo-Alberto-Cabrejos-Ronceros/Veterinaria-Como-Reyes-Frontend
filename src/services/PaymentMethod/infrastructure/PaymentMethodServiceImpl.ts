@@ -30,4 +30,7 @@ export class PaymentMethodServiceImpl implements PaymentMethodService {
   async deletePaymentMethod(id: number): Promise<void> {
     await this.httpClient.delete(`${this.url}/${id}`);
   }
+  async activatePaymentMethod(id: number): Promise<void> {
+    await this.httpClient.put<void>(`${this.url}/${id}/activate`, {});
+  }
 }

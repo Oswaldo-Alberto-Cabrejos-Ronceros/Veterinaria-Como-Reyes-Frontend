@@ -16,6 +16,7 @@ import ModulesPermissions from '@/assets/data/modules-permissions.json'
 import ModulePermissionCard from './components/ModulePermissionCard.vue'
 import { useRole } from '@/composables/useRole'
 import type { OptionSelect } from '@/models/OptionSelect'
+import { useConfirm } from 'primevue'
 
 //toast
 const toast = useToast()
@@ -31,7 +32,7 @@ const showToast = (message: string) => {
 
 //methods
 
-const { loading, error, getAllRoles, createRole, updateRole } = useRole()
+const { loading, error, getAllRoles, createRole, updateRole, activateRole } = useRole()
 
 //for roles
 
@@ -130,6 +131,36 @@ const editRole = (roleData: Role) => {
   })
 }
 
+//for active pet
+const confirm = useConfirm()
+
+const confirmActivateRol = (event: MouseEvent | KeyboardEvent, role: Role) => {
+  confirm.require({
+    group: 'confirmPopupGeneral',
+    target: event.currentTarget as HTMLElement,
+    message: '¿Seguro que desea activar este rol?',
+    icon: 'pi pi-exclamation-triangle',
+    rejectProps: {
+      label: 'Cancelar',
+      severity: 'secondary',
+      outlined: true,
+    },
+    acceptProps: {
+      label: 'Activar',
+      severity: 'success',
+    },
+    accept: async () => {
+      console.log('Activando rol: ', role.id)
+      await activateRole(role.id)
+      await loadRoles()
+      showToast('Rol activado exitosamente: ' + role.name)
+    },
+    reject: () => {
+      console.log('Cancelando activación')
+    },
+  })
+}
+
 const editPermissions = (permissions: { name: string; code: number }[]) => {
   console.log(permissions)
 }
@@ -196,6 +227,16 @@ const editPermissions = (permissions: { name: string; code: number }[]) => {
                 class="w-full"
                 v-if="roleSelectInf"
                 @click="editRole(roleSelectInf)"
+              />
+              <!-- button for activate -->
+              <Button
+                label="Activar"
+                icon="pi pi-refresh"
+                severity="success"
+                iconPos="right"
+                class="w-full"
+                v-if="roleSelectInf"
+                @click="confirmActivateRol($event, roleSelectInf)"
               />
             </div>
           </div>

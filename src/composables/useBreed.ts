@@ -57,6 +57,10 @@ export function useBreed() {
     return BreedAdapter.toBreedView(breed)
   }
 
+  const activateBreed = async (breedId: number): Promise<void> => {
+    await runUseCase('activateBreed', () => breedUsesCases.activateBreed.execute(breedId))
+  }
+
   return {
     loading,
     error,
@@ -66,5 +70,6 @@ export function useBreed() {
     getBreedByUd,
     getBreedsBySpecie,
     updateBreed,
+    activateBreed,
   }
 }
