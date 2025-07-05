@@ -34,7 +34,7 @@ const showToast = (message: string) => {
 
 //methods
 
-const { loading, error, getAllCategories, createCategory, updateCategory, deleteCategory } =
+const { loading, error, getAllCategories, createCategory, updateCategory, deleteCategory, activateCategory } =
   useCategory()
 
 //categories
@@ -155,7 +155,6 @@ const deleteCategoryAction = (event: MouseEvent | KeyboardEvent, category: Categ
 }
 
 //for activate
-const { activateCategory } = useCategory()
 
 const activateCategoryAction = async (categoryId: number) => {
   await activateCategory(categoryId)

@@ -37,7 +37,7 @@ const showToast = (message: string) => {
 
 //get from compose
 
-const { loading, error, getAllBreeds, createBreed, updateBreed, deleteBreed } = useBreed()
+const { loading, error, getAllBreeds, createBreed, updateBreed, deleteBreed, activateBreed } = useBreed()
 
 const { getAllSpecies } = useSpecie()
 
@@ -163,7 +163,6 @@ const deleteBreedAction = (event: MouseEvent | KeyboardEvent, breedData: Breed) 
 }
 
 //for activate
-const { activateBreed } = useBreed()
 
 const activateBreedAction = (event: MouseEvent | KeyboardEvent, breed: Breed) => {
   confirm.require({

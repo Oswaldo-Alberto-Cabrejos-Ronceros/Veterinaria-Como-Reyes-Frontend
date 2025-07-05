@@ -41,6 +41,7 @@ const {
   createPaymentMethod,
   updatePaymentMethod,
   deletePaymentMethod,
+  activatePaymentMethod,
 } = usePaymentMethod()
 
 //payment methods
@@ -160,7 +161,6 @@ const deletePaymentMethodAction = (
 }
 
 //for activate
-const { activatePaymentMethod } = usePaymentMethod()
 
 const activatePaymentMethodAction = async (id: number) => {
   await activatePaymentMethod(id)

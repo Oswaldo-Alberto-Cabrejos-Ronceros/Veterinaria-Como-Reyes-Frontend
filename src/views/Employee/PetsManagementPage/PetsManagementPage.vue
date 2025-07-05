@@ -40,7 +40,7 @@ const showToast = (message: string) => {
 
 //methods
 
-const { loading, error, getAllPets, createPet, updatePet, deletePet } = usePet()
+const { loading, error, getAllPets, createPet, updatePet, deletePet, activatePet } = usePet()
 
 const { getAllSpecies } = useSpecie()
 
@@ -223,7 +223,6 @@ const confirmDeletePet = (event: MouseEvent | KeyboardEvent, pet: Pet) => {
 }
 
 //for active pet
-const { activatePet } = usePet()
 
 const confirmActivatePet = (event: MouseEvent | KeyboardEvent, pet: Pet) => {
   confirm.require({
