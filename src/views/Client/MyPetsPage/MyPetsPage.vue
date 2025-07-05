@@ -98,7 +98,7 @@ const addPet = async () => {
         </div>
       </template>
       <template #content>
-        <div class="flex flex-col gap-6">
+        <div class="flex flex-col gap-6 mt-2">
           <!-- for messague loading  -->
           <Message v-if="loading.getPetByClientId" severity="warn" size="small" variant="simple">
             Cargando ...

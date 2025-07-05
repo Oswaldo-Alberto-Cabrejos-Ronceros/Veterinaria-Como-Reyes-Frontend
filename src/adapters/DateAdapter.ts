@@ -54,4 +54,8 @@ export class DateAdapter {
       return ''
     }
   }
+
+  static fromISOFormalToStringFull(date: string): string {
+    return date.replace('T', ' ')
+  }
 }

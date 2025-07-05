@@ -48,3 +48,17 @@ export interface BasicServiceForAppointment {
   serviceImageUrl:string
   categoryName:string
 }
+
+
+export interface InfoBasicAppointment{
+  id:number
+  date:string
+  time:string
+  animalName:string
+  serviceName:string
+  serviceDescription:string
+  serviceImage:string
+  categoryServiceName:string
+  status:string
+  duration:number
+}

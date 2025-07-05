@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { inject, onMounted, type Ref } from 'vue'
-import Card from 'primevue/card'
 import InputText from 'primevue/inputtext'
 import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
@@ -57,15 +56,12 @@ onMounted(()=>{
 </script>
 
 <template>
-  <Card class="card-dialog-form-layout">
-    <template #title>
-      <h3 class="h3 text-center">{{title}} Método de Pago</h3>
-    </template>
-    <template #content>
+  <div class="card-dialog-form-layout">
+
       <form @submit.prevent="onSubmit" class="form-dialog-layout-col-2">
         <!-- name -->
         <div>
-          <label class="block mb-2">Nombre</label>
+          <label class="block mb-2">Nombre del método</label>
           <InputGroup>
             <InputGroupAddon class="text-neutral-400">
               <i class="pi pi-info"></i>
@@ -106,6 +102,5 @@ onMounted(()=>{
           />
         </div>
       </form>
-    </template>
-  </Card>
+    </div>
 </template>

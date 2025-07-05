@@ -7,14 +7,14 @@ import Button from 'primevue/button'
   appointmentStatus: string
   date: string
   petName?: string
-  duration: string
+  duration: number
   serviceName: string
   serviceDescription: string
 }>()
 </script>
 
 <template>
-  <Card class="dark:bg-transparent">
+  <Card class="w-full overflow-hidden h-min border border-neutral-200 dark:border-neutral-50 shadow">
     <template #header>
       <div
         class="w-full p-5 border-b justify-between border-neutral-300 dark:border-neutral-50 flex items-center text-lg font-medium"
@@ -26,6 +26,7 @@ import Button from 'primevue/button'
         <div class="flex gap-2 items-center">
           <h3>{{ date }}</h3>
           <h3>{{ duration }}</h3>
+          <h3>minutos</h3>
         </div>
       </div>
     </template>

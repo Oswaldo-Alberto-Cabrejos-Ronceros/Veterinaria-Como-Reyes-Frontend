@@ -9,6 +9,7 @@ import { SearchClient } from '@/services/Client/aplication/SearchClient'
 import { UpdateBlockNote } from '@/services/Client/aplication/UpdateBlockNote'
 import { UpdateClient } from '@/services/Client/aplication/UpdateClient'
 import { UpdateClientAsClient } from '@/services/Client/aplication/UpdateClientAsClient'
+import { GetClientByDni } from '@/services/Client/aplication/GetClientByDni'
 //import axiosHttpClient
 import { AxiosHttpClient } from '@/services/Http/infrastructure/AxiosHttpClient'
 //import service implementation
@@ -33,4 +34,5 @@ export const clientUsesCases = {
   updateBlockNote: new UpdateBlockNote(clientService),
   updateClient: new UpdateClient(clientService),
   updateClientAsClient: new UpdateClientAsClient(clientService),
+  getClientByDni: new GetClientByDni(clientService),
 }

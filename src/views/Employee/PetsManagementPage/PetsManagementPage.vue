@@ -138,10 +138,10 @@ const addPet = async () => {
   dialog.open(AddEditPetCard, {
     props: {
       modal: true,
+      header:'Agregar mascota'
     },
     data: {
-      speciesOptions: speciesToOptionsSelect(await getAllSpecies()),
-      breedsOptions: breedsToOptionsSelect(await getAllBreeds()),
+      speciesOptions: speciesToOptionsSelect(await getAllSpecies())
     },
     onClose: async (options) => {
       const data = options?.data as AddEditPetSchema
@@ -165,6 +165,7 @@ const editPet = async (petData: Pet) => {
   dialog.open(AddEditPetCard, {
     props: {
       modal: true,
+      header:`${petData.name}`
     },
     data: {
       petData: {
@@ -178,8 +179,7 @@ const editPet = async (petData: Pet) => {
         urlImage: petData.urlImage,
         ownerDni: petData.clientId?.toString()||'', //fix
       } as AddEditPetSchema,
-      speciesOptions: speciesToOptionsSelect(await getAllSpecies()),
-      breedsOptions: breedsToOptionsSelect(await getAllBreeds()),
+      speciesOptions: speciesToOptionsSelect(await getAllSpecies())
     },
     onClose: async (options) => {
       const data = options?.data as AddEditPetSchema

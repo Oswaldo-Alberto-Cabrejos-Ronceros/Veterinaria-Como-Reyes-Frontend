@@ -58,3 +58,8 @@ export interface ClientUpdateAsClient {
   phone: string
   headquarterId: number
 }
+
+export interface ClientBasicInfoByDni {
+  id: number
+  fullName: string
+}

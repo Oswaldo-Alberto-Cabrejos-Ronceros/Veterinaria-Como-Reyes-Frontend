@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { inject, onMounted, type Ref } from 'vue'
-import Card from 'primevue/card'
 import InputText from 'primevue/inputtext'
 import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
@@ -43,12 +42,13 @@ const [district, districtAttrs] = defineField('district')
 const [departament, departamentAttrs] = defineField('departament')
 
 //textfields
-const textFields: { title: string; key: keyof typeof fieldMap; type: string; icon: string }[] = [
+const textFields: { title: string; key: keyof typeof fieldMap; type: string; icon: string, placeholder:string }[] = [
   {
     title: 'Nombre',
     key: 'name',
     type: 'text',
     icon: 'pi-user',
+    placeholder: 'Nombre de la sede'
   },
 
   {
@@ -56,19 +56,21 @@ const textFields: { title: string; key: keyof typeof fieldMap; type: string; ico
     key: 'phone',
     type: 'tel',
     icon: 'pi-mobile',
+    placeholder: 'Ej: 984156123'
   },
   {
     title: 'Dirección',
     key: 'address',
     type: 'text',
     icon: 'pi-map-marker',
+    placeholder: 'Avenida, calle, número'
   },
-
   {
     title: 'Email',
     key: 'email',
     type: 'email',
     icon: 'pi-envelope',
+    placeholder: 'example@gmail.com'
   },
 ]
 
@@ -128,96 +130,91 @@ onMounted(() => {
 </script>
 
 <template>
-  <Card class="card-dialog-form-layout">
-    <template #title>
-      <h3 class="h3 text-center">{{ title }} Sede</h3>
-    </template>
-    <template #content>
-      <form @submit.prevent="onSubmit" class="form-dialog-layout">
-        <div v-for="element in textFields" :key="element.key">
-          <label class="block mb-2">{{ element.title }}</label>
-          <InputGroup>
-            <InputGroupAddon class="text-neutral-400">
-              <i :class="`pi ${element.icon}`"></i>
-            </InputGroupAddon>
-            <InputText
-              v-model="fieldMap[element.key][0].value"
-              v-bind="fieldMap[element.key][1]"
-              class="w-full"
-              :placeholder="element.title"
-              :type="element.type"
-            />
-          </InputGroup>
-          <Message v-if="errors[element.key]" severity="error" size="small" variant="simple">
-            {{ errors[element.key] }}
-          </Message>
-        </div>
-
-        <!-- province -->
-        <div>
-          <label class="block mb-2">Province</label>
-          <Select
+  <div class="card-dialog-form-layout">
+    <form @submit.prevent="onSubmit" class="form-dialog-layout">
+      <div v-for="element in textFields" :key="element.key">
+        <label class="block mb-2">{{ element.title }}</label>
+        <InputGroup>
+          <InputGroupAddon class="text-neutral-400">
+            <i :class="`pi ${element.icon}`"></i>
+          </InputGroupAddon>
+          <InputText
+            v-model="fieldMap[element.key][0].value"
+            v-bind="fieldMap[element.key][1]"
             class="w-full"
-            v-bind="provinceAttrs"
-            v-model="province"
-            :options="provinces"
-            optionLabel="name"
-            optionValue="value"
-            placeholder="Selecciona Provincia"
+            :placeholder="element.placeholder"
+            :type="element.type"
           />
+        </InputGroup>
+        <Message v-if="errors[element.key]" severity="error" size="small" variant="simple">
+          {{ errors[element.key] }}
+        </Message>
+      </div>
 
-          <Message v-if="errors.province" severity="error" size="small" variant="simple">
-            {{ errors.province }}
-          </Message>
-        </div>
+      <!-- province -->
+      <div>
+        <label class="block mb-2">Province</label>
+        <Select
+          class="w-full"
+          v-bind="provinceAttrs"
+          v-model="province"
+          :options="provinces"
+          optionLabel="name"
+          optionValue="value"
+          placeholder="Selecciona Provincia"
+        />
 
-        <!-- district -->
-        <div>
-          <label class="block mb-2">Distrito</label>
-          <Select
-            class="w-full"
-            v-bind="districtAttrs"
-            v-model="district"
-            :options="districts"
-            optionLabel="name"
-            optionValue="value"
-            placeholder="Selecciona Distrito"
-          />
+        <Message v-if="errors.province" severity="error" size="small" variant="simple">
+          {{ errors.province }}
+        </Message>
+      </div>
 
-          <Message v-if="errors.district" severity="error" size="small" variant="simple">
-            {{ errors.district }}
-          </Message>
-        </div>
+      <!-- district -->
+      <div>
+        <label class="block mb-2">Distrito</label>
+        <Select
+          class="w-full"
+          v-bind="districtAttrs"
+          v-model="district"
+          :options="districts"
+          optionLabel="name"
+          optionValue="value"
+          placeholder="Selecciona Distrito"
+        />
 
-        <!-- departament -->
-        <div>
-          <label class="block mb-2">Departamento</label>
-          <Select
-            class="w-full"
-            v-bind="departamentAttrs"
-            v-model="departament"
-            :options="departaments"
-            optionLabel="name"
-            optionValue="value"
-            placeholder="Selecciona Departamento"
-          />
+        <Message v-if="errors.district" severity="error" size="small" variant="simple">
+          {{ errors.district }}
+        </Message>
+      </div>
 
-          <Message v-if="errors.district" severity="error" size="small" variant="simple">
-            {{ errors.district }}
-          </Message>
-        </div>
+      <!-- departament -->
+      <div>
+        <label class="block mb-2">Departamento</label>
+        <Select
+          class="w-full"
+          v-bind="departamentAttrs"
+          v-model="departament"
+          :options="departaments"
+          optionLabel="name"
+          optionValue="value"
+          placeholder="Selecciona Departamento"
+        />
 
-        <div class="button-form-container-grid-end">
-          <Button
-            class="w-full max-w-md"
-            :label="title"
-            type="submit"
-            severity="success"
-            icon="pi pi-save"
-            iconPos="right"
-          />
-        </div>
-      </form>
-    </template>
-  </Card>
+        <Message v-if="errors.district" severity="error" size="small" variant="simple">
+          {{ errors.district }}
+        </Message>
+      </div>
+
+      <div class="button-form-container-grid-end">
+        <Button
+          class="w-full max-w-md"
+          :label="title"
+          type="submit"
+          severity="success"
+          icon="pi pi-save"
+          iconPos="right"
+        />
+      </div>
+    </form>
+  </div>
 </template>

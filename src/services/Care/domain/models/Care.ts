@@ -14,3 +14,15 @@ export interface CareRequest {
   appointmentId?: number
   animalId: number
 }
+
+
+export interface CreateCareFromAppointmentRequest{
+  appointmentId:number,
+  employeeId:number
+}
+
+export interface CareRequestCreate {
+  headquarterVetServiceId:number,
+  animalId:number,
+  employeeId:number
+}

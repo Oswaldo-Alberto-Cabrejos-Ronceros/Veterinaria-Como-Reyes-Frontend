@@ -18,6 +18,10 @@ import { useCare } from '@/composables/useCare'
 import type { Care } from '@/models/Care'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
+import { useDialog } from 'primevue/usedialog'
+import AddEditCareCard from './components/AddEditCareCard.vue'
+import type { FormValues as AddCareFromRequestSchema } from '@/validation-schemas-forms/schema-add-care'
+import { useToast } from 'primevue/usetoast'
 
 onMounted(async () => {
   loadCares()
@@ -25,6 +29,8 @@ onMounted(async () => {
 
 //methods for care
 const { loading, error, getAllCares } = useCare()
+
+const {createCareFromRequest} = useCare()
 
 //for cares
 
@@ -88,6 +94,40 @@ const statusOptions: OptionSelect[] = [
 const dt = ref()
 const exportCSV = () => {
   dt.value.exportCSV()
+}
+
+//for toast
+const toast = useToast()
+
+const showToast = (message: string) => {
+  toast.add({
+    severity: 'success',
+    summary: 'Exito',
+    detail: message,
+    life: 3000,
+  })
+}
+
+
+//for dialog
+const dialog = useDialog()
+
+//for add
+const addCare = async () => {
+  dialog.open(AddEditCareCard, {
+    props: {
+      modal: true,
+    },
+    onClose: async (options) => {
+      const data = options?.data as AddCareFromRequestSchema
+      console.log(data)
+      if(data){
+        const care = await createCareFromRequest(data)
+        loadCares()
+        showToast(`Atención creada: ${care.dateTime}`)
+      }
+    },
+  })
 }
 </script>
 <template>
@@ -206,6 +246,7 @@ const exportCSV = () => {
                   iconPos="right"
                   severity="success"
                   label="Agregar Atencíon"
+                  @click="addCare()"
                 />
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>

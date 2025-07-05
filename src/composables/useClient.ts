@@ -1,6 +1,10 @@
 import { clientUsesCases } from '@/dependency-injection/client.container'
 import { useAsyncHandler } from './useAsyncHandler'
-import type { Client, ClientUpdateAsClient, MyInfoClient } from '@/services/Client/domain/models/Client'
+import type {
+  Client,
+  ClientUpdateAsClient,
+  MyInfoClient,
+} from '@/services/Client/domain/models/Client'
 import type { Client as ClientView } from '@/models/Client'
 import { ClientAdapter } from '@/adapters/ClientAdapter'
 import type { FormValues as ClientAddSchema } from '@/validation-schemas-forms/schema-add-client'
@@ -8,6 +12,7 @@ import type { FormValues as ClientEditSchema } from '@/validation-schemas-forms/
 import type { PageResponse } from '@/services/models/PageResponse'
 import type { MyInfoClient as MyInfoClientView } from '@/models/MyInfoClient'
 import type { FormValues as SchemaEditSelfClient } from '@/validation-schemas-forms/schema-edit-self-client'
+import type { ClientBasicInfoByDni as ClientBasicInfoByDniView } from '@/models/ClientBasicInfoByDni'
 
 export function useClient() {
   //from useAsyncHandle
@@ -91,11 +96,22 @@ export function useClient() {
   }
 
   //fix
-  const updateClientAsClient = async (clientId: number, schemaEditSelfClient: SchemaEditSelfClient): Promise<string> => {
-    const clientUpdateAsClient:ClientUpdateAsClient=ClientAdapter.fromSchemaEditSelfClientToClientUpdateAsClient(schemaEditSelfClient)
+  const updateClientAsClient = async (
+    clientId: number,
+    schemaEditSelfClient: SchemaEditSelfClient,
+  ): Promise<string> => {
+    const clientUpdateAsClient: ClientUpdateAsClient =
+      ClientAdapter.fromSchemaEditSelfClientToClientUpdateAsClient(schemaEditSelfClient)
     return await runUseCase('updateClientAsClient', () =>
       clientUsesCases.updateClientAsClient.execute(clientId, clientUpdateAsClient),
     )
+  }
+
+  const getClientByDni = async (clientDni: string): Promise<ClientBasicInfoByDniView> => {
+    const clientBasicInfoByDni = await runUseCase('getClientByDni', () =>
+      clientUsesCases.getClientByDni.execute(clientDni),
+    )
+    return ClientAdapter.fromClientBasicInfoByDniToClientBasicInfoByDniView(clientBasicInfoByDni)
   }
   return {
     loading,
@@ -110,5 +126,6 @@ export function useClient() {
     updateBlockNote,
     updateClient,
     updateClientAsClient,
+    getClientByDni,
   }
 }

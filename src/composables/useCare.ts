@@ -3,6 +3,8 @@ import { useAsyncHandler } from './useAsyncHandler'
 import type { Care, Care as CareView } from '@/models/Care'
 import { CareAdapter } from '@/adapters/CareAdapter'
 import type { CareRequest } from '@/services/Care/domain/models/Care'
+import type { FormValues as AddCareFromAppoinmentSchema } from '@/validation-schemas-forms/schema-add-care-from-appointment'
+import type { FormValues as AddCareFromRequestSchema } from '@/validation-schemas-forms/schema-add-care'
 
 export function useCare() {
   const { loading, error, runUseCase } = useAsyncHandler()
@@ -41,6 +43,24 @@ export function useCare() {
     return CareAdapter.toView(care)
   }
 
+  const createCareFromAppointment = async (
+    schema: AddCareFromAppoinmentSchema,
+  ): Promise<CareView> => {
+    const careRequest = CareAdapter.fromSchemaToCreateCareFromAppointmentRequest(schema)
+    const care = await runUseCase('createCareFromAppointment', () =>
+      careUsesCases.createCareFromAppointment.execute(careRequest),
+    )
+    return CareAdapter.toView(care)
+  }
+
+  const createCareFromRequest = async (schema: AddCareFromRequestSchema): Promise<CareView> => {
+    const careRequest = CareAdapter.fromSchemaToCareRequestCreate(schema)
+    const care = await runUseCase('createCareFromRequest', () =>
+      careUsesCases.createCareFromRequest.execute(careRequest),
+    )
+    return CareAdapter.toView(care)
+  }
+
   return {
     loading,
     error,
@@ -50,5 +70,7 @@ export function useCare() {
     createCare,
     completeCare,
     updateCare,
+    createCareFromAppointment,
+    createCareFromRequest
   }
 }

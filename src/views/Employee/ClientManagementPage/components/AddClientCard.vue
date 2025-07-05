@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import Card from 'primevue/card'
 import { schema } from '@/validation-schemas-forms/schema-add-client'
 import type { FormValues } from '@/validation-schemas-forms/schema-add-client'
 import { useForm } from 'vee-validate'
@@ -47,31 +46,37 @@ const [email, emailAttrs] = defineField('email')
 const [password, passwordAttrs] = defineField('password')
 const [confirmPassword, confirmPasswordAttrs] = defineField('confirmPassword')
 
-const textFields: { title: string; key: keyof typeof fieldMap; icon: string }[] = [
+const textFields: { title: string; key: keyof typeof fieldMap; icon: string,placeholder:string }[] = [
   {
     title: 'DNI',
     key: 'dni',
     icon: 'pi-id-card',
+    placeholder:'Ej: 74512125'
   },
   {
     title: 'Nombres',
     key: 'names',
     icon: 'pi-user',
+    placeholder:'Nombre del cliente'
   },
   {
     title: 'Apellidos',
     key: 'lastnames',
     icon: 'pi-user',
+    placeholder:'Apellidos del cliente'
   },
   {
     title: 'Celular',
     key: 'phone',
-    icon: 'pi-mobile',
+    icon: 'pi-mobile'
+    ,
+    placeholder:'Ej: 984156123'
   },
   {
     title: 'Dirección',
     key: 'address',
-    icon: 'pi-home',
+    icon: 'pi-home'    ,
+    placeholder:'Avenida, calle, número'
   },
 ]
 
@@ -96,12 +101,7 @@ const headquarkers = [
 </script>
 
 <template>
-  <Card class="card-dialog-form-layout">
-    <template #title>
-      <h3 class="h3 text-center">Agregar Cliente</h3>
-    </template>
-
-    <template #content>
+  <div class="card-dialog-form-layout">
       <form @submit.prevent="onSubmit" class="form-dialog-layout">
         <div v-for="element in textFields" :key="element.key">
           <label class="block mb-2">{{ element.title }}</label>
@@ -113,7 +113,7 @@ const headquarkers = [
               v-model="fieldMap[element.key][0].value"
               v-bind="fieldMap[element.key][1]"
               class="w-full"
-              :placeholder="element.title"
+              :placeholder="element.placeholder"
             />
           </InputGroup>
           <Message v-if="errors[element.key]" severity="error" size="small" variant="simple">
@@ -162,7 +162,7 @@ const headquarkers = [
               v-bind="emailAttrs"
               v-model="email"
               type="text"
-              placeholder="Correo electrónico"
+              placeholder="Ej: example@gmail.com"
             />
           </InputGroup>
 
@@ -220,6 +220,5 @@ const headquarkers = [
           />
         </div>
       </form>
-    </template>
-  </Card>
+  </div>
 </template>

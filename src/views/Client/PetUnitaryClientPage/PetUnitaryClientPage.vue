@@ -28,6 +28,7 @@ const petData = ref<Pet | null>(null)
 const veterinaryRecords = ref<VeterinaryRecordInfoTable[]>([])
 
 //for loadVeterinaryRecords
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const loadVeterinaryRecords = async (petId: number) => {
   veterinaryRecords.value = await getAllInfoVeterinaryRecordsByPet(petId)
 }
@@ -37,7 +38,119 @@ onMounted(async () => {
   console.log(Number(props.petId))
   petData.value = await getPetById(Number(props.petId))
   console.log(props.petId)
-  loadVeterinaryRecords(Number(props.petId))
+  // loadVeterinaryRecords(Number(props.petId))
+  veterinaryRecords.value=[
+  {
+    id: 1,
+    date: "2025-06-15",
+    nameHeadquarter: "Veterinaria Central",
+    nameEmployee: "Dra. Carmen Ríos",
+    diagnosis: "Infección urinaria",
+    treatment: "Antibióticos por 7 días",
+    observation: "Revisar en una semana",
+    resultUrl: "/resultados/1.pdf",
+    status: "FINALIZADO"
+  },
+  {
+    id: 2,
+    date: "2025-06-16",
+    nameHeadquarter: "Clínica Los Andes",
+    nameEmployee: "Dr. Luis Torres",
+    diagnosis: "Parvovirus",
+    treatment: "Hospitalización y sueros",
+    observation: "En observación",
+    resultUrl: "/resultados/2.pdf",
+    status: "EN_CURSO"
+  },
+  {
+    id: 3,
+    date: "2025-06-17",
+    nameHeadquarter: "Vet Pet Center",
+    nameEmployee: "Dra. Ana Mendoza",
+    diagnosis: "Otitis canina",
+    treatment: "Limpieza y gotas otológicas",
+    observation: "Control en 5 días",
+    resultUrl: "/resultados/3.pdf",
+    status: "FINALIZADO"
+  },
+  {
+    id: 4,
+    date: "2025-06-18",
+    nameHeadquarter: "Veterinaria El Buen Amigo",
+    nameEmployee: "Dr. Pedro Alvarado",
+    diagnosis: "Alergia alimentaria",
+    treatment: "Cambio de dieta",
+    observation: "Control mensual",
+    resultUrl: "/resultados/4.pdf",
+    status: "EN_CURSO"
+  },
+  {
+    id: 5,
+    date: "2025-06-19",
+    nameHeadquarter: "Clínica Animal Vida",
+    nameEmployee: "Dra. Karla Ruiz",
+    diagnosis: "Dermatitis",
+    treatment: "Corticoides tópicos",
+    observation: "Mejoría parcial",
+    resultUrl: "/resultados/5.pdf",
+    status: "FINALIZADO"
+  },
+  {
+    id: 6,
+    date: "2025-06-20",
+    nameHeadquarter: "VetSalud Surco",
+    nameEmployee: "Dr. Andrés Salazar",
+    diagnosis: "Gastritis",
+    treatment: "Dieta blanda y antiácidos",
+    observation: "Evaluar vómitos persistentes",
+    resultUrl: "/resultados/6.pdf",
+    status: "FINALIZADO"
+  },
+  {
+    id: 7,
+    date: "2025-06-21",
+    nameHeadquarter: "Veterinaria Santa Rosa",
+    nameEmployee: "Dra. Lucía Fernández",
+    diagnosis: "Anemia",
+    treatment: "Suplementos y transfusión",
+    observation: "Requiere seguimiento",
+    resultUrl: "/resultados/7.pdf",
+    status: "EN_CURSO"
+  },
+  {
+    id: 8,
+    date: "2025-06-22",
+    nameHeadquarter: "Centro Vet Pachacamac",
+    nameEmployee: "Dr. Henry Poma",
+    diagnosis: "Fractura en extremidad",
+    treatment: "Inmovilización con férula",
+    observation: "Evaluar cirugía ortopédica",
+    resultUrl: "/resultados/8.pdf",
+    status: "EN_CURSO"
+  },
+  {
+    id: 9,
+    date: "2025-06-23",
+    nameHeadquarter: "Animal Care Express",
+    nameEmployee: "Dra. Evelyn Díaz",
+    diagnosis: "Infección ocular",
+    treatment: "Gotas oftálmicas cada 8 horas",
+    observation: "Revisar en 3 días",
+    resultUrl: "/resultados/9.pdf",
+    status: "FINALIZADO"
+  },
+  {
+    id: 10,
+    date: "2025-06-24",
+    nameHeadquarter: "Veterinaria San Miguel",
+    nameEmployee: "Dr. Óscar Rojas",
+    diagnosis: "Pulgas y garrapatas",
+    treatment: "Baño medicado y pipeta",
+    observation: "Aplicar nuevamente en 1 mes",
+    resultUrl: "/resultados/10.pdf",
+    status: "FINALIZADO"
+  }
+]
 })
 
 //for export

@@ -2,6 +2,7 @@
 import Menubar from 'primevue/menubar'
 import { RouterLink } from 'vue-router'
 import Image from 'primevue/image'
+import LogoRose from '@/assets/images/logos/logo-rose.png'
 import LogoWhite from '@/assets/images/logos/logo-white.png'
 import Button from 'primevue/button'
 import { useThemeStore } from '@/stores/themeStore'
@@ -12,7 +13,8 @@ import { useAuthentication } from '@/composables/useAuthentication'
 import { useConfirm } from 'primevue'
 
 defineProps<{
-  role:string
+  role: string
+  showMenu: boolean
 }>()
 
 const routeMap: Record<string, string> = {
@@ -20,16 +22,21 @@ const routeMap: Record<string, string> = {
   ENCARGADOSEDE: '/employee/maneger',
   VETERINARIO: '/employee/veterinary',
   RECEPCIONISTA: '/employee/receptionist',
-  CLIENTE:'/client'
+  CLIENTE: '/client',
 }
 
 const themeStore = useThemeStore()
 
 const iconTheme = computed(() => (themeStore.isDark ? 'pi-moon' : 'pi-sun'))
+const imageLogo = computed(() => (themeStore.isDark ? LogoWhite : LogoRose))
 
-const emit = defineEmits(['toggle-menu'])
-const emitToggleMenu = () => {
-  emit('toggle-menu')
+
+//define emit
+const emit = defineEmits(['show-menu'])
+
+//for emit show menu
+const emitShowMenu = ()=>{
+  emit('show-menu')
 }
 
 //for popover
@@ -68,16 +75,21 @@ const confirmLogout = async () => {
 </script>
 
 <template>
-  <header>
-    <Menubar class="bg-primary-900 dark:bg-primary-950 rounded-none border-0">
+  <header class="sticky top-0 left-0">
+    <Menubar class="h-16 py-4 bg-surface-0 dark:bg-neutral-900 border-b-1 border-neutral-200 dark:border-neutral-700 rounded-none border-0">
       <template #start>
-        <div class="flex items-center gap-3" >
-          <i v-ripple
-            class="pi pi-bars text-xl text-surface-0 transition-colors duration-200 hover:text-surface-200 dark:hover:text-surface-300 cursor-pointer"
-            @click="emitToggleMenu"
+        <div class="flex items-center gap-0.5">
+                    <Button
+            icon="pi pi-bars"
+            severity="contrast"
+            variant="text"
+            rounded
+            aria-label="Calendario"
+            class="block sm:hidden"
+            @click="emitShowMenu()"
           />
-          <RouterLink v-ripple :to="routeMap[role]??'/'">
-            <Image :src="LogoWhite" alt="Logo" width="48" />
+          <RouterLink v-if="!showMenu" v-ripple :to="routeMap[role] ?? '/'">
+            <Image :src="imageLogo" alt="Logo" width="48" />
           </RouterLink>
         </div>
       </template>
@@ -85,45 +97,50 @@ const confirmLogout = async () => {
         <div class="flex items-center gap-2">
           <Button
             :icon="`pi ${iconTheme}`"
-            severity="info"
+            severity="contrast"
+            variant="text"
             rounded
             aria-label="Calendario"
-            class="button-the-header"
             @click="themeStore.toggleTheme"
           />
           <Button
             icon="pi pi-calendar"
-            severity="info"
+            severity="contrast"
+            variant="text"
             rounded
             aria-label="Calendario"
-            class="button-the-header"
           />
           <Button
             icon="pi pi-bell"
-            severity="info"
+            severity="contrast"
+            variant="text"
             rounded
             aria-label="Notificaciones"
-            class="button-the-header"
           />
           <Button
             icon="pi pi-user"
-            severity="info"
+            severity="contrast"
+            variant="text"
             rounded
             aria-label="Usuario"
-            class="button-the-header"
             @click="toggle($event)"
           />
           <Popover ref="op">
             <div class="w-44">
-              <RouterLink :to="routeMap[role]?`${routeMap[role]}/perfil`:'/'" @click="()=>op.hide()">
-                <div v-ripple
+              <RouterLink
+                :to="routeMap[role] ? `${routeMap[role]}/perfil` : '/'"
+                @click="() => op.hide()"
+              >
+                <div
+                  v-ripple
                   class="w-full flex items-center justify-between cursor-pointer rounded p-2 transition-colors hover:bg-surface-50 dark:hover:bg-surface-800"
                 >
                   <p>Perfil</p>
                   <i class="pi pi-user"></i></div
               ></RouterLink>
 
-              <div v-ripple
+              <div
+                v-ripple
                 class="w-full flex items-center justify-between cursor-pointer rounded p-2 transition-colors hover:bg-surface-50 dark:hover:bg-surface-800"
                 @click="confirmLogout()"
               >

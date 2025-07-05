@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { inject, onMounted, ref, type Ref } from 'vue'
-import Card from 'primevue/card'
 import InputText from 'primevue/inputtext'
 import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
@@ -16,6 +15,13 @@ import IftaLabel from 'primevue/iftalabel'
 import Button from 'primevue/button'
 import Message from 'primevue/message'
 import type { OptionSelect } from '@/models/OptionSelect'
+import { useClient } from '@/composables/useClient'
+import type { Breed } from '@/models/Breed'
+import { useBreed } from '@/composables/useBreed'
+
+const { getClientByDni } = useClient()
+const {getBreedsBySpecie} = useBreed()
+
 
 //form
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
@@ -30,6 +36,8 @@ const { handleSubmit, errors, defineField } = useForm<FormValues>({
     breedId: undefined,
     urlImage: '',
     ownerDni: '',
+    ownerFullName: '',
+    ownerId: undefined,
   },
 })
 
@@ -44,6 +52,8 @@ const [specieId, specieIdAttrs] = defineField('specieId')
 const [breedId, breedIdAttrs] = defineField('breedId')
 const [urlImage, urlImageAttrs] = defineField('urlImage')
 const [ownerDni, ownerDniAttrs] = defineField('ownerDni')
+const [ownerFullName, ownerFullNameAttrs] = defineField('ownerFullName')
+const [ownerId, ownerIdAttrs] = defineField('ownerId')
 
 const onSubmit = handleSubmit((values) => {
   console.log(values)
@@ -60,9 +70,8 @@ const breedsOptions = ref<OptionSelect[]>([])
 const dialogRef = inject('dialogRef') as Ref<{
   close: (data?: FormValues) => void
   data: {
-    petData?: FormValues,
-    speciesOptions?:OptionSelect[],
-    breedsOptions?:OptionSelect[]
+    petData?: FormValues
+    speciesOptions?: OptionSelect[]
   }
 }>
 
@@ -72,18 +81,47 @@ const genders = [
   { name: 'Hembra', value: 'H' },
 ]
 
-
 const title = ref<string>('Agregar')
+
+//for search client
+
+const searchClient = async () => {
+  if (ownerDni.value.length === 8) {
+    try {
+      const getOwner = await getClientByDni(ownerDni.value)
+
+      ownerFullName.value = getOwner.fullName
+      ownerId.value = getOwner.id
+    } catch (e) {
+      console.error('Error al obtener el nombre del dueño', e)
+      ownerFullName.value = ''
+      ownerId.value = 0
+    }
+  }
+}
+const loadsBreed=async()=>{
+  if(specieId.value){
+  breedsOptions.value= breedsToOptionsSelect(await getBreedsBySpecie(specieId.value))
+}
+}
+
+const breedsToOptionsSelect = (breeds: Breed[]): OptionSelect[] => {
+  return breeds.map((breed) => ({
+    value: breed.id,
+    name: breed.name,
+  }))
+}
+
 
 onMounted(() => {
   if (dialogRef.value.data) {
     console.log(dialogRef.value.data)
     const params = dialogRef.value.data.petData
     const speciesOptionsGet = dialogRef.value.data.speciesOptions
-    const breedsOptionsGet = dialogRef.value.data.breedsOptions
+loadsBreed()
     //set data if edit
     if (params) {
-      title.value='Editar'
+      title.value = 'Editar'
       name.value = params.name
       gender.value = params.gender
       weight.value = params.weight
@@ -94,20 +132,64 @@ onMounted(() => {
       urlImage.value = params.urlImage
       ownerDni.value = params.ownerDni
     }
-    if(speciesOptionsGet) speciesOptions.value=speciesOptionsGet
-    if(breedsOptionsGet) breedsOptions.value = breedsOptionsGet
+    if (speciesOptionsGet) speciesOptions.value = speciesOptionsGet
   }
 })
 </script>
 
 <template>
-  <Card class="card-dialog-form-layout">
-    <template #title>
-      <h3 class="h3 text-center">{{title}} Mascota</h3>
-    </template>
+  <div class="card-dialog-form-layout">
 
-    <template #content>
       <form @submit.prevent="onSubmit" class="form-dialog-layout">
+        <!-- owner dni -->
+        <div>
+          <label class="block mb-2">Dni del dueño</label>
+          <InputGroup>
+            <InputGroupAddon class="text-neutral-400">
+              <i class="pi pi-user"></i>
+            </InputGroupAddon>
+            <InputText
+              v-model="ownerDni"
+              v-bind="ownerDniAttrs"
+              class="w-full"
+              placeholder="Busque dueño por DNI"
+            />
+            <InputGroupAddon>
+              <Button
+                icon="pi pi-search"
+                severity="secondary"
+                variant="text"
+                @click="searchClient()"
+              />
+            </InputGroupAddon>
+          </InputGroup>
+
+          <Message v-if="errors.ownerDni" severity="error" size="small" variant="simple">
+            {{ errors.ownerDni }}
+          </Message>
+        </div>
+        <!-- owner name -->
+        <div>
+          <label class="block mb-2">Nombre del dueño</label>
+          <InputGroup>
+            <InputGroupAddon class="text-neutral-400">
+              <i class="pi pi-user"></i>
+            </InputGroupAddon>
+            <InputText
+              v-model="ownerFullName"
+              v-bind="ownerFullNameAttrs"
+              class="w-full"
+              placeholder="Nombre del dueño"
+              disabled
+            />
+          </InputGroup>
+
+          <Message v-if="errors.ownerFullName" severity="error" size="small" variant="simple">
+            {{ errors.ownerFullName }}
+          </Message>
+        </div>
+
+        <InputNumber v-model="ownerId" v-bind="ownerIdAttrs" hidden />
         <!-- name -->
         <div>
           <label class="block mb-2">Nombre</label>
@@ -115,7 +197,7 @@ onMounted(() => {
             <InputGroupAddon class="text-neutral-400">
               <i class="pi pi-info"></i>
             </InputGroupAddon>
-            <InputText v-model="name" v-bind="nameAttrs" class="w-full" placeholder="Nombre" />
+            <InputText v-model="name" v-bind="nameAttrs" class="w-full" placeholder="Nombre de la mascota" />
           </InputGroup>
           <Message v-if="errors.name" severity="error" size="small" variant="simple">
             {{ errors.name }}
@@ -186,6 +268,7 @@ onMounted(() => {
             optionLabel="name"
             optionValue="value"
             placeholder="Selecciona Especie"
+            @change="loadsBreed()"
           />
 
           <Message v-if="errors.specieId" severity="error" size="small" variant="simple">
@@ -229,23 +312,6 @@ onMounted(() => {
         </div>
 
         <div>
-          <label class="block mb-2">Dueño</label>
-          <InputGroup>
-            <InputGroupAddon class="text-neutral-400">
-              <i class="pi pi-user"></i>
-            </InputGroupAddon>
-            <InputText
-              v-model="ownerDni"
-              v-bind="ownerDniAttrs"
-              class="w-full"
-              placeholder="Dueño"
-            />
-          </InputGroup>
-          <Message v-if="errors.ownerDni" severity="error" size="small" variant="simple">
-            {{ errors.ownerDni }}
-          </Message>
-        </div>
-        <div>
           <label class="block mb-2">Comentario</label>
 
           <IftaLabel>
@@ -274,6 +340,5 @@ onMounted(() => {
           />
         </div>
       </form>
-    </template>
-  </Card>
+  </div>
 </template>

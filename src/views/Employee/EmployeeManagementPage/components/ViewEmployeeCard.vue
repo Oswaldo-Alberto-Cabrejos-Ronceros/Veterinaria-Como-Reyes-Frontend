@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import Card from 'primevue/card'
 import type { Employee } from '@/models/Employee'
 import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
@@ -69,15 +68,8 @@ const elements: { title: string; key: keyof Employee; icon: string }[] = [
 </script>
 
 <template>
-  <Card class="card-dialog-form-layout">
-    <template v-if="employeeData" #title>
-      <div class="flex gap-1 justify-center items-center">
-        <h3 v-if="employeeData.roles[0].name === 'Veterinario'" class="h3">Dr.</h3>
-        <h3 class="h3">{{ `${firstName} ${firstLastName}` }}</h3>
-      </div>
-    </template>
-    <template v-if="employeeData" #content>
-      <div class="flex-1 space-y-6">
+  <div class="card-dialog-form-layout">
+      <div class="flex-1 space-y-6" v-if="employeeData">
         <div class="form-dialog-layout">
           <div v-for="(element, id) in elements" :key="id">
             <label class="block mb-2">{{ element.title }}</label>
@@ -113,6 +105,5 @@ const elements: { title: string; key: keyof Employee; icon: string }[] = [
 
         </div>
       </div>
-    </template>
-  </Card>
+  </div>
 </template>
