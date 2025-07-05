@@ -13,6 +13,11 @@ import DatePicker from 'primevue/datepicker'
 import type { Ref } from 'vue'
 import { inject } from 'vue'
 import Button from 'primevue/button'
+import { useReniec } from '@/composables/useReniec'
+
+//methods
+
+const { getInfoSimpleByReniec } = useReniec()
 
 //form
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
@@ -32,7 +37,6 @@ const { handleSubmit, errors, defineField } = useForm<FormValues>({
 })
 
 const fieldMap = {
-  dni: defineField('dni'),
   names: defineField('names'),
   lastnames: defineField('lastnames'),
   phone: defineField('phone'),
@@ -40,43 +44,42 @@ const fieldMap = {
 }
 
 //for adittionals
+const [dni, dniAttrs] = defineField('dni')
 const [birthdate, birthdateAttrs] = defineField('birthdate')
 const [headquarterId, headquarterIdAttrs] = defineField('headquarterId')
 const [email, emailAttrs] = defineField('email')
 const [password, passwordAttrs] = defineField('password')
 const [confirmPassword, confirmPasswordAttrs] = defineField('confirmPassword')
 
-const textFields: { title: string; key: keyof typeof fieldMap; icon: string,placeholder:string }[] = [
-  {
-    title: 'DNI',
-    key: 'dni',
-    icon: 'pi-id-card',
-    placeholder:'Ej: 74512125'
-  },
+const textFields: {
+  title: string
+  key: keyof typeof fieldMap
+  icon: string
+  placeholder: string
+}[] = [
   {
     title: 'Nombres',
     key: 'names',
     icon: 'pi-user',
-    placeholder:'Nombre del cliente'
+    placeholder: 'Nombre del cliente',
   },
   {
     title: 'Apellidos',
     key: 'lastnames',
     icon: 'pi-user',
-    placeholder:'Apellidos del cliente'
+    placeholder: 'Apellidos del cliente',
   },
   {
     title: 'Celular',
     key: 'phone',
-    icon: 'pi-mobile'
-    ,
-    placeholder:'Ej: 984156123'
+    icon: 'pi-mobile',
+    placeholder: 'Ej: 984156123',
   },
   {
     title: 'Dirección',
     key: 'address',
-    icon: 'pi-home'    ,
-    placeholder:'Avenida, calle, número'
+    icon: 'pi-home',
+    placeholder: 'Avenida, calle, número',
   },
 ]
 
@@ -98,127 +101,170 @@ const headquarkers = [
   { name: 'Parcona', value: 2 },
   { name: 'Tinguiña', value: 3 },
 ]
+
+//for search
+
+const searchInfoReniec = async () => {
+  if (dni.value?.length === 8) {
+    try {
+      const infoGet = await getInfoSimpleByReniec(dni.value)
+      console.log(infoGet)
+      fieldMap.names[0].value = infoGet.names
+      fieldMap.lastnames[0].value = infoGet.lastnames
+    } catch (e) {
+      console.error('Error al obtener la informacion', e)
+
+      fieldMap.names[0].value = ''
+      fieldMap.lastnames[0].value = ''
+    }
+  }
+}
 </script>
 
 <template>
   <div class="card-dialog-form-layout">
-      <form @submit.prevent="onSubmit" class="form-dialog-layout">
-        <div v-for="element in textFields" :key="element.key">
-          <label class="block mb-2">{{ element.title }}</label>
-          <InputGroup>
-            <InputGroupAddon class="text-neutral-400">
-              <i :class="`pi ${element.icon}`"></i>
-            </InputGroupAddon>
-            <InputText
-              v-model="fieldMap[element.key][0].value"
-              v-bind="fieldMap[element.key][1]"
-              class="w-full"
-              :placeholder="element.placeholder"
-            />
-          </InputGroup>
-          <Message v-if="errors[element.key]" severity="error" size="small" variant="simple">
-            {{ errors[element.key] }}
-          </Message>
-        </div>
-        <div>
-          <label class="block mb-2">Fecha de nacimiento</label>
-          <DatePicker
-            v-bind="birthdateAttrs"
-            v-model="birthdate"
-            showIcon
-            fluid
-            iconDisplay="input"
-          />
+    <form @submit.prevent="onSubmit" class="form-dialog-layout">
+      <!-- dni -->
 
-          <Message v-if="errors.birthdate" severity="error" size="small" variant="simple">
-            {{ errors.birthdate }}
-          </Message>
-        </div>
-        <div>
-          <label class="block mb-2">Sede</label>
-          <Select
+      <div>
+        <label class="block mb-2">DNI</label>
+
+        <InputGroup>
+          <InputGroupAddon class="text-neutral-400">
+            <i class="pi pi-id-card"></i>
+          </InputGroupAddon>
+          <InputText v-bind="dniAttrs" v-model="dni" type="text" placeholder="Ej: 74512351" />
+          <InputGroupAddon>
+            <Button
+              icon="pi pi-search"
+              severity="secondary"
+              variant="text"
+              @click="searchInfoReniec()"
+            />
+          </InputGroupAddon>
+        </InputGroup>
+
+        <Message v-if="errors.dni" severity="error" size="small" variant="simple">
+          {{ errors.dni }}
+        </Message>
+      </div>
+
+      <div v-for="element in textFields" :key="element.key">
+        <label class="block mb-2">{{ element.title }}</label>
+        <InputGroup>
+          <InputGroupAddon class="text-neutral-400">
+            <i :class="`pi ${element.icon}`"></i>
+          </InputGroupAddon>
+          <InputText
+            v-model="fieldMap[element.key][0].value"
+            v-bind="fieldMap[element.key][1]"
             class="w-full"
-            v-bind="headquarterIdAttrs"
-            v-model="headquarterId"
-            :options="headquarkers"
-            optionLabel="name"
-            optionValue="value"
-            placeholder="Selecciona Sede"
+            :placeholder="element.placeholder"
           />
+        </InputGroup>
+        <Message v-if="errors[element.key]" severity="error" size="small" variant="simple">
+          {{ errors[element.key] }}
+        </Message>
+      </div>
+      <div>
+        <label class="block mb-2">Fecha de nacimiento</label>
+        <DatePicker
+          v-bind="birthdateAttrs"
+          v-model="birthdate"
+          showIcon
+          fluid
+          iconDisplay="input"
+        />
 
-          <Message v-if="errors.headquarterId" severity="error" size="small" variant="simple">
-            {{ errors.headquarterId }}
-          </Message>
-        </div>
+        <Message v-if="errors.birthdate" severity="error" size="small" variant="simple">
+          {{ errors.birthdate }}
+        </Message>
+      </div>
+      <div>
+        <label class="block mb-2">Sede</label>
+        <Select
+          class="w-full"
+          v-bind="headquarterIdAttrs"
+          v-model="headquarterId"
+          :options="headquarkers"
+          optionLabel="name"
+          optionValue="value"
+          placeholder="Selecciona Sede"
+        />
 
-        <div>
-          <label class="block mb-2">Email</label>
+        <Message v-if="errors.headquarterId" severity="error" size="small" variant="simple">
+          {{ errors.headquarterId }}
+        </Message>
+      </div>
 
-          <InputGroup>
-            <InputGroupAddon class="text-neutral-400">
-              <i class="pi pi-envelope"></i>
-            </InputGroupAddon>
-            <InputText
-              v-bind="emailAttrs"
-              v-model="email"
-              type="text"
-              placeholder="Ej: example@gmail.com"
-            />
-          </InputGroup>
+      <div>
+        <label class="block mb-2">Email</label>
 
-          <Message v-if="errors.email" severity="error" size="small" variant="simple">
-            {{ errors.email }}
-          </Message>
-        </div>
-
-        <div>
-          <label class="block mb-2">Contraseña</label>
-          <InputGroup>
-            <InputGroupAddon class="text-neutral-400">
-              <i class="pi pi-lock"></i>
-            </InputGroupAddon>
-            <Password
-              v-bind="passwordAttrs"
-              v-model="password"
-              toggleMask
-              :feedback="false"
-              placeholder="Contraseña"
-            />
-          </InputGroup>
-          <Message v-if="errors.password" severity="error" size="small" variant="simple">
-            {{ errors.password }}
-          </Message>
-        </div>
-
-        <div>
-          <label class="block mb-2">Confirmar contraseña</label>
-
-          <InputGroup>
-            <InputGroupAddon class="text-neutral-400">
-              <i class="pi pi-lock"></i>
-            </InputGroupAddon>
-            <Password
-              v-bind="confirmPasswordAttrs"
-              v-model="confirmPassword"
-              toggleMask
-              placeholder="Confirmar contraseña"
-            />
-          </InputGroup>
-
-          <Message v-if="errors.confirmPassword" severity="error" size="small" variant="simple">
-            {{ errors.confirmPassword }}
-          </Message>
-        </div>
-        <div class="button-form-container-grid-end">
-          <Button
-            class="w-full max-w-md"
-            label="Agregar"
-            type="submit"
-            severity="success"
-            icon="pi pi-save"
-            iconPos="right"
+        <InputGroup>
+          <InputGroupAddon class="text-neutral-400">
+            <i class="pi pi-envelope"></i>
+          </InputGroupAddon>
+          <InputText
+            v-bind="emailAttrs"
+            v-model="email"
+            type="text"
+            placeholder="Ej: example@gmail.com"
           />
-        </div>
-      </form>
+        </InputGroup>
+
+        <Message v-if="errors.email" severity="error" size="small" variant="simple">
+          {{ errors.email }}
+        </Message>
+      </div>
+
+      <div>
+        <label class="block mb-2">Contraseña</label>
+        <InputGroup>
+          <InputGroupAddon class="text-neutral-400">
+            <i class="pi pi-lock"></i>
+          </InputGroupAddon>
+          <Password
+            v-bind="passwordAttrs"
+            v-model="password"
+            toggleMask
+            :feedback="false"
+            placeholder="Contraseña"
+          />
+        </InputGroup>
+        <Message v-if="errors.password" severity="error" size="small" variant="simple">
+          {{ errors.password }}
+        </Message>
+      </div>
+
+      <div>
+        <label class="block mb-2">Confirmar contraseña</label>
+
+        <InputGroup>
+          <InputGroupAddon class="text-neutral-400">
+            <i class="pi pi-lock"></i>
+          </InputGroupAddon>
+          <Password
+            v-bind="confirmPasswordAttrs"
+            v-model="confirmPassword"
+            toggleMask
+            placeholder="Confirmar contraseña"
+          />
+        </InputGroup>
+
+        <Message v-if="errors.confirmPassword" severity="error" size="small" variant="simple">
+          {{ errors.confirmPassword }}
+        </Message>
+      </div>
+      <div class="button-form-container-grid-end">
+        <Button
+          class="w-full max-w-md"
+          label="Agregar"
+          type="submit"
+          severity="success"
+          icon="pi pi-save"
+          iconPos="right"
+        />
+      </div>
+    </form>
   </div>
 </template>

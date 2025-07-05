@@ -228,7 +228,7 @@ const searchInfoReniec = async () => {
           <InputText
             v-model="fieldMap[element.key][0].value"
             v-bind="fieldMap[element.key][1]"
-            class="w-full textSm"
+            class="w-full"
             :placeholder="element.placeholder"
           />
         </InputGroup>
