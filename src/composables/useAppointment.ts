@@ -135,7 +135,7 @@ export function useAppointment() {
     getServicesByHeadquarterAndSpecies,
     updateAppointment,
     getAppointmentsForClient,
-    getAppointmentById
+    getAppointmentById,
     searchAppointments,
 
   }
