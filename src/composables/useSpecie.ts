@@ -52,6 +52,11 @@ export function useSpecie() {
     return SpecieAdapter.toSpecieView(specie)
   }
 
+  const activateSpecie = async (specieId: number): Promise<void> => {
+    await runUseCase('activateSpecie', () =>
+      specieUsesCases.activateSpecie.execute(specieId))
+  }
+
   return {
     loading,
     error,
@@ -60,5 +65,6 @@ export function useSpecie() {
     getAllSpecies,
     getSpecieById,
     updateSpecie,
+    activateSpecie,
   }
 }
