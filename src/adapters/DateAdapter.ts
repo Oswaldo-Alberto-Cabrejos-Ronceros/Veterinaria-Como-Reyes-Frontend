@@ -58,4 +58,14 @@ export class DateAdapter {
   static fromISOFormalToStringFull(date: string): string {
     return date.replace('T', ' ')
   }
+
+  static toFormatView(date: Date): string {
+    const options: Intl.DateTimeFormatOptions = {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    }
+    return new Intl.DateTimeFormat('es-PE', options).format(date)
+  }
 }

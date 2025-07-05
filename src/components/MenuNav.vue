@@ -111,7 +111,7 @@ const isActive = (path: string) => route.path.startsWith(path)
       class="w-full bg-primary z-40 h-screen block sm:hidden fixed top-0 left-0 brightness-50"
       v-if="showMenu"
     ></div>  -->
-    <div class="w-2/3 sm:w-auto h-screen bg-surface-0 z-50" ref="menuWrapperRef">
+    <div class="w-2/3 sm:w-auto h-screen bg-surface-0 dark:bg-neutral-800 z-50" ref="menuWrapperRef">
       <div
         :class="[
           'w-full h-16 flex items-center px-3 border-b-1 border-neutral-200 dark:border-neutral-700',

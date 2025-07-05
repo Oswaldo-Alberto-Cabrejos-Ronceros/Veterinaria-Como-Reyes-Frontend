@@ -4,7 +4,7 @@ import EmployeeLayout from '@/layouts/EmployeeLayout.vue'
 import LoginPage from '@/views/Auth/LoginPage/LoginPage.vue'
 import RegistrationPage from '@/views/Auth/Registration/RegistrationPage.vue'
 import HomePageClient from '@/views/Client/HomePage/HomePage.vue'
-import HomePageEmployee from '@/views/Employee/HomePage/HomePage.vue'
+import HomePageAdministrador from '@/views/Employee/HomePageAdministrador/HomePageAdministrador.vue'
 import PerfilPage from '@/views/Common/PerfilPage/PerfilPage.vue'
 import EmployeeManagementPage from '@/views/Employee/EmployeeManagementPage/EmployeeManagementPage.vue'
 import ClientManagementPage from '@/views/Employee/ClientManagementPage/ClientManagementPage.vue'
@@ -21,6 +21,10 @@ import PaymentManagementPage from '@/views/Employee/PaymentManagementPage/Paymen
 import AppointmentManagementPage from '@/views/Employee/AppointmentManagementPage/AppointmentManagementPage.vue'
 import CareManagementPage from '@/views/Employee/CareManagementPage/CareManagementPage.vue'
 import PageNotFound from '@/views/Common/PageNotFound/PageNotFound.vue'
+import HomePageRecepcionist from '@/views/Employee/HomePageRecepcionist/HomePageRecepcionist.vue'
+import HomePageVeterinary from '@/views/Employee/HomePageVeterinary/HomePageVeterinary.vue'
+import AttendAppointmentPageRecepcionist from '@/views/Employee/AttendAppointmentPageRecepcionist/AttendAppointmentPageRecepcionist.vue'
+import AttendAppointmentVeterinaryPage from '@/views/Employee/AttendAppointmentVeterinaryPage/AttendAppointmentVeterinaryPage.vue'
 //client
 import MyAppointmentsClientPage from '@/views/Client/MyAppointmentsClientPage/MyAppointmentsClientPage.vue'
 import MyPetsPage from '@/views/Client/MyPetsPage/MyPetsPage.vue'
@@ -117,7 +121,7 @@ const router = createRouter({
             {
               path: 'home',
               name: 'administrator-home',
-              component: HomePageEmployee,
+              component: HomePageAdministrador,
               meta: { requiresAuth: true, roles: ['Administrador'] },
             },
             {
@@ -210,6 +214,12 @@ const router = createRouter({
               name: 'administrator-appoinment-management',
               component: AppointmentManagementPage,
               meta: { requiresAuth: true, roles: ['Administrador'] },
+            },     {
+              path: 'appoinment-management/attend/:appointmentId',
+              name: 'administrator-appointment-management-attend',
+              component: AttendAppointmentPageRecepcionist,
+              props: true,
+              meta: { requiresAuth: true, roles: ['Administrador'] },
             },
             {
               path: 'care-management',
@@ -217,6 +227,7 @@ const router = createRouter({
               component: CareManagementPage,
               meta: { requiresAuth: true, roles: ['Administrador'] },
             },
+
           ],
         },
         {
@@ -227,7 +238,7 @@ const router = createRouter({
             {
               path: 'home',
               name: 'manager-home',
-              component: HomePageEmployee,
+              component: HomePageAdministrador,
               meta: { requiresAuth: true, roles: ['Encargado Sede'] },
             },
             {
@@ -260,6 +271,13 @@ const router = createRouter({
               component: AppointmentManagementPage,
               meta: { requiresAuth: true, roles: ['Encargado Sede'] },
             },
+                        {
+              path: 'appoinment-management/attend/:appointmentId',
+              name: 'manager-appointment-management-attend',
+              component: AttendAppointmentPageRecepcionist,
+              props: true,
+              meta: { requiresAuth: true, roles: ['Encargado Sede'] },
+            },
             {
               path: 'care-management',
               name: 'manager-care-management',
@@ -276,7 +294,7 @@ const router = createRouter({
             {
               path: 'home',
               name: 'receptionist-home',
-              component: HomePageEmployee,
+              component: HomePageRecepcionist,
               meta: { requiresAuth: true, roles: ['Recepcionista'] },
             },
             {
@@ -291,6 +309,14 @@ const router = createRouter({
               component: PetsManagementPage,
               meta: { requiresAuth: true, roles: ['Recepcionista'] },
             },
+
+            {
+              path: 'pets-management/pet/:petId',
+              name: 'receptionist-pets-unitary-pet',
+              component: PetUnitaryClientPage,
+              props: true,
+              meta: { requiresAuth: true, roles: ['Recepcionista'] },
+            },
             {
               path: 'payment-management',
               name: 'receptionist-payment-management',
@@ -300,8 +326,15 @@ const router = createRouter({
 
             {
               path: 'appoinment-management',
-              name: 'receptionist-appoinment-management',
+              name: 'receptionist-appointment-management',
               component: AppointmentManagementPage,
+              meta: { requiresAuth: true, roles: ['Recepcionista'] },
+            },
+            {
+              path: 'appoinment-management/attend/:appointmentId',
+              name: 'receptionist-appointment-management-attend',
+              component: AttendAppointmentPageRecepcionist,
+              props: true,
               meta: { requiresAuth: true, roles: ['Recepcionista'] },
             },
             {
@@ -320,7 +353,7 @@ const router = createRouter({
             {
               path: 'home',
               name: 'veterinary-home',
-              component: HomePageEmployee,
+              component: HomePageVeterinary,
               meta: { requiresAuth: true, roles: ['Veterinario'] },
             },
             {
@@ -333,6 +366,12 @@ const router = createRouter({
               path: 'pets-management',
               name: 'veterinary-pets-management',
               component: PetsManagementPage,
+              meta: { requiresAuth: true, roles: ['Veterinario'] },
+            },
+            {
+              path: 'appoinments/attend/:appointmentId',
+              name: 'veterinary-appointments-attend',
+              component: AttendAppointmentVeterinaryPage,
               meta: { requiresAuth: true, roles: ['Veterinario'] },
             },
           ],

@@ -28,7 +28,6 @@ import type { OptionSelect } from '@/models/OptionSelect'
 import type { Role } from '@/models/Role'
 import { useHeadquarter } from '@/composables/useHeadquarter'
 import type { Headquarter } from '@/models/Headquarter'
-
 //toast
 const toast = useToast()
 
@@ -153,12 +152,6 @@ const onSubmit = handleSubmit(async (values) => {
   employees.value = employeesSearch
 })
 
-const rolesMap: Record<string, number> = {
-  Recepcionista: 1,
-  Veterinario: 2,
-  'Encargado Sede': 3,
-  Administrador: 4,
-}
 
 //for dialog
 const dialog = useDialog()
@@ -214,7 +207,7 @@ const editEmployee = async (employeeData: Employee) => {
         headquarterId: employeeData.headquarter.headquarterId,
         birthdate: new Date(employeeData.birthdate),
         dirImage: employeeData.dirImage,
-        roleId: rolesMap[employeeData.roles[0].name],
+        roleId: employeeData.roles[0].roleId,
       } as EditEmployeeSchema,
       headquartersOptions: headquartersToOptionsSelect(await getAllHeadquarters()),
       rolesOptions: rolesToOptionsSelect(await getAllRoles()),

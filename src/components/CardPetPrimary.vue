@@ -17,7 +17,7 @@ defineProps<{
     class="transition-opacity duration-300 hover:opacity-80 group cursor-pointer"
     :class="
       selected
-        ? ' bg-surface-100 hover:bg-surface-50 dark:bg-slate-950 hover:dark:bg-slate-900 border-primary-500 dark:border-primary-900'
+        ? ' bg-surface-100 hover:bg-surface-100 dark:bg-surface-950 hover:dark:bg-surface-900 !border-primary-500 !dark:border-primary-900'
         : ''
     "
   >

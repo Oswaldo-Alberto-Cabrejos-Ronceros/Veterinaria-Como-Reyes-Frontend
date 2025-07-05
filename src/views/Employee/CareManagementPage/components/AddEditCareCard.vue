@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import { inject,onMounted,ref, type Ref } from 'vue'
-import Card from 'primevue/card'
+import { inject, onMounted, ref, type Ref } from 'vue'
 import InputText from 'primevue/inputtext'
 import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
@@ -22,7 +21,6 @@ import { useEmployee } from '@/composables/useEmployee'
 import { useAppointment } from '@/composables/useAppointment'
 import type { Employee } from '@/models/Employee'
 
-
 //for methods
 const { getEntityId } = useAuthentication()
 
@@ -30,7 +28,7 @@ const { getClientByDni } = useClient()
 
 const { getPetByClientId } = usePet()
 
-const { getAllEmployees,getEmployeeById } = useEmployee()
+const { getAllEmployees, getEmployeeById } = useEmployee()
 
 const { getServicesByHeadquarterAndSpecies } = useAppointment()
 
@@ -42,20 +40,19 @@ const { handleSubmit, errors, defineField } = useForm<FormValues>({
     ownerId: undefined,
     ownerName: '',
     petId: undefined,
-    employeeId:undefined
+    employeeId: undefined,
   },
 })
 
 //field
-const [headquarterVetServiceId, headquarterVetServiceIdAttrs] = defineField('headquarterVetServiceId')
+const [headquarterVetServiceId, headquarterVetServiceIdAttrs] =
+  defineField('headquarterVetServiceId')
 const [ownerDni, ownerDniAttrs] = defineField('ownerDni')
 
 const [ownerId, ownerIdAttrs] = defineField('ownerId')
 const [ownerName, ownerNameAttrs] = defineField('ownerName')
 const [petId, petIdAttrs] = defineField('petId')
 const [employeeId, employeeIdAttrs] = defineField('employeeId')
-
-
 
 //for dynamicDialog
 const dialogRef = inject('dialogRef') as Ref<{
@@ -94,7 +91,6 @@ const searchClient = async () => {
       petsClient.value = []
     }
   }
-
 }
 
 //for obtain headquarters Service
@@ -139,136 +135,127 @@ onMounted(async () => {
   if (employeeId) {
     headquarterId.value = (await getEmployeeById(employeeId)).headquarter.headquarterId
   }
-   employeesOptions.value=employeeToOptionsSelect(await getAllEmployees())
+  employeesOptions.value = employeeToOptionsSelect(await getAllEmployees())
 })
-
-
 </script>
 
 <template>
-  <Card class="card-dialog-form-layout">
-        <template #title>
-      <h3 class="h3 text-center">Registrar Atención</h3>
-    </template>
-    <template #content>
-            <form @submit.prevent="onSubmit" class="form-dialog-layout">
-                      <!-- owner dni -->
-        <div>
-          <label class="block mb-2">Dni del dueño</label>
-          <InputGroup>
-            <InputGroupAddon class="text-neutral-400">
-              <i class="pi pi-user"></i>
-            </InputGroupAddon>
-            <InputText
-              v-model="ownerDni"
-              v-bind="ownerDniAttrs"
-              class="w-full"
-              placeholder="Dueño DNI"
+  <div class="card-dialog-form-layout">
+    <form @submit.prevent="onSubmit" class="form-dialog-layout">
+      <!-- owner dni -->
+      <div>
+        <label class="block mb-2">DNI del dueño</label>
+        <InputGroup>
+          <InputGroupAddon class="text-neutral-400">
+            <i class="pi pi-user"></i>
+          </InputGroupAddon>
+          <InputText
+            v-model="ownerDni"
+            v-bind="ownerDniAttrs"
+            class="w-full"
+            placeholder="Busque dueño por DNI"
+          />
+          <InputGroupAddon>
+            <Button
+              icon="pi pi-search"
+              severity="secondary"
+              variant="text"
+              @click="searchClient()"
             />
-            <InputGroupAddon>
-              <Button
-                icon="pi pi-search"
-                severity="secondary"
-                variant="text"
-                @click="searchClient()"
-              />
-            </InputGroupAddon>
-          </InputGroup>
+          </InputGroupAddon>
+        </InputGroup>
 
-          <Message v-if="errors.ownerDni" severity="error" size="small" variant="simple">
-            {{ errors.ownerDni }}
-          </Message>
-        </div>
-        <!-- owner name -->
-        <div>
-          <label class="block mb-2">Nombre del dueño</label>
-          <InputGroup>
-            <InputGroupAddon class="text-neutral-400">
-              <i class="pi pi-user"></i>
-            </InputGroupAddon>
-            <InputText
-              v-model="ownerName"
-              v-bind="ownerNameAttrs"
-              class="w-full"
-              placeholder="Nombre del dueño"
-              disabled
-            />
-          </InputGroup>
-
-          <Message v-if="errors.ownerName" severity="error" size="small" variant="simple">
-            {{ errors.ownerName }}
-          </Message>
-        </div>
-        <InputNumber v-model="ownerId" v-bind="ownerIdAttrs" hidden />
-
-        <div>
-          <label class="block mb-2">Mascota</label>
-          <Select
+        <Message v-if="errors.ownerDni" severity="error" size="small" variant="simple">
+          {{ errors.ownerDni }}
+        </Message>
+      </div>
+      <!-- owner name -->
+      <div>
+        <label class="block mb-2">Nombre del dueño</label>
+        <InputGroup>
+          <InputGroupAddon class="text-neutral-400">
+            <i class="pi pi-user"></i>
+          </InputGroupAddon>
+          <InputText
+            v-model="ownerName"
+            v-bind="ownerNameAttrs"
             class="w-full"
-            v-bind="petIdAttrs"
-            v-model="petId"
-            :options="petsOptions"
-            optionLabel="name"
-            optionValue="value"
-            placeholder="Selecciona Mascota"
-            @change="loadHeadquartersService()"
+            placeholder="Nombre del dueño"
+            disabled
           />
+        </InputGroup>
 
-          <Message v-if="errors.petId" severity="error" size="small" variant="simple">
-            {{ errors.petId }}
-          </Message>
-        </div>
+        <Message v-if="errors.ownerName" severity="error" size="small" variant="simple">
+          {{ errors.ownerName }}
+        </Message>
+      </div>
+      <InputNumber v-model="ownerId" v-bind="ownerIdAttrs" hidden />
 
-        <div>
-          <label class="block mb-2">Servicio</label>
-          <Select
-            class="w-full"
-            v-bind="headquarterVetServiceIdAttrs"
-            v-model="headquarterVetServiceId"
-            :options="serviceHeadquarterOptions"
-            optionLabel="name"
-            optionValue="value"
-            placeholder="Selecciona Servicio"
-          />
+      <div>
+        <label class="block mb-2">Mascota</label>
+        <Select
+          class="w-full"
+          v-bind="petIdAttrs"
+          v-model="petId"
+          :options="petsOptions"
+          optionLabel="name"
+          optionValue="value"
+          placeholder="Selecciona Mascota"
+          @change="loadHeadquartersService()"
+        />
 
-          <Message
-            v-if="errors.headquarterVetServiceId"
-            severity="error"
-            size="small"
-            variant="simple"
-          >
-            {{ errors.headquarterVetServiceId }}
-          </Message>
-        </div>
-                <div>
-          <label class="block mb-2">Empleado</label>
-          <Select
-            class="w-full"
-            v-bind="employeeIdAttrs"
-            v-model="employeeId"
-            :options="employeesOptions"
-            optionLabel="name"
-            optionValue="value"
-            placeholder="Selecciona Empleado"
-          />
+        <Message v-if="errors.petId" severity="error" size="small" variant="simple">
+          {{ errors.petId }}
+        </Message>
+      </div>
 
-          <Message v-if="errors.employeeId" severity="error" size="small" variant="simple">
-            {{ errors.employeeId }}
-          </Message>
-        </div>
-        <div class="button-form-container-grid-end">
-          <Button
-            class="w-full max-w-md"
-            label="Registrar"
-            type="submit"
-            severity="success"
-            icon="pi pi-save"
-            iconPos="right"
-          />
-        </div>
-            </form>
-    </template>
-  </Card>
+      <div>
+        <label class="block mb-2">Servicio</label>
+        <Select
+          class="w-full"
+          v-bind="headquarterVetServiceIdAttrs"
+          v-model="headquarterVetServiceId"
+          :options="serviceHeadquarterOptions"
+          optionLabel="name"
+          optionValue="value"
+          placeholder="Selecciona Servicio"
+        />
+
+        <Message
+          v-if="errors.headquarterVetServiceId"
+          severity="error"
+          size="small"
+          variant="simple"
+        >
+          {{ errors.headquarterVetServiceId }}
+        </Message>
+      </div>
+      <div>
+        <label class="block mb-2">Empleado</label>
+        <Select
+          class="w-full"
+          v-bind="employeeIdAttrs"
+          v-model="employeeId"
+          :options="employeesOptions"
+          optionLabel="name"
+          optionValue="value"
+          placeholder="Selecciona Empleado"
+        />
+
+        <Message v-if="errors.employeeId" severity="error" size="small" variant="simple">
+          {{ errors.employeeId }}
+        </Message>
+      </div>
+      <div class="button-form-container-grid-end">
+        <Button
+          class="w-full max-w-md"
+          label="Registrar"
+          type="submit"
+          severity="success"
+          icon="pi pi-save"
+          iconPos="right"
+        />
+      </div>
+    </form>
+  </div>
 </template>
-
-

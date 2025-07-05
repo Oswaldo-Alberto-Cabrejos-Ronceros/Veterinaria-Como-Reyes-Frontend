@@ -200,7 +200,7 @@ onMounted(() => {
               v-model="ownerDni"
               v-bind="ownerDniAttrs"
               class="w-full"
-              placeholder="Dueño DNI"
+              placeholder="Busque dueño por DNI"
             />
             <InputGroupAddon>
               <Button

@@ -5,7 +5,6 @@ import type { FormValues } from '@/validation-schemas-forms/schema-add-pet-clien
 import { toTypedSchema } from '@vee-validate/yup'
 import { useForm } from 'vee-validate'
 import { inject, onMounted, ref, type Ref } from 'vue'
-import Card from 'primevue/card'
 import InputText from 'primevue/inputtext'
 import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
@@ -91,12 +90,9 @@ onMounted(() => {
   loadsBreed()
 })
 </script>
+
 <template>
-  <Card class="card-dialog-form-layout">
-    <template #title>
-      <h3 class="h3 text-center">Agrega a tu mascota</h3>
-    </template>
-    <template #content>
+  <div class="card-dialog-form-layout">
       <form @submit.prevent="onSubmit" class="form-dialog-layout">
         <!-- name -->
         <div>
@@ -189,6 +185,6 @@ onMounted(() => {
           />
         </div>
       </form>
-    </template>
-  </Card>
+
+  </div>
 </template>
