@@ -5,6 +5,7 @@ import { GetAllSpecies } from '@/services/Specie/aplication/GetAllSpecies'
 import { GetSpecieById } from '@/services/Specie/aplication/GetSpecieById'
 import { UpdateSpecie } from '@/services/Specie/aplication/UpdateSpecie'
 import { ActivateSpecie } from '@/services/Specie/aplication/ActivateSpecie'
+import { SearchSpecies } from '@/services/Specie/aplication/SearchSpecies'
 import { SpecieServiceImpl } from '@/services/Specie/infrastructure/SpecieServiceImpl'
 
 //instantiete AxiosHttpCliente
@@ -22,4 +23,5 @@ export const specieUsesCases = {
   getSpecieById: new GetSpecieById(specieService),
   updateSpecie: new UpdateSpecie(specieService),
   activateSpecie: new ActivateSpecie(specieService),
+  searchSpecies: new SearchSpecies(specieService),
 }

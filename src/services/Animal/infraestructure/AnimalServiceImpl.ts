@@ -1,6 +1,8 @@
 import type { HttpClient } from '@/services/Http/model/HttpClient'
 import type { Animal, AnimalByClient, AnimalRequest } from '../domain/models/Animal'
 import type { AnimalService } from '../domain/services/AnimalService'
+import type { SearchAnimalParams } from '../domain/models/SearchAnimalParams'
+import type { PageResponse } from '@/services/models/PageResponse'
 
 export class AnimalServiceImpl implements AnimalService {
   //inject httpClient
@@ -30,5 +32,21 @@ export class AnimalServiceImpl implements AnimalService {
   }
   async activateAnimal(animalId: number): Promise<void> {
     await this.httpClient.put<void>(`${this.urlBase}/${animalId}/activate`, {})
+  }
+  async searchAnimals(params: SearchAnimalParams): Promise<PageResponse<Animal>> {
+    const queryParams: Record<string, string | number> = {}
+
+    if (params.name) queryParams.name = params.name
+    if (params.owner) queryParams.owner = params.owner
+    if (params.specie) queryParams.specie = params.specie
+    if (params.breed) queryParams.breed = params.breed
+    if (params.gender) queryParams.gender = params.gender
+    if (typeof params.status === 'boolean') queryParams.status = String(params.status)
+    if (typeof params.page === 'number') queryParams.page = params.page
+    if (typeof params.size === 'number') queryParams.size = params.size
+    if (params.sort) queryParams.sort = params.sort
+
+    const response = await this.httpClient.get<PageResponse<Animal>>(`${this.urlBase}/search`, queryParams)
+    return response.data
   }
 }

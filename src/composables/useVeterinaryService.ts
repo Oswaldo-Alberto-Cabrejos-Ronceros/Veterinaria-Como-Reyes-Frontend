@@ -4,6 +4,7 @@ import type { VeterinaryService } from '@/services/VeterinaryService/domain/mode
 import { VeterinaryServiceAdapter } from '@/adapters/VeterinaryServiceAdapter'
 import type { Service as VeterinaryServiceView } from '@/models/Service'
 import type { FormValues as VeterinaryServiceAddEditSchema } from '@/validation-schemas-forms/schema-add-edit-service'
+import type { PageResponse } from '@/services/models/PageResponse'
 
 export function useVeterinaryService() {
   const { loading, error, runUseCase } = useAsyncHandler()
@@ -55,6 +56,26 @@ export function useVeterinaryService() {
     )
   }
 
+  const searchVeterinaryServices = async (
+    page: number,
+    size: number,
+    filters: {
+      name?: string
+      specie?: string
+      category?: string
+      status?: boolean
+    },
+    sort?: string
+  ): Promise<PageResponse<VeterinaryServiceView>> => {
+    const result = await runUseCase('searchVeterinaryServices', () =>
+      veterinaryServiceUsesCases.searchVeterinaryServices.execute(page, size, filters, sort)
+    )
+    return {
+      ...result,
+      content: result.content.map(VeterinaryServiceAdapter.toView),
+    }
+  }
+
   return {
     loading,
     error,
@@ -64,5 +85,6 @@ export function useVeterinaryService() {
     getVeterinaryServiceById,
     updateVeterinaryService,
     activateVeterinaryService,
+    searchVeterinaryServices,
   }
 }
