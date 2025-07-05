@@ -10,6 +10,7 @@ import TabPanels from 'primevue/tabpanels'
 import TabPanel from 'primevue/tabpanel'
 import Card from 'primevue/card'
 import CardVitalSigns from './components/CardVitalSigns.vue'
+import CardHistoryVeterinaryRecord from './components/CardHistoryVeterinaryRecord.vue'
 const props = defineProps<{
   appointmentId: string
 }>()
@@ -64,6 +65,53 @@ const ownerInfo: {
   email: 'oswaldocabrejosr@gmail.com',
   address: 'Av. Brasil',
 }
+const records = [
+  {
+    recordId: 1,
+    description: 'Control general de salud',
+    serviceName: 'Consulta veterinaria',
+    status: 'Finalizado',
+    date: '2025-07-05',
+    time: '10:00',
+    employeeName: 'Sandra Muñoz',
+  },
+  {
+    recordId: 2,
+    description: 'Aplicación de vacunas',
+    serviceName: 'Vacunación',
+    status: 'En curso',
+    date: '2025-07-05',
+    time: '11:30',
+    employeeName: 'Carlos Ramírez',
+  },
+  {
+    recordId: 3,
+    description: 'Baño y corte de pelo',
+    serviceName: 'Estética canina',
+    status: 'Pendiente',
+    date: '2025-07-06',
+    time: '09:00',
+    employeeName: 'Karen Ruiz',
+  },
+  {
+    recordId: 4,
+    description: 'Cirugía menor programada',
+    serviceName: 'Cirugía veterinaria',
+    status: 'Finalizado',
+    date: '2025-07-04',
+    time: '15:00',
+    employeeName: 'Javier Torres',
+  },
+  {
+    recordId: 5,
+    description: 'Evaluación de comportamiento',
+    serviceName: 'Etología',
+    status: 'Cancelado',
+    date: '2025-07-03',
+    time: '16:30',
+    employeeName: 'Adriana Vega',
+  },
+]
 </script>
 
 <template>
@@ -84,7 +132,9 @@ const ownerInfo: {
           </TabList>
           <TabPanels>
             <TabPanel value="0"><CardVitalSigns></CardVitalSigns></TabPanel>
-            <TabPanel value="1"></TabPanel>
+            <TabPanel value="1">
+              <CardHistoryVeterinaryRecord :veterinaryRecords="records" />
+            </TabPanel>
             <TabPanel value="2"></TabPanel>
           </TabPanels>
         </Tabs>
