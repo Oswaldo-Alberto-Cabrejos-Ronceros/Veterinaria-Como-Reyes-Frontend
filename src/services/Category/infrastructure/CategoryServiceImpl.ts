@@ -30,4 +30,8 @@ export class CategoryServiceImpl implements CategoryService {
   async deleteCategory(id: number): Promise<void> {
     await this.httpClient.delete<void>(`${this.urlBase}/${id}`)
   }
+
+  async activateCategory(categoryId: number): Promise<void> {
+    await this.httpClient.put<void>(`${this.urlBase}/${categoryId}/activate`, {})
+  }
 }

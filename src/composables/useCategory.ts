@@ -53,6 +53,12 @@ export function useCategory() {
     await runUseCase('deleteCategory', () => categoryUsesCases.deleteCategory.execute(id))
   }
 
+  const activateCategory = async (categoryId: number): Promise<void> => {
+    await runUseCase('activateCategory', () =>
+      categoryUsesCases.activateCategory.execute(categoryId),
+    )
+  }
+
   return {
     loading,
     error,
@@ -61,5 +67,6 @@ export function useCategory() {
     deleteCategory,
     createCategory,
     updateCategory,
+    activateCategory,
   }
 }
