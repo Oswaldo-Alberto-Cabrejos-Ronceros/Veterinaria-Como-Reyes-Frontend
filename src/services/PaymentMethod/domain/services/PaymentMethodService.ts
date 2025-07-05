@@ -6,4 +6,5 @@ export interface PaymentMethodService {
   createPaymentMethod(data: PaymentMethodRequest): Promise<PaymentMethod>;
   updatePaymentMethod(id: number, data: PaymentMethodRequest): Promise<PaymentMethod>;
   deletePaymentMethod(id: number): Promise<void>;
+  activatePaymentMethod(id: number): Promise<void>;
 }

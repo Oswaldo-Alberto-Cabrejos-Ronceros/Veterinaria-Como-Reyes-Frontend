@@ -18,19 +18,13 @@ import { useCare } from '@/composables/useCare'
 import type { Care } from '@/models/Care'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import { useDialog } from 'primevue/usedialog'
-import AddEditCareCard from './components/AddEditCareCard.vue'
-import type { FormValues as AddCareFromRequestSchema } from '@/validation-schemas-forms/schema-add-care'
-import { useToast } from 'primevue/usetoast'
 
 onMounted(async () => {
   loadCares()
 })
 
 //methods for care
-const { loading, error, getAllCares } = useCare()
-
-const {createCareFromRequest} = useCare()
+const { loading, error, getAllCares, completeCare } = useCare()
 
 //for cares
 
@@ -41,6 +35,15 @@ const loadCares = async () => {
   cares.value = await getAllCares()
   headquartersOptions.value = headquartersServicesToOptionsSelect(await getAllHeadquarters())
   servicesOptions.value = headquartersServicesToOptionsSelect(await getAllVeterinaryServices())
+}
+
+const onCompleteCare = async (careId: number) => {
+  try {
+    await completeCare(careId)
+    await loadCares()
+  } catch (err) {
+    console.error('Error al completar atención', err)
+  }
 }
 
 const { handleSubmit, errors, defineField } = useForm<SearchCareSchema>({
@@ -94,40 +97,6 @@ const statusOptions: OptionSelect[] = [
 const dt = ref()
 const exportCSV = () => {
   dt.value.exportCSV()
-}
-
-//for toast
-const toast = useToast()
-
-const showToast = (message: string) => {
-  toast.add({
-    severity: 'success',
-    summary: 'Exito',
-    detail: message,
-    life: 3000,
-  })
-}
-
-
-//for dialog
-const dialog = useDialog()
-
-//for add
-const addCare = async () => {
-  dialog.open(AddEditCareCard, {
-    props: {
-      modal: true,
-    },
-    onClose: async (options) => {
-      const data = options?.data as AddCareFromRequestSchema
-      console.log(data)
-      if(data){
-        const care = await createCareFromRequest(data)
-        loadCares()
-        showToast(`Atención creada: ${care.dateTime}`)
-      }
-    },
-  })
 }
 </script>
 <template>
@@ -246,7 +215,6 @@ const addCare = async () => {
                   iconPos="right"
                   severity="success"
                   label="Agregar Atencíon"
-                  @click="addCare()"
                 />
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
@@ -266,7 +234,7 @@ const addCare = async () => {
               style="width: 30%"
             ></Column>
             <Column>
-              <template #body>
+              <template #body="slotProps">
                 <div
                   class="flex justify-between items-center flex-row lg:flex-col xl:flex-row gap-1"
                 >
@@ -288,9 +256,19 @@ const addCare = async () => {
                     icon="pi pi-trash"
                     severity="danger"
                     variant="outlined"
-                    aria-label="Filter"
+                    aria-label="Eliminar"
                     rounded
                   ></Button>
+                  <!-- completar si esta en curso -->
+                  <Button
+                    v-if="slotProps.data.statusCare === 'EN_CURSO'"
+                    icon="pi pi-check-circle"
+                    severity="success"
+                    variant="outlined"
+                    aria-label="Completar"
+                    rounded
+                    @click="onCompleteCare(slotProps.data.id)"
+                  />
                 </div>
               </template>
             </Column>

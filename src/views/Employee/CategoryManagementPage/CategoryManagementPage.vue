@@ -34,7 +34,7 @@ const showToast = (message: string) => {
 
 //methods
 
-const { loading, error, getAllCategories, createCategory, updateCategory, deleteCategory } =
+const { loading, error, getAllCategories, createCategory, updateCategory, deleteCategory, activateCategory } =
   useCategory()
 
 //categories
@@ -154,6 +154,14 @@ const deleteCategoryAction = (event: MouseEvent | KeyboardEvent, category: Categ
   })
 }
 
+//for activate
+
+const activateCategoryAction = async (categoryId: number) => {
+  await activateCategory(categoryId)
+  loadCategories()
+  showToast('Categoría activada exitosamente')
+}
+
 //for export
 
 const dt = ref()
@@ -258,6 +266,14 @@ const exportCSV = () => {
                     aria-label="Filter"
                     rounded
                     @click="deleteCategoryAction($event, data)"
+                  ></Button>
+                  <Button
+                    icon="pi pi-check"
+                    severity="success"
+                    variant="outlined"
+                    aria-label="Activar"
+                    rounded
+                    @click="() => activateCategoryAction(data.id)"
                   ></Button>
                 </div>
               </template>

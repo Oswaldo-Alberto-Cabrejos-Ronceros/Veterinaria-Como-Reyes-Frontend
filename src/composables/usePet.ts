@@ -58,6 +58,10 @@ export function usePet() {
     await runUseCase('updatePet', () => animalUsesCases.updateAnimal.execute(petId, animalRequest))
   }
 
+  const activatePet = async (petId: number): Promise<void> => {
+  await runUseCase('activatePet', () => animalUsesCases.activateAnimal.execute(petId))
+}
+
   return {
     loading,
     error,
@@ -68,5 +72,6 @@ export function usePet() {
     getPetByClientId,
     getPetById,
     updatePet,
+    activatePet,
   }
 }

@@ -47,6 +47,12 @@ export function usePaymentMethod() {
     return PaymentMethodAdapter.toView(method)
   }
 
+  const activatePaymentMethod = async (id: number): Promise<void> => {
+    await runUseCase('activatePaymentMethod', () =>
+      paymentMethodUseCases.activatePaymentMethod.execute(id),
+    )
+  }
+
   return {
     loading,
     error,
@@ -55,5 +61,6 @@ export function usePaymentMethod() {
     deletePaymentMethod,
     getAllPaymentMethods,
     getPaymentMethodById,
+    activatePaymentMethod,
   }
 }

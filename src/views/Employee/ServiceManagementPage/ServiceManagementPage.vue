@@ -46,6 +46,7 @@ const {
   createVeterinaryService,
   updateVeterinaryService,
   deleteVeterinaryService,
+  activateVeterinaryService,
 } = useVeterinaryService()
 
 const { getAllSpecies } = useSpecie()
@@ -207,6 +208,13 @@ const deleteService = (event: MouseEvent | KeyboardEvent, service: Service) => {
       console.log('Cancelando')
     },
   })
+}
+
+//for activate service
+const activarServicio = async (service: Service) => {
+  await activateVeterinaryService(service.id)
+  showToast('Servicio activado exitosamente: ' + service.name)
+  loadServices()
 }
 
 //for export
@@ -380,6 +388,14 @@ const exportCSV = () => {
                     aria-label="Filter"
                     rounded
                     @click="deleteService($event, data)"
+                  ></Button>
+                  <Button
+                    icon="pi pi-check-circle"
+                    severity="success"
+                    variant="outlined"
+                    aria-label="Activar"
+                    rounded
+                    @click="activarServicio(data)"
                   ></Button>
                 </div>
               </template>

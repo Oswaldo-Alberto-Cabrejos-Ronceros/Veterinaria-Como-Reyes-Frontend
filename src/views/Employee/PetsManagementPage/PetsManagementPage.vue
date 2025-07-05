@@ -40,7 +40,7 @@ const showToast = (message: string) => {
 
 //methods
 
-const { loading, error, getAllPets, createPet, updatePet, deletePet } = usePet()
+const { loading, error, getAllPets, createPet, updatePet, deletePet, activatePet } = usePet()
 
 const { getAllSpecies } = useSpecie()
 
@@ -218,6 +218,35 @@ const confirmDeletePet = (event: MouseEvent | KeyboardEvent, pet: Pet) => {
     },
     reject: () => {
       console.log('Cancelando eliminación')
+    },
+  })
+}
+
+//for active pet
+
+const confirmActivatePet = (event: MouseEvent | KeyboardEvent, pet: Pet) => {
+  confirm.require({
+    group: 'confirmPopupGeneral',
+    target: event.currentTarget as HTMLElement,
+    message: '¿Seguro que desea activar esta mascota?',
+    icon: 'pi pi-exclamation-triangle',
+    rejectProps: {
+      label: 'Cancelar',
+      severity: 'secondary',
+      outlined: true,
+    },
+    acceptProps: {
+      label: 'Activar',
+      severity: 'success',
+    },
+    accept: async () => {
+      console.log('Activando mascota: ', pet.id)
+      await activatePet(pet.id)
+      loadPets()
+      showToast('Mascota activada exitosamente: ' + pet.name)
+    },
+    reject: () => {
+      console.log('Cancelando activación')
     },
   })
 }
@@ -400,6 +429,14 @@ const exportCSV = () => {
                     aria-label="Filter"
                     rounded
                     @click="confirmDeletePet($event, data)"
+                  ></Button>
+                  <Button
+                    icon="pi pi-refresh"
+                    severity="success"
+                    variant="outlined"
+                    aria-label="Activar"
+                    rounded
+                    @click="confirmActivatePet($event, data)"
                   ></Button>
                 </div>
               </template>

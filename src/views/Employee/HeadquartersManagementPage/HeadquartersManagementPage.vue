@@ -41,6 +41,7 @@ const {
   createHeadquarter,
   updateHeadquarter,
   deleteHeadquarter,
+  activateHeadquarter,
 } = useHeadquarter()
 
 //headquarters
@@ -221,6 +222,13 @@ const deleteHeadquarterAction = (event: MouseEvent | KeyboardEvent, headquarter:
   })
 }
 
+//for activate headquarter
+const activateHeadquarterAction = async (headquarter: Headquarter) => {
+  await activateHeadquarter(headquarter.id)
+  showToast('Sede activada exitosamente: ' + headquarter.name)
+  loadHeadquarters()
+}
+
 //for export
 
 const dt = ref()
@@ -383,6 +391,14 @@ const exportCSV = () => {
                     aria-label="Filter"
                     rounded
                     @click="deleteHeadquarterAction($event, data)"
+                  ></Button>
+                  <Button
+                    icon="pi pi-check-circle"
+                    severity="success"
+                    variant="outlined"
+                    aria-label="Activar"
+                    rounded
+                    @click="activateHeadquarterAction(data)"
                   ></Button>
                 </div>
               </template>

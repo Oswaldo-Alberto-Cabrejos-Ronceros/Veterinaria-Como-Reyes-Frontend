@@ -4,6 +4,7 @@ import { GetAllHeadquarters } from '@/services/Headquarter/aplication/GetAllHead
 import { GetHeadquarterById } from '@/services/Headquarter/aplication/getHeadquarterById'
 import { UpdateHeadquarter } from '@/services/Headquarter/aplication/UpdateHeadquarter'
 import { HeadquarterServiceImpl } from '@/services/Headquarter/infrastructure/HeadquarterServiceImpl'
+import { ActivateHeadquarter } from '@/services/Headquarter/aplication/ActivateHeadquarter'
 import { AxiosHttpClient } from '@/services/Http/infrastructure/AxiosHttpClient'
 
 //instantiete AxiosHttpCliente
@@ -20,4 +21,5 @@ export const headquarterUsesCases = {
   getAllHeadquarters: new GetAllHeadquarters(headquarterService),
   getHeadquarterById: new GetHeadquarterById(headquarterService),
   updateHeadquarter: new UpdateHeadquarter(headquarterService),
+  activateHeadquarter: new ActivateHeadquarter(headquarterService),
 }
