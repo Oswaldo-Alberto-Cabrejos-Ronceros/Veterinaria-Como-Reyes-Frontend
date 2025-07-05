@@ -24,7 +24,7 @@ defineProps<{
       <p class="text-neutral-500 text-sm">{{ petName }} - {{ serviceName }}</p>
     </div>
     <div class="flex flex-col justify-center items-end">
-      <p class="Plg text-green-600">S/{{ amount }}</p>
+      <p class="textLg text-green-600">S/{{ amount }}</p>
       <p class="text-neutral-500 text-sm">{{ date }}</p>
       <p class="text-neutral-500 text-sm">{{ time }}</p>
       <Tag :value="status" severity="secondary"></Tag>

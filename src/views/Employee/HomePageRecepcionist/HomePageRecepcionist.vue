@@ -361,7 +361,7 @@ const payments: {
         </h2>
       </template>
       <template #subtitle>
-        <p class="Plg">{{ today }}</p>
+        <p class="textLg">{{ today }}</p>
       </template>
       <template #content>
         <!-- news -->

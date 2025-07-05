@@ -437,7 +437,7 @@ const appoinmentsAbstract: { title: string; value: number }[] = [
         </h2>
       </template>
       <template #subtitle>
-        <p class="Plg">{{ today }}</p>
+        <p class="textLg">{{ today }}</p>
       </template>
       <template #content>
         <!-- news -->
@@ -523,7 +523,7 @@ const appoinmentsAbstract: { title: string; value: number }[] = [
                       :key="index"
                       class="text-blue-600 dark:text-blue-400 text-center"
                     >
-                      <p class="Plg">
+                      <p class="textLg">
                         {{ abstract.title }}
                       </p>
                       <p class="H3 font-bold">
@@ -531,9 +531,8 @@ const appoinmentsAbstract: { title: string; value: number }[] = [
                       </p>
                     </div>
                   </div>
-                                  <Button label="Ver agenda completa" variant="outlined" severity="secondary" />
+                  <Button label="Ver agenda completa" variant="outlined" severity="secondary" />
                 </div>
-
               </div>
             </template>
           </Card>
