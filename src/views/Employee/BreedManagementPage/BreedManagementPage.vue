@@ -162,6 +162,36 @@ const deleteBreedAction = (event: MouseEvent | KeyboardEvent, breedData: Breed) 
   })
 }
 
+//for activate
+const { activateBreed } = useBreed()
+
+const activateBreedAction = (event: MouseEvent | KeyboardEvent, breed: Breed) => {
+  confirm.require({
+    group: 'confirmPopupGeneral',
+    target: event.currentTarget as HTMLElement,
+    message: '¿Seguro que quiere activar esta raza?',
+    icon: 'pi pi-exclamation-triangle',
+    rejectProps: {
+      label: 'Cancelar',
+      severity: 'secondary',
+      outlined: true,
+    },
+    acceptProps: {
+      label: 'Activar',
+      severity: 'success',
+    },
+    accept: async () => {
+      await activateBreed(breed.id)
+      loadBreeds()
+      showToast('Raza activada exitosamente: ' + breed.name)
+    },
+    reject: () => {
+      console.log('Cancelando activación')
+    },
+  })
+}
+
+
 //for export
 
 const dt = ref()
@@ -284,6 +314,13 @@ const exportCSV = () => {
                     aria-label="Filter"
                     rounded
                     @click="deleteBreedAction($event, data)"
+                  ></Button>
+                  <Button
+                    icon="pi pi-power-off"
+                    severity="success"
+                    variant="outlined"
+                    rounded
+                    @click="activateBreedAction($event, data)"
                   ></Button>
                 </div>
               </template>

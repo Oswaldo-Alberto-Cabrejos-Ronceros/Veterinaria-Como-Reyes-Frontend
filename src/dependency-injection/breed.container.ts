@@ -4,6 +4,7 @@ import { GetAllBreeds } from '@/services/Breed/aplication/GetAllBreeds'
 import { GetBreedById } from '@/services/Breed/aplication/GetBreedById'
 import { GetBreedsBySpecie } from '@/services/Breed/aplication/GetBreedsBySpecie'
 import { UpdateBreed } from '@/services/Breed/aplication/UpdateBreed'
+import { ActivateBreed } from '@/services/Breed/aplication/ActivateBreed'
 import { BreedServiceImpl } from '@/services/Breed/infrastructure/BreedServiceImpl'
 import { AxiosHttpClient } from '@/services/Http/infrastructure/AxiosHttpClient'
 
@@ -22,4 +23,5 @@ export const breedUsesCases = {
   getBreedById: new GetBreedById(breedService),
   getBreedsBySpecie: new GetBreedsBySpecie(breedService),
   updateBreed: new UpdateBreed(breedService),
+  activateBreed: new ActivateBreed(breedService),
 }

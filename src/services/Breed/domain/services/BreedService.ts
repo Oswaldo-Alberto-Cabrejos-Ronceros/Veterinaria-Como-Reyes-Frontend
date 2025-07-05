@@ -8,5 +8,6 @@ export interface BreedService {
   createBreed(breedRequest: BreedRequest): Promise<Breed>
   updateBreed(breedId: number, breedRequest: BreedRequest): Promise<Breed>
   deleteBreed(breedId: number): Promise<void>
+  activateBreed(breedId: number): Promise<void>
 }
 
