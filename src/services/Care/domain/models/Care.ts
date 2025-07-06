@@ -4,7 +4,8 @@ export interface Care {
   statusCare: string
   headquarterVetServiceId: number
   appointmentId?: number
-  animalId: number
+  animalId: number,
+  employeeId:number
 }
 
 export interface CareRequest {

@@ -11,4 +11,7 @@ export interface Care {
   pet: {
     id: number
   }
+  employee:{
+    id:number
+  }
 }

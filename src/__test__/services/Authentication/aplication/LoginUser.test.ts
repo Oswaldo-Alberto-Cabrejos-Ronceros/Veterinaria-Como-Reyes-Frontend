@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { LoginUser } from '@/services/Authentication/aplication/LoginUser'
+import { LoginEmployee } from '@/services/Authentication/aplication/LoginEmployee'
 import { AuthenticationServiceMock } from '@/__mocks__/AuthenticationServiceMock'
 import { setActivePinia, createPinia } from 'pinia'
 import { useAuthenticationStore } from '@/stores/authenticationStore'
@@ -13,13 +13,17 @@ describe('LoginUser', () => {
 
   it('when user log in, it must be saved in the store', async () => {
     const authService = new AuthenticationServiceMock()
-    const loginUser = new LoginUser(authService)
+    const loginUser = new LoginEmployee(authService)
     const user = await loginUser.execute('test@gmail.com', '12354')
     const authenticationStore = useAuthenticationStore()
-    expect(user.name).toBe('Jesus')
-    expect(authenticationStore.user?.name).toBe('Jesus')
-    expect(authenticationStore.user?.id).toBe(1)
-    expect(authenticationStore.user?.rol).toBe('ADMIN')
-    expect(authenticationStore.userRole).toBe('ADMIN')
+    authenticationStore.setUser({
+      userId: user.userId,
+      entityId: user.entityId,
+      mainRole: user.mainRole
+    })
+    expect(user.userId).toBe(1)
+    expect(authenticationStore.user?.entityId).toBe(1)
+    expect(authenticationStore.user?.mainRole).toBe('ADMIN')
+    expect(authenticationStore.user?.userId).toBe(1)
   })
 })

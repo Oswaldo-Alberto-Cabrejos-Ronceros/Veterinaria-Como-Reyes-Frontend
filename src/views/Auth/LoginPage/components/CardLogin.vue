@@ -93,7 +93,7 @@ const onSubmit = handleSubmit((values) => {
           <InputGroupAddon class="text-neutral-400">
             <i class="pi pi-user"></i>
           </InputGroupAddon>
-          <InputText v-bind="emailAttrs" v-model="email" type="text" placeholder="Email" />
+          <InputText v-bind="emailAttrs" v-model="email" type="email" placeholder="Email" />
         </InputGroup>
         <Message v-if="errors.email" severity="error" size="small" variant="simple">
           {{ errors.email }}

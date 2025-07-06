@@ -5,10 +5,13 @@ import CardPetInfo from '@/components/CardPetInfo.vue'
 import CardOwnerInfo from '@/components/CardOwnerInfo.vue'
 import Card from 'primevue/card'
 import Button from 'primevue/button'
-import Divider from 'primevue/divider'
-import Select from 'primevue/select'
 import { useAppointment } from '@/composables/useAppointment'
 import type { Appointment } from '@/models/Appointment'
+import { useCare } from '@/composables/useCare'
+import { useDialog, useToast } from 'primevue'
+import AddCareFromAppointment from '@/components/AddCareFromAppointment.vue'
+import type { FormValues } from '@/validation-schemas-forms/schema-add-care-from-appointment'
+import CardBilling from '@/components/CardBilling.vue'
 
 const props = defineProps<{
   appointmentId: string
@@ -17,14 +20,44 @@ const props = defineProps<{
 //methods
 
 const { getAppointmentById } = useAppointment()
+const { createCareFromAppointment } = useCare()
 
 //ref
 const appointmentBasicInfo = ref<Appointment | null>(null)
 
 onMounted(async () => {
   console.log(props.appointmentId)
-  appointmentBasicInfo.value = await getAppointmentById(Number(props.appointmentId))
+  loadInfo()
 })
+
+const loadInfo = async () => {
+  appointmentBasicInfo.value = await getAppointmentById(Number(props.appointmentId))
+}
+
+//for dialog
+const dialog = useDialog()
+
+//for create care when the client arrive
+const openCreateCareConfirmArrive = () => {
+  dialog.open(AddCareFromAppointment, {
+    props: {
+      modal: true,
+      header: 'Crear Atención',
+    },
+    data: {
+      appointmentId: Number(props.appointmentId),
+      headquarterVetServiceId: appointmentBasicInfo.value?.headquarterVetService.id,
+    },
+    onClose: async (options) => {
+      const data = options?.data as FormValues
+      if (data) {
+        const care = await createCareFromAppointment(data)
+        loadInfo()
+        showToast(`Atención creada correctamente: ${care.dateTime}`)
+      }
+    },
+  })
+}
 
 const appointmentInfo: {
   time: string
@@ -66,20 +99,40 @@ const ownerInfo: {
   name: string
   lastname: string
   phone: string
-  email: string
+    headquarterName: string
   address: string
 } = {
   name: 'Oswaldo Alberto',
   lastname: 'Cabrejos Ronceros',
   phone: '984156123',
-  email: 'oswaldocabrejosr@gmail.com',
+    headquarterName: 'Ica',
   address: 'Av. Brasil',
+}
+//for toast
+//toast
+const toast = useToast()
+
+const showToast = (message: string) => {
+  toast.add({
+    severity: 'success',
+    summary: 'Éxito',
+    detail: message,
+    life: 3000,
+  })
 }
 </script>
 
 <template>
   <div class="layout-principal-flex flex-col gap-2">
-    <CardAppointmentInfo v-if="appointmentBasicInfo" :time="appointmentBasicInfo.scheduleDateTime" :serviceDuration="appointmentInfo.serviceDuration" :serviceName="appointmentInfo.serviceName" :veterinaryName="appointmentBasicInfo.assignedEmployee?.names" :comentario="appointmentInfo.comentario" :status="appointmentBasicInfo.statusAppointment"  />
+    <CardAppointmentInfo
+      v-if="appointmentBasicInfo"
+      :time="appointmentBasicInfo.scheduleDateTime"
+      :serviceDuration="appointmentInfo.serviceDuration"
+      :serviceName="appointmentInfo.serviceName"
+      :veterinaryName="appointmentBasicInfo.assignedEmployee?.names"
+      :comentario="appointmentInfo.comentario"
+      :status="appointmentBasicInfo.statusAppointment"
+    />
     <div class="w-full grid grid-cols-2 gap-4">
       <CardPetInfo v-bind="petInfo"></CardPetInfo>
       <CardOwnerInfo v-bind="ownerInfo" />
@@ -103,18 +156,21 @@ const ownerInfo: {
           >
             <div class="text-blue-600 dark:text-blue-400">
               <p>Hora de llegada</p>
-              <p class="textLg font-bold">{{appointmentBasicInfo?.scheduleDateTime}}</p>
+              <p class="textLg font-bold">{{ appointmentBasicInfo?.scheduleDateTime }}</p>
             </div>
             <Button
+              v-if="appointmentBasicInfo?.statusAppointment === 'Programada'"
               size="small"
               icon="pi pi-check-circle"
               icon-pos="left"
               label="Confirmar llegada"
               class="bg-blue-500 border-blue-500"
+              @click="openCreateCareConfirmArrive"
             />
           </div>
           <!-- time -->
-          <div v-if="appointmentBasicInfo?.statusAppointment==='Programada'"
+          <div
+            v-if="appointmentBasicInfo?.statusAppointment === 'Programada'"
             class="p-4 shadow-none border-1 rounded-sm border-green-500 bg-green-50 dark:bg-transparent w-full flex justify-between items-center"
           >
             <div class="text-green-600 dark:text-green-400">
@@ -128,59 +184,6 @@ const ownerInfo: {
 
     <!-- payment -->
 
-    <Card class="card-primary w-full">
-      <template #title>
-        <div class="flex gap-2 items-center">
-          <i class="pi pi-money-bill"></i>
-          <p>Facturación</p>
-        </div>
-      </template>
-      <template #subtitle>
-        <p>Procesamiento de pago</p>
-      </template>
-      <template #content>
-        <h3 class="textLg font-semibold">Servicio programado</h3>
-        <div
-          class="mt-4 rounded-sm bg-surface-100 dark:bg-surface-800 flex items-center justify-between p-3"
-        >
-          <p class="textLg font-semibold">Consulta General</p>
-          <p class="textLg font-semibold text-green-600 dark:text-green-400">S/ 80</p>
-        </div>
-        <Divider />
-        <div class="textLg flex items-center justify-between">
-          <p>Subtotal:</p>
-          <p>S/ 65.6</p>
-        </div>
-        <div class="textLg flex items-center justify-between mt-2">
-          <p>IGV (18%):</p>
-          <p>S/ 14.4</p>
-        </div>
-        <Divider />
-        <div
-          class="textLg mb-4 font-bold text-green-600 dark:text-green-400 flex items-center justify-between"
-        >
-          <p>Total:</p>
-          <p>S/ 80</p>
-        </div>
-        <p>Método de pago</p>
-        <Select placeholder="Seleccione método de pago" class="w-full mt-4" fluid />
-        <div class="w-full flex gap-4 mt-4">
-          <Button
-            severity="success"
-            icon-pos="left"
-            icon="pi pi-credit-card"
-            label="Procesar pago"
-            class="flex-1"
-          />
-          <Button
-            label="Generar Boleta"
-            icon="pi pi-receipt"
-            icon-pos="left"
-            variant="outlined"
-            severity="secondary"
-          />
-        </div>
-      </template>
-    </Card>
+    <CardBilling serviceName="Consulta General" :price="80"/>
   </div>
 </template>

@@ -1,4 +1,4 @@
-import type { HeadquarterVetService } from '@/services/Appointment/domain/models/Appointment'
+import type { HeadquarterVetService } from '@/services/HeadquarterVetService/domain/models/HeadquarterVetService'
 import type { HeadquarterVetService as HeadquarterVetServiceView } from '@/models/HeadquarterVetService'
 import { VeterinaryServiceAdapter } from './VeterinaryServiceAdapter'
 
