@@ -99,13 +99,13 @@ const ownerInfo: {
   name: string
   lastname: string
   phone: string
-  email: string
+    headquarterName: string
   address: string
 } = {
   name: 'Oswaldo Alberto',
   lastname: 'Cabrejos Ronceros',
   phone: '984156123',
-  email: 'oswaldocabrejosr@gmail.com',
+    headquarterName: 'Ica',
   address: 'Av. Brasil',
 }
 //for toast

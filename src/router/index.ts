@@ -25,6 +25,7 @@ import HomePageRecepcionist from '@/views/Employee/HomePageRecepcionist/HomePage
 import HomePageVeterinary from '@/views/Employee/HomePageVeterinary/HomePageVeterinary.vue'
 import AttendAppointmentPageRecepcionist from '@/views/Employee/AttendAppointmentPageRecepcionist/AttendAppointmentPageRecepcionist.vue'
 import AttendAppointmentVeterinaryPage from '@/views/Employee/AttendAppointmentVeterinaryPage/AttendAppointmentVeterinaryPage.vue'
+import CareUnitaryPage from '@/views/Employee/CareUnitaryPage/CareUnitaryPage.vue'
 //client
 import MyAppointmentsClientPage from '@/views/Client/MyAppointmentsClientPage/MyAppointmentsClientPage.vue'
 import MyPetsPage from '@/views/Client/MyPetsPage/MyPetsPage.vue'
@@ -214,7 +215,8 @@ const router = createRouter({
               name: 'administrator-appoinment-management',
               component: AppointmentManagementPage,
               meta: { requiresAuth: true, roles: ['Administrador'] },
-            },     {
+            },
+            {
               path: 'appoinment-management/attend/:appointmentId',
               name: 'administrator-appointment-management-attend',
               component: AttendAppointmentPageRecepcionist,
@@ -227,7 +229,13 @@ const router = createRouter({
               component: CareManagementPage,
               meta: { requiresAuth: true, roles: ['Administrador'] },
             },
-
+            {
+              path: 'care-management/care/:careId',
+              name: 'administrator-care-management-unitary',
+              component: CareUnitaryPage,
+              props: true,
+              meta: { requiresAuth: true, roles: ['Administrador'] },
+            },
           ],
         },
         {
@@ -271,7 +279,7 @@ const router = createRouter({
               component: AppointmentManagementPage,
               meta: { requiresAuth: true, roles: ['Encargado Sede'] },
             },
-                        {
+            {
               path: 'appoinment-management/attend/:appointmentId',
               name: 'manager-appointment-management-attend',
               component: AttendAppointmentPageRecepcionist,
@@ -282,6 +290,13 @@ const router = createRouter({
               path: 'care-management',
               name: 'manager-care-management',
               component: CareManagementPage,
+              meta: { requiresAuth: true, roles: ['Encargado Sede'] },
+            },
+            {
+              path: 'care-management/care/:careId',
+              name: 'manager-care-management-unitary',
+              component: CareUnitaryPage,
+              props: true,
               meta: { requiresAuth: true, roles: ['Encargado Sede'] },
             },
           ],
@@ -341,6 +356,13 @@ const router = createRouter({
               path: 'care-management',
               name: 'receptionist-care-management',
               component: CareManagementPage,
+              meta: { requiresAuth: true, roles: ['Recepcionista'] },
+            },
+            {
+              path: 'care-management/care/:careId',
+              name: 'receptionist-care-management-unitary',
+              component: CareUnitaryPage,
+              props: true,
               meta: { requiresAuth: true, roles: ['Recepcionista'] },
             },
           ],
