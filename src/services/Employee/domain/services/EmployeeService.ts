@@ -1,5 +1,6 @@
 import type { PageResponse } from '@/services/models/PageResponse'
 import type { Employee, EmployeeRequest, MyInfoEmployee } from '../models/Employee'
+import type { EmployeeList } from '../models/Employee'
 
 export interface EmployeeService {
   getAllEmployees(): Promise<Employee[]>
@@ -9,13 +10,15 @@ export interface EmployeeService {
   blockEmployee(employeeId: number): Promise<void>
   restoreEmployee(employeeId: number): Promise<void>
   searchEmployees(
+    status: boolean,
     dni?: string,
+    cmvp?:string,
     name?: string,
     lastName?: string,
-    status?: boolean,
-    headquarterId?: number,
+    headquarterName?: string,
+    rolName?:string,
     page?: number,
     size?: number,
-  ): Promise<PageResponse<Employee>>
+  ): Promise<PageResponse<EmployeeList>>
   getEmployeeMyInfo(employeeId: number): Promise<MyInfoEmployee>
 }

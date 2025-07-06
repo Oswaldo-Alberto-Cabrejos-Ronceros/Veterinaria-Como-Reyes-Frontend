@@ -1,25 +1,28 @@
 import type { PageResponse } from '@/services/models/PageResponse'
 import type { EmployeeService } from '../domain/services/EmployeeService'
-import type { Employee } from '../domain/models/Employee'
-
+import type { EmployeeList } from '../domain/models/Employee'
 
 export class SearchEmployees {
   constructor(private readonly employeeService: EmployeeService) {}
   async execute(
+    status: boolean,
     dni?: string,
+    cmvp?:string,
     name?: string,
     lastName?: string,
-    status?: boolean,
-    headquarterId?: number,
+    headquarterName?: string,
+    rolName?: string,
     page?: number,
     size?: number,
-  ): Promise<PageResponse<Employee>> {
+  ): Promise<PageResponse<EmployeeList>> {
     return await this.employeeService.searchEmployees(
+      status,
       dni,
+      cmvp,
       name,
       lastName,
-      status,
-      headquarterId,
+      headquarterName,
+      rolName,
       page,
       size,
     )

@@ -8,6 +8,7 @@ import type { FormValues as EmployeeAddSchema } from '@/validation-schemas-forms
 import type { FormValues as EmployeeEditSchema } from '@/validation-schemas-forms/schema-edit.employee'
 import type { MyInfoEmployee } from '@/services/Employee/domain/models/Employee'
 import type { MyInfoEmployee as MyInfoEmployeeView } from '@/models/MyInfoEmployee'
+import type { EmployeeList as EmployeeListView } from '@/models/EmployeeList'
 
 export function useEmployee() {
   //fet from useAsyncHandle
@@ -56,27 +57,31 @@ export function useEmployee() {
   }
 
   const searchEmployees = async (
+    status: boolean,
     dni?: string,
+    cmvp?:string,
     name?: string,
     lastName?: string,
-    status?: boolean,
-    headquarterId?: number,
+    headquarterName?: string,
+    rolName?: string,
     page?: number,
     size?: number,
-  ): Promise<PageResponse<EmployeeView>> => {
+  ): Promise<PageResponse<EmployeeListView>> => {
     const pageEmployee = await runUseCase('searchEmployees', () =>
       employeeUsesCases.searchEmployees.execute(
+        status,
         dni,
+        cmvp,
         name,
         lastName,
-        status,
-        headquarterId,
+        headquarterName,
+        rolName,
         page,
         size,
       ),
     )
     const employeesView = pageEmployee.content.map((employee) =>
-      EmployeeAdapter.toEmployeeView(employee),
+      EmployeeAdapter.fromEmployeeListToEmployeeListView(employee),
     )
     return {
       ...pageEmployee,
@@ -108,6 +113,6 @@ export function useEmployee() {
     getEmployeeMyInfo,
     restoreEmployee,
     searchEmployees,
-    updateEmployee
+    updateEmployee,
   }
 }

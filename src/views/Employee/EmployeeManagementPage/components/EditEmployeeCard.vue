@@ -140,6 +140,8 @@ onMounted(() => {
       rolesOptions.value = rolesOptionsGet
     }
   }
+
+  console.log(rolesOptions.value)
 })
 
 //for search

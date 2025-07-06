@@ -1,4 +1,4 @@
 export interface OptionSelect {
-  value:string|number,
+  value:string|number|boolean,
   name:string
 }

@@ -1,7 +1,12 @@
 import type { EmployeeService } from '../domain/services/EmployeeService'
 import type { PageResponse } from '@/services/models/PageResponse'
 import type { HttpClient } from '@/services/Http/model/HttpClient'
-import type { Employee, EmployeeRequest, MyInfoEmployee } from '../domain/models/Employee'
+import type {
+  Employee,
+  EmployeeRequest,
+  MyInfoEmployee,
+  EmployeeList,
+} from '../domain/models/Employee'
 
 export class EmployeeServiceImpl implements EmployeeService {
   //inject httpClient
@@ -35,38 +40,47 @@ export class EmployeeServiceImpl implements EmployeeService {
     await this.httpClient.patch(`${this.urlBase}/${employeeId}/restore`)
   }
   async searchEmployees(
+    status: boolean,
     dni?: string,
+    cmvp?: string,
     name?: string,
     lastName?: string,
-    status?: boolean,
-    headquarterId?: number,
+    headquarterName?: string,
+    rolName?: string,
     page?: number,
     size?: number,
-  ): Promise<PageResponse<Employee>> {
+  ): Promise<PageResponse<EmployeeList>> {
     //params for url
     const params = new URLSearchParams()
 
     //for dni
     if (dni) params.append('dni', dni)
+    //cmvp
+
+    if (cmvp) params.append('cmvp', cmvp)
     //for name
     if (name) params.append('name', name)
     //for lastname
-    if (lastName) params.append('lastName', lastName)
+    if (lastName) params.append('lastname', lastName)
     //for status
     if (status != undefined) params.append('status', String(status))
     //for headquarter
-    if (headquarterId != undefined) params.append('headquarterId', String(headquarterId))
+    if (headquarterName) params.append('nameHeadquarter', headquarterName)
+    //for rolname
+    if (rolName) params.append('rolName', rolName)
     //for page
     if (page != undefined) params.append('page', String(page))
     //for size
     if (size != undefined) params.append('size', String(size))
-    const response = await this.httpClient.get<PageResponse<Employee>>(
+    const response = await this.httpClient.get<PageResponse<EmployeeList>>(
       `${this.urlBase}/search?${params.toString()}`,
     )
     return response.data
   }
   async getEmployeeMyInfo(employeeId: number): Promise<MyInfoEmployee> {
-    const response = await this.httpClient.get<MyInfoEmployee>(`${this.urlBase}/${employeeId}/myInfo`)
+    const response = await this.httpClient.get<MyInfoEmployee>(
+      `${this.urlBase}/${employeeId}/myInfo`,
+    )
     return response.data
   }
 }
