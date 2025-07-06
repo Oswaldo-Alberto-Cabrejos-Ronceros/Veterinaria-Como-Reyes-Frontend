@@ -112,15 +112,22 @@ const loadEmployees = async (event?: DataTablePageEvent) => {
   employees.value = pageResponse.content
   totalRecords.value = pageResponse.totalElements
 
-  rolesOptions.value = rolesToOptionsSelect(await getAllRoles())
+  rolesOptions.value = rolesToOptionsNameSelect(await getAllRoles())
   headquartersOptions.value = headquartersToOptionsSelect(await getAllHeadquarters())
 }
 
 //for get options from roles
 
-const rolesToOptionsSelect = (roles: Role[]): OptionSelect[] => {
+const rolesToOptionsNameSelect = (roles: Role[]): OptionSelect[] => {
   return roles.map((role) => ({
     value: role.name,
+    name: role.name,
+  }))
+}
+
+const rolesToOptionsSelect = (roles: Role[]): OptionSelect[] => {
+  return roles.map((role) => ({
+    value: role.id,
     name: role.name,
   }))
 }
