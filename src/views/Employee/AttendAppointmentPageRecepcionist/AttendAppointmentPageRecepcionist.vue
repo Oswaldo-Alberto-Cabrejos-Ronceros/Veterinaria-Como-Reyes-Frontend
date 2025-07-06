@@ -47,6 +47,7 @@ const openCreateCareConfirmArrive = () => {
     },
     data: {
       appointmentId: Number(props.appointmentId),
+      headquarterVetServiceId: appointmentBasicInfo.value?.headquarterVetService.id,
     },
     onClose: async (options) => {
       const data = options?.data as FormValues

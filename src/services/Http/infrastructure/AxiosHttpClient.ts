@@ -52,6 +52,7 @@ export class AxiosHttpClient implements HttpClient {
       throw e
     }
   }
+
   async post<T>(url: string, body: unknown): Promise<{ data: T }> {
     try {
       const response = await this.axiosInstance.post<T>(url, body)

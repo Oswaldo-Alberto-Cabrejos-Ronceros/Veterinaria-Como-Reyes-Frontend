@@ -19,7 +19,8 @@ import { useAuthentication } from '@/composables/useAuthentication'
 import { usePet } from '@/composables/usePet'
 import { useEmployee } from '@/composables/useEmployee'
 import { useAppointment } from '@/composables/useAppointment'
-import type { Employee } from '@/models/Employee'
+import { useHeadquarterVetService } from '@/composables/useHeadquarterVetService'
+import type { EmployeeBasicInfo } from '@/models/EmployeeBasicInfo'
 
 //for methods
 const { getEntityId } = useAuthentication()
@@ -28,11 +29,13 @@ const { getClientByDni } = useClient()
 
 const { getPetByClientId } = usePet()
 
-const { getAllEmployees, getEmployeeById } = useEmployee()
+const { getEmployeeById } = useEmployee()
 
 const { getServicesByHeadquarterAndSpecies } = useAppointment()
 
-const { handleSubmit, errors, defineField } = useForm<FormValues>({
+const { listVeterinariansByHeadVetService } = useHeadquarterVetService()
+
+const { handleSubmit, errors, defineField, resetForm } = useForm<FormValues>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
     headquarterVetServiceId: undefined,
@@ -77,20 +80,51 @@ const searchClient = async () => {
   if (ownerDni.value && ownerDni.value.length === 8) {
     try {
       const getOwner = await getClientByDni(ownerDni.value)
-
-      ownerName.value = getOwner.fullName
-      ownerId.value = getOwner.id
+      resetForm({
+        values: {
+          headquarterVetServiceId: undefined,
+          ownerDni: ownerDni.value,
+          ownerId: getOwner.id,
+          ownerName: getOwner.fullName,
+          petId: undefined,
+          employeeId: undefined,
+        },
+      })
       const petsGet = await getPetByClientId(ownerId.value)
       petsOptions.value = petToOptionsSelect(petsGet)
       petsClient.value = petsGet
     } catch (e) {
       console.error('Error al obtener el nombre del dueño', e)
-      ownerName.value = ''
-      ownerId.value = 0
+      cleanFormClientIdChange()
       petsOptions.value = []
       petsClient.value = []
     }
+    serviceHeadquarterOptions.value=[]
+    employeesOptions.value = []
   }
+}
+
+//for clean when change clientid
+
+const cleanFormClientIdChange = () => {
+  resetForm({
+    values: {
+      headquarterVetServiceId: undefined,
+      ownerDni: ownerDni.value,
+      ownerId: undefined,
+      ownerName: '',
+      petId: undefined,
+      employeeId: undefined,
+    },
+  })
+}
+
+//for load avaibles employees
+
+const loadAvaiblesEmployees = async () => {
+  employeesOptions.value = employeeToOptionsSelect(
+    await listVeterinariansByHeadVetService(headquarterVetServiceId.value),
+  )
 }
 
 //for obtain headquarters Service
@@ -104,6 +138,7 @@ const loadHeadquartersService = async () => {
         await getServicesByHeadquarterAndSpecies(headquarterId.value, petClient.specieId),
       )
     }
+
   }
 }
 //for obtain options from pet
@@ -123,11 +158,26 @@ const serviceHeadquartersToOptionsSelect = (
   }))
 }
 //for obtain options from pet
-const employeeToOptionsSelect = (items: Employee[]): OptionSelect[] => {
+const employeeToOptionsSelect = (items: EmployeeBasicInfo[]): OptionSelect[] => {
   return items.map((item) => ({
-    value: item.employeeId,
-    name: `${item.lastnames} ${item.names}`,
+    value: item.id,
+    name: item.fullName,
   }))
+}
+
+//for change pet
+
+const changePet=()=>{
+  loadHeadquartersService()
+  headquarterVetServiceId.value=0
+  loadAvaiblesEmployees()
+  employeeId.value=0
+  employeesOptions.value=[]
+}
+
+const changeSevice=()=>{
+  loadAvaiblesEmployees()
+  employeeId.value=0
 }
 
 onMounted(async () => {
@@ -135,7 +185,6 @@ onMounted(async () => {
   if (employeeId) {
     headquarterId.value = (await getEmployeeById(employeeId)).headquarter.headquarterId
   }
-  employeesOptions.value = employeeToOptionsSelect(await getAllEmployees())
 })
 </script>
 
@@ -189,7 +238,13 @@ onMounted(async () => {
           {{ errors.ownerName }}
         </Message>
       </div>
-      <InputNumber v-model="ownerId" v-bind="ownerIdAttrs" hidden />
+      <!-- owner id -->
+      <InputNumber
+        @update:modelValue="cleanFormClientIdChange()"
+        v-model="ownerId"
+        v-bind="ownerIdAttrs"
+        hidden
+      />
 
       <div>
         <label class="block mb-2">Mascota</label>
@@ -201,7 +256,7 @@ onMounted(async () => {
           optionLabel="name"
           optionValue="value"
           placeholder="Selecciona Mascota"
-          @change="loadHeadquartersService()"
+          @change="changePet()"
         />
 
         <Message v-if="errors.petId" severity="error" size="small" variant="simple">
@@ -219,6 +274,7 @@ onMounted(async () => {
           optionLabel="name"
           optionValue="value"
           placeholder="Selecciona Servicio"
+          @change="changeSevice()"
         />
 
         <Message

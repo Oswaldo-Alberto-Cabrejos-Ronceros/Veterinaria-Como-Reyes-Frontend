@@ -46,8 +46,7 @@ export class HeadquarterVetServiceServiceImpl implements HeadquarterVetServiceSe
       headquarterVetServiceId: headquarterVetServiceId,
     }
     const response = await this.httpClient.get<EmployeeBasicInfo[]>(
-      `${this.urlBase}/veterinarians`,
-      params,
+      `${this.urlBase}/veterinarians`,params
     )
     return response.data
   }
