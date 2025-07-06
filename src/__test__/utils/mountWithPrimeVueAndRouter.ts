@@ -5,6 +5,7 @@ import router from '@/router'
 import { createTestingPinia } from '@pinia/testing'
 import ConfirmationService from 'primevue/confirmationservice'
 import ConfirmDialog from 'primevue/confirmdialog'
+import { ToastService } from 'primevue'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function mountWithPrimeVueAndRouter(component: any, options = {}) {
@@ -15,6 +16,7 @@ export function mountWithPrimeVueAndRouter(component: any, options = {}) {
         router,
         createTestingPinia({ stubActions: false }),
         ConfirmationService,
+        ToastService,
       ],
       components: {
         ...components,

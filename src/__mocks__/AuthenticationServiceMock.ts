@@ -8,7 +8,7 @@ export class AuthenticationServiceMock implements AuthenticationService {
       userId: 1,
       entityId: 1,
       mainRole: 'ADMIN',
-      groupedPermissions: [],
+      groupedPermissions: {},
     }
   }
   async loginEmployee(email: string, password: string): Promise<User> {
@@ -17,7 +17,7 @@ export class AuthenticationServiceMock implements AuthenticationService {
       userId: 1,
       entityId: 1,
       mainRole: 'ADMIN',
-      groupedPermissions: [],
+      groupedPermissions: {},
     }
   }
   async login(email: string, password: string): Promise<User> {
@@ -26,7 +26,7 @@ export class AuthenticationServiceMock implements AuthenticationService {
       userId: 1,
       entityId: 1,
       mainRole: 'ADMIN',
-      groupedPermissions: [],
+      groupedPermissions: {},
     }
   }
   async register(user: UserClientRequest): Promise<User> {
@@ -35,7 +35,7 @@ export class AuthenticationServiceMock implements AuthenticationService {
       userId: 1,
       entityId: 1,
       mainRole: 'CLIENT',
-      groupedPermissions: [],
+      groupedPermissions: {},
     }
   }
   async logout(): Promise<void> {
