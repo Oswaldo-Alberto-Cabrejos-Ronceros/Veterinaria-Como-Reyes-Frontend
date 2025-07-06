@@ -78,7 +78,13 @@ onMounted(() => {
             <InputGroupAddon class="text-neutral-400">
               <i class="pi pi-info"></i>
             </InputGroupAddon>
-            <InputText v-model="name" v-bind="nameAttrs" class="w-full" placeholder="Nombre" />
+            <InputText
+              v-model="name"
+              v-bind="nameAttrs"
+              :invalid="Boolean(errors.name)"
+              class="w-full"
+              placeholder="Nombre"
+            />
           </InputGroup>
           <Message v-if="errors.name" severity="error" size="small" variant="simple">
             {{ errors.name }}
@@ -92,6 +98,7 @@ onMounted(() => {
             v-bind="specieIdAttrs"
             v-model="specieId"
             :options="speciesOptions"
+            :invalid="Boolean(errors.specieId)"
             optionLabel="name"
             optionValue="value"
             placeholder="Selecciona Especie"

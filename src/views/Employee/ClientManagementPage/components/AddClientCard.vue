@@ -133,7 +133,13 @@ const searchInfoReniec = async () => {
           <InputGroupAddon class="text-neutral-400">
             <i class="pi pi-id-card"></i>
           </InputGroupAddon>
-          <InputText v-bind="dniAttrs" v-model="dni" type="text" placeholder="Ej: 74512351" />
+          <InputText
+            v-bind="dniAttrs"
+            v-model="dni"
+            type="text"
+            :invalid="Boolean(errors.dni)"
+            placeholder="Ej: 74512351"
+          />
           <InputGroupAddon>
             <Button
               icon="pi pi-search"
@@ -158,6 +164,7 @@ const searchInfoReniec = async () => {
           <InputText
             v-model="fieldMap[element.key][0].value"
             v-bind="fieldMap[element.key][1]"
+            :invalid="Boolean(errors[element.key])"
             class="w-full"
             :placeholder="element.placeholder"
           />
@@ -208,6 +215,7 @@ const searchInfoReniec = async () => {
             v-bind="emailAttrs"
             v-model="email"
             type="text"
+            :invalid="Boolean(errors.email)"
             placeholder="Ej: example@gmail.com"
           />
         </InputGroup>
@@ -226,6 +234,7 @@ const searchInfoReniec = async () => {
           <Password
             v-bind="passwordAttrs"
             v-model="password"
+            :invalid="Boolean(errors.password)"
             toggleMask
             :feedback="false"
             placeholder="Contraseña"
@@ -246,6 +255,7 @@ const searchInfoReniec = async () => {
           <Password
             v-bind="confirmPasswordAttrs"
             v-model="confirmPassword"
+            :invalid="Boolean(errors.confirmPassword)"
             toggleMask
             placeholder="Confirmar contraseña"
           />

@@ -201,6 +201,7 @@ onMounted(async () => {
           <InputText
             v-model="ownerDni"
             v-bind="ownerDniAttrs"
+            :invalid="Boolean(errors.ownerDni)"
             class="w-full"
             placeholder="Busque dueño por DNI"
           />
@@ -228,6 +229,7 @@ onMounted(async () => {
           <InputText
             v-model="ownerName"
             v-bind="ownerNameAttrs"
+            :invalid="Boolean(errors.ownerName)"
             class="w-full"
             placeholder="Nombre del dueño"
             disabled
@@ -253,6 +255,7 @@ onMounted(async () => {
           v-bind="petIdAttrs"
           v-model="petId"
           :options="petsOptions"
+          :invalid="Boolean(errors.petId)"
           optionLabel="name"
           optionValue="value"
           placeholder="Selecciona Mascota"
@@ -271,6 +274,7 @@ onMounted(async () => {
           v-bind="headquarterVetServiceIdAttrs"
           v-model="headquarterVetServiceId"
           :options="serviceHeadquarterOptions"
+          :invalid="Boolean(errors.headquarterVetServiceId)"
           optionLabel="name"
           optionValue="value"
           placeholder="Selecciona Servicio"
@@ -293,6 +297,7 @@ onMounted(async () => {
           v-bind="employeeIdAttrs"
           v-model="employeeId"
           :options="employeesOptions"
+          :invalid="Boolean(errors.employeeId)"
           optionLabel="name"
           optionValue="value"
           placeholder="Selecciona Empleado"

@@ -219,6 +219,7 @@ const attendAppointment = (appointmentId:number)=>{
                 class="w-full"
                 v-bind="dateAttrs"
                 v-model="date"
+                :invalid="Boolean(errors.date)"
                 placeholder="Selecciona Fecha"
               />
 
@@ -233,6 +234,7 @@ const attendAppointment = (appointmentId:number)=>{
                 class="w-full"
                 v-bind="headquarterIdAttrs"
                 v-model="headquarterId"
+                :invalid="Boolean(errors.headquarterId)"
                 :options="headquartersOptions"
                 optionLabel="name"
                 optionValue="value"
@@ -250,6 +252,7 @@ const attendAppointment = (appointmentId:number)=>{
                 class="w-full"
                 v-bind="categoryIdAttrs"
                 v-model="categoryId"
+                :invalid="Boolean(errors.categoryId)"
                 :options="categoriesOptions"
                 optionLabel="name"
                 optionValue="value"
@@ -267,14 +270,15 @@ const attendAppointment = (appointmentId:number)=>{
                 class="w-full"
                 v-bind="statusAttrs"
                 v-model="status"
+                :invalid="Boolean(errors.status)"
                 :options="statusOptions"
                 optionLabel="name"
                 optionValue="value"
                 placeholder="Selecciona Estado"
               />
 
-              <Message v-if="errors.headquarterId" severity="error" size="small" variant="simple">
-                {{ errors.headquarterId }}
+              <Message v-if="errors.status" severity="error" size="small" variant="simple">
+                {{ errors.status }}
               </Message>
             </div>
             <div class="form-button-search-container-grid-col-5">

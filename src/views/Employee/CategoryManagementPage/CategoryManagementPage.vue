@@ -185,7 +185,13 @@ const exportCSV = () => {
                 <InputGroupAddon class="text-neutral-400">
                   <i class="pi pi-info"></i>
                 </InputGroupAddon>
-                <InputText v-model="name" v-bind="nameAttrs" class="w-full" placeholder="Nombre de la categoria" />
+                <InputText
+                  v-model="name"
+                  v-bind="nameAttrs"
+                  :invalid="Boolean(errors.name)"
+                  class="w-full"
+                  placeholder="Nombre de la categoria"
+                />
               </InputGroup>
               <Message v-if="errors.name" severity="error" size="small" variant="simple">
                 {{ errors.name }}

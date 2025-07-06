@@ -161,6 +161,7 @@ const viewCare = (careId: number) => {
                 class="w-full"
                 v-bind="dateAttrs"
                 v-model="date"
+                :invalid="Boolean(errors.date)"
                 placeholder="Selecciona Fecha"
               />
 
@@ -176,6 +177,7 @@ const viewCare = (careId: number) => {
                 v-bind="headquarterIdAttrs"
                 v-model="headquarterId"
                 :options="headquartersOptions"
+                :invalid="Boolean(errors.headquarterId)"
                 optionLabel="name"
                 optionValue="value"
                 placeholder="Selecciona Sede"
@@ -195,6 +197,7 @@ const viewCare = (careId: number) => {
                 v-bind="headquarterServiceIdAttrs"
                 v-model="headquarterServiceId"
                 :options="servicesOptions"
+                :invalid="Boolean(errors.headquarterServiceId)"
                 optionLabel="name"
                 optionValue="value"
                 placeholder="Selecciona Servicio"
@@ -212,6 +215,7 @@ const viewCare = (careId: number) => {
                 v-bind="statusAttrs"
                 v-model="status"
                 :options="statusOptions"
+                :invalid="Boolean(errors.status)"
                 optionLabel="name"
                 optionValue="value"
                 placeholder="Selecciona Estado"

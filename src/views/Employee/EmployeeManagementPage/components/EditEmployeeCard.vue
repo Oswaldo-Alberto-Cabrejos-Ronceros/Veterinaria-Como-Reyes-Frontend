@@ -174,7 +174,13 @@ const searchInfoReniec = async () => {
           <InputGroupAddon class="text-neutral-400">
             <i class="pi pi-id-card"></i>
           </InputGroupAddon>
-          <InputText v-bind="dniAttrs" v-model="dni" type="text" placeholder="Ej: 74512351" />
+          <InputText
+            v-bind="dniAttrs"
+            v-model="dni"
+            :invalid="Boolean(errors.dni)"
+            type="text"
+            placeholder="Ej: 74512351"
+          />
                   <InputGroupAddon>
             <Button
               icon="pi pi-search"
@@ -198,6 +204,7 @@ const searchInfoReniec = async () => {
           class="w-full"
           v-bind="roleIdAttrs"
           v-model="roleId"
+          :invalid="Boolean(errors.roleId)"
           :options="rolesOptions"
           optionLabel="name"
           optionValue="value"
@@ -219,6 +226,7 @@ const searchInfoReniec = async () => {
           <InputText
             v-bind="cmvpAttrs"
             v-model="cmvp"
+            :invalid="Boolean(errors.cmvp)"
             type="text"
             placeholder="Ej: 14125"
             :disabled="roleId !== 2"
@@ -239,6 +247,7 @@ const searchInfoReniec = async () => {
           <InputText
             v-model="fieldMap[element.key][0].value"
             v-bind="fieldMap[element.key][1]"
+            :invalid="Boolean(errors[element.key])"
             class="w-full"
             :placeholder="element.placeholder"
           />
@@ -252,6 +261,7 @@ const searchInfoReniec = async () => {
         <DatePicker
           v-bind="birthdateAttrs"
           v-model="birthdate"
+          :invalid="Boolean(errors.birthdate)"
           showIcon
           fluid
           iconDisplay="input"
@@ -267,6 +277,7 @@ const searchInfoReniec = async () => {
           class="w-full"
           v-bind="headquarterIdAttrs"
           v-model="headquarterId"
+          :invalid="Boolean(errors.headquarterId)"
           :options="headquartersOptions"
           optionLabel="name"
           optionValue="value"

@@ -315,6 +315,7 @@ const exportCSV = () => {
                 <InputText
                   v-model="fieldMap[element.key][0].value"
                   v-bind="fieldMap[element.key][1]"
+                  :invalid="Boolean(errors[element.key])"
                   class="w-full"
                   @update:model-value="searchEmployeeDebounce()"
                   :placeholder="element.title"
@@ -331,6 +332,7 @@ const exportCSV = () => {
                 class="w-full"
                 v-bind="rolAttrs"
                 v-model="rol"
+                :invalid="Boolean(errors.rol)"
                 :options="rolesOptions"
                 optionLabel="name"
                 optionValue="value"
@@ -346,6 +348,7 @@ const exportCSV = () => {
                 class="w-full"
                 v-bind="headquarterAttrs"
                 v-model="headquarter"
+                :invalid="Boolean(errors.headquarter)"
                 :options="headquartersOptions"
                 optionLabel="name"
                 optionValue="value"

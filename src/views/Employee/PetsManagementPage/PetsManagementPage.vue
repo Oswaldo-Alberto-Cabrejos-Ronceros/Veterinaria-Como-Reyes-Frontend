@@ -277,6 +277,7 @@ const exportCSV = () => {
                 <InputText
                   v-model="textFields[element.key][0].value"
                   v-bind="textFields[element.key][1]"
+                  :invalid="Boolean(errors[element.key])"
                   class="w-full"
                   :placeholder="element.title"
                 />
@@ -291,6 +292,7 @@ const exportCSV = () => {
                 class="w-full"
                 v-bind="specieIdAttrs"
                 v-model="specieId"
+                :invalid="Boolean(errors.specieId)"
                 :options="speciesOptions"
                 optionLabel="name"
                 optionValue="value"
@@ -308,6 +310,7 @@ const exportCSV = () => {
                 v-bind="breedIdAttrs"
                 v-model="breedId"
                 :options="breedsOptions"
+                :invalid="Boolean(errors.breedId)"
                 optionLabel="name"
                 optionValue="value"
                 placeholder="Selecciona Raza"
@@ -323,6 +326,7 @@ const exportCSV = () => {
                 class="w-full"
                 v-bind="genderAttrs"
                 v-model="gender"
+                :invalid="Boolean(errors.gender)"
                 :options="genders"
                 optionLabel="name"
                 optionValue="value"
