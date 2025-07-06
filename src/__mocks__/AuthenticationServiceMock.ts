@@ -34,7 +34,7 @@ export class AuthenticationServiceMock implements AuthenticationService {
     return {
       userId: 1,
       entityId: 1,
-      mainRole: 'ADMIN',
+      mainRole: 'CLIENT',
       groupedPermissions: [],
     }
   }
