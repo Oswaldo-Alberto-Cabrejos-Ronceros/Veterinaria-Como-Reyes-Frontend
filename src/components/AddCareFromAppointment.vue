@@ -69,10 +69,10 @@ onMounted(async () => {
 })
 </script>
 <template>
-  <div class="card-dialog-form-layout">
+  <div class="card-dialog-form-layout min-w-2xs">
 
-      <form @submit.prevent="onSubmit" class="form-dialog-layout-flex-col">
-        <div>
+      <form @submit.prevent="onSubmit" class="form-dialog-layout-flex-col w-full">
+        <div class="w-full">
           <label class="block mb-2">Empleado</label>
           <Select
             class="w-full"

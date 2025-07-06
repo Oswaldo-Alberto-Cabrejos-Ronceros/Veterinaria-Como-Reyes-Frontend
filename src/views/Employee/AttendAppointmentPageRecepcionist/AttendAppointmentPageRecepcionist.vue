@@ -9,6 +9,10 @@ import Divider from 'primevue/divider'
 import Select from 'primevue/select'
 import { useAppointment } from '@/composables/useAppointment'
 import type { Appointment } from '@/models/Appointment'
+import { useCare } from '@/composables/useCare'
+import { useDialog, useToast } from 'primevue'
+import AddCareFromAppointment from '@/components/AddCareFromAppointment.vue'
+import type { FormValues } from '@/validation-schemas-forms/schema-add-care-from-appointment'
 
 const props = defineProps<{
   appointmentId: string
@@ -17,14 +21,43 @@ const props = defineProps<{
 //methods
 
 const { getAppointmentById } = useAppointment()
+const { createCareFromAppointment } = useCare()
 
 //ref
 const appointmentBasicInfo = ref<Appointment | null>(null)
 
 onMounted(async () => {
   console.log(props.appointmentId)
-  appointmentBasicInfo.value = await getAppointmentById(Number(props.appointmentId))
+  loadInfo()
 })
+
+const loadInfo = async () => {
+  appointmentBasicInfo.value = await getAppointmentById(Number(props.appointmentId))
+}
+
+//for dialog
+const dialog = useDialog()
+
+//for create care when the client arrive
+const openCreateCareConfirmArrive = () => {
+  dialog.open(AddCareFromAppointment, {
+    props: {
+      modal: true,
+      header: 'Crear Atención',
+    },
+    data: {
+      appointmentId: Number(props.appointmentId),
+    },
+    onClose: async (options) => {
+      const data = options?.data as FormValues
+      if (data) {
+        const care = await createCareFromAppointment(data)
+        loadInfo()
+        showToast(`Atención creada correctamente: ${care.dateTime}`)
+      }
+    },
+  })
+}
 
 const appointmentInfo: {
   time: string
@@ -75,11 +108,31 @@ const ownerInfo: {
   email: 'oswaldocabrejosr@gmail.com',
   address: 'Av. Brasil',
 }
+//for toast
+//toast
+const toast = useToast()
+
+const showToast = (message: string) => {
+  toast.add({
+    severity: 'success',
+    summary: 'Éxito',
+    detail: message,
+    life: 3000,
+  })
+}
 </script>
 
 <template>
   <div class="layout-principal-flex flex-col gap-2">
-    <CardAppointmentInfo v-if="appointmentBasicInfo" :time="appointmentBasicInfo.scheduleDateTime" :serviceDuration="appointmentInfo.serviceDuration" :serviceName="appointmentInfo.serviceName" :veterinaryName="appointmentBasicInfo.assignedEmployee?.names" :comentario="appointmentInfo.comentario" :status="appointmentBasicInfo.statusAppointment"  />
+    <CardAppointmentInfo
+      v-if="appointmentBasicInfo"
+      :time="appointmentBasicInfo.scheduleDateTime"
+      :serviceDuration="appointmentInfo.serviceDuration"
+      :serviceName="appointmentInfo.serviceName"
+      :veterinaryName="appointmentBasicInfo.assignedEmployee?.names"
+      :comentario="appointmentInfo.comentario"
+      :status="appointmentBasicInfo.statusAppointment"
+    />
     <div class="w-full grid grid-cols-2 gap-4">
       <CardPetInfo v-bind="petInfo"></CardPetInfo>
       <CardOwnerInfo v-bind="ownerInfo" />
@@ -103,18 +156,21 @@ const ownerInfo: {
           >
             <div class="text-blue-600 dark:text-blue-400">
               <p>Hora de llegada</p>
-              <p class="textLg font-bold">{{appointmentBasicInfo?.scheduleDateTime}}</p>
+              <p class="textLg font-bold">{{ appointmentBasicInfo?.scheduleDateTime }}</p>
             </div>
             <Button
+              v-if="appointmentBasicInfo?.statusAppointment === 'Programada'"
               size="small"
               icon="pi pi-check-circle"
               icon-pos="left"
               label="Confirmar llegada"
               class="bg-blue-500 border-blue-500"
+              @click="openCreateCareConfirmArrive"
             />
           </div>
           <!-- time -->
-          <div v-if="appointmentBasicInfo?.statusAppointment==='Programada'"
+          <div
+            v-if="appointmentBasicInfo?.statusAppointment === 'Programada'"
             class="p-4 shadow-none border-1 rounded-sm border-green-500 bg-green-50 dark:bg-transparent w-full flex justify-between items-center"
           >
             <div class="text-green-600 dark:text-green-400">
