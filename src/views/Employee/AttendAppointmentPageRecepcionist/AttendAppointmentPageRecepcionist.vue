@@ -5,14 +5,13 @@ import CardPetInfo from '@/components/CardPetInfo.vue'
 import CardOwnerInfo from '@/components/CardOwnerInfo.vue'
 import Card from 'primevue/card'
 import Button from 'primevue/button'
-import Divider from 'primevue/divider'
-import Select from 'primevue/select'
 import { useAppointment } from '@/composables/useAppointment'
 import type { Appointment } from '@/models/Appointment'
 import { useCare } from '@/composables/useCare'
 import { useDialog, useToast } from 'primevue'
 import AddCareFromAppointment from '@/components/AddCareFromAppointment.vue'
 import type { FormValues } from '@/validation-schemas-forms/schema-add-care-from-appointment'
+import CardBilling from '@/components/CardBilling.vue'
 
 const props = defineProps<{
   appointmentId: string
@@ -185,59 +184,6 @@ const showToast = (message: string) => {
 
     <!-- payment -->
 
-    <Card class="card-primary w-full">
-      <template #title>
-        <div class="flex gap-2 items-center">
-          <i class="pi pi-money-bill"></i>
-          <p>Facturación</p>
-        </div>
-      </template>
-      <template #subtitle>
-        <p>Procesamiento de pago</p>
-      </template>
-      <template #content>
-        <h3 class="textLg font-semibold">Servicio programado</h3>
-        <div
-          class="mt-4 rounded-sm bg-surface-100 dark:bg-surface-800 flex items-center justify-between p-3"
-        >
-          <p class="textLg font-semibold">Consulta General</p>
-          <p class="textLg font-semibold text-green-600 dark:text-green-400">S/ 80</p>
-        </div>
-        <Divider />
-        <div class="textLg flex items-center justify-between">
-          <p>Subtotal:</p>
-          <p>S/ 65.6</p>
-        </div>
-        <div class="textLg flex items-center justify-between mt-2">
-          <p>IGV (18%):</p>
-          <p>S/ 14.4</p>
-        </div>
-        <Divider />
-        <div
-          class="textLg mb-4 font-bold text-green-600 dark:text-green-400 flex items-center justify-between"
-        >
-          <p>Total:</p>
-          <p>S/ 80</p>
-        </div>
-        <p>Método de pago</p>
-        <Select placeholder="Seleccione método de pago" class="w-full mt-4" fluid />
-        <div class="w-full flex gap-4 mt-4">
-          <Button
-            severity="success"
-            icon-pos="left"
-            icon="pi pi-credit-card"
-            label="Procesar pago"
-            class="flex-1"
-          />
-          <Button
-            label="Generar Boleta"
-            icon="pi pi-receipt"
-            icon-pos="left"
-            variant="outlined"
-            severity="secondary"
-          />
-        </div>
-      </template>
-    </Card>
+    <CardBilling serviceName="Consulta General" :price="80"/>
   </div>
 </template>
