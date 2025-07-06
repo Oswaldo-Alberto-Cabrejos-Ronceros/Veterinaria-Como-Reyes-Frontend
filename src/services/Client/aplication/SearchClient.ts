@@ -1,5 +1,5 @@
 import type { PageResponse } from '@/services/models/PageResponse'
-import type { Client } from '../domain/models/Client'
+import type { ClientList } from '../domain/models/Client'
 import type { ClientService } from '../domain/services/ClientService'
 
 export class SearchClient {
@@ -12,7 +12,7 @@ export class SearchClient {
     headquarterId?: number,
     page?: number,
     size?: number,
-  ): Promise<PageResponse<Client>> {
+  ): Promise<PageResponse<ClientList>> {
     return await this.clientService.searchClients(
       dni,
       name,

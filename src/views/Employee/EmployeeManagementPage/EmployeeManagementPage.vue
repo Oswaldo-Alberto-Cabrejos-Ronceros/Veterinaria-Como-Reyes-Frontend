@@ -113,7 +113,7 @@ const loadEmployees = async (event?: DataTablePageEvent) => {
   totalRecords.value = pageResponse.totalElements
 
   rolesOptions.value = rolesToOptionsNameSelect(await getAllRoles())
-  headquartersOptions.value = headquartersToOptionsSelect(await getAllHeadquarters())
+  headquartersOptions.value = headquartersNameToOptionsSelect(await getAllHeadquarters())
 }
 
 //for get options from roles
@@ -134,12 +134,20 @@ const rolesToOptionsSelect = (roles: Role[]): OptionSelect[] => {
 
 //for get options from headquarters
 
-const headquartersToOptionsSelect = (headquarters: Headquarter[]): OptionSelect[] => {
+const headquartersNameToOptionsSelect = (headquarters: Headquarter[]): OptionSelect[] => {
   return headquarters.map((headquarter) => ({
     value: headquarter.name,
     name: headquarter.name,
   }))
 }
+
+const headquartersToOptionsSelect = (headquarters: Headquarter[]): OptionSelect[] => {
+  return headquarters.map((headquarter) => ({
+    value: headquarter.id,
+    name: headquarter.name,
+  }))
+}
+
 
 //form
 

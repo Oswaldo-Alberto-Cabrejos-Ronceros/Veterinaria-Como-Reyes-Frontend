@@ -9,10 +9,9 @@ import Message from 'primevue/message'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/yup'
 import Button from 'primevue/button'
-import DataTable from 'primevue/datatable'
+import DataTable, { type DataTablePageEvent } from 'primevue/datatable'
 import Column from 'primevue/column'
 import { onMounted, ref } from 'vue'
-import type { Client } from '@/models/Client'
 import { useConfirm } from 'primevue'
 import ViewClientCard from './components/ViewClientCard.vue'
 import { useDialog, useToast } from 'primevue'
@@ -22,6 +21,12 @@ import EditClientCard from './components/EditClientCard.vue'
 import type { FormValues as SchemaEditClient } from '@/validation-schemas-forms/schema-edit-client'
 import type { FormValues as SchemaClientAdd } from '@/validation-schemas-forms/schema-add-client'
 import { useClient } from '@/composables/useClient'
+import type { OptionSelect } from '@/models/OptionSelect'
+import type { Headquarter } from '@/models/Headquarter'
+import Select from 'primevue/select'
+import { useHeadquarter } from '@/composables/useHeadquarter'
+import { debounce } from 'lodash'
+import type { ClientList } from '@/models/ClientList'
 
 //toast
 const toast = useToast()
@@ -36,30 +41,57 @@ const showToast = (message: string) => {
 }
 
 //methods
-const { loading, error, getAllClients, createClient, updateClient, deleteClient, searchClient } =
-  useClient()
+const { loading, error, createClient, updateClient, deleteClient, searchClient, getClientById } = useClient()
+
+const { getAllHeadquarters } = useHeadquarter()
 
 //clients
+//refs
+const clients = ref<ClientList[]>([])
+const totalRecords = ref<number>(0)
 
-const clients = ref<Client[]>([])
+const rows = ref<number>(1)
+
+const first = ref<number>(0)
 
 onMounted(async () => {
   loadClients()
 })
 
+//for search clients
+
+const searchClientsDebounce = debounce(() => {
+  loadClients()
+})
+
 //for load clients
-const loadClients = async () => {
-  clients.value = await getAllClients()
+const loadClients = async (event?: DataTablePageEvent) => {
+  const page = event ? event.first / event.rows : 0
+  const size = event ? event.rows : rows.value
+  rows.value = size
+  const pageResponse = await searchClient(
+    fieldMap.dni[0].value,
+    fieldMap.names[0].value,
+    fieldMap.lastnames[0].value,
+    status.value,
+    headquarterId.value,
+    page,
+    size,
+  )
+  clients.value = pageResponse.content
+  totalRecords.value = pageResponse.totalElements
+
+  headquartersOptions.value = headquartersToOptionsSelect(await getAllHeadquarters())
 }
 
-const { handleSubmit, errors, defineField } = useForm<SchemaSearchClient>({
+const { errors, defineField } = useForm<SchemaSearchClient>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
     dni: '',
     names: '',
     lastnames: '',
-    phone: '',
-    email: '',
+    status: true,
+    headquarterId: undefined,
   },
 })
 
@@ -67,17 +99,19 @@ const fieldMap = {
   dni: defineField('dni'),
   names: defineField('names'),
   lastnames: defineField('lastnames'),
-  phone: defineField('phone'),
-  email: defineField('email'),
 }
+
+//aditionals fields
+const [status, statusAttrs] = defineField('status')
+const [headquarterId, headquarterIdAttrs] = defineField('headquarterId')
 
 //for dialog
 const dialog = useDialog()
 
-const viewClient = (clientData: Client) => {
+const viewClient = async (clientData: ClientList) => {
   dialog.open(ViewClientCard, {
     data: {
-      clientData: clientData,
+      clientData: await getClientById(clientData.id),
     },
     props: {
       modal: true,
@@ -104,17 +138,18 @@ const addClient = () => {
   })
 }
 
-const editClient = (clientData: Client) => {
+const editClient = async (clientData: ClientList) => {
+  const client = await getClientById(clientData.id)
   dialog.open(EditClientCard, {
     data: {
       clientData: {
-        dni: clientData.dni,
-        names: clientData.names,
-        lastnames: clientData.lastnames,
-        phone: clientData.phone,
-        address: clientData.phone,
-        birthdate: new Date(clientData.birthdate),
-        headquarterId: clientData.headquarter.headquarterId,
+        dni: client.dni,
+        names: client.names,
+        lastnames: client.lastnames,
+        phone: client.phone,
+        address: client.phone,
+        birthdate: new Date(client.birthdate),
+        headquarterId: client.headquarter.headquarterId,
       } as SchemaEditClient,
     },
     props: {
@@ -125,7 +160,7 @@ const editClient = (clientData: Client) => {
       const data = options?.data as SchemaEditClient
       if (data) {
         console.log(clientData)
-        const client = await updateClient(clientData.clientId, data)
+        const client = await updateClient(clientData.id, data)
         console.log('Datos recibidos', client)
         loadClients()
         showToast('Cliente editado exitosamente: ' + client.names)
@@ -138,7 +173,7 @@ const editClient = (clientData: Client) => {
 const confirm = useConfirm()
 
 //for delete with confirm popup
-const deleteClientAction = (event: MouseEvent | KeyboardEvent, client: Client) => {
+const deleteClientAction = (event: MouseEvent | KeyboardEvent, client: ClientList) => {
   confirm.require({
     group: 'confirmPopupGeneral',
     target: event.currentTarget as HTMLElement,
@@ -154,8 +189,8 @@ const deleteClientAction = (event: MouseEvent | KeyboardEvent, client: Client) =
       severity: 'danger',
     },
     accept: async () => {
-      console.log('Eliminando Empleado ', client.clientId)
-      await deleteClient(client.clientId)
+      console.log('Eliminando Empleado ', client.id)
+      await deleteClient(client.id)
       loadClients()
       showToast('Cliente eliminado exitosamente: ' + client.names)
     },
@@ -181,36 +216,33 @@ const searchElementsClient: { title: string; key: keyof typeof fieldMap; icon: s
     key: 'lastnames',
     icon: 'pi-user',
   },
-  {
-    title: 'Celular',
-    key: 'phone',
-    icon: 'pi-mobile',
-  },
-  {
-    title: 'Email',
-    key: 'email',
-    icon: 'pi-envelope',
-  },
 ]
-
-//for submit
-const onSubmit = handleSubmit(async (values) => {
-  console.log(values)
-  const pageSearchCliente = await searchClient(
-    values.dni,
-    values.names,
-    values.lastnames,
-    undefined,
-  )
-  const clientsSearch = pageSearchCliente.content
-  clients.value = clientsSearch
-})
 
 //for export
 
 const dt = ref()
 const exportCSV = () => {
   dt.value.exportCSV()
+}
+
+//options
+const statusOptions: OptionSelect[] = [
+  {
+    value: true,
+    name: 'Activo',
+  },
+  {
+    value: false,
+    name: 'Desativado',
+  },
+]
+const headquartersOptions = ref<OptionSelect[]>([])
+
+const headquartersToOptionsSelect = (headquarters: Headquarter[]): OptionSelect[] => {
+  return headquarters.map((headquarter) => ({
+    value: headquarter.id,
+    name: headquarter.name,
+  }))
 }
 </script>
 
@@ -223,7 +255,7 @@ const exportCSV = () => {
       <template #content>
         <div class="flex flex-col gap-6">
           <!-- form -->
-          <form @submit.prevent="onSubmit" class="form-search-grid-col-5">
+          <form class="form-search-grid-col-5">
             <div v-for="element in searchElementsClient" :key="element.key">
               <label class="block mb-2">{{ element.title }}</label>
               <InputGroup>
@@ -236,22 +268,49 @@ const exportCSV = () => {
                   :invalid="Boolean(errors[element.key])"
                   class="w-full"
                   :placeholder="element.title"
+                  @update:model-value="searchClientsDebounce()"
                 />
               </InputGroup>
               <Message v-if="errors[element.key]" severity="error" size="small" variant="simple">
                 {{ errors[element.key] }}
               </Message>
             </div>
-            <div class="form-button-search-container-grid-col-5">
-              <!-- button -->
-              <Button
-                label="Buscar"
-                type="submit"
-                severity="info"
-                icon="pi pi-search"
-                iconPos="right"
+
+            <!-- headquarter -->
+            <div>
+              <label class="block mb-2">Sede</label>
+              <Select
                 class="w-full"
+                v-bind="headquarterIdAttrs"
+                v-model="headquarterId"
+                :invalid="Boolean(errors.headquarterId)"
+                :options="headquartersOptions"
+                optionLabel="name"
+                optionValue="value"
+                placeholder="Selecciona Sede"
+                showClear
+                @update:model-value="searchClientsDebounce()"
               />
+            </div>
+
+            <!-- status -->
+
+            <div>
+              <label class="block mb-2">Estado</label>
+              <Select
+                class="w-full"
+                v-bind="statusAttrs"
+                v-model="status"
+                :options="statusOptions"
+                optionLabel="name"
+                optionValue="value"
+                placeholder="Selecciona Estado"
+                @update:model-value="searchClientsDebounce()"
+              />
+
+              <Message v-if="errors.status" severity="error" size="small" variant="simple">
+                {{ errors.status }}
+              </Message>
             </div>
           </form>
           <!-- for messague loading  -->
@@ -265,8 +324,13 @@ const exportCSV = () => {
           <DataTable
             :value="clients"
             paginator
-            :rows="10"
-            :rows-per-page-options="[10, 15, 20, 25, 30]"
+            :rows="rows"
+            :totalRecords="totalRecords"
+            :lazy="true"
+            :first="first"
+            :loading="loading.searchClient"
+            @page="loadClients"
+            :rows-per-page-options="[1, 2, 3, 4]"
             ref="dt"
           >
             <template #header>
@@ -297,16 +361,12 @@ const exportCSV = () => {
               style="width: 15%"
             ></Column>
             <Column
-              field="phone"
-              class="hidden xl:table-cell"
-              header="Celular"
+              class="hidden lg:table-cell"
+              header="Sede"
+              field="headquarterName"
               sortable
               style="width: 15%"
-            ></Column>
-            <Column class="hidden lg:table-cell" header="Correo" sortable style="width: 15%">
-              <template #body="{ data }">
-                {{ data.user.email }}
-              </template>
+            >
             </Column>
             <Column>
               <template #body="{ data }">

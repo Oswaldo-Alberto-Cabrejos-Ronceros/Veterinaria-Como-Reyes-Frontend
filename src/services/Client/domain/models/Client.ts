@@ -63,3 +63,12 @@ export interface ClientBasicInfoByDni {
   id: number
   fullName: string
 }
+
+export interface ClientList {
+  clientId: number
+  dni: string
+  name: string
+  lastName: string
+  headquarterName: string
+  status: string
+}
