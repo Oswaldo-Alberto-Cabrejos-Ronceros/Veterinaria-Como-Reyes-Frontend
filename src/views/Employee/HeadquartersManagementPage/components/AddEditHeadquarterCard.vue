@@ -141,6 +141,7 @@ onMounted(() => {
           <InputText
             v-model="fieldMap[element.key][0].value"
             v-bind="fieldMap[element.key][1]"
+            :invalid="Boolean(errors[element.key])"
             class="w-full"
             :placeholder="element.placeholder"
             :type="element.type"
@@ -158,6 +159,7 @@ onMounted(() => {
           class="w-full"
           v-bind="provinceAttrs"
           v-model="province"
+          :invalid="Boolean(errors.province)"
           :options="provinces"
           optionLabel="name"
           optionValue="value"
@@ -176,6 +178,7 @@ onMounted(() => {
           class="w-full"
           v-bind="districtAttrs"
           v-model="district"
+          :invalid="Boolean(errors.district)"
           :options="districts"
           optionLabel="name"
           optionValue="value"
@@ -194,17 +197,17 @@ onMounted(() => {
           class="w-full"
           v-bind="departamentAttrs"
           v-model="departament"
+          :invalid="Boolean(errors.departament)"
           :options="departaments"
           optionLabel="name"
           optionValue="value"
           placeholder="Selecciona Departamento"
         />
 
-        <Message v-if="errors.district" severity="error" size="small" variant="simple">
-          {{ errors.district }}
+        <Message v-if="errors.departament" severity="error" size="small" variant="simple">
+          {{ errors.departament }}
         </Message>
       </div>
-
       <div class="button-form-container-grid-end">
         <Button
           class="w-full max-w-md"

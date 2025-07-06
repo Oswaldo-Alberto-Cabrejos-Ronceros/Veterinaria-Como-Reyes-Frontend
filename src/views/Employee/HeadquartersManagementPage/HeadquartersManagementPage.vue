@@ -253,6 +253,7 @@ const exportCSV = () => {
                 class="w-full"
                 v-bind="provinceAttrs"
                 v-model="province"
+                :invalid="Boolean(errors.province)"
                 :options="provinces"
                 optionLabel="name"
                 optionValue="value"
@@ -271,6 +272,7 @@ const exportCSV = () => {
                 class="w-full"
                 v-bind="districtAttrs"
                 v-model="district"
+                :invalid="Boolean(errors.district)"
                 :options="districts"
                 optionLabel="name"
                 optionValue="value"
@@ -290,6 +292,7 @@ const exportCSV = () => {
                 <InputText
                   v-model="fieldMap[element.key][0].value"
                   v-bind="fieldMap[element.key][1]"
+                  :invalid="Boolean(errors[element.key])"
                   class="w-full"
                   :placeholder="element.title"
                   :type="element.type"

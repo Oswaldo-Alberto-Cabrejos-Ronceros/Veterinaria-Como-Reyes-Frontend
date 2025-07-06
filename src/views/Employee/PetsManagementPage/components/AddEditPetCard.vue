@@ -151,6 +151,7 @@ loadsBreed()
             <InputText
               v-model="ownerDni"
               v-bind="ownerDniAttrs"
+              :invalid="Boolean(errors.ownerDni)"
               class="w-full"
               placeholder="Busque dueño por DNI"
             />
@@ -178,6 +179,7 @@ loadsBreed()
             <InputText
               v-model="ownerFullName"
               v-bind="ownerFullNameAttrs"
+              :invalid="Boolean(errors.ownerFullName)"
               class="w-full"
               placeholder="Nombre del dueño"
               disabled
@@ -197,7 +199,7 @@ loadsBreed()
             <InputGroupAddon class="text-neutral-400">
               <i class="pi pi-info"></i>
             </InputGroupAddon>
-            <InputText v-model="name" v-bind="nameAttrs" class="w-full" placeholder="Nombre de la mascota" />
+            <InputText v-model="name" v-bind="nameAttrs" :invalid="Boolean(errors.name)" class="w-full" placeholder="Nombre de la mascota" />
           </InputGroup>
           <Message v-if="errors.name" severity="error" size="small" variant="simple">
             {{ errors.name }}
@@ -210,6 +212,7 @@ loadsBreed()
             class="w-full"
             v-bind="genderAttrs"
             v-model="gender"
+            :invalid="Boolean(errors.gender)"
             :options="genders"
             optionLabel="name"
             optionValue="value"
@@ -230,6 +233,7 @@ loadsBreed()
             <InputNumber
               v-model="weight"
               v-bind="weightAttrs"
+              :invalid="Boolean(errors.weight)"
               fluid
               class="w-full"
               placeholder="Peso"
@@ -246,6 +250,7 @@ loadsBreed()
           <DatePicker
             v-bind="birthdateAttrs"
             v-model="birthdate"
+            :invalid="Boolean(errors.birthdate)"
             showIcon
             fluid
             iconDisplay="input"
@@ -264,6 +269,7 @@ loadsBreed()
             class="w-full"
             v-bind="specieIdAttrs"
             v-model="specieId"
+            :invalid="Boolean(errors.specieId)"
             :options="speciesOptions"
             optionLabel="name"
             optionValue="value"
@@ -282,6 +288,7 @@ loadsBreed()
             class="w-full"
             v-bind="breedIdAttrs"
             v-model="breedId"
+            :invalid="Boolean(errors.breedId)"
             :options="breedsOptions"
             optionLabel="name"
             optionValue="value"
@@ -302,6 +309,7 @@ loadsBreed()
             <InputText
               v-model="urlImage"
               v-bind="urlImageAttrs"
+              :invalid="Boolean(errors.urlImage)"
               class="w-full"
               placeholder="Imagen"
             />
@@ -319,6 +327,7 @@ loadsBreed()
               id="description"
               v-model="comment"
               v-bind="commentAttrs"
+              :invalid="Boolean(errors.comment)"
               rows="5"
               class="resize-none w-full"
             />

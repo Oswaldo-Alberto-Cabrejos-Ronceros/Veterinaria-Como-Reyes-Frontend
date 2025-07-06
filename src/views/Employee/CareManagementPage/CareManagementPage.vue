@@ -155,6 +155,7 @@ const addCare = async () => {
                 class="w-full"
                 v-bind="dateAttrs"
                 v-model="date"
+                :invalid="Boolean(errors.date)"
                 placeholder="Selecciona Fecha"
               />
 
@@ -170,6 +171,7 @@ const addCare = async () => {
                 v-bind="headquarterIdAttrs"
                 v-model="headquarterId"
                 :options="headquartersOptions"
+                :invalid="Boolean(errors.headquarterId)"
                 optionLabel="name"
                 optionValue="value"
                 placeholder="Selecciona Sede"
@@ -189,6 +191,7 @@ const addCare = async () => {
                 v-bind="headquarterServiceIdAttrs"
                 v-model="headquarterServiceId"
                 :options="servicesOptions"
+                :invalid="Boolean(errors.headquarterServiceId)"
                 optionLabel="name"
                 optionValue="value"
                 placeholder="Selecciona Servicio"
@@ -206,6 +209,7 @@ const addCare = async () => {
                 v-bind="statusAttrs"
                 v-model="status"
                 :options="statusOptions"
+                :invalid="Boolean(errors.status)"
                 optionLabel="name"
                 optionValue="value"
                 placeholder="Selecciona Estado"

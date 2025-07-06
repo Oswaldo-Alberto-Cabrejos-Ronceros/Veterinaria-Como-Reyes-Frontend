@@ -89,7 +89,13 @@ const exportCSV = () => {
                 <InputGroupAddon class="text-neutral-400">
                   <i class="pi pi-id-card"></i>
                 </InputGroupAddon>
-                <InputText v-model="dni" v-bind="dniAttrs" class="w-full" placeholder="Dni" />
+                <InputText
+                  v-bind="dniAttrs"
+                  v-model="dni"
+                  :invalid="Boolean(errors.dni)"
+                  type="text"
+                  placeholder="Ej: 74512351"
+                />
               </InputGroup>
               <Message v-if="errors.dni" severity="error" size="small" variant="simple">
                 {{ errors.dni }}
@@ -102,6 +108,7 @@ const exportCSV = () => {
                 class="w-full"
                 v-bind="headquarterIdAttrs"
                 v-model="headquarterId"
+                :invalid="Boolean(errors.headquarterId)"
                 :options="headquarters"
                 optionLabel="name"
                 optionValue="value"
@@ -121,6 +128,7 @@ const exportCSV = () => {
                 class="w-full"
                 v-bind="servicesIdAttrs"
                 v-model="servicesId"
+                :invalid="Boolean(errors.serviceId)"
                 :options="services"
                 optionLabel="name"
                 optionValue="value"
@@ -134,7 +142,7 @@ const exportCSV = () => {
 
             <div>
               <label class="block mb-2">Fecha</label>
-              <DatePicker v-bind="dateAttrs" v-model="date" showIcon fluid iconDisplay="input" />
+              <DatePicker v-bind="dateAttrs" v-model="date" :invalid="Boolean(errors.date)" showIcon fluid iconDisplay="input" />
               <Message v-if="errors.date" severity="error" size="small" variant="simple">
                 {{ errors.date }}
               </Message>
