@@ -66,7 +66,7 @@ onMounted(() => {
           <InputGroupAddon class="text-neutral-400">
             <i class="pi pi-mobile"></i>
           </InputGroupAddon>
-          <InputText v-bind="phoneAttrs" v-model="phone" type="tel" placeholder="Celular" />
+          <InputText v-bind="phoneAttrs" v-model="phone" :invalid="Boolean(errors.phone)" type="tel" placeholder="Celular" />
         </InputGroup>
 
         <Message v-if="errors.phone" severity="error" size="small" variant="simple">
@@ -82,7 +82,7 @@ onMounted(() => {
           <InputGroupAddon class="text-neutral-400">
             <i class="pi pi-home"></i>
           </InputGroupAddon>
-          <InputText v-bind="addressAttrs" v-model="address" type="text" placeholder="Dirección" />
+          <InputText v-bind="addressAttrs" v-model="address" :invalid="Boolean(errors.address)" type="text" placeholder="Dirección" />
         </InputGroup>
 
         <Message v-if="errors.address" severity="error" size="small" variant="simple">
@@ -97,6 +97,7 @@ onMounted(() => {
           class="w-full"
           v-bind="headquarterIdAttrs"
           v-model="headquarterId"
+          :invalid="Boolean(errors.headquarterId)"
           :options="headquarkers"
           optionLabel="name"
           optionValue="value"
@@ -117,7 +118,7 @@ onMounted(() => {
           <InputGroupAddon class="text-neutral-400">
             <i class="pi pi-image"></i>
           </InputGroupAddon>
-          <InputText v-bind="dirImageAttrs" v-model="dirImage" type="text" placeholder="Imagen" />
+          <InputText v-bind="dirImageAttrs" v-model="dirImage" :invalid="Boolean(errors.dirImage)" type="text" placeholder="Imagen" />
         </InputGroup>
 
         <Message v-if="errors.dirImage" severity="error" size="small" variant="simple">

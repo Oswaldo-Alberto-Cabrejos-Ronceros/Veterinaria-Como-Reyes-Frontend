@@ -69,7 +69,7 @@ onMounted(() => {
             <InputGroupAddon class="text-neutral-400">
               <i class="pi pi-mobile"></i>
             </InputGroupAddon>
-            <InputText v-bind="phoneAttrs" v-model="phone" type="tel" placeholder="Celular" />
+            <InputText v-bind="phoneAttrs" v-model="phone" :invalid="Boolean(errors.phone)" type="tel" placeholder="Celular" />
           </InputGroup>
 
           <Message v-if="errors.phone" severity="error" size="small" variant="simple">
@@ -87,6 +87,7 @@ onMounted(() => {
             <InputText
               v-bind="addressAttrs"
               v-model="address"
+              :invalid="Boolean(errors.address)"
               type="text"
               placeholder="Dirección"
             />
@@ -102,6 +103,7 @@ onMounted(() => {
           <Select
             v-bind="headquarterIdAttrs"
             v-model="headquarterId"
+            :invalid="Boolean(errors.headquarterId)"
             :options="headquartersOptions"
             optionLabel="name"
             optionValue="value"

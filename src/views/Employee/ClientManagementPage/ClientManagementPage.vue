@@ -233,6 +233,7 @@ const exportCSV = () => {
                 <InputText
                   v-model="fieldMap[element.key][0].value"
                   v-bind="fieldMap[element.key][1]"
+                  :invalid="Boolean(errors[element.key])"
                   class="w-full"
                   :placeholder="element.title"
                 />
