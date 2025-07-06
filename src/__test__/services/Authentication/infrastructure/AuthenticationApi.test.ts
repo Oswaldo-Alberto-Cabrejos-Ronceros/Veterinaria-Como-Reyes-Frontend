@@ -6,7 +6,7 @@ import type { Mock } from 'vitest'
 
 // safeFetch mock
 vi.mock('@/utilities/safeFetch', () => ({
-  safeFetch: vi.fn()
+  safeFetch: vi.fn(),
 }))
 
 describe('AuthenticationServiceImpl', () => {
@@ -15,7 +15,7 @@ describe('AuthenticationServiceImpl', () => {
     userId: 0,
     entityId: 0,
     mainRole: '',
-    groupedPermissions: []
+    groupedPermissions: {},
   }
 
   beforeEach(() => {
@@ -37,8 +37,8 @@ describe('AuthenticationServiceImpl', () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: 'OswC@gmail.com', password: '123456' }),
-        credentials: 'include'
-      })
+        credentials: 'include',
+      }),
     )
   })
 
@@ -54,7 +54,7 @@ describe('AuthenticationServiceImpl', () => {
       phone: '',
       birthDate: '',
       headquarter: { headquarterId: 0 },
-      user: { email: '', password: '' }
+      user: { email: '', password: '' },
     }
 
     const user = await authApi.register(userRegister)
@@ -66,8 +66,8 @@ describe('AuthenticationServiceImpl', () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userRegister),
-        credentials: 'include'
-      })
+        credentials: 'include',
+      }),
     )
   })
 
@@ -82,8 +82,8 @@ describe('AuthenticationServiceImpl', () => {
       expect.objectContaining({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'include'
-      })
+        credentials: 'include',
+      }),
     )
   })
 })
