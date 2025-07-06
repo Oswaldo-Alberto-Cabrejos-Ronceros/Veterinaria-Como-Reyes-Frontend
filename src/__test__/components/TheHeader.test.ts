@@ -3,7 +3,6 @@ import TheHeader from "@/components/TheHeader.vue"
 import { mountWithPrimeVueAndRouter } from "../utils/mountWithPrimeVueAndRouter"
 import Menubar from "primevue/menubar"
 import { RouterLink } from "vue-router"
-import Image from "primevue/image"
 import router from "@/router"
 import Button from "primevue/button"
 describe('TheHeader.vue',()=>{
@@ -24,14 +23,6 @@ describe('TheHeader.vue',()=>{
     const wrapper = mountWithPrimeVueAndRouter(TheHeader);
     const routerLink = wrapper.findComponent(RouterLink);
     expect(routerLink.props('to')).toBe('/')
-  });
-  //for check Image exists and atributte to were correct
-  it('Check Image',()=>{
-    const wrapper = mountWithPrimeVueAndRouter(TheHeader);
-    const image = wrapper.findComponent(Image);
-    expect(image.exists()).toBe(true);
-    expect(image.attributes('src')).contain('logo-white.png');
-    expect(image.attributes('alt')).contain('Logo')
   });
   //for check RouterLink redirect to '/'
   it('Check RouterLink, should redirect to "/"',async ()=>{

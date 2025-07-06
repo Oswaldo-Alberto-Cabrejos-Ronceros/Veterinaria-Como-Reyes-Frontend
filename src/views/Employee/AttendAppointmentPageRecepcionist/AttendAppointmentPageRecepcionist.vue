@@ -1,0 +1,189 @@
+<script lang="ts" setup>
+import { onMounted, ref } from 'vue'
+import CardAppointmentInfo from '@/components/CardAppointmentInfo.vue'
+import CardPetInfo from '@/components/CardPetInfo.vue'
+import CardOwnerInfo from '@/components/CardOwnerInfo.vue'
+import Card from 'primevue/card'
+import Button from 'primevue/button'
+import { useAppointment } from '@/composables/useAppointment'
+import type { Appointment } from '@/models/Appointment'
+import { useCare } from '@/composables/useCare'
+import { useDialog, useToast } from 'primevue'
+import AddCareFromAppointment from '@/components/AddCareFromAppointment.vue'
+import type { FormValues } from '@/validation-schemas-forms/schema-add-care-from-appointment'
+import CardBilling from '@/components/CardBilling.vue'
+
+const props = defineProps<{
+  appointmentId: string
+}>()
+
+//methods
+
+const { getAppointmentById } = useAppointment()
+const { createCareFromAppointment } = useCare()
+
+//ref
+const appointmentBasicInfo = ref<Appointment | null>(null)
+
+onMounted(async () => {
+  console.log(props.appointmentId)
+  loadInfo()
+})
+
+const loadInfo = async () => {
+  appointmentBasicInfo.value = await getAppointmentById(Number(props.appointmentId))
+}
+
+//for dialog
+const dialog = useDialog()
+
+//for create care when the client arrive
+const openCreateCareConfirmArrive = () => {
+  dialog.open(AddCareFromAppointment, {
+    props: {
+      modal: true,
+      header: 'Crear Atención',
+    },
+    data: {
+      appointmentId: Number(props.appointmentId),
+      headquarterVetServiceId: appointmentBasicInfo.value?.headquarterVetService.id,
+    },
+    onClose: async (options) => {
+      const data = options?.data as FormValues
+      if (data) {
+        const care = await createCareFromAppointment(data)
+        loadInfo()
+        showToast(`Atención creada correctamente: ${care.dateTime}`)
+      }
+    },
+  })
+}
+
+const appointmentInfo: {
+  time: string
+  serviceDuration: number
+  serviceName: string
+  veterinaryName?: string
+  comentario?: string
+  status: string
+} = {
+  time: '9:30',
+  serviceDuration: 30,
+  serviceName: 'Consulta general',
+  veterinaryName: 'Paolo Cueva',
+  comentario: 'Consulta de rutina',
+  status: 'Programada',
+}
+
+const petInfo: {
+  name: string
+  specieName: string
+  breedName: string
+  weight: number
+  birthdate: string
+  gender: string
+  comment: string
+  urlImage: string
+} = {
+  name: 'Thor',
+  specieName: 'Perro',
+  breedName: 'Salchicha',
+  weight: 15,
+  birthdate: '05/12/2023',
+  gender: 'Macho',
+  comment: 'Perro juguetón, le encanta correr, celoso, no le gusta que se le acerquen al dueño',
+  urlImage: 'https://www.hola.com/horizon/43/d1eaad20c4c6-adobestock47432136.jpg',
+}
+
+const ownerInfo: {
+  name: string
+  lastname: string
+  phone: string
+    headquarterName: string
+  address: string
+} = {
+  name: 'Oswaldo Alberto',
+  lastname: 'Cabrejos Ronceros',
+  phone: '984156123',
+    headquarterName: 'Ica',
+  address: 'Av. Brasil',
+}
+//for toast
+//toast
+const toast = useToast()
+
+const showToast = (message: string) => {
+  toast.add({
+    severity: 'success',
+    summary: 'Éxito',
+    detail: message,
+    life: 3000,
+  })
+}
+</script>
+
+<template>
+  <div class="layout-principal-flex flex-col gap-2">
+    <CardAppointmentInfo
+      v-if="appointmentBasicInfo"
+      :time="appointmentBasicInfo.scheduleDateTime"
+      :serviceDuration="appointmentInfo.serviceDuration"
+      :serviceName="appointmentInfo.serviceName"
+      :veterinaryName="appointmentBasicInfo.assignedEmployee?.names"
+      :comentario="appointmentInfo.comentario"
+      :status="appointmentBasicInfo.statusAppointment"
+    />
+    <div class="w-full grid grid-cols-2 gap-4">
+      <CardPetInfo v-bind="petInfo"></CardPetInfo>
+      <CardOwnerInfo v-bind="ownerInfo" />
+    </div>
+    <!-- control -->
+    <Card class="card-primary w-full">
+      <template #title>
+        <div class="flex gap-2 items-center">
+          <i class="pi pi-clock"></i>
+          <p>Control de cita</p>
+        </div>
+      </template>
+      <template #subtitle>
+        <p>Control de estado y tiempo de la cita</p>
+      </template>
+      <template #content>
+        <div class="w-full grid grid-cols-2 gap-4">
+          <!-- complete -->
+          <div
+            class="p-4 shadow-none border-1 rounded-sm border-blue-500 bg-blue-50 dark:bg-transparent w-full flex justify-between items-center"
+          >
+            <div class="text-blue-600 dark:text-blue-400">
+              <p>Hora de llegada</p>
+              <p class="textLg font-bold">{{ appointmentBasicInfo?.scheduleDateTime }}</p>
+            </div>
+            <Button
+              v-if="appointmentBasicInfo?.statusAppointment === 'Programada'"
+              size="small"
+              icon="pi pi-check-circle"
+              icon-pos="left"
+              label="Confirmar llegada"
+              class="bg-blue-500 border-blue-500"
+              @click="openCreateCareConfirmArrive"
+            />
+          </div>
+          <!-- time -->
+          <div
+            v-if="appointmentBasicInfo?.statusAppointment === 'Programada'"
+            class="p-4 shadow-none border-1 rounded-sm border-green-500 bg-green-50 dark:bg-transparent w-full flex justify-between items-center"
+          >
+            <div class="text-green-600 dark:text-green-400">
+              <p>Tiempo de espera</p>
+              <p class="textLg font-bold">5 minutos</p>
+            </div>
+          </div>
+        </div>
+      </template>
+    </Card>
+
+    <!-- payment -->
+
+    <CardBilling serviceName="Consulta General" :price="80"/>
+  </div>
+</template>

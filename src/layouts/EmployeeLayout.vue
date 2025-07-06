@@ -1,19 +1,33 @@
 <script setup lang="ts">
 import TheHeader from '@/components/TheHeader.vue'
 import type { MenuItem } from 'primevue/menuitem'
-import { computed, ref, watch } from 'vue'
-import Menu from 'primevue/menu'
-import { RouterLink, useRoute } from 'vue-router'
+import { computed, onMounted, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
+import MenuNav from '@/components/MenuNav.vue'
+import { useAuthentication } from '@/composables/useAuthentication'
 
 //for now getting the role by router
 const route = useRoute()
 const role = ref(route.meta.role as string)
 
+const { getMainRole } = useAuthentication()
+
+const mainRole = ref<string>('')
+
+onMounted(() => {
+  const role = getMainRole()
+  if (role) mainRole.value = cleanRole(role)
+})
+
 const roleMap: Record<string, number> = {
-  MANAGER: 0,
-  ADMINISTRATOR: 1,
-  VETERINARY: 2,
-  RECEPTIONIST: 3,
+  ADMINISTRADOR: 0,
+  ENCARGADOSEDE: 1,
+  VETERINARIO: 2,
+  RECEPCIONISTA: 3,
+}
+
+const cleanRole = (role: string): string => {
+  return role.replace(/\s+/g, '').toUpperCase()
 }
 
 const items = ref<MenuItem[][]>([
@@ -21,63 +35,133 @@ const items = ref<MenuItem[][]>([
     {
       label: 'Inicio',
       icon: 'pi pi-home',
-      to: '/',
+      to: '/employee/administrator/home',
     },
     {
       label: 'Empleados',
       icon: 'pi pi-users',
-      to: '/',
+      to: '/employee/administrator/employee-management',
     },
     {
       label: 'Clientes',
       icon: 'pi pi-users',
-      to: '/',
-    },
-    {
-      label: 'Administradores',
-      icon: 'pi pi-users',
-      to: '/',
+      to: '/employee/administrator/client-management',
     },
     {
       label: 'Mascotas',
       icon: 'pi pi-github',
-      to: '/',
+      to: '/employee/administrator/pets-management',
+    },
+    {
+      label: 'Categorias',
+      icon: 'pi pi-sort-amount-up-alt',
+      to: '/employee/administrator/category-management',
+    },
+    {
+      label: 'Servicios',
+      icon: 'pi pi-calendar-plus',
+      to: '/employee/administrator/services-management',
+    },
+    {
+      label: 'Métodos de Pago',
+      icon: 'pi pi-wallet',
+      to: '/employee/administrator/payment-method-management',
+    },
+    {
+      label: 'Sedes',
+      icon: 'pi pi-map-marker',
+      to: '/employee/administrator/headquarter-management',
+    },
+    {
+      label: 'Roles y Permisos',
+      icon: 'pi pi-user-plus',
+      to: '/employee/administrator/roles-permission',
+    },
+    {
+      label: 'Especies',
+      icon: 'pi pi-github',
+      to: '/employee/administrator/species-management',
+    },
+    {
+      label: 'Razas',
+      icon: 'pi pi-github',
+      to: '/employee/administrator/breeds-management',
+    },
+    {
+      label: 'Servicios por Sede',
+      icon: 'pi pi-arrow-right-arrow-left',
+      to: '/employee/administrator/services-headquarters-management',
+    },
+    {
+      label: 'Pagos',
+      icon: 'pi pi-receipt',
+      to: '/employee/administrator/payment-management',
+    },
+    {
+      label: 'Citas',
+      icon: 'pi pi-clipboard',
+      to: '/employee/administrator/appoinment-management',
+    },
+    {
+      label: 'Atenciones',
+      icon: 'pi pi-file-edit',
+      to: '/employee/administrator/care-management',
     },
   ],
   [
     {
       label: 'Inicio',
       icon: 'pi pi-home',
-      to: '/',
+      to: '/employee/manager/home',
     },
     {
       label: 'Empleados',
       icon: 'pi pi-users',
-      to: '/',
+      to: '/employee/manager/employee-management',
     },
     {
       label: 'Clientes',
       icon: 'pi pi-users',
-      to: '/',
+      to: '/employee/manager/client-management',
+    },
+    {
+      label: 'Mascotas',
+      icon: 'pi pi-github',
+      to: '/employee/manager/pets-management',
+    },
+    {
+      label: 'Citas',
+      icon: 'pi pi-clipboard',
+      to: '/employee/manager/appoinment-management',
+    },
+    {
+      label: 'Atenciones',
+      icon: 'pi pi-file-edit',
+      to: '/employee/manager/care-management',
     },
   ],
   [
     {
       label: 'Inicio',
       icon: 'pi pi-home',
-      to: '/',
+      to: '/employee/veterinary/home',
     },
     {
       label: 'Citas',
       icon: 'pi pi-clipboard',
       to: '/',
     },
+    {
+      label: 'Mascotas',
+      icon: 'pi pi-github',
+      to: '/employee/veterinary/pets-management',
+    },
   ],
   [
     {
       label: 'Inicio',
       icon: 'pi pi-home',
-      to: '/',
+      to: '/employee/receptionist/home',
     },
     {
       label: 'Citas',
@@ -87,7 +171,22 @@ const items = ref<MenuItem[][]>([
     {
       label: 'Mascotas',
       icon: 'pi pi-github',
-      to: '/',
+      to: '/employee/receptionist/pets-management',
+    },
+    {
+      label: 'Pagos',
+      icon: 'pi pi-receipt',
+      to: '/employee/receptionist/payment-management',
+    },
+    {
+      label: 'Citas',
+      icon: 'pi pi-clipboard',
+      to: '/employee/receptionist/appoinment-management',
+    },
+    {
+      label: 'Atenciones',
+      icon: 'pi pi-file-edit',
+      to: '/employee/receptionist/care-management',
     },
   ],
 ])
@@ -99,31 +198,22 @@ watch(
   },
 )
 
-const itemsRole = computed(() => items.value[roleMap[role.value]] ?? [])
-</script>
+const itemsRole = computed(() => items.value[roleMap[mainRole.value]] ?? [])
 
+const showMenu = ref(true)
+
+const toggleMenu = () => {
+  showMenu.value = !showMenu.value
+}
+</script>
 <template>
-  <div class="w-full min-h-screen flex flex-col">
-    <TheHeader />
-    <main class="w-full flex-1 flex p-2">
-      <aside class="w-64">
-        <Menu :model="itemsRole">
-          <template #item="{ item, props }">
-            <router-link v-if="item.to" v-slot="{ href, navigate }" :to="item.to" custom>
-              <a
-                :href="href"
-                v-bind="props.action"
-                @click="navigate"
-                class="flex align-items-center"
-              >
-                <span v-if="item.icon" :class="item.icon" class="mr-2"></span>
-                <span>{{ item.label }}</span>
-              </a>
-            </router-link>
-          </template>
-        </Menu>
-      </aside>
-      <section class="flex-1 h-auto p-4"><router-view /></section>
+  <div class="w-full min-h-screen flex">
+    <MenuNav :role="mainRole" :items="itemsRole" :show-menu="showMenu" @update:show-menu="toggleMenu()" />
+    <main :class="['w-full flex-1 flex flex-col transition-all duration-200 ease-out' ,showMenu?'ml-64':'ml-0 sm:ml-20']">
+      <TheHeader @show-menu="toggleMenu()" :show-menu="showMenu" :role="mainRole" />
+      <section class="flex-1 h-auto py-1 px-0.5 xs:px-4 transition-all duration-200 ease-out">
+        <router-view />
+      </section>
     </main>
   </div>
 </template>
