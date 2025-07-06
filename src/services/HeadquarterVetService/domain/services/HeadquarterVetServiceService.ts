@@ -1,4 +1,4 @@
-import type { HeadquarterVetService } from '@/models/HeadquarterVetService'
+import type { HeadquarterVetService } from '../models/HeadquarterVetService'
 import type { HeadquarterVetServiceRequest } from '../models/HeadquarterVetService'
 import type { EmployeeBasicInfo } from '@/services/Employee/domain/models/Employee'
 

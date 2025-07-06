@@ -1,6 +1,5 @@
 import type { Animal } from '@/services/Animal/domain/models/Animal'
 import type { Employee } from '@/services/Employee/domain/models/Employee'
-import type { VeterinaryService } from '@/services/VeterinaryService/domain/models/VeterinaryService'
 
 export interface Appointment {
   appointmentId: number
@@ -21,11 +20,6 @@ export interface AppointmentRequest {
   paymentMethodId: number
 }
 
-export interface HeadquarterVetService {
-  id: number
-  headquarterId: number
-  service: VeterinaryService
-}
 
 export interface TimesForTurn {
   turn: string

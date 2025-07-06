@@ -2,7 +2,7 @@ import type { HeadquarterVetServiceService } from '../domain/services/Headquarte
 
 export class GetHeadquarterVetServiceByHeadquarter {
   constructor(private readonly headquarterVetService: HeadquarterVetServiceService) {}
-  async executer(headquarterId: number) {
+  async execute(headquarterId: number) {
     return this.headquarterVetService.getByHeadquarter(headquarterId)
   }
 }
