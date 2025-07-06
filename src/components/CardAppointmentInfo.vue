@@ -10,6 +10,7 @@ const props = defineProps<{
   veterinaryName?: string
   comentario?: string,
   status:string
+  isCare?:boolean
 }>()
 
 const itemsInfo = ref<{ title: string; icon: string; content: string }[]>([
@@ -37,7 +38,7 @@ onMounted(() => {
       <div class="flex gap-2 items-center justify-between">
         <div class="flex items-center gap-2">
         <i class="pi pi-calendar"></i>
-        <p>Información de la cita</p>
+        <p>Información de la {{isCare?'atención':'cita'}}</p>
         </div>
         <Tag severity="secondary" :value="status"/>
       </div>

@@ -6,7 +6,7 @@ const props = defineProps<{
   name: string
   lastname: string
   phone: string
-  email: string
+  headquarterName: string
   address: string
 }>()
 
@@ -14,12 +14,12 @@ const items = ref<{ icon: string; title: string; content: string }[]>([
   {
     icon: 'pi pi-phone',
     title: 'Celular',
-    content: props.name,
+    content: props.phone,
   },
   {
-    icon: 'pi pi-envelope',
-    title: 'Email',
-    content: props.email,
+    icon: 'pi pi-warehouse',
+    title: 'Sede',
+    content: props.headquarterName,
   },
   {
     icon: 'pi pi-home',

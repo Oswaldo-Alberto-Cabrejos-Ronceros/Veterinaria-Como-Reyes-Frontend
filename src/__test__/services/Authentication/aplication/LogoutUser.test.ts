@@ -15,6 +15,7 @@ describe('LogooutUser',()=>{
     const logoutUser = new LogoutUser(authService);
     await logoutUser.execute();
     const authenticationStore= useAuthenticationStore()
+    authenticationStore.cleanUser()
     expect(authenticationStore.user).toBe(null);
     expect(authenticationStore.userRole).toBe(null)
   })

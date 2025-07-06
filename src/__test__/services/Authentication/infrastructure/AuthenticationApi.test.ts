@@ -1,94 +1,89 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { AuthApi } from '@/services/Authentication/infrastructure/AuthenticationApi'
-import type { User, UserRequest } from '@/services/Authentication/domain/models/User'
-describe('AuthApi', () => {
+import { AuthenticationServiceImpl } from '@/services/Authentication/infrastructure/AuthenticationServiceImpl'
+import type { User, UserClientRequest } from '@/services/Authentication/domain/models/User'
+import { safeFetch } from '@/utilities/safeFetch'
+import type { Mock } from 'vitest'
+
+// safeFetch mock
+vi.mock('@/utilities/safeFetch', () => ({
+  safeFetch: vi.fn(),
+}))
+
+describe('AuthenticationServiceImpl', () => {
+  //mock user
+  const mockUser: User = {
+    userId: 0,
+    entityId: 0,
+    mainRole: '',
+    groupedPermissions: {},
+  }
+
   beforeEach(() => {
-    //cleaning all mocks before that test
     vi.restoreAllMocks()
+    ;(safeFetch as Mock).mockReset()
   })
 
   it('should log in successfully and return user', async () => {
-    //mock response
-    const mockResponse: User = {
-      id: 123,
-      name: 'Oswaldo Alberto',
-      lastname: 'Cabrejos Ronceros',
-      rol: 'ADMIN',
-    }
-    global.fetch = vi.fn(() =>
-      Promise.resolve({
-        ok: true,
-        status: 200,
-        json: () =>
-          Promise.resolve({
-            user: mockResponse,
-          }),
-      } as Response),
+    ;(safeFetch as Mock).mockResolvedValue(mockUser)
+    //user login
+    const authApi = new AuthenticationServiceImpl()
+    const user = await authApi.loginClient('OswC@gmail.com', '123456')
+
+    expect(user).toEqual(mockUser)
+    //verify the request
+    expect(safeFetch).toHaveBeenCalledWith(
+      'http://localhost:8080/api/auth/login/client',
+      expect.objectContaining({
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: 'OswC@gmail.com', password: '123456' }),
+        credentials: 'include',
+      }),
     )
-
-    const authApi = new AuthApi()
-    const user = await authApi.login('OswC@gmail.com', '123456')
-    expect(user).toEqual(mockResponse)
-
-    expect(fetch).toHaveBeenCalledWith('http://localhost:8080/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: 'OswC@gmail.com', password: '123456' }),
-    })
   })
+
   it('should register successfully and return user', async () => {
-    //mock response
-    const mockResponse: User = {
-      id: 123,
-      name: 'Oswaldo Alberto',
-      lastname: 'Cabrejos Ronceros',
-      rol: 'ADMIN',
-    }
+    ;(safeFetch as Mock).mockResolvedValue(mockUser)
 
-    global.fetch = vi.fn(() =>
-      Promise.resolve({
-        ok: true,
-        status: 200,
-        json: () =>
-          Promise.resolve({
-            user: mockResponse,
-          }),
-      } as Response),
-    )
-
-    const authApi = new AuthApi()
-    const userRegister: UserRequest = {
-      dni: '78451223',
-      names: 'Oswaldo Alberto',
-      lastnames: 'Cabrejos Ronceros',
-      email: 'OswCab@gmail.com',
-      address: 'Direccion',
-      cellphone: '984123125',
-      password: '122456',
+    const authApi = new AuthenticationServiceImpl()
+    const userRegister: UserClientRequest = {
+      dni: '',
+      name: '',
+      lastName: '',
+      address: '',
+      phone: '',
+      birthDate: '',
+      headquarter: { headquarterId: 0 },
+      user: { email: '', password: '' },
     }
 
     const user = await authApi.register(userRegister)
 
-    expect(user).toEqual(mockResponse)
-    expect(fetch).toBeCalledWith('http://localhost:8080/api/auth/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(userRegister),
-    })
-  });
-  it('should logout sucessfully', async ()=>{
-    global.fetch = vi.fn(() =>
-      Promise.resolve({
-        ok: true,
-        status: 200
-      } as Response),
-    );
-    const authApi=new AuthApi();
-    await authApi.logout();
-    expect(fetch).toBeCalledWith('http://localhost:8080/api/auth/logout',{
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-    })
+    expect(user).toEqual(mockUser)
+    expect(safeFetch).toHaveBeenCalledWith(
+      'http://localhost:8080/api/auth/register',
+      expect.objectContaining({
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userRegister),
+        credentials: 'include',
+      }),
+    )
+  })
+
+  it('should logout successfully', async () => {
+    ;(safeFetch as Mock).mockResolvedValue(undefined)
+
+    const authApi = new AuthenticationServiceImpl()
+    await authApi.logout()
+
+    expect(safeFetch).toHaveBeenCalledWith(
+      'http://localhost:8080/api/auth/logout',
+      expect.objectContaining({
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+      }),
+    )
   })
 })

@@ -64,3 +64,8 @@ export interface MyInfoEmployee {
     },
   ]
 }
+
+export interface EmployeeBasicInfo {
+  id: number
+  fullName: string
+}

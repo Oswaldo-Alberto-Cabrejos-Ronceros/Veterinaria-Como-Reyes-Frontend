@@ -2,7 +2,7 @@ export interface User {
   userId: number
   entityId: number
   mainRole: string
-  groupedPermissions: GroupedPermissions[]
+  groupedPermissions: GroupedPermissions
 }
 
 export interface GroupedPermissions {

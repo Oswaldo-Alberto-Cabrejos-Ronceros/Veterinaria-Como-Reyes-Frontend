@@ -21,13 +21,14 @@ import Column from 'primevue/column'
 import { useDialog, useToast } from 'primevue'
 import AddEditCareCard from './components/AddEditCareCard.vue'
 import type { FormValues as AddCareFromRequestSchema } from '@/validation-schemas-forms/schema-add-care'
+import { useRoute, useRouter } from 'vue-router'
 
 onMounted(async () => {
   loadCares()
 })
 
 //methods for care
-const { loading, error, getAllCares, completeCare,createCareFromRequest } = useCare()
+const { loading, error, getAllCares, completeCare, createCareFromRequest } = useCare()
 
 //for cares
 
@@ -114,7 +115,6 @@ const showToast = (message: string) => {
   })
 }
 
-
 //for dialog
 const dialog = useDialog()
 
@@ -123,18 +123,24 @@ const addCare = async () => {
   dialog.open(AddEditCareCard, {
     props: {
       modal: true,
-      header:"Crear atención"
+      header: 'Crear atención',
     },
     onClose: async (options) => {
       const data = options?.data as AddCareFromRequestSchema
       console.log(data)
-      if(data){
+      if (data) {
         const care = await createCareFromRequest(data)
         loadCares()
         showToast(`Atención creada: ${care.dateTime}`)
       }
     },
   })
+}
+const router = useRouter()
+const route = useRoute()
+
+const viewCare = (careId: number) => {
+  router.push(`${route.fullPath}/care/${careId}`)
 }
 </script>
 <template>
@@ -289,11 +295,12 @@ const addCare = async () => {
                     rounded
                   ></Button>
                   <Button
-                    icon="pi pi-pencil"
+                    icon="pi pi-calendar-clock"
                     severity="warn"
                     variant="outlined"
                     aria-label="Filter"
                     rounded
+                    @click="viewCare(slotProps.data.id)"
                   ></Button>
                   <Button
                     icon="pi pi-trash"

@@ -21,6 +21,9 @@ export class CareAdapter {
       pet: {
         id: care.animalId,
       },
+      employee: {
+        id: care.employeeId,
+      },
     }
   }
   static fromSchemaToCreateCareFromAppointmentRequest(
