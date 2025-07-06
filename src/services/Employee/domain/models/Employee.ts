@@ -69,3 +69,14 @@ export interface EmployeeBasicInfo {
   id: number
   fullName: string
 }
+
+export interface EmployeeList{
+    employeeId:number;
+    dni:string;
+    cmvp:string;
+    name:string;
+    lastName:string;
+    rolName:string;
+    nameHeadquarter:string;
+   status:string;
+}

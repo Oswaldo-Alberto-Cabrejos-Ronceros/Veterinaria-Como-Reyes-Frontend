@@ -5,8 +5,9 @@ export const schema = yup.object({
   cmvp:yup.string().matches(/^\d{0,8}$/, 'CMVP debe tener hasta 8 dígitos numéricos'),
   names:yup.string().max(50,'Nombres debe tener menos de 50 dígitos'),
   lastnames:yup.string().max(50,'Nombres debe tener menos de 50 dígitos'),
-  rol:yup.number(),
-  headquarter:yup.number()
+  rol:yup.string(),
+  headquarter:yup.string(),
+  status:yup.boolean().required('Estado es obligatorio')
 })
 
 export type FormValues = yup.InferType<typeof schema>
