@@ -11,25 +11,62 @@ import Message from 'primevue/message'
 import Select from 'primevue/select'
 import DatePicker from 'primevue/datepicker'
 import Button from 'primevue/button'
-import DataTable from 'primevue/datatable'
+import DataTable, { type DataTablePageEvent } from 'primevue/datatable'
 import Column from 'primevue/column'
 import { onMounted, ref } from 'vue'
 import { usePayment } from '@/composables/usePayment'
 import type { PaymentList } from '@/models/PaymentList'
+import type { OptionSelect } from '@/models/OptionSelect'
+import { useHeadquarter } from '@/composables/useHeadquarter'
+import type { Headquarter } from '@/models/Headquarter'
+import { useVeterinaryService } from '@/composables/useVeterinaryService'
+import type { Service } from '@/models/Service'
+import { DateAdapter } from '@/adapters/DateAdapter'
+import { debounce } from 'lodash'
 
 //methods
 
-const { error, loading, getAllPaymentsForTable } = usePayment()
+const { error, loading, searchPayments } = usePayment()
+const { getAllHeadquarters } = useHeadquarter()
+
+const { getAllVeterinaryServices } = useVeterinaryService()
 
 const payments = ref<PaymentList[]>([])
+const totalRecords = ref<number>(0)
 
-const loadPayment = async () => {
-  payments.value = await getAllPaymentsForTable(1, 5)
-}
+const rows = ref<number>(1)
+
+const first = ref<number>(0)
 
 onMounted(() => {
-  loadPayment()
+  loadPayments()
 })
+
+//for search payments
+
+const searchPaymentsDebounce = debounce(() => {
+  loadPayments()
+})
+
+const loadPayments = async (event?: DataTablePageEvent) => {
+  const page = event ? event.first / event.rows : 0
+  const size = event ? event.rows : rows.value
+  rows.value = size
+  const pageResponse = await searchPayments(page, size, {
+    dni: dni.value,
+    headquarterId: headquarterId.value,
+    serviceId: servicesId.value,
+    status: status.value,
+    startDate: startDate.value ? DateAdapter.toDateYYYYmmDD(startDate.value) : undefined,
+    endDate: endDate.value ? DateAdapter.toDateYYYYmmDD(endDate.value) : undefined,
+  })
+
+  payments.value = pageResponse.content
+  totalRecords.value = pageResponse.totalElements
+
+  headquartersOptions.value = headquartersServicesToOptionsSelect(await getAllHeadquarters())
+  servicesOptions.value = headquartersServicesToOptionsSelect(await getAllVeterinaryServices())
+}
 
 //form
 const { handleSubmit, errors, defineField } = useForm<SearchPaymentMethodSchema>({
@@ -38,32 +75,54 @@ const { handleSubmit, errors, defineField } = useForm<SearchPaymentMethodSchema>
     dni: '',
     headquarterId: undefined,
     serviceId: undefined,
-    date: undefined,
+    status: '',
+    startDate: undefined,
+    endDate: undefined,
   },
 })
 
 const [dni, dniAttrs] = defineField('dni')
 const [headquarterId, headquarterIdAttrs] = defineField('headquarterId')
 const [servicesId, servicesIdAttrs] = defineField('serviceId')
-const [date, dateAttrs] = defineField('date')
+const [status, statusAttrs] = defineField('status')
+const [startDate, startDateAttrs] = defineField('startDate')
+const [endDate, endDateAttrs] = defineField('endDate')
 
 const onSubmit = handleSubmit((values) => {
   console.log(values)
 })
 
-//headquarterIds
-const headquarters = [
-  { name: 'Ica', value: 1 },
-  { name: 'Parcona', value: 2 },
-  { name: 'Tinguiña', value: 3 },
+//options status
+const statusOptions: OptionSelect[] = [
+  {
+    value: 'COMPLETADA',
+    name: 'Completada',
+  },
+  {
+    value: 'CANCELADA',
+    name: 'Cancelada',
+  },
+  {
+    value: 'PENDIENTE',
+    name: 'Pendiente',
+  },
+  {
+    value: 'REEMBOLSADA',
+    name: 'Reembolsada',
+  },
 ]
 
-//servicesId
-const services = [
-  { name: 'Corte de pelo', value: 1 },
-  { name: 'Cirugía', value: 2 },
-  { name: 'Radiografía', value: 3 },
-]
+//headquarterIds
+const headquartersOptions = ref<OptionSelect[]>([])
+//services
+const servicesOptions = ref<OptionSelect[]>([])
+
+const headquartersServicesToOptionsSelect = (items: Headquarter[] | Service[]): OptionSelect[] => {
+  return items.map((item) => ({
+    value: item.id,
+    name: item.name,
+  }))
+}
 
 //for export
 
@@ -95,6 +154,7 @@ const exportCSV = () => {
                   :invalid="Boolean(errors.dni)"
                   type="text"
                   placeholder="Ej: 74512351"
+                  @update:model-value="searchPaymentsDebounce()"
                 />
               </InputGroup>
               <Message v-if="errors.dni" severity="error" size="small" variant="simple">
@@ -106,18 +166,16 @@ const exportCSV = () => {
               <label class="block mb-2">Sede</label>
               <Select
                 class="w-full"
+                showClear
                 v-bind="headquarterIdAttrs"
                 v-model="headquarterId"
                 :invalid="Boolean(errors.headquarterId)"
-                :options="headquarters"
+                :options="headquartersOptions"
                 optionLabel="name"
                 optionValue="value"
                 placeholder="Selecciona Sede"
+                @update:model-value="searchPaymentsDebounce()"
               />
-
-              <Message v-if="errors.headquarterId" severity="error" size="small" variant="simple">
-                {{ errors.headquarterId }}
-              </Message>
             </div>
 
             <!-- services -->
@@ -126,36 +184,67 @@ const exportCSV = () => {
               <label class="block mb-2">Servicio</label>
               <Select
                 class="w-full"
+                showClear
                 v-bind="servicesIdAttrs"
                 v-model="servicesId"
                 :invalid="Boolean(errors.serviceId)"
-                :options="services"
+                :options="servicesOptions"
                 optionLabel="name"
                 optionValue="value"
                 placeholder="Selecciona Servicio"
+                @update:model-value="searchPaymentsDebounce()"
               />
+            </div>
 
-              <Message v-if="errors.serviceId" severity="error" size="small" variant="simple">
-                {{ errors.serviceId }}
+            <div>
+              <label class="block mb-2">Fecha de inicio</label>
+              <DatePicker
+                v-bind="startDateAttrs"
+                v-model="startDate"
+                :invalid="Boolean(errors.startDate)"
+                showIcon
+                fluid
+                showButtonBar
+                iconDisplay="input"
+                @update:model-value="searchPaymentsDebounce()"
+              />
+              <Message v-if="errors.startDate" severity="error" size="small" variant="simple">
+                {{ errors.startDate }}
               </Message>
             </div>
 
             <div>
-              <label class="block mb-2">Fecha</label>
-              <DatePicker v-bind="dateAttrs" v-model="date" :invalid="Boolean(errors.date)" showIcon fluid iconDisplay="input" />
-              <Message v-if="errors.date" severity="error" size="small" variant="simple">
-                {{ errors.date }}
+              <label class="block mb-2">Fecha de fin</label>
+              <DatePicker
+                v-bind="endDateAttrs"
+                v-model="endDate"
+                :invalid="Boolean(errors.endDate)"
+                showIcon
+                fluid
+                showButtonBar
+                iconDisplay="input"
+                @update:model-value="searchPaymentsDebounce()"
+              />
+              <Message v-if="errors.endDate" severity="error" size="small" variant="simple">
+                {{ errors.endDate }}
               </Message>
             </div>
-            <div class="form-button-search-container-grid-col-5">
-              <!-- button -->
-              <Button
-                label="Buscar"
-                type="submit"
-                severity="info"
-                icon="pi pi-search"
-                iconPos="right"
+
+            <!-- status -->
+
+            <div>
+              <label class="block mb-2">Estado</label>
+              <Select
                 class="w-full"
+                showClear
+                v-bind="statusAttrs"
+                v-model="status"
+                :invalid="Boolean(errors.status)"
+                :options="statusOptions"
+                optionLabel="name"
+                optionValue="value"
+                placeholder="Selecciona Estado"
+                @update:model-value="searchPaymentsDebounce()"
               />
             </div>
           </form>
@@ -184,8 +273,13 @@ const exportCSV = () => {
           <DataTable
             :value="payments"
             paginator
-            :rows="10"
-            :rows-per-page-options="[10, 15, 20, 25, 30]"
+            :rows="rows"
+            :totalRecords="totalRecords"
+            :lazy="true"
+            :first="first"
+            :loading="loading.searchPayments"
+            @page="loadPayments"
+            :rows-per-page-options="[1, 2, 3, 4]"
             ref="dt"
           >
             <template #header>

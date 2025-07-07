@@ -3,6 +3,7 @@ import type { Payment as PaymentView } from '@/models/Payment'
 import type { PaymentList as PaymentListView } from '@/models/PaymentList'
 import { PaymentAdapter } from '@/adapters/PaymentAdapter'
 import { paymentUsesCases } from '@/dependency-injection/payment.container'
+import type { PageResponse } from '@/services/models/PageResponse'
 
 export function usePayment() {
   const { loading, error, runUseCase } = useAsyncHandler()
@@ -50,7 +51,9 @@ export function usePayment() {
     const paymentsPage = await runUseCase('getAllPaymentsForTable', () =>
       paymentUsesCases.getAllPaymentsForTable.execute(page, size, sort),
     )
-    return paymentsPage.content.map((payment) => PaymentAdapter.fromPaymentListToPaymentListView(payment))
+    return paymentsPage.content.map((payment) =>
+      PaymentAdapter.fromPaymentListToPaymentListView(payment),
+    )
   }
 
   const searchPayments = async (
@@ -65,11 +68,17 @@ export function usePayment() {
       endDate?: string
     },
     sort?: string,
-  ): Promise<PaymentListView[]> => {
+  ): Promise<PageResponse<PaymentListView>> => {
     const paymentsPage = await runUseCase('searchPayments', () =>
       paymentUsesCases.searchPayments.execute(page, size, options, sort),
     )
-    return paymentsPage.content.map((payment) => PaymentAdapter.fromPaymentListToPaymentListView(payment))
+    const payments = paymentsPage.content.map((payment) =>
+      PaymentAdapter.fromPaymentListToPaymentListView(payment),
+    )
+    return {
+      ...paymentsPage,
+      content: payments,
+    }
   }
 
   return {
