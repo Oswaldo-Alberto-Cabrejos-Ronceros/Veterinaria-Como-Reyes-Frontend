@@ -86,9 +86,14 @@ export class ClientServiceImpl implements ClientService {
     return response.data
   }
   async updateBlockNote(clientId: number, blockNote: string): Promise<string> {
-    const response = await this.httpClient.patch<string>(`${this.urlBase}/${clientId}/blockNote`, {
-      blockNote: blockNote,
-    })
+    const params: Record<string, string | number> = {
+      note: blockNote,
+    }
+    const response = await this.httpClient.patch<string>(
+      `${this.urlBase}/${clientId}/block`,
+      null,
+      params,
+    )
     return response.data
   }
 

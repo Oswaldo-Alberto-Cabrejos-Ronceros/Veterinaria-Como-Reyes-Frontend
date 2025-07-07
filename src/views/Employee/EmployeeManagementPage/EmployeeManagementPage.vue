@@ -342,7 +342,6 @@ const restoreEmployeeConfirm = (event: MouseEvent | KeyboardEvent, employee: Emp
       severity: 'success',
     },
     accept: async () => {
-      console.log('Eliminando Empleado ', employee.id)
       await restoreEmployee(employee.id)
       showToast('Empleado restaurado exitosamente: ' + employee.names)
       loadEmployees()

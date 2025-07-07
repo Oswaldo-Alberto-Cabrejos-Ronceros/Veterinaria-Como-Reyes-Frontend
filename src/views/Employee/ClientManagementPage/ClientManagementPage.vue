@@ -27,6 +27,8 @@ import Select from 'primevue/select'
 import { useHeadquarter } from '@/composables/useHeadquarter'
 import { debounce } from 'lodash'
 import type { ClientList } from '@/models/ClientList'
+import BlockCardPrimary from '@/components/BlockCardPrimary.vue'
+import type { FormValues as BlockSchema } from '@/validation-schemas-forms/schema-block-employee-client'
 
 //toast
 const toast = useToast()
@@ -41,7 +43,8 @@ const showToast = (message: string) => {
 }
 
 //methods
-const { loading, error, createClient, updateClient, deleteClient, searchClient, getClientById } = useClient()
+const { loading, error, createClient, updateClient, blockClient, searchClient, getClientById } =
+  useClient()
 
 const { getAllHeadquarters } = useHeadquarter()
 
@@ -172,6 +175,26 @@ const editClient = async (clientData: ClientList) => {
 //for confirm
 const confirm = useConfirm()
 
+const openModalBlock = async (client: ClientList) => {
+  dialog.open(BlockCardPrimary, {
+    data: {
+      title: 'Empleado',
+    },
+    props: {
+      modal: true,
+      header: `Bloquear ${client.names} ${client.lastnames}`,
+    },
+    onClose: async (options) => {
+      const data = options?.data as BlockSchema
+      if (data) {
+        await blockClient(client.id, data.blockNote)
+        loadClients()
+        showToast('Cliente eliminado exitosamente: ' + client.names)
+      }
+    },
+  })
+}
+
 //for delete with confirm popup
 const deleteClientAction = (event: MouseEvent | KeyboardEvent, client: ClientList) => {
   confirm.require({
@@ -190,9 +213,34 @@ const deleteClientAction = (event: MouseEvent | KeyboardEvent, client: ClientLis
     },
     accept: async () => {
       console.log('Eliminando Empleado ', client.id)
-      await deleteClient(client.id)
+      openModalBlock(client)
+    },
+    reject: () => {
+      console.log('Cancelando')
+    },
+  })
+}
+
+//for delete with confirm popup
+const restoreClientAction = (event: MouseEvent | KeyboardEvent, client: ClientList) => {
+  confirm.require({
+    group: 'confirmPopupGeneral',
+    target: event.currentTarget as HTMLElement,
+    message: '¿Seguro que quiere restaurar a este cliente?',
+    icon: 'pi pi-exclamation-triangle',
+    rejectProps: {
+      label: 'Cancelar',
+      severity: 'secondary',
+      outlined: true,
+    },
+    acceptProps: {
+      label: 'Reactivar',
+      severity: 'success',
+    },
+    accept: async () => {
+      console.log('Restaurando cliente ', client.id)
       loadClients()
-      showToast('Cliente eliminado exitosamente: ' + client.names)
+      showToast('Cliente restaurado exitosamente: ' + client.names)
     },
     reject: () => {
       console.log('Cancelando')
@@ -369,34 +417,46 @@ const headquartersToOptionsSelect = (headquarters: Headquarter[]): OptionSelect[
               style="width: 15%"
             >
             </Column>
-            <Column>
+            <Column header="Acciones">
               <template #body="{ data }">
-                <div
-                  class="flex justify-between items-center flex-row lg:flex-col xl:flex-row gap-1"
-                >
+                <div class="flex items-center flex-row lg:flex-col xl:flex-row gap-1">
                   <Button
                     icon="pi pi-eye"
                     severity="info"
-                    variant="outlined"
-                    aria-label="Filter"
+                    variant="text"
+                    aria-label="Ver"
                     rounded
+                    size="small"
                     @click="viewClient(data)"
                   ></Button>
                   <Button
                     icon="pi pi-pencil"
                     severity="warn"
-                    variant="outlined"
-                    aria-label="Filter"
+                    variant="text"
+                    aria-label="Editar"
                     rounded
+                    size="small"
                     @click="editClient(data)"
                   ></Button>
                   <Button
                     icon="pi pi-trash"
                     severity="danger"
-                    variant="outlined"
-                    aria-label="Filter"
+                    variant="text"
+                    aria-label="Bloquear"
+                    size="small"
                     rounded
+                    v-if="data.status === 'Activo'"
                     @click="deleteClientAction($event, data)"
+                  ></Button>
+                  <Button
+                    v-else
+                    icon="pi pi-refresh"
+                    severity="warn"
+                    variant="text"
+                    aria-label="Desbloquear"
+                    rounded
+                    size="small"
+                    @click="restoreClientAction($event, data)"
                   ></Button>
                 </div>
               </template>
