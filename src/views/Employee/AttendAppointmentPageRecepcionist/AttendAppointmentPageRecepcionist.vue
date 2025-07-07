@@ -159,7 +159,7 @@ const showToast = (message: string) => {
               <p class="textLg font-bold">{{ appointmentBasicInfo?.scheduleDateTime }}</p>
             </div>
             <Button
-              v-if="appointmentBasicInfo?.statusAppointment === 'Programada'"
+              v-if="appointmentBasicInfo?.statusAppointment === 'Confirmada'"
               size="small"
               icon="pi pi-check-circle"
               icon-pos="left"
@@ -170,7 +170,7 @@ const showToast = (message: string) => {
           </div>
           <!-- time -->
           <div
-            v-if="appointmentBasicInfo?.statusAppointment === 'Programada'"
+            v-if="appointmentBasicInfo?.statusAppointment === 'Confirmada'"
             class="p-4 shadow-none border-1 rounded-sm border-green-500 bg-green-50 dark:bg-transparent w-full flex justify-between items-center"
           >
             <div class="text-green-600 dark:text-green-400">

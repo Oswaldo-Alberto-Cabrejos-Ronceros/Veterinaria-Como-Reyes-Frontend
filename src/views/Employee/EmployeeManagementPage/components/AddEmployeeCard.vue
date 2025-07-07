@@ -149,6 +149,18 @@ const searchInfoReniec = async () => {
     }
   }
 }
+
+//for cmvp
+
+const cmvpActive = (id:number):boolean=>{
+  const roleVeterinary =rolesOptions.value.find((item)=> item.name.toUpperCase()==='VETERINARIO')
+  if(roleVeterinary&&roleVeterinary.value===id){
+    return false
+  }else{
+    return true
+  }
+}
+
 </script>
 
 <template>
@@ -218,7 +230,7 @@ const searchInfoReniec = async () => {
             :invalid="Boolean(errors.cmvp)"
             type="text"
             placeholder="Ej: 14125"
-            :disabled="roleId !== 2"
+            :disabled="cmvpActive(roleId)"
           />
         </InputGroup>
 

@@ -19,7 +19,7 @@ export const schema = yup.object({
   dirImage: yup.string().required('La imagen es obligatoria'),
   headquarterId: yup.number().required('La sede es obligatorio'),
   birthdate: yup.date().required('La fecha es obligatorio').max(dateLimit,'Debe de haber nacido hace 18 años'),
-  roleId: yup.number().required('El role es obligatorio'),
+  roleId: yup.number().required('El rol es obligatorio'),
   email: yup.string().email('Email invalido').required('El email es obligatorio'),
   password: yup.string().required('La contraseña es obligatoria').min(6, 'Mínimo 6 caracteres'),
   confirmPassword: yup

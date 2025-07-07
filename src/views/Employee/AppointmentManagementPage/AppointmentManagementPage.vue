@@ -29,6 +29,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { DateAdapter } from '@/adapters/DateAdapter'
 import { debounce } from 'lodash'
 import type { AppointmentList } from '@/models/AppointmentList'
+import { useConfirm } from 'primevue/useconfirm'
 
 onMounted(async () => {
   loadAppoinments()
@@ -88,6 +89,7 @@ const handleChangeStatus = async (appointmentId: number, status: string) => {
   try {
     if (status === 'CONFIRMADA') {
       await confirmAppointment(appointmentId)
+      showToast('Cita confirmada exitodamente')
     } else if (status === 'COMPLETADA') {
       await completeAppointment(appointmentId)
     }
@@ -120,6 +122,15 @@ const headquartersOptions = ref<OptionSelect[]>([])
 const categoriesOptions = ref<OptionSelect[]>([])
 
 //for get options from headquarters
+
+const headquartersCategoriesIdsToOptionsSelect = (
+  items: Headquarter[] | Category[] | PaymentMethod[],
+): OptionSelect[] => {
+  return items.map((item) => ({
+    value: item.id,
+    name: item.name,
+  }))
+}
 
 const headquartersCategoriesToOptionsSelect = (
   items: Headquarter[] | Category[] | PaymentMethod[],
@@ -207,7 +218,7 @@ const addAppointment = async () => {
       header: 'Agendar cita',
     },
     data: {
-      paymentMethodsOptions: headquartersCategoriesToOptionsSelect(await getAllPaymentMethods()),
+      paymentMethodsOptions: headquartersCategoriesIdsToOptionsSelect(await getAllPaymentMethods()),
     },
     onClose: async (options) => {
       const data = options?.data as AddEditPaymentSchema
@@ -222,6 +233,36 @@ const addAppointment = async () => {
           data.comment,
         )
       }
+    },
+  })
+}
+
+//for confirm
+const confirm = useConfirm()
+
+//for complete confirm
+
+const confirmAppoinmentConfirm = (event: MouseEvent | KeyboardEvent, appointmentId: number) => {
+  confirm.require({
+    group: 'confirmPopupGeneral',
+    target: event.currentTarget as HTMLElement,
+    message: '¿Seguro que quiere confirmar esta cita?',
+    icon: 'pi pi-exclamation-triangle',
+    rejectProps: {
+      label: 'Cancelar',
+      severity: 'secondary',
+      outlined: true,
+    },
+    acceptProps: {
+      label: 'Confirmar',
+      severity: 'success',
+    },
+    accept: async () => {
+      console.log('Confirmando cita ', appointmentId)
+      handleChangeStatus(appointmentId, 'CONFIRMADA')
+    },
+    reject: () => {
+      console.log('Cancelando')
     },
   })
 }
@@ -388,14 +429,6 @@ const attendAppointment = (appointmentId: number) => {
               <template #body="{ data }">
                 <div class="flex items-center flex-row lg:flex-col xl:flex-row gap-1">
                   <Button
-                    icon="pi pi-eye"
-                    severity="info"
-                    size="small"
-                    variant="text"
-                    aria-label="Ver"
-                    rounded
-                  />
-                  <Button
                     icon="pi pi-calendar-clock"
                     v-tooltip="'Atender'"
                     severity="warn"
@@ -416,9 +449,9 @@ const attendAppointment = (appointmentId: number) => {
                     rounded
                     v-tooltip="'Confirmar'"
                     v-if="data.appointmentStatus === 'Programada'"
-                    @click="handleChangeStatus(data.id, 'CONFIRMADA')"
+                    @click="confirmAppoinmentConfirm($event, data.id)"
                   />
-                  <Button
+                  <!--                   <Button
                     icon="pi pi-calendar-check"
                     severity="help"
                     size="small"
@@ -427,8 +460,9 @@ const attendAppointment = (appointmentId: number) => {
                     v-tooltip="'Completar'"
                     rounded
                     @click="handleChangeStatus(data.id, 'COMPLETADA')"
-                  />
-                                    <Button
+                  /> -->
+
+                  <Button
                     icon="pi pi-times-circle"
                     severity="danger"
                     size="small"
