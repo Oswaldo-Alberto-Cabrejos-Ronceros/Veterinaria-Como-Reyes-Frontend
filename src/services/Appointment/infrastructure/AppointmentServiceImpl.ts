@@ -6,6 +6,7 @@ import type {
   TimesForTurn,
   BasicServiceForAppointment,
   InfoBasicAppointment,
+  AppointmentList,
 } from '../domain/models/Appointment'
 import type { SearchAppointmentParams } from '../domain/models/SearchAppointmentParams'
 import type { PageResponse } from '@/services/models/PageResponse'
@@ -81,7 +82,7 @@ export class AppointmentServiceImpl implements AppointmentService {
     return response.data
   }
 
-  async searchAppointments(params: SearchAppointmentParams): Promise<PageResponse<Appointment>> {
+  async searchAppointments(params: SearchAppointmentParams): Promise<PageResponse<AppointmentList>> {
     const queryParams: Record<string, string | number> = {}
 
     if (params.day) queryParams.day = params.day
@@ -92,7 +93,7 @@ export class AppointmentServiceImpl implements AppointmentService {
     if (params.size !== undefined) queryParams.size = params.size
     if (params.sort) queryParams.sort = params.sort
 
-    const response = await this.httpClient.get<PageResponse<Appointment>>(
+    const response = await this.httpClient.get<PageResponse<AppointmentList>>(
       `${this.url}/search`,
       queryParams,
     )

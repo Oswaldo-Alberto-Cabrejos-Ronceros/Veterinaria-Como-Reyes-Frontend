@@ -18,3 +18,13 @@ export interface HeadquarterRequest {
   province: string
   department: string
 }
+
+export interface HeadquarterList{
+    headquarterId:number;
+    name:string;
+    phone:string;
+    address:string;
+    email:string;
+    district:string;
+    province:string;
+}

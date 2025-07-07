@@ -2,6 +2,7 @@ import type { PageResponse } from '@/services/models/PageResponse'
 import type {
   Client,
   ClientBasicInfoByDni,
+  ClientList,
   ClientRequest,
   ClientUpdateAsClient,
   MyInfoClient,
@@ -17,7 +18,7 @@ export interface ClientService {
     headquarterId?: number,
     page?: number,
     size?: number,
-  ): Promise<PageResponse<Client>>
+  ): Promise<PageResponse<ClientList>>
   createClient(clientRequest: ClientRequest): Promise<Client>
   getAllClients(): Promise<Client[]>
   updateClient(clientId: number, clientRequest: ClientRequest): Promise<Client>

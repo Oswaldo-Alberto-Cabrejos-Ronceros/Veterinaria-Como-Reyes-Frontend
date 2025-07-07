@@ -2,6 +2,7 @@ import type { Payment } from '@/services/Payment/domain/models/Payment'
 import type { Payment as PaymentView } from '@/models/Payment'
 import type { PaymentList } from '@/services/Payment/domain/models/Payment'
 import type { PaymentList as PaymentListView } from '@/models/PaymentList'
+import { FormatAdapter } from './FormatAdapter'
 
 export class PaymentAdapter {
   static toPaymentView(payment: Payment): PaymentView {
@@ -9,7 +10,7 @@ export class PaymentAdapter {
       id: payment.paymentId,
       amount: payment.amount,
       paymentDateTime: payment.paymentDateTime,
-      status: payment.status,
+      status: FormatAdapter.toCaptalizeCaseWithout_(payment.status),
       appointmentId: payment.appointmentId,
       careId: payment.careId,
       paymentMethodId: payment.paymentMethodId,
@@ -23,7 +24,7 @@ export class PaymentAdapter {
       serviceName: paymentList.serviceName,
       clientDni: paymentList.clientDni,
       amount: paymentList.amount,
-      status: paymentList.status,
+      status: FormatAdapter.toCaptalizeCaseWithout_(paymentList.status),
       paymentMethod: paymentList.paymentMethod,
       paymentDate: paymentList.paymentDate,
     }

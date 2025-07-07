@@ -7,6 +7,8 @@ import type { FormValues as SchemaEditSelfClient } from '@/validation-schemas-fo
 import type { ClientUpdateAsClient } from '@/services/Client/domain/models/Client'
 import type { ClientBasicInfoByDni } from '@/services/Client/domain/models/Client'
 import type { ClientBasicInfoByDni as ClientBasicInfoByDniView } from '@/models/ClientBasicInfoByDni'
+import type { ClientList as ClientListView } from '@/models/ClientList'
+import type { ClientList } from '@/services/Client/domain/models/Client'
 
 import { DateAdapter } from './DateAdapter'
 
@@ -100,6 +102,18 @@ export class ClientAdapter {
     return {
       id: clientBasicInfoByDni.id,
       fullName: clientBasicInfoByDni.fullName,
+    }
+  }
+
+  //for adapt clientList
+  static fromClientListToClientListView(clientList: ClientList): ClientListView {
+    return {
+      id: clientList.clientId,
+      dni: clientList.dni,
+      names: clientList.name,
+      lastnames: clientList.lastName,
+      headquarterName: clientList.headquarterName,
+      status: clientList.status,
     }
   }
 }

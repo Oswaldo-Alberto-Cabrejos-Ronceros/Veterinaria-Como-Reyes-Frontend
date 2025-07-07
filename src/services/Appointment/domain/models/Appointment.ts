@@ -56,3 +56,12 @@ export interface InfoBasicAppointment{
   status:string
   duration:number
 }
+
+
+export interface AppointmentList{
+    appointmentId:number;
+    day:string;
+    headquarter:string;
+    categoryService:string;
+    appointmentStatus:string;
+}

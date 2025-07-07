@@ -30,16 +30,25 @@ export interface AnimalRequest {
   clientId: number
 }
 
+export interface AnimalByClient {
+  animalId: number
+  birthDate: string
+  gender: string
+  name: string
+  urlImage: string
+  weight: number
+  breedName: string
+  speciesId: number
+  speciesName: string
+  animalComment: string
+}
 
-export interface AnimalByClient{
-  animalId:number
-  birthDate:string,
-  gender:string,
-  name:string,
-  urlImage:string,
-  weight:number,
-  breedName:string,
-  speciesId: number,
-  speciesName:string,
-  animalComment:string
+export interface AnimalList {
+  animalId: number
+  name: string
+  owner: string
+  specie: string
+  breed: string
+  gender: string
+  status: string
 }

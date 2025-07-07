@@ -2,6 +2,7 @@ import type { PageResponse } from '@/services/models/PageResponse'
 import type {
   Client,
   ClientBasicInfoByDni,
+  ClientList,
   ClientRequest,
   ClientUpdateAsClient,
   MyInfoClient,
@@ -27,7 +28,7 @@ export class ClientServiceImpl implements ClientService {
     headquarterId?: number,
     page?: number,
     size?: number,
-  ): Promise<PageResponse<Client>> {
+  ): Promise<PageResponse<ClientList>> {
     const params = new URLSearchParams()
 
     //for dni
@@ -45,7 +46,7 @@ export class ClientServiceImpl implements ClientService {
     //for size
     if (size != undefined) params.append('size', String(size))
 
-    const response = await this.httpClient.get<PageResponse<Client>>(
+    const response = await this.httpClient.get<PageResponse<ClientList>>(
       `${this.urlBase}/search?${params.toString()}`,
     )
     return response.data
@@ -85,9 +86,14 @@ export class ClientServiceImpl implements ClientService {
     return response.data
   }
   async updateBlockNote(clientId: number, blockNote: string): Promise<string> {
-    const response = await this.httpClient.patch<string>(`${this.urlBase}/${clientId}/blockNote`, {
-      blockNote: blockNote,
-    })
+    const params: Record<string, string | number> = {
+      note: blockNote,
+    }
+    const response = await this.httpClient.patch<string>(
+      `${this.urlBase}/${clientId}/block`,
+      null,
+      params,
+    )
     return response.data
   }
 
