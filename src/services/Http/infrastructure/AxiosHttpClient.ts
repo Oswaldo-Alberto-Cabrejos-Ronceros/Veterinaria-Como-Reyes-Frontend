@@ -41,10 +41,10 @@ export class AxiosHttpClient implements HttpClient {
     )
   }
 
-  async get<T>(url: string,params?:Record<string,string|number>): Promise<{ data: T }> {
+  async get<T>(url: string, params?: Record<string, string | number>): Promise<{ data: T }> {
     try {
-      const response = await this.axiosInstance.get<T>(url,{
-        params
+      const response = await this.axiosInstance.get<T>(url, {
+        params,
       })
       return { data: response.data }
     } catch (e) {
@@ -71,9 +71,15 @@ export class AxiosHttpClient implements HttpClient {
       throw e
     }
   }
-  async patch<T>(url: string, body?: unknown): Promise<{ data: T }> {
+  async patch<T>(
+    url: string,
+    body?: unknown,
+    params?: Record<string, string | number>,
+  ): Promise<{ data: T }> {
     try {
-      const response = await this.axiosInstance.patch(url, body)
+      const response = await this.axiosInstance.patch(url, body, {
+        params,
+      })
       return { data: response.data }
     } catch (e) {
       this.handleError(e as Error)
