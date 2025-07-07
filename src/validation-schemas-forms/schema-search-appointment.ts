@@ -1,8 +1,8 @@
 import * as yup from 'yup'
 
 export const schema = yup.object({
-  headquarterId: yup.number(),
-  categoryId: yup.number(),
+  headquarter: yup.string(),
+  category: yup.string(),
   date: yup.date(),
   status: yup.string(),
 })

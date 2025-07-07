@@ -8,6 +8,8 @@ import type { InfoBasicAppointment } from '@/services/Appointment/domain/models/
 import type { InfoBasicAppointmentClient } from '@/models/InfoBasicAppointmentClient'
 import { DateAdapter } from './DateAdapter'
 import { FormatAdapter } from './FormatAdapter'
+import type { AppointmentList as AppointmentListView } from '@/models/AppointmentList'
+import type { AppointmentList } from '@/services/Appointment/domain/models/Appointment'
 
 export class AppointmentAdapter {
   static toAppointmentView(appoinment: Appointment): AppointmentView {
@@ -59,6 +61,18 @@ export class AppointmentAdapter {
       },
       status: infoBasicAppointment.status,
       duration: infoBasicAppointment.duration,
+    }
+  }
+
+  static fromAppointementListToAppointmentListView(
+    appointmentList: AppointmentList,
+  ): AppointmentListView {
+    return {
+      id: appointmentList.appointmentId,
+      date: appointmentList.day,
+      headquarter: appointmentList.headquarter,
+      categoryService: appointmentList.categoryService,
+      appointmentStatus: appointmentList.appointmentStatus,
     }
   }
 }

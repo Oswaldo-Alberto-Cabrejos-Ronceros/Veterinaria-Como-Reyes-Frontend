@@ -11,20 +11,28 @@ export const schema = yup.object({
     .date()
     .max(dateLimit, 'La fecha debe ser máximo de hoy')
     .nullable()
-    .when('endDate', ([endDate], schema) => {
-      return endDate
-        ? schema.max(endDate, 'La fecha de inicio no puede ser después de la fecha fin')
-        : schema
-    }),
+    .test(
+      'fecha-inicio-anterior',
+      'La fecha de inicio no puede ser posterior a la fecha fin',
+      function (value) {
+        const { endDate } = this.parent
+        if (!value || !endDate) return true
+        return value <= endDate
+      },
+    ),
   endDate: yup
     .date()
     .max(dateLimit, 'La fecha debe ser máximo de hoy')
     .nullable()
-    .when('startDate', ([startDate], schema) => {
-      return startDate
-        ? schema.min(startDate, 'La fecha de fin no puede ser antes de la fecha inicio')
-        : schema
-    }),
+    .test(
+      'fecha-fin-posterior',
+      'La fecha de fin no puede ser anterior a la fecha inicio',
+      function (value) {
+        const { startDate } = this.parent
+        if (!value || !startDate) return true
+        return value >= startDate
+      },
+    ),
 })
 
 export type FormValues = yup.InferType<typeof schema>

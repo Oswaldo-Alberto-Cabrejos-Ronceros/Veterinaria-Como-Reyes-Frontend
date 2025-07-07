@@ -12,6 +12,7 @@ import type { AppointmentRequest as AppointmentRequestView } from '@/models/Appo
 import type { InfoBasicAppointmentClient } from '@/models/InfoBasicAppointmentClient'
 import type { PageResponse } from '@/services/models/PageResponse'
 import type { SearchAppointmentParams } from '@/services/Appointment/domain/models/SearchAppointmentParams'
+import type { AppointmentList as AppointmentListView } from '@/models/AppointmentList'
 
 export function useAppointment() {
   //get from useAsyncHandle
@@ -105,14 +106,14 @@ export function useAppointment() {
   }
   const searchAppointments = async (
     params: SearchAppointmentParams,
-  ): Promise<PageResponse<AppointmentView>> => {
+  ): Promise<PageResponse<AppointmentListView>> => {
     const page = await runUseCase('searchAppointments', () =>
       appointmentUsesCases.searchAppointment.execute(params),
     )
     return {
       ...page,
       content: page.content.map((appointment) =>
-        AppointmentAdapter.toAppointmentView(appointment),
+        AppointmentAdapter.fromAppointementListToAppointmentListView(appointment),
       ),
     }
   }
@@ -137,6 +138,5 @@ export function useAppointment() {
     getAppointmentsForClient,
     getAppointmentById,
     searchAppointments,
-
   }
 }
