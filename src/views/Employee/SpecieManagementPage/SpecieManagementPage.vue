@@ -18,6 +18,8 @@ import { useDialog, useToast } from 'primevue'
 import AddEditSpecie from './components/AddEditSpecieCard.vue'
 import type { FormValues as AddEditSpecieSchema } from '@/validation-schemas-forms/schema-add-edit-specie'
 import { useSpecie } from '@/composables/useSpecie'
+import type { DataTablePageEvent } from 'primevue/datatable'
+import { debounce } from 'lodash'
 
 //toast
 const toast = useToast()
@@ -33,17 +35,26 @@ const showToast = (message: string) => {
 
 //for get species
 
-const { loading, error, getAllSpecies, createSpecie, updateSpecie, deleteSpecie, activateSpecie } = useSpecie()
+const { loading, error, createSpecie, updateSpecie, deleteSpecie, activateSpecie, searchSpecies } = useSpecie()
 
 const species = ref<Specie[]>([])
+
+const totalRecords = ref<number>(0)
+const rows = ref<number>(10)
+const first = ref<number>(0)
 
 onMounted(() => {
   loadSpecies()
 })
 
 //for load species
-const loadSpecies = async () => {
-  species.value = await getAllSpecies()
+const loadSpecies = async (event?: DataTablePageEvent) => {
+  const page = event ? event.first / event.rows : 0
+  const size = event ? event.rows : rows.value
+  rows.value = size
+  const response = await searchSpecies(page, size, name.value)
+  species.value = response.content
+  totalRecords.value = response.totalElements
 }
 
 //form
@@ -55,6 +66,10 @@ const { handleSubmit, errors, defineField } = useForm<SearchSpecieSchema>({
 })
 
 const [name, nameAttrs] = defineField('name')
+
+const searchSpeciesDebounced = debounce(() => {
+  loadSpecies()
+}, 400)
 
 const onSubmit = handleSubmit((values) => {
   console.log(values)
@@ -190,7 +205,14 @@ const confirmActivateSpecie = (event: MouseEvent | KeyboardEvent, specie: Specie
                 <InputGroupAddon class="text-neutral-400">
                   <i class="pi pi-info"></i>
                 </InputGroupAddon>
-                <InputText v-model="name" v-bind="nameAttrs" :invalid="Boolean(errors.name)" class="w-full" placeholder="Nombre" />
+                <InputText
+                  v-model="name"
+                  v-bind="nameAttrs"
+                  :invalid="Boolean(errors.name)"
+                  class="w-full"
+                  placeholder="Nombre"
+                  @update:model-value="searchSpeciesDebounced"
+                />
               </InputGroup>
               <Message v-if="errors.name" severity="error" size="small" variant="simple">
                 {{ errors.name }}
@@ -222,9 +244,14 @@ const confirmActivateSpecie = (event: MouseEvent | KeyboardEvent, specie: Specie
           <DataTable
             :value="species"
             paginator
-            :rows="10"
-            :rows-per-page-options="[5, 10]"
+            lazy
+            :rows="rows"
+            :first="first"
+            :loading="loading.searchSpecies"
+            :totalRecords="totalRecords"
+            :rows-per-page-options="[5, 10, 20]"
             ref="dt"
+            @page="loadSpecies"
           >
             <template #header>
               <div class="w-full flex flex-col xs:flex-row justify-between gap-2 pb-4">

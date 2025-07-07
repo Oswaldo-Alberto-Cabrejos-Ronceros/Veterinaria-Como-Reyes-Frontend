@@ -22,24 +22,51 @@ import { useDialog, useToast } from 'primevue'
 import AddEditCareCard from './components/AddEditCareCard.vue'
 import type { FormValues as AddCareFromRequestSchema } from '@/validation-schemas-forms/schema-add-care'
 import { useRoute, useRouter } from 'vue-router'
+import type { DataTablePageEvent } from 'primevue/datatable'
+import { debounce } from 'lodash'
 
 onMounted(async () => {
-  loadCares()
+  headquartersOptions.value = headquartersServicesToOptionsSelect(await getAllHeadquarters())
+  servicesOptions.value = headquartersServicesToOptionsSelect(await getAllVeterinaryServices())
+  await loadCares()
 })
 
 //methods for care
-const { loading, error, getAllCares, completeCare, createCareFromRequest } = useCare()
+const { loading, error, searchCares, completeCare, createCareFromRequest } = useCare()
 
 //for cares
 
 const cares = ref<Care[]>([])
 
+const totalRecords = ref(0)
+const rows = ref(10)
+const first = ref(0)
+
 //for loads care
-const loadCares = async () => {
-  cares.value = await getAllCares()
-  headquartersOptions.value = headquartersServicesToOptionsSelect(await getAllHeadquarters())
-  servicesOptions.value = headquartersServicesToOptionsSelect(await getAllVeterinaryServices())
+const loadCares = async (event?: DataTablePageEvent) => {
+  const page = event ? event.first / event.rows : 0
+  const size = event ? event.rows : rows.value
+  rows.value = size
+
+  const formattedDate = date.value ? date.value.toISOString().split('T')[0] : undefined
+
+  const result = await searchCares(
+    status.value,
+    formattedDate,
+    headquarterId.value,
+    headquarterServiceId.value,
+    page,
+    size
+  )
+
+  cares.value = result.content
+  totalRecords.value = result.totalElements
 }
+
+const searchCaresDebounced = debounce(() => {
+  loadCares()
+}, 400)
+
 
 const onCompleteCare = async (careId: number) => {
   try {
@@ -66,9 +93,11 @@ const [date, dateAttrs] = defineField('date')
 const [status, statusAttrs] = defineField('status')
 
 //for submit
-const onSubmit = handleSubmit((values) => {
-  console.log(values)
+const onSubmit = handleSubmit(async () => {
+  first.value = 0 // resetear a página 0
+  await loadCares()
 })
+
 //for get headquarters and services
 const { getAllHeadquarters } = useHeadquarter()
 const { getAllVeterinaryServices } = useVeterinaryService()
@@ -162,6 +191,7 @@ const viewCare = (careId: number) => {
                 v-bind="dateAttrs"
                 v-model="date"
                 :invalid="Boolean(errors.date)"
+                @update:model-value="searchCaresDebounced"
                 placeholder="Selecciona Fecha"
               />
 
@@ -177,6 +207,7 @@ const viewCare = (careId: number) => {
                 v-bind="headquarterIdAttrs"
                 v-model="headquarterId"
                 :options="headquartersOptions"
+                @update:model-value="searchCaresDebounced"
                 :invalid="Boolean(errors.headquarterId)"
                 optionLabel="name"
                 optionValue="value"
@@ -197,14 +228,15 @@ const viewCare = (careId: number) => {
                 v-bind="headquarterServiceIdAttrs"
                 v-model="headquarterServiceId"
                 :options="servicesOptions"
+                @update:model-value="searchCaresDebounced"
                 :invalid="Boolean(errors.headquarterServiceId)"
                 optionLabel="name"
                 optionValue="value"
                 placeholder="Selecciona Servicio"
               />
 
-              <Message v-if="errors.headquarterId" severity="error" size="small" variant="simple">
-                {{ errors.headquarterId }}
+              <Message v-if="errors.headquarterServiceId" severity="error" size="small" variant="simple">
+                {{ errors.headquarterServiceId }}
               </Message>
             </div>
 
@@ -215,14 +247,15 @@ const viewCare = (careId: number) => {
                 v-bind="statusAttrs"
                 v-model="status"
                 :options="statusOptions"
+                @update:model-value="searchCaresDebounced"
                 :invalid="Boolean(errors.status)"
                 optionLabel="name"
                 optionValue="value"
                 placeholder="Selecciona Estado"
               />
 
-              <Message v-if="errors.headquarterId" severity="error" size="small" variant="simple">
-                {{ errors.headquarterId }}
+              <Message v-if="errors.status" severity="error" size="small" variant="simple">
+                {{ errors.status }}
               </Message>
             </div>
             <div class="form-button-search-container-grid-col-5">
@@ -240,20 +273,24 @@ const viewCare = (careId: number) => {
           </form>
 
           <!-- for messague loading  -->
-          <Message v-if="loading.getAllCares" severity="warn" size="small" variant="simple">
+          <Message v-if="loading.searchCares" severity="warn" size="small" variant="simple">
             Cargando ...
           </Message>
           <!-- for messague error -->
-          <Message v-if="error.getAllCares" severity="error" size="small" variant="simple">
+          <Message v-if="error.searchCares" severity="error" size="small" variant="simple">
             Error al cargar las atenciones
           </Message>
           <!-- table -->
           <DataTable
-            v-if="cares"
             :value="cares"
+            lazy
             paginator
-            :rows="10"
+            :rows="rows"
+            :first="first"
+            :totalRecords="totalRecords"
+            :loading="loading.searchCares"
             :rows-per-page-options="[10, 15, 20, 25, 30]"
+            @page="loadCares"
             ref="dt"
           >
             <template #header>
