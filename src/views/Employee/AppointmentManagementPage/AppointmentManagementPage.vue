@@ -339,7 +339,7 @@ const attendAppointment = (appointmentId: number) => {
             :lazy="true"
             :first="first"
             :loading="loading.searchAppointments"
-            @page="loadAppoinments()"
+            @page="loadAppoinments"
             :rows-per-page-options="[1, 2, 3, 4]"
             ref="dt"
           >
@@ -384,48 +384,59 @@ const attendAppointment = (appointmentId: number) => {
               style="width: 15%"
             >
             </Column>
-            <Column>
+            <Column header="Acciones">
               <template #body="{ data }">
-                <div
-                  class="flex justify-between items-center flex-row lg:flex-col xl:flex-row gap-1"
-                >
+                <div class="flex items-center flex-row lg:flex-col xl:flex-row gap-1">
                   <Button
                     icon="pi pi-eye"
                     severity="info"
-                    variant="outlined"
+                    size="small"
+                    variant="text"
                     aria-label="Ver"
                     rounded
                   />
                   <Button
                     icon="pi pi-calendar-clock"
+                    v-tooltip="'Atender'"
                     severity="warn"
-                    variant="outlined"
+                    size="small"
+                    variant="text"
                     aria-label="Atender"
+                    v-if="data.appointmentStatus === 'Confirmada'"
                     @click="attendAppointment(data.id)"
                     rounded
                   />
-                  <Button
-                    icon="pi pi-trash"
-                    severity="danger"
-                    variant="outlined"
-                    aria-label="Eliminar"
-                    rounded
-                  />
+
                   <Button
                     icon="pi pi-check"
                     severity="success"
-                    variant="outlined"
+                    size="small"
+                    variant="text"
                     aria-label="Confirmar"
                     rounded
+                    v-tooltip="'Confirmar'"
+                    v-if="data.appointmentStatus === 'Programada'"
                     @click="handleChangeStatus(data.id, 'CONFIRMADA')"
                   />
                   <Button
                     icon="pi pi-calendar-check"
                     severity="help"
-                    variant="outlined"
+                    size="small"
+                    variant="text"
                     aria-label="Completar"
+                    v-tooltip="'Completar'"
                     rounded
                     @click="handleChangeStatus(data.id, 'COMPLETADA')"
+                  />
+                                    <Button
+                    icon="pi pi-times-circle"
+                    severity="danger"
+                    size="small"
+                    v-tooltip="'Cancelar'"
+                    variant="text"
+                    aria-label="Cancelar"
+                    rounded
+                    ariala
                   />
                 </div>
               </template>

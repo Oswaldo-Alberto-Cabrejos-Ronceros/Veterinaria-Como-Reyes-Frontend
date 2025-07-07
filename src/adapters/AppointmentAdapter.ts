@@ -72,7 +72,7 @@ export class AppointmentAdapter {
       date: appointmentList.day,
       headquarter: appointmentList.headquarter,
       categoryService: appointmentList.categoryService,
-      appointmentStatus: appointmentList.appointmentStatus,
+      appointmentStatus: FormatAdapter.toCaptalizeCaseWithout_ (appointmentList.appointmentStatus),
     }
   }
 }
