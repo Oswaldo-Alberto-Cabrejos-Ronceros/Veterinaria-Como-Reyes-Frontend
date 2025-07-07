@@ -236,6 +236,7 @@ const statusOptions: OptionSelect[] = [
     name: 'Desativado',
   },
 ]
+
 const headquartersOptions = ref<OptionSelect[]>([])
 
 const headquartersToOptionsSelect = (headquarters: Headquarter[]): OptionSelect[] => {

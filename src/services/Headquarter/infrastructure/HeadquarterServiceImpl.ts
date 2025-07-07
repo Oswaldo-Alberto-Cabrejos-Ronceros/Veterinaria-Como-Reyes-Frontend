@@ -1,6 +1,7 @@
 import type { HttpClient } from '@/services/Http/model/HttpClient'
 import type { HeadquarterService } from '../domain/services/HeadquarterService'
-import type { Headquarter, HeadquarterRequest } from '../domain/models/Headquarter'
+import type { Headquarter, HeadquarterList, HeadquarterRequest } from '../domain/models/Headquarter'
+import type { PageResponse } from '@/services/models/PageResponse'
 
 export class HeadquarterServiceImpl implements HeadquarterService {
   constructor(private readonly httpClient: HttpClient) {}
@@ -22,8 +23,43 @@ export class HeadquarterServiceImpl implements HeadquarterService {
     return response.data
   }
 
-  async updateHeadquarter(id: number, headquarterRequest: HeadquarterRequest): Promise<Headquarter> {
-    const response = await this.httpClient.put<Headquarter>(`${this.urlBase}/${id}`, headquarterRequest)
+  async updateHeadquarter(
+    id: number,
+    headquarterRequest: HeadquarterRequest,
+  ): Promise<Headquarter> {
+    const response = await this.httpClient.put<Headquarter>(
+      `${this.urlBase}/${id}`,
+      headquarterRequest,
+    )
+    return response.data
+  }
+
+  async searchHeadquarters(
+    page: number,
+    size: number,
+    name?: string,
+    phone?: string,
+    address?: string,
+    email?: string,
+    district?: string,
+    province?: string,
+  ): Promise<PageResponse<HeadquarterList>> {
+    const params: Record<string, string | number> = {
+      page,
+      size,
+    }
+
+    if (name) params.name = name
+    if (phone) params.phone = phone
+    if (address) params.address = address
+    if (email) params.email = email
+    if (district) params.district = district
+    if (province) params.province = province
+
+    const response = await this.httpClient.get<PageResponse<HeadquarterList>>(
+      `${this.urlBase}/search`,
+      params,
+    )
     return response.data
   }
 

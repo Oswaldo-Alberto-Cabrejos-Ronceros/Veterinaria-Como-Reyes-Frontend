@@ -11,7 +11,7 @@ import Button from 'primevue/button'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/yup'
 import { onMounted, ref } from 'vue'
-import DataTable from 'primevue/datatable'
+import DataTable, { type DataTablePageEvent } from 'primevue/datatable'
 import Column from 'primevue/column'
 import { useConfirm, useDialog, useToast } from 'primevue'
 import type { Headquarter } from '@/models/Headquarter'
@@ -20,6 +20,9 @@ import type { FormValues as AddEditHeadquarterSchema } from '@/validation-schema
 import ViewHeadquaterCard from './components/ViewHeadquaterCard.vue'
 import { useHeadquarter } from '@/composables/useHeadquarter'
 import type { FormValues as HeadquarterAddEditSchema } from '@/validation-schemas-forms/schema-add-edit-headquarter'
+import type { HeadquarterList } from '@/models/HeadquarterList'
+import { debounce } from 'lodash'
+import type { OptionSelect } from '@/models/OptionSelect'
 
 //toast
 const toast = useToast()
@@ -37,28 +40,52 @@ const showToast = (message: string) => {
 const {
   loading,
   error,
-  getAllHeadquarters,
   createHeadquarter,
   updateHeadquarter,
   deleteHeadquarter,
   activateHeadquarter,
+  searchHeadquarters,
+  getHeadquarterById,
 } = useHeadquarter()
 
 //headquarters
-const headquarters = ref<Headquarter[]>([])
+const headquarters = ref<HeadquarterList[]>([])
+const totalRecords = ref<number>(0)
+
+const rows = ref<number>(1)
+
+const first = ref<number>(0)
 
 onMounted(() => {
   loadHeadquarters()
 })
 
-//for load headquartes
+//for search headquarters
 
-const loadHeadquarters = async () => {
-  headquarters.value = await getAllHeadquarters()
+const searchHeadquartersDebounce = debounce(() => loadHeadquarters())
+
+//for load headquarters
+
+const loadHeadquarters = async (event?: DataTablePageEvent) => {
+  const page = event ? event.first / event.rows : 0
+  const size = event ? event.rows : rows.value
+  rows.value = size
+  const pageResponse = await searchHeadquarters(
+    page,
+    size,
+    fieldMap.name[0].value,
+    fieldMap.phone[0].value,
+    fieldMap.address[0].value,
+    fieldMap.email[0].value,
+    district.value,
+    province.value,
+  )
+  headquarters.value = pageResponse.content
+  totalRecords.value = pageResponse.totalElements
 }
 
 //form
-const { handleSubmit, errors, defineField } = useForm<SearchHeadquarterSchema>({
+const { errors, defineField } = useForm<SearchHeadquarterSchema>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
     name: '',
@@ -67,6 +94,7 @@ const { handleSubmit, errors, defineField } = useForm<SearchHeadquarterSchema>({
     district: '',
     phone: '',
     email: '',
+    status: true,
   },
 })
 
@@ -83,6 +111,7 @@ const fieldMap = {
 
 const [province, provinceAttrs] = defineField('province')
 const [district, districtAttrs] = defineField('district')
+const [status, statusAttrs] = defineField('status')
 
 //textfields
 const textFields: { title: string; key: keyof typeof fieldMap; type: string; icon: string }[] = [
@@ -112,11 +141,6 @@ const textFields: { title: string; key: keyof typeof fieldMap; type: string; ico
   },
 ]
 
-//for submit
-const onSubmit = handleSubmit((values) => {
-  console.log(values)
-})
-
 const provinces = [
   { name: 'Ica', value: 'Ica' },
   { name: 'Chincha', value: 'Chincha' },
@@ -130,6 +154,18 @@ const districts = [
   { name: 'Chincha', value: 'Chincha' },
   { name: 'Pisco', value: 'Pisco' },
   { name: 'Nazca', value: 'Nazca' },
+]
+
+//options
+const statusOptions: OptionSelect[] = [
+  {
+    value: true,
+    name: 'Activo',
+  },
+  {
+    value: false,
+    name: 'Desativado',
+  },
 ]
 
 //for dialog
@@ -155,28 +191,30 @@ const addHeadquarter = () => {
 }
 
 //for view
-const viewHeadquarter = (headquarterData: Headquarter) => {
+const viewHeadquarter = async (headquarterData: HeadquarterList) => {
+  const headquarter = await getHeadquarterById(headquarterData.id)
   dialog.open(ViewHeadquaterCard, {
     props: {
       modal: true,
       header: `${headquarterData.name}`,
     },
     data: {
-      headquarterData: headquarterData,
+      headquarterData: headquarter,
     },
   })
 }
 
 //for edit
 
-const editHeadquarter = (headquarterData: Headquarter) => {
+const editHeadquarter = async (headquarterData: HeadquarterList) => {
+  const headquarter = await getHeadquarterById(headquarterData.id)
   dialog.open(AddEditHeadquarterCard, {
     props: {
       modal: true,
       header: `${headquarterData.name}`,
     },
     data: {
-      headquarterData: headquarterData as AddEditHeadquarterSchema,
+      headquarterData: headquarter as AddEditHeadquarterSchema,
     },
     onClose: async (options) => {
       const data = options?.data as HeadquarterAddEditSchema
@@ -195,7 +233,10 @@ const confirm = useConfirm()
 
 //for delete with confirm popup
 
-const deleteHeadquarterAction = (event: MouseEvent | KeyboardEvent, headquarter: Headquarter) => {
+const deleteHeadquarterAction = (
+  event: MouseEvent | KeyboardEvent,
+  headquarter: HeadquarterList,
+) => {
   confirm.require({
     group: 'confirmPopupGeneral',
     target: event.currentTarget as HTMLElement,
@@ -245,7 +286,7 @@ const exportCSV = () => {
       </template>
       <template #content>
         <div class="flex flex-col gap-6">
-          <form @submit.prevent="onSubmit" class="form-search-grid-col-5">
+          <form class="form-search-grid-col-5">
             <!-- province -->
             <div>
               <label class="block mb-2">Provincia</label>
@@ -258,11 +299,9 @@ const exportCSV = () => {
                 optionLabel="name"
                 optionValue="value"
                 placeholder="Selecciona Provincia"
+                showClear
+                @update:model-value="searchHeadquartersDebounce()"
               />
-
-              <Message v-if="errors.province" severity="error" size="small" variant="simple">
-                {{ errors.province }}
-              </Message>
             </div>
 
             <!-- district -->
@@ -277,11 +316,9 @@ const exportCSV = () => {
                 optionLabel="name"
                 optionValue="value"
                 placeholder="Selecciona Distrito"
+                showClear
+                @update:model-value="searchHeadquartersDebounce()"
               />
-
-              <Message v-if="errors.district" severity="error" size="small" variant="simple">
-                {{ errors.district }}
-              </Message>
             </div>
             <div v-for="element in textFields" :key="element.key">
               <label class="block mb-2">{{ element.title }}</label>
@@ -296,22 +333,32 @@ const exportCSV = () => {
                   class="w-full"
                   :placeholder="element.title"
                   :type="element.type"
+                  @update:model-value="searchHeadquartersDebounce()"
                 />
               </InputGroup>
               <Message v-if="errors[element.key]" severity="error" size="small" variant="simple">
                 {{ errors[element.key] }}
               </Message>
             </div>
-            <div class="form-button-search-container-grid-col-5">
-              <!-- button -->
-              <Button
-                label="Buscar"
-                type="submit"
-                severity="info"
-                icon="pi pi-search"
-                iconPos="right"
+
+            <!-- status -->
+
+            <div>
+              <label class="block mb-2">Estado</label>
+              <Select
                 class="w-full"
+                v-bind="statusAttrs"
+                v-model="status"
+                :options="statusOptions"
+                optionLabel="name"
+                optionValue="value"
+                placeholder="Selecciona Estado"
+                @update:model-value="searchHeadquartersDebounce()"
               />
+
+              <Message v-if="errors.status" severity="error" size="small" variant="simple">
+                {{ errors.status }}
+              </Message>
             </div>
           </form>
 
@@ -328,8 +375,13 @@ const exportCSV = () => {
           <DataTable
             :value="headquarters"
             paginator
-            :rows="10"
-            :rows-per-page-options="[5, 10]"
+            :rows="rows"
+            :totalRecords="totalRecords"
+            :lazy="true"
+            :first="first"
+            :loading="loading.searchHeadquarters"
+            @page="loadHeadquarters"
+            :rows-per-page-options="[1, 2, 3, 4]"
             ref="dt"
           >
             <template #header>
@@ -344,6 +396,13 @@ const exportCSV = () => {
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
             </template>
+            <Column
+              field="name"
+              class="hidden lg:table-cell"
+              sortable
+              header="Nombre"
+              style="width: 15%"
+            ></Column>
             <Column field="address" sortable header="Dirección" style="width: 25%"></Column>
             <Column
               field="district"
