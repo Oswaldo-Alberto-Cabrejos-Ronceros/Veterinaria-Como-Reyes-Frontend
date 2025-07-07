@@ -1,13 +1,19 @@
 import { animalUsesCases } from '@/dependency-injection/animal.container'
 import { useAsyncHandler } from './useAsyncHandler'
 import { AnimalAdapter } from '@/adapters/AnimalAdapter'
-import type { Animal, AnimalByClient, AnimalRequest } from '@/services/Animal/domain/models/Animal'
+import type {
+  Animal,
+  AnimalByClient,
+  AnimalList,
+  AnimalRequest,
+} from '@/services/Animal/domain/models/Animal'
 import type { Pet as PetView } from '@/models/Pet'
 import type { FormValues as PetAddEditSchema } from '@/validation-schemas-forms/schema-add-edit-pet'
 import type { PetByClient } from '@/models/PetByClient'
 import type { FormValues as AddMyPetSchema } from '@/validation-schemas-forms/schema-add-pet-client'
 import type { SearchAnimalParams } from '@/services/Animal/domain/models/SearchAnimalParams'
 import type { PageResponse } from '@/services/models/PageResponse'
+import type { PetList } from '@/models/PetList'
 export function usePet() {
   const { loading, error, runUseCase } = useAsyncHandler()
 
@@ -63,18 +69,16 @@ export function usePet() {
     await runUseCase('activatePet', () => animalUsesCases.activateAnimal.execute(petId))
   }
 
-  const searchPets = async (
-    params: SearchAnimalParams,
-  ): Promise<PageResponse<PetView>> => {
-      const page: PageResponse<Animal> = await runUseCase('searchAnimals', () =>
-        animalUsesCases.searchAnimals.execute(params),
-      )
+  const searchPets = async (params: SearchAnimalParams): Promise<PageResponse<PetList>> => {
+    const page: PageResponse<AnimalList> = await runUseCase('searchAnimals', () =>
+      animalUsesCases.searchAnimals.execute(params),
+    )
 
-      return {
-        ...page,
-        content: page.content.map((animal) => AnimalAdapter.toPetView(animal)),
-      }
+    return {
+      ...page,
+      content: page.content.map((animal) => AnimalAdapter.fromAnimalListToPetList(animal)),
     }
+  }
 
   return {
     loading,

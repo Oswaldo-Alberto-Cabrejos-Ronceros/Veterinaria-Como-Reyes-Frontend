@@ -1,5 +1,5 @@
 import type { HttpClient } from '@/services/Http/model/HttpClient'
-import type { Animal, AnimalByClient, AnimalRequest } from '../domain/models/Animal'
+import type { Animal, AnimalByClient, AnimalList, AnimalRequest } from '../domain/models/Animal'
 import type { AnimalService } from '../domain/services/AnimalService'
 import type { SearchAnimalParams } from '../domain/models/SearchAnimalParams'
 import type { PageResponse } from '@/services/models/PageResponse'
@@ -17,7 +17,9 @@ export class AnimalServiceImpl implements AnimalService {
     return response.data
   }
   async getAnimalByClientId(clientId: number): Promise<AnimalByClient[]> {
-    const response = await this.httpClient.get<AnimalByClient[]>(`${this.urlBase}/client/${clientId}`)
+    const response = await this.httpClient.get<AnimalByClient[]>(
+      `${this.urlBase}/client/${clientId}`,
+    )
     return response.data
   }
 
@@ -33,7 +35,7 @@ export class AnimalServiceImpl implements AnimalService {
   async activateAnimal(animalId: number): Promise<void> {
     await this.httpClient.put<void>(`${this.urlBase}/${animalId}/activate`, {})
   }
-  async searchAnimals(params: SearchAnimalParams): Promise<PageResponse<Animal>> {
+  async searchAnimals(params: SearchAnimalParams): Promise<PageResponse<AnimalList>> {
     const queryParams: Record<string, string | number> = {}
 
     if (params.name) queryParams.name = params.name
@@ -46,7 +48,10 @@ export class AnimalServiceImpl implements AnimalService {
     if (typeof params.size === 'number') queryParams.size = params.size
     if (params.sort) queryParams.sort = params.sort
 
-    const response = await this.httpClient.get<PageResponse<Animal>>(`${this.urlBase}/search`, queryParams)
+    const response = await this.httpClient.get<PageResponse<AnimalList>>(
+      `${this.urlBase}/search`,
+      queryParams,
+    )
     return response.data
   }
 }
