@@ -24,6 +24,8 @@ import type { OptionSelect } from '@/models/OptionSelect'
 import { useSpecie } from '@/composables/useSpecie'
 import type { Category } from '@/models/Category'
 import { useCategory } from '@/composables/useCategory'
+import type { DataTablePageEvent } from 'primevue/datatable'
+import { debounce } from 'lodash'
 
 //toast
 const toast = useToast()
@@ -42,11 +44,11 @@ const showToast = (message: string) => {
 const {
   loading,
   error,
-  getAllVeterinaryServices,
   createVeterinaryService,
   updateVeterinaryService,
   deleteVeterinaryService,
   activateVeterinaryService,
+  searchVeterinaryServices
 } = useVeterinaryService()
 
 const { getAllSpecies } = useSpecie()
@@ -56,6 +58,10 @@ const { getAllCategories } = useCategory()
 //services
 
 const services = ref<Service[]>([])
+
+const totalRecords = ref<number>(0)
+const rows = ref<number>(10)
+const first = ref<number>(0)
 
 const speciesOptions = ref<OptionSelect[]>([])
 
@@ -67,8 +73,23 @@ onMounted(async () => {
   categoriesOptions.value = categoriesToOptionsSelect(await getAllCategories())
 })
 
-const loadServices = async () => {
-  services.value = await getAllVeterinaryServices()
+const loadServices = async (event?: DataTablePageEvent) => {
+  const page = event ? event.first / event.rows : 0
+  const size = event ? event.rows : rows.value
+  rows.value = size
+
+  const response = await searchVeterinaryServices(
+    page,
+    size,
+    {
+      name: name.value,
+      specie: specieId.value?.toString(),
+      category: categoryId.value?.toString(),
+    }
+  )
+
+  services.value = response.content
+  totalRecords.value = response.totalElements
 }
 
 //form
@@ -91,6 +112,10 @@ const [categoryId, categoryIdAttrs] = defineField('categoryId')
 const onSubmit = handleSubmit((values) => {
   console.log(values)
 })
+
+const searchServicesDebounced = debounce(() => {
+  loadServices()
+}, 400)
 
 //for species to options Select
 
@@ -240,7 +265,7 @@ const exportCSV = () => {
                 <InputGroupAddon class="text-neutral-400">
                   <i class="pi pi-info"></i>
                 </InputGroupAddon>
-                <InputText v-model="name" v-bind="nameAttrs" class="w-full" placeholder="Nombre" />
+                <InputText v-model="name" v-bind="nameAttrs" :invalid="Boolean(errors.name)" class="w-full" placeholder="Nombre" @update:model-value="searchServicesDebounced" />
               </InputGroup>
               <Message v-if="errors.name" severity="error" size="small" variant="simple">
                 {{ errors.name }}
@@ -254,9 +279,11 @@ const exportCSV = () => {
                 v-bind="specieIdAttrs"
                 v-model="specieId"
                 :options="speciesOptions"
+                :invalid="Boolean(errors.specieId)"
                 optionLabel="name"
                 optionValue="value"
                 placeholder="Selecciona Especie"
+                @update:model-value="searchServicesDebounced"
               />
 
               <Message v-if="errors.specieId" severity="error" size="small" variant="simple">
@@ -271,9 +298,11 @@ const exportCSV = () => {
                 v-bind="categoryIdAttrs"
                 v-model="categoryId"
                 :options="categoriesOptions"
+                :invalid="Boolean(errors.specieId)"
                 optionLabel="name"
                 optionValue="value"
                 placeholder="Selecciona Categoria"
+                @update:model-value="searchServicesDebounced"
               />
               <Message v-if="errors.specieId" severity="error" size="small" variant="simple">
                 {{ errors.specieId }}
@@ -315,8 +344,13 @@ const exportCSV = () => {
           <DataTable
             :value="services"
             paginator
-            :rows="10"
+            lazy
+            :rows="rows"
+            :first="first"
+            :totalRecords="totalRecords"
+            :loading="loading.searchVeterinaryServices"
             :rows-per-page-options="[10, 15, 20, 25, 30]"
+            @page="loadServices"
             ref="dt"
           >
             <template #header>

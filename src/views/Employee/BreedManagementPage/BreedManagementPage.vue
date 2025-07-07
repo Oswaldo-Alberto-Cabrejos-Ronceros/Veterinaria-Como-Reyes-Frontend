@@ -22,6 +22,8 @@ import { useBreed } from '@/composables/useBreed'
 import type { OptionSelect } from '@/models/OptionSelect'
 import type { Specie } from '@/models/Specie'
 import { useSpecie } from '@/composables/useSpecie'
+import type { DataTablePageEvent } from 'primevue/datatable'
+import { debounce } from 'lodash'
 
 //toast
 const toast = useToast()
@@ -37,7 +39,7 @@ const showToast = (message: string) => {
 
 //get from compose
 
-const { loading, error, getAllBreeds, createBreed, updateBreed, deleteBreed, activateBreed } = useBreed()
+const { loading, error, createBreed, updateBreed, deleteBreed, activateBreed, searchBreeds } = useBreed()
 
 const { getAllSpecies } = useSpecie()
 
@@ -45,15 +47,34 @@ const breeds = ref<Breed[]>([])
 
 const speciesOptions = ref<OptionSelect[]>([])
 
-onMounted(() => {
-  loadBreeds()
+const totalRecords = ref<number>(0)
+const rows = ref<number>(10)
+const first = ref<number>(0)
+const searchBreedsDebounced = debounce(() => loadBreeds(), 400)
+
+onMounted(async () => {
+  speciesOptions.value = speciesToOptionsSelect(await getAllSpecies())
+  await loadBreeds()
 })
 
 //for load breeds
 
-const loadBreeds = async () => {
-  breeds.value = await getAllBreeds()
-  speciesOptions.value = speciesToOptionsSelect(await getAllSpecies())
+const loadBreeds = async (event?: DataTablePageEvent) => {
+  const page = event ? event.first / event.rows : 0
+  const size = event ? event.rows : rows.value
+  rows.value = size
+
+  const specieName = speciesOptions.value.find((s) => s.value === specieId.value)?.name || undefined
+
+  const response = await searchBreeds({
+    page,
+    size,
+    name: name.value,
+    specieName,
+  })
+
+  breeds.value = response.content
+  totalRecords.value = response.totalElements
 }
 
 //for species to options Select
@@ -218,6 +239,7 @@ const exportCSV = () => {
                   v-model="name"
                   v-bind="nameAttrs"
                   :invalid="Boolean(errors.name)"
+                  @update:model-value="searchBreedsDebounced"
                   class="w-full"
                   placeholder="Nombre"
                 />
@@ -235,6 +257,7 @@ const exportCSV = () => {
                 v-model="specieId"
                 :options="speciesOptions"
                 :invalid="Boolean(errors.specieId)"
+                @update:model-value="searchBreedsDebounced"
                 optionLabel="name"
                 optionValue="value"
                 placeholder="Selecciona Especie"
@@ -271,8 +294,13 @@ const exportCSV = () => {
           <DataTable
             :value="breeds"
             paginator
-            :rows="10"
+            lazy
+            :rows="rows"
+            :first="first"
+            :totalRecords="totalRecords"
+            :loading="loading.searchBreeds"
             :rows-per-page-options="[5, 10, 15, 20]"
+            @page="loadBreeds"
             ref="dt"
           >
             <template #header>

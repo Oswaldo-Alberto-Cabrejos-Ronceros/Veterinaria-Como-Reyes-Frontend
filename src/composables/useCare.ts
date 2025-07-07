@@ -5,6 +5,7 @@ import { CareAdapter } from '@/adapters/CareAdapter'
 import type { CareRequest } from '@/services/Care/domain/models/Care'
 import type { FormValues as AddCareFromAppoinmentSchema } from '@/validation-schemas-forms/schema-add-care-from-appointment'
 import type { FormValues as AddCareFromRequestSchema } from '@/validation-schemas-forms/schema-add-care'
+import type { PageResponse } from '@/services/models/PageResponse'
 
 export function useCare() {
   const { loading, error, runUseCase } = useAsyncHandler()
@@ -61,6 +62,26 @@ export function useCare() {
     return CareAdapter.toView(care)
   }
 
+  const searchCares = async (
+    status?: string,
+    fecha?: string,
+    idHeadquarter?: number,
+    idService?: number,
+    page?: number,
+    size?: number
+  ): Promise<PageResponse<CareView>> => {
+    const result = await runUseCase('searchCares', () =>
+      careUsesCases.searchCares.execute(status, fecha, idHeadquarter, idService, page, size)
+    )
+
+    const content = result.content.map((care) => CareAdapter.toView(care))
+
+    return {
+      ...result,
+      content
+    }
+  }
+
   return {
     loading,
     error,
@@ -71,6 +92,7 @@ export function useCare() {
     completeCare,
     updateCare,
     createCareFromAppointment,
-    createCareFromRequest
+    createCareFromRequest,
+    searchCares,
   }
 }

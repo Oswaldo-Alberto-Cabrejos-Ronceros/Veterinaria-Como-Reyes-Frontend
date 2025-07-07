@@ -19,6 +19,8 @@ import { useDialog, useToast } from 'primevue'
 import type { FormValues as AddEditPaymentMethodSchema } from '@/validation-schemas-forms/schema-add-edit-payment-method'
 import ViewPaymentMethodCard from './components/ViewPaymentMethodCard.vue'
 import { usePaymentMethod } from '@/composables/usePaymentMethod'
+import { debounce } from 'lodash'
+import type { DataTablePageEvent } from 'primevue/datatable'
 
 //toast
 const toast = useToast()
@@ -37,25 +39,37 @@ const showToast = (message: string) => {
 const {
   loading,
   error,
-  getAllPaymentMethods,
   createPaymentMethod,
   updatePaymentMethod,
   deletePaymentMethod,
   activatePaymentMethod,
+  searchPaymentMethods,
 } = usePaymentMethod()
 
 //payment methods
 
 const paymentMethods = ref<PaymentMethod[]>([])
 
-onMounted(() => {
-  loadPaymentMethods()
+const totalRecords = ref<number>(0)
+const rows = ref<number>(10)
+const first = ref<number>(0)
+const searchPaymentMethodsDebounced = debounce(() => loadPaymentMethods(), 400)
+
+onMounted(async () => {
+  await loadPaymentMethods()
 })
 
 //for load payment methods
 
-const loadPaymentMethods = async () => {
-  paymentMethods.value = await getAllPaymentMethods()
+const loadPaymentMethods = async (event?: DataTablePageEvent) => {
+  const page = event ? event.first / event.rows : 0
+  const size = event ? event.rows : rows.value
+  rows.value = size
+
+  const response = await searchPaymentMethods(page, size, name.value)
+
+  paymentMethods.value = response.content
+  totalRecords.value = response.totalElements
 }
 
 //form
@@ -192,7 +206,7 @@ const exportCSV = () => {
                 <InputGroupAddon class="text-neutral-400">
                   <i class="pi pi-info"></i>
                 </InputGroupAddon>
-                <InputText v-model="name" v-bind="nameAttrs" :invalid="Boolean(errors.name)" class="w-full" placeholder="Nombre" />
+                <InputText v-model="name" v-bind="nameAttrs" :invalid="Boolean(errors.name)" @update:model-value="searchPaymentMethodsDebounced" class="w-full" placeholder="Nombre" />
               </InputGroup>
               <Message v-if="errors.name" severity="error" size="small" variant="simple">
                 {{ errors.name }}
@@ -222,15 +236,20 @@ const exportCSV = () => {
           </Message>
           <!-- for messague error -->
           <Message v-if="error.getAllPaymentMethods" severity="error" size="small" variant="simple">
-            Error al cargar los sedes
+            Error al cargar los métodos de pago
           </Message>
 
           <!-- table -->
           <DataTable
             :value="paymentMethods"
             paginator
-            :rows="10"
+            lazy
+            :rows="rows"
+            :first="first"
+            :totalRecords="totalRecords"
+            :loading="loading.searchPaymentMethods"
             :rows-per-page-options="[5, 10]"
+            @page="loadPaymentMethods"
             ref="dt"
           >
             <template #header>

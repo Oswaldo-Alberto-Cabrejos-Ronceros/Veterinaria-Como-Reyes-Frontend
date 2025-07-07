@@ -19,6 +19,8 @@ import type { FormValues as AddEditCategorySchema } from '@/validation-schemas-f
 import ViewCategoryCard from './components/ViewCategoryCard.vue'
 import { useConfirm } from 'primevue'
 import { useCategory } from '@/composables/useCategory'
+import type { DataTablePageEvent } from 'primevue/datatable'
+import { debounce } from 'lodash'
 
 //for toast
 const toast = useToast()
@@ -34,20 +36,37 @@ const showToast = (message: string) => {
 
 //methods
 
-const { loading, error, getAllCategories, createCategory, updateCategory, deleteCategory, activateCategory } =
+const { loading, error, createCategory, updateCategory, deleteCategory, activateCategory, searchCategories } =
   useCategory()
 
 //categories
 
 const categories = ref<Category[]>([])
 
+const totalRecords = ref<number>(0)
+const rows = ref<number>(10)
+const first = ref<number>(0)
+
+const searchCategoriesDebounced = debounce(() => loadCategories(), 400)
+
 onMounted(async () => {
   loadCategories()
 })
 
 //load categories
-const loadCategories = async () => {
-  categories.value = await getAllCategories()
+const loadCategories = async (event?: DataTablePageEvent) => {
+  const page = event ? event.first / event.rows : 0
+  const size = event ? event.rows : rows.value
+  rows.value = size
+
+  const response = await searchCategories({
+    page,
+    size,
+    name: name.value,
+  })
+
+  categories.value = response.content
+  totalRecords.value = response.totalElements
 }
 
 //form
@@ -189,6 +208,7 @@ const exportCSV = () => {
                   v-model="name"
                   v-bind="nameAttrs"
                   :invalid="Boolean(errors.name)"
+                  @update:model-value="searchCategoriesDebounced"
                   class="w-full"
                   placeholder="Nombre de la categoria"
                 />
@@ -221,8 +241,13 @@ const exportCSV = () => {
           <DataTable
             :value="categories"
             paginator
-            :rows="10"
-            :rows-per-page-options="[5, 10]"
+            lazy
+            :rows="rows"
+            :first="first"
+            :totalRecords="totalRecords"
+            :loading="loading.searchCategories"
+            :rows-per-page-options="[5, 10, 15, 20]"
+            @page="loadCategories"
             ref="dt"
           >
             <template #header>
