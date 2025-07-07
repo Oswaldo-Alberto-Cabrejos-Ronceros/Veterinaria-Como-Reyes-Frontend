@@ -118,7 +118,7 @@ const statusOptions: OptionSelect[] = [
   },
   {
     value: false,
-    name: 'Desativado',
+    name: 'Desactivado',
   },
 ]
 
@@ -162,6 +162,7 @@ const { errors, defineField } = useForm<SearchEmployeeSchema>({
     specie: undefined,
     breed: undefined,
     gender: undefined,
+    status: true,
   },
 })
 
@@ -251,7 +252,7 @@ const editPet = async (petData: PetList) => {
         urlImage: pet.urlImage,
         ownerDni: client.value ? client.value?.dni : '',
         ownerId: pet.clientId,
-        ownerFullName: client.value? ` ${client.value.names} ${client.value.lastnames}` : '',
+        ownerFullName: client.value ? ` ${client.value.names} ${client.value.lastnames}` : '',
       } as AddEditPetSchema,
       speciesOptions: speciesToOptionsSelect(await getAllSpecies()),
     },
@@ -288,6 +289,7 @@ const confirmDeletePet = (event: MouseEvent | KeyboardEvent, pet: PetList) => {
     accept: async () => {
       console.log('Eliminando mascota: ', pet.id)
       await deletePet(pet.id) // esta es la que viene de usePet()
+      loadPets()
       showToast('Mascota eliminada exitosamente: ' + pet.name)
     },
     reject: () => {
@@ -334,12 +336,15 @@ const exportCSV = () => {
 
 //for watch specieId
 
-watch(()=>specie.value,(newValue)=>{
-  if(newValue===null){
-    breed.value=undefined
-    breedsOptions.value=[]
-  }
-})
+watch(
+  () => specie.value,
+  (newValue) => {
+    if (newValue === null) {
+      breed.value = undefined
+      breedsOptions.value = []
+    }
+  },
+)
 </script>
 
 <template>
@@ -507,39 +512,43 @@ watch(()=>specie.value,(newValue)=>{
               sortable
               style="width: 15%"
             ></Column>
-            <Column>
+            <Column header="Acciones">
               <template #body="{ data }">
-                <div
-                  class="flex justify-between items-center flex-row lg:flex-col xl:flex-row gap-1"
-                >
+                <div class="flex items-center flex-row lg:flex-col xl:flex-row gap-1">
                   <Button
                     icon="pi pi-eye"
                     severity="info"
-                    variant="outlined"
-                    aria-label="Filter"
+                    variant="text"
+                    size="small"
+                    aria-label="Ver"
                     rounded
                     @click="viewPet(data)"
                   ></Button>
                   <Button
                     icon="pi pi-pencil"
                     severity="warn"
-                    variant="outlined"
-                    aria-label="Filter"
+                    variant="text"
+                    size="small"
+                    aria-label="Editar"
                     rounded
                     @click="editPet(data)"
                   ></Button>
                   <Button
-                    icon="pi pi-trash"
+                    v-if="data.status === 'Activo'"
+                    icon="pi pi-ban"
                     severity="danger"
-                    variant="outlined"
-                    aria-label="Filter"
+                    variant="text"
+                    size="small"
+                    aria-label="Bloquear"
                     rounded
                     @click="confirmDeletePet($event, data)"
                   ></Button>
                   <Button
+                    v-else
                     icon="pi pi-refresh"
-                    severity="success"
-                    variant="outlined"
+                    severity="warn"
+                    variant="text"
+                    size="small"
                     aria-label="Activar"
                     rounded
                     @click="confirmActivatePet($event, data)"

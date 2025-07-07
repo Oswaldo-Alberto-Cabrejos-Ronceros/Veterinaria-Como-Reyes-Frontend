@@ -6,4 +6,5 @@ export interface HeadquarterList {
   email: string
   district: string
   province: string
+  status:string
 }

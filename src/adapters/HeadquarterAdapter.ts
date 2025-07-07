@@ -43,6 +43,7 @@ export class HeadquarterAdapter {
       email: headquarterList.email,
       district: headquarterList.district,
       province: headquarterList.province,
+      status:headquarterList.status
     }
   }
 }

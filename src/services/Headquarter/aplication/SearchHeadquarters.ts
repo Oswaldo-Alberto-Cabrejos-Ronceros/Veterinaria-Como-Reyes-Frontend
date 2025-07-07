@@ -12,6 +12,7 @@ export class SearchHeadquarters {
     email?: string,
     district?: string,
     province?: string,
+    status?:boolean
   ) {
     return await this.headquarterService.searchHeadquarters(
       page,
@@ -22,6 +23,7 @@ export class SearchHeadquarters {
       email,
       district,
       province,
+      status
     )
   }
 }

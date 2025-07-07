@@ -14,7 +14,6 @@ import { onMounted, ref } from 'vue'
 import DataTable, { type DataTablePageEvent } from 'primevue/datatable'
 import Column from 'primevue/column'
 import { useConfirm, useDialog, useToast } from 'primevue'
-import type { Headquarter } from '@/models/Headquarter'
 import AddEditHeadquarterCard from './components/AddEditHeadquarterCard.vue'
 import type { FormValues as AddEditHeadquarterSchema } from '@/validation-schemas-forms/schema-add-edit-headquarter'
 import ViewHeadquaterCard from './components/ViewHeadquaterCard.vue'
@@ -79,6 +78,7 @@ const loadHeadquarters = async (event?: DataTablePageEvent) => {
     fieldMap.email[0].value,
     district.value,
     province.value,
+    status.value,
   )
   headquarters.value = pageResponse.content
   totalRecords.value = pageResponse.totalElements
@@ -164,7 +164,7 @@ const statusOptions: OptionSelect[] = [
   },
   {
     value: false,
-    name: 'Desativado',
+    name: 'Desactivado',
   },
 ]
 
@@ -263,12 +263,36 @@ const deleteHeadquarterAction = (
   })
 }
 
-//for activate headquarter
-const activateHeadquarterAction = async (headquarter: Headquarter) => {
-  await activateHeadquarter(headquarter.id)
-  showToast('Sede activada exitosamente: ' + headquarter.name)
-  loadHeadquarters()
+const activeHeadquarterAction = (
+  event: MouseEvent | KeyboardEvent,
+  headquarter: HeadquarterList,
+) => {
+  confirm.require({
+    group: 'confirmPopupGeneral',
+    target: event.currentTarget as HTMLElement,
+    message: '¿Seguro que activar eliminar esta sede?',
+    icon: 'pi pi-exclamation-triangle',
+    rejectProps: {
+      label: 'Cancelar',
+      severity: 'secondary',
+      outlined: true,
+    },
+    acceptProps: {
+      label: 'Activar',
+      severity: 'success',
+    },
+    accept: async () => {
+      console.log('Activando Sede ', headquarter.id)
+      await activateHeadquarter(headquarter.id)
+      loadHeadquarters()
+      showToast('Sede Activada exitosamente: ' + headquarter.name)
+    },
+    reject: () => {
+      console.log('Cancelando')
+    },
+  })
 }
+
 
 //for export
 
@@ -425,7 +449,7 @@ const exportCSV = () => {
               sortable
               style="width: 25%"
             ></Column>
-            <Column>
+            <Column header="Acciones">
               <template #body="{ data }">
                 <div
                   class="flex justify-between items-center flex-row lg:flex-col xl:flex-row gap-1"
@@ -433,34 +457,40 @@ const exportCSV = () => {
                   <Button
                     icon="pi pi-eye"
                     severity="info"
-                    variant="outlined"
-                    aria-label="Filter"
+                    size="small"
+                    variant="text"
+                    aria-label="Ver"
                     rounded
                     @click="viewHeadquarter(data)"
                   ></Button>
                   <Button
                     icon="pi pi-pencil"
                     severity="warn"
-                    variant="outlined"
-                    aria-label="Filter"
+                    size="small"
+                    variant="text"
+                    aria-label="Editar"
                     rounded
                     @click="editHeadquarter(data)"
                   ></Button>
                   <Button
-                    icon="pi pi-trash"
+                  v-if="data.status==='Activo'"
+                    icon="pi pi-ban"
                     severity="danger"
-                    variant="outlined"
-                    aria-label="Filter"
+                    size="small"
+                    variant="text"
+                    aria-label="Bloquear"
                     rounded
                     @click="deleteHeadquarterAction($event, data)"
                   ></Button>
                   <Button
+                  v-else
                     icon="pi pi-check-circle"
                     severity="success"
-                    variant="outlined"
+                    size="small"
+                    variant="text"
                     aria-label="Activar"
                     rounded
-                    @click="activateHeadquarterAction(data)"
+                    @click="activeHeadquarterAction($event,data)"
                   ></Button>
                 </div>
               </template>

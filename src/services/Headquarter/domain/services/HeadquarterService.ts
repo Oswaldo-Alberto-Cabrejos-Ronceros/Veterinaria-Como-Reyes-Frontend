@@ -19,6 +19,7 @@ export interface HeadquarterService {
     email?: string,
     district?: string,
     province?: string,
+    status?:boolean
   ): Promise<PageResponse<HeadquarterList>>
 
   deleteHeadquarter(id: number): Promise<void>
