@@ -330,30 +330,31 @@ const exportCSV = () => {
               sortable
               style="width: 12%"
             ></Column>
-            <Column>
+            <Column header="Acciones">
               <template #body>
-                <div
-                  class="flex justify-between items-center flex-col sm:flex-row lg:flex-row gap-1"
-                >
+                <div class="flex items-center flex-col sm:flex-row lg:flex-row gap-1">
                   <Button
                     icon="pi pi-eye"
                     severity="info"
-                    variant="outlined"
-                    aria-label="Filter"
+                    variant="text"
+                    size="small"
+                    aria-label="Ver"
                     rounded
                   ></Button>
                   <Button
                     icon="pi pi-pencil"
                     severity="warn"
-                    variant="outlined"
-                    aria-label="Filter"
+                    variant="text"
+                    size="small"
+                    aria-label="Editar"
                     rounded
                   ></Button>
                   <Button
                     icon="pi pi-file"
                     severity="success"
-                    variant="outlined"
-                    aria-label="Filter"
+                    variant="text"
+                    size="small"
+                    aria-label="Descargar comprobante"
                     rounded
                   ></Button>
                 </div>

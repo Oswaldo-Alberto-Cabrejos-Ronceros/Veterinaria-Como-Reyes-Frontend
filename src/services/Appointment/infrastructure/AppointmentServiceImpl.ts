@@ -7,12 +7,17 @@ import type {
   BasicServiceForAppointment,
   InfoBasicAppointment,
   AppointmentList,
+  InfoAppointmentForPanel,
+  AnimalInfoForAppointment,
+  ClientInfoForAppointment,
+  PaymentInfoForAppointment,
 } from '../domain/models/Appointment'
 import type { SearchAppointmentParams } from '../domain/models/SearchAppointmentParams'
 import type { PageResponse } from '@/services/models/PageResponse'
 
 export class AppointmentServiceImpl implements AppointmentService {
   constructor(private readonly httpClient: HttpClient) {}
+
 
   private readonly url = '/appointments'
 
@@ -99,4 +104,30 @@ export class AppointmentServiceImpl implements AppointmentService {
     )
     return response.data
   }
+
+  async  getAppointmentPanelInfo(appointmentId: number): Promise<InfoAppointmentForPanel> {
+    const response = await this.httpClient.get<InfoAppointmentForPanel>(`${this.url}/panel-info/${appointmentId}`)
+    return response.data
+  }
+
+  async getAnimalInfo(appointmentId: number): Promise<AnimalInfoForAppointment> {
+  const response = await this.httpClient.get<AnimalInfoForAppointment>(
+    `${this.url}/panel-info/${appointmentId}/animal-info`
+  )
+  return response.data
+}
+
+async getClientInfo(appointmentId: number): Promise<ClientInfoForAppointment> {
+  const response = await this.httpClient.get<ClientInfoForAppointment>(
+    `${this.url}/panel-info/${appointmentId}/client-info`
+  )
+  return response.data
+}
+
+async getPaymentInfo(appointmentId: number): Promise<PaymentInfoForAppointment> {
+  const response = await this.httpClient.get<PaymentInfoForAppointment>(
+    `${this.url}/panel-info/${appointmentId}/payment-info`
+  )
+  return response.data
+}
 }

@@ -43,8 +43,9 @@ export class HeadquarterServiceImpl implements HeadquarterService {
     email?: string,
     district?: string,
     province?: string,
+    status?: boolean,
   ): Promise<PageResponse<HeadquarterList>> {
-    const params: Record<string, string | number> = {
+    const params: Record<string, string | number | boolean> = {
       page,
       size,
     }
@@ -55,7 +56,8 @@ export class HeadquarterServiceImpl implements HeadquarterService {
     if (email) params.email = email
     if (district) params.district = district
     if (province) params.province = province
-
+    if (status != undefined) params.status = status
+    
     const response = await this.httpClient.get<PageResponse<HeadquarterList>>(
       `${this.urlBase}/search`,
       params,

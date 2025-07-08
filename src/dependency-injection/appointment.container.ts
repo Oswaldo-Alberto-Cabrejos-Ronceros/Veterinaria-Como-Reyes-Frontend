@@ -9,6 +9,11 @@ import { GetServicesByHeadquarterAndSpecies } from '@/services/Appointment/aplic
 import { UpdateAppointment } from '@/services/Appointment/aplication/UpdateAppointment'
 import { GetAppointmentsForClient } from '@/services/Appointment/aplication/GetAppointmentsForClient'
 import { SearchAppointments } from '@/services/Appointment/aplication/SearchAppointment'
+import { GetAppointmentPanelInfo } from '@/services/Appointment/aplication/GetAppointmentPanelInfo'
+import { GetAnimalInfoForAppointment } from '@/services/Appointment/aplication/GetAnimalInfoForAppointment'
+import { GetClientInfoForAppointment } from '@/services/Appointment/aplication/GetClientInfoForAppointment'
+import { GetPaymentInfoForAppointment } from '@/services/Appointment/aplication/GetPaymentInfoForAppointment'
+
 import { AppointmentServiceImpl } from '@/services/Appointment/infrastructure/AppointmentServiceImpl'
 import { AxiosHttpClient } from '@/services/Http/infrastructure/AxiosHttpClient'
 
@@ -31,4 +36,8 @@ export const appointmentUsesCases = {
   updateAppointment: new UpdateAppointment(appointmentService),
   getAppointmentsForClient: new GetAppointmentsForClient(appointmentService),
   searchAppointment: new SearchAppointments(appointmentService),
+  getAppointmentPanelInfo: new GetAppointmentPanelInfo(appointmentService),
+  getAnimalInfoForAppointment: new GetAnimalInfoForAppointment(appointmentService),
+  getClientInfoForAppointment: new GetClientInfoForAppointment(appointmentService),
+  getPaymentInfoForAppointment: new GetPaymentInfoForAppointment(appointmentService),
 }

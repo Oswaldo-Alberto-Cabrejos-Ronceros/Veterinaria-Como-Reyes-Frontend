@@ -16,7 +16,7 @@ import CategoryManagementPage from '@/views/Employee/CategoryManagementPage/Cate
 import RolePermissionManagementPage from '@/views/Employee/RolePermissionManagementPage/RolePermissionManagementPage.vue'
 import SpecieManagementPage from '@/views/Employee/SpecieManagementPage/SpecieManagementPage.vue'
 import BreedManagementPage from '@/views/Employee/BreedManagementPage/BreedManagementPage.vue'
-import ServicesHeadquarterManagementPage from '@/views/Employee/ServicesHeadquarterManagementPage/ServicesHeadquarterManagementPage.vue'
+//import ServicesHeadquarterManagementPage from '@/views/Employee/ServicesHeadquarterManagementPage/ServicesHeadquarterManagementPage.vue'
 import PaymentManagementPage from '@/views/Employee/PaymentManagementPage/PaymentManagementPage.vue'
 import AppointmentManagementPage from '@/views/Employee/AppointmentManagementPage/AppointmentManagementPage.vue'
 import CareManagementPage from '@/views/Employee/CareManagementPage/CareManagementPage.vue'
@@ -26,6 +26,7 @@ import HomePageVeterinary from '@/views/Employee/HomePageVeterinary/HomePageVete
 import AttendAppointmentPageRecepcionist from '@/views/Employee/AttendAppointmentPageRecepcionist/AttendAppointmentPageRecepcionist.vue'
 import AttendAppointmentVeterinaryPage from '@/views/Employee/AttendAppointmentVeterinaryPage/AttendAppointmentVeterinaryPage.vue'
 import CareUnitaryPage from '@/views/Employee/CareUnitaryPage/CareUnitaryPage.vue'
+import HeadquarterVetServiceManagement from '@/views/Employee/HeadquarterVetServiceManagement/HeadquarterVetServiceManagement.vue'
 //client
 import MyAppointmentsClientPage from '@/views/Client/MyAppointmentsClientPage/MyAppointmentsClientPage.vue'
 import MyPetsPage from '@/views/Client/MyPetsPage/MyPetsPage.vue'
@@ -201,9 +202,10 @@ const router = createRouter({
             {
               path: 'services-headquarters-management',
               name: 'administrator-services-headquarters-management',
-              component: ServicesHeadquarterManagementPage,
+              component: HeadquarterVetServiceManagement,
               meta: { requiresAuth: true, roles: ['Administrador'] },
             },
+
             {
               path: 'payment-management',
               name: 'administrator-payment-management',

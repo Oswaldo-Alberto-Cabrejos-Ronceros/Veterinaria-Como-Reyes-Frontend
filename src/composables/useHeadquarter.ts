@@ -76,6 +76,7 @@ export function useHeadquarter() {
     email?: string,
     district?: string,
     province?: string,
+    status?: boolean,
   ): Promise<PageResponse<HeadquarterListView>> => {
     const pageHeadquarter = await runUseCase('searchHeadquarters', () =>
       headquarterUsesCases.searchHeadquarters.execute(
@@ -87,6 +88,7 @@ export function useHeadquarter() {
         email,
         district,
         province,
+        status,
       ),
     )
     const headquarterView = pageHeadquarter.content.map((headquarter) =>

@@ -161,6 +161,15 @@ const searchInfoReniec = async () => {
     }
   }
 }
+
+const cmvpActive = (id:number):boolean=>{
+  const roleVeterinary =rolesOptions.value.find((item)=> item.name.toUpperCase()==='VETERINARIO')
+  if(roleVeterinary&&roleVeterinary.value===id){
+    return false
+  }else{
+    return true
+  }
+}
 </script>
 
 <template>
@@ -216,10 +225,10 @@ const searchInfoReniec = async () => {
         </Message>
       </div>
 
-      <div>
+      <div v-if="!cmvpActive(roleId)">
         <label class="block mb-2">CMVP</label>
 
-        <InputGroup>
+        <InputGroup         >
           <InputGroupAddon class="text-neutral-400">
             <i class="pi pi-id-card"></i>
           </InputGroupAddon>
@@ -229,7 +238,8 @@ const searchInfoReniec = async () => {
             :invalid="Boolean(errors.cmvp)"
             type="text"
             placeholder="Ej: 14125"
-            :disabled="roleId !== 2"
+            :disabled="cmvpActive(roleId)"
+
           />
         </InputGroup>
 

@@ -13,6 +13,10 @@ import type { InfoBasicAppointmentClient } from '@/models/InfoBasicAppointmentCl
 import type { PageResponse } from '@/services/models/PageResponse'
 import type { SearchAppointmentParams } from '@/services/Appointment/domain/models/SearchAppointmentParams'
 import type { AppointmentList as AppointmentListView } from '@/models/AppointmentList'
+import type { InfoAppointmentForPanel as InfoAppointmentForPanelView } from '@/models/InfoAppointmentForPanel'
+import type { PetInfoForAppointment as PetInfoForAppointmentView } from '@/models/PetInfoForAppointment'
+import type { ClientInfoForAppointment as ClientInfoForAppointmentView } from '@/models/ClientInfoForAppointment'
+import type { PaymentInfoForAppointment as PaymentInfoForAppointmentView } from '@/models/PaymentInfoForAppointment'
 
 export function useAppointment() {
   //get from useAsyncHandle
@@ -124,6 +128,43 @@ export function useAppointment() {
     )
     return AppointmentAdapter.toAppointmentView(appointment)
   }
+
+  const getAppointmentPanelInfo = async (
+    appointmentId: number,
+  ): Promise<InfoAppointmentForPanelView> => {
+    const infoAppointment = await runUseCase('getAppointmentPanelInfo', () =>
+      appointmentUsesCases.getAppointmentPanelInfo.execute(appointmentId),
+    )
+    return AppointmentAdapter.toInfoAppointmentForPanel(infoAppointment)
+  }
+
+  const getPetInfoForAppointment = async (
+    appointmentId: number,
+  ): Promise<PetInfoForAppointmentView> => {
+    const petInfoAppointment = await runUseCase('getPetInfoForAppointment', () =>
+      appointmentUsesCases.getAnimalInfoForAppointment.execute(appointmentId),
+    )
+    return AppointmentAdapter.toPetInfoAppointmentView(petInfoAppointment)
+  }
+
+  const getClientInfoForAppointment = async (
+    appoinmentId: number,
+  ): Promise<ClientInfoForAppointmentView> => {
+    const clientInfoAppointment = await runUseCase('getClientInfoForAppointment', () =>
+      appointmentUsesCases.getClientInfoForAppointment.execute(appoinmentId),
+    )
+    return AppointmentAdapter.toClientInfoForAppointmentView(clientInfoAppointment)
+  }
+
+  const getPaymentInfoForAppointment = async (
+    appoinmentId: number,
+  ): Promise<PaymentInfoForAppointmentView> => {
+    const paymentInfoAppoinment = await runUseCase('getPaymentInfoForAppointment', () =>
+      appointmentUsesCases.getPaymentInfoForAppointment.execute(appoinmentId),
+    )
+    return AppointmentAdapter.toPaymentInfoForAppointmentView(paymentInfoAppoinment)
+  }
+
   return {
     loading,
     error,
@@ -138,5 +179,9 @@ export function useAppointment() {
     getAppointmentsForClient,
     getAppointmentById,
     searchAppointments,
+    getAppointmentPanelInfo,
+    getPetInfoForAppointment,
+    getClientInfoForAppointment,
+    getPaymentInfoForAppointment,
   }
 }

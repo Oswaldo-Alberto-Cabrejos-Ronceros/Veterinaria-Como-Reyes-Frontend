@@ -2,11 +2,15 @@ import type { PageResponse } from '@/services/models/PageResponse'
 import type { SearchAppointmentParams } from '../models/SearchAppointmentParams'
 
 import type {
+  AnimalInfoForAppointment,
   Appointment,
   AppointmentList,
   AppointmentRequest,
   BasicServiceForAppointment,
+  ClientInfoForAppointment,
+  InfoAppointmentForPanel,
   InfoBasicAppointment,
+  PaymentInfoForAppointment,
   TimesForTurn,
 } from '../models/Appointment'
 
@@ -28,4 +32,8 @@ export interface AppointmentService {
   ): Promise<BasicServiceForAppointment[]>
   getAppointmentsForClient(clientId: number): Promise<InfoBasicAppointment[]>
   searchAppointments(params: SearchAppointmentParams): Promise<PageResponse<AppointmentList>>
+  getAppointmentPanelInfo(appointmentId:number):Promise<InfoAppointmentForPanel>
+  getAnimalInfo(appointmentId: number): Promise<AnimalInfoForAppointment>
+  getClientInfo(appointmentId: number): Promise<ClientInfoForAppointment>
+  getPaymentInfo(appointmentId: number): Promise<PaymentInfoForAppointment>
 }
