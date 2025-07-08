@@ -2,16 +2,38 @@
 import Card from 'primevue/card'
 import Button from 'primevue/button'
 import Divider from 'primevue/divider'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import Select from 'primevue/select'
+import { usePaymentMethod } from '@/composables/usePaymentMethod'
+import type { PaymentMethod } from '@/models/PaymentMethod'
+import type { OptionSelect } from '@/models/OptionSelect'
 
 
 const props = defineProps<{
   serviceName: string
   price: number
+  paymentMethodId:number
 }>()
 
 //ref
+const paymentMethodIdref=ref<number>(0)
+
+const paymentMethodsOptions = ref<OptionSelect[]>([])
+
+const { getAllPaymentMethods } = usePaymentMethod()
+const paymentIdsToOptionsSelect = (
+  items: PaymentMethod[],
+): OptionSelect[] => {
+  return items.map((item) => ({
+    value: item.id,
+    name: item.name,
+  }))
+}
+
+onMounted(async ()=>{
+   paymentMethodsOptions.value = paymentIdsToOptionsSelect(await getAllPaymentMethods())
+  paymentMethodIdref.value=props.paymentMethodId
+  })
 
 const subtotal = ref<number>(props.price * 0.82)
 const igv = ref<number>(Number((props.price - subtotal.value).toFixed(1)))
@@ -29,6 +51,7 @@ const igv = ref<number>(Number((props.price - subtotal.value).toFixed(1)))
       <p>Procesamiento de pago</p>
     </template>
     <template #content>
+      <form >
       <h3 class="textLg font-semibold">Servicio programado</h3>
       <div
         class="mt-4 rounded-sm bg-surface-100 dark:bg-surface-800 flex items-center justify-between p-3"
@@ -53,7 +76,9 @@ const igv = ref<number>(Number((props.price - subtotal.value).toFixed(1)))
         <p>S/ {{ price }}</p>
       </div>
       <p>Método de pago</p>
-      <Select placeholder="Seleccione método de pago" class="w-full mt-4" fluid />
+      <Select       v-model="paymentMethodIdref"      optionLabel="name"
+            optionValue="value"
+            placeholder="Selecciona método de pago" :options="paymentMethodsOptions" class="w-full mt-4" fluid />
       <div class="w-full flex gap-4 mt-4">
         <Button
           severity="success"
@@ -61,6 +86,7 @@ const igv = ref<number>(Number((props.price - subtotal.value).toFixed(1)))
           icon="pi pi-credit-card"
           label="Procesar pago"
           class="flex-1"
+          type="submit"
         />
         <Button
           label="Generar Boleta"
@@ -70,6 +96,7 @@ const igv = ref<number>(Number((props.price - subtotal.value).toFixed(1)))
           severity="secondary"
         />
       </div>
+      </form>
     </template>
   </Card>
 </template>

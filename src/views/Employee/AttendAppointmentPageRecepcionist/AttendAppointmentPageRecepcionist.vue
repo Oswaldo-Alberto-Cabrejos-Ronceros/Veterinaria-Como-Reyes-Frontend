@@ -26,6 +26,8 @@ const props = defineProps<{
 const { getAppointmentPanelInfo,getPetInfoForAppointment,getClientInfoForAppointment,getPaymentInfoForAppointment,getAppointmentById } = useAppointment()
 const { createCareFromAppointment } = useCare()
 
+
+
 //ref
 const appointmentBasicInfo = ref<Appointment | null>(null)
 
@@ -162,6 +164,6 @@ const showToast = (message: string) => {
 
     <!-- payment -->
 
-    <CardBilling v-if="paymentInfo" :serviceName="paymentInfo.serviceName" :price="paymentInfo.amount"/>
+    <CardBilling v-if="paymentInfo" :payment-method-id="paymentInfo.paymentMethod.id" :serviceName="paymentInfo.serviceName" :price="paymentInfo.amount"/>
   </div>
 </template>
