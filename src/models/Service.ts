@@ -9,4 +9,5 @@ export interface Service{
     specieId:number,
     category:string,
     categoryId:number
+    status:boolean
 }

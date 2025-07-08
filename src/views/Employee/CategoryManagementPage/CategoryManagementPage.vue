@@ -14,7 +14,7 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import AddEditCategoryCard from './components/AddEditCategoryCard.vue'
 import { useDialog, useToast } from 'primevue'
-import type { Category } from '@/models/Category'
+import type { Category as CategoryView } from '@/models/Category'
 import type { FormValues as AddEditCategorySchema } from '@/validation-schemas-forms/schema-add-edit-category'
 import ViewCategoryCard from './components/ViewCategoryCard.vue'
 import { useConfirm } from 'primevue'
@@ -36,12 +36,12 @@ const showToast = (message: string) => {
 
 //methods
 
-const { loading, error, createCategory, updateCategory, deleteCategory, activateCategory, searchCategories } =
+const { loading, error, createCategory, updateCategory, activateCategory, searchCategories } =
   useCategory()
 
 //categories
 
-const categories = ref<Category[]>([])
+const categories = ref<CategoryView[]>([])
 
 const totalRecords = ref<number>(0)
 const rows = ref<number>(10)
@@ -108,7 +108,7 @@ const addCategory = () => {
 
 //edit
 
-const editCategory = (categoryData: Category) => {
+const editCategory = (categoryData: CategoryView) => {
   dialog.open(AddEditCategoryCard, {
     props: {
       modal: true,
@@ -129,7 +129,7 @@ const editCategory = (categoryData: Category) => {
 
 //for view
 
-const viewCategory = (categoryData: Category) => {
+const viewCategory = (categoryData: CategoryView) => {
   dialog.open(ViewCategoryCard, {
     props: {
       modal: true,
@@ -144,13 +144,13 @@ const viewCategory = (categoryData: Category) => {
 //for confirm
 const confirm = useConfirm()
 
-//for delete with confirm popup
+const deleteCategory = (event: MouseEvent | KeyboardEvent, categoryData: CategoryView) => {
+  const isActive = categoryData.status
 
-const deleteCategoryAction = (event: MouseEvent | KeyboardEvent, category: Category) => {
   confirm.require({
-    group:'confirmPopupGeneral',
+    group: 'confirmPopupGeneral',
     target: event.currentTarget as HTMLElement,
-    message: '¿Seguro que quiere eliminar esta categoria?',
+    message: '¿Seguro que quiere eliminar esta categoría?',
     icon: 'pi pi-exclamation-triangle',
     rejectProps: {
       label: 'Cancelar',
@@ -158,27 +158,18 @@ const deleteCategoryAction = (event: MouseEvent | KeyboardEvent, category: Categ
       outlined: true,
     },
     acceptProps: {
-      label: 'Eliminar',
-      severity: 'danger',
+      label: isActive ? 'Desactivar' : 'Activar',
+      severity: isActive ? 'danger' : 'success',
     },
     accept: async () => {
-      console.log('Eliminando categoria ', category.id)
-      await deleteCategory(category.id)
+      await activateCategory(categoryData.id)
+      showToast('Categoría eliminado exitosamente: ' + categoryData.name)
       loadCategories()
-      showToast('Categoria eliminada exitosamente: ' + category.name)
     },
     reject: () => {
-      console.log('Cancelando')
+      console.log('Acción cancelada')
     },
   })
-}
-
-//for activate
-
-const activateCategoryAction = async (categoryId: number) => {
-  await activateCategory(categoryId)
-  loadCategories()
-  showToast('Categoría activada exitosamente')
 }
 
 //for export
@@ -294,18 +285,10 @@ const exportCSV = () => {
                     icon="pi pi-trash"
                     severity="danger"
                     variant="outlined"
-                    aria-label="Filter"
+                    aria-label="Eliminar"
                     rounded
-                    @click="deleteCategoryAction($event, data)"
-                  ></Button>
-                  <Button
-                    icon="pi pi-check"
-                    severity="success"
-                    variant="outlined"
-                    aria-label="Activar"
-                    rounded
-                    @click="() => activateCategoryAction(data.id)"
-                  ></Button>
+                    @click="deleteCategory($event, data)"
+                  />
                 </div>
               </template>
             </Column>

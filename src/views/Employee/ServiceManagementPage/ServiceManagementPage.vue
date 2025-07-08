@@ -12,7 +12,7 @@ import Select from 'primevue/select'
 import Button from 'primevue/button'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import type { Service } from '@/models/Service'
+import type { Service as ServiceView } from '@/models/Service'
 import { useConfirm, useDialog, useToast } from 'primevue'
 import { onMounted, ref } from 'vue'
 import AddEditServiceCard from './components/AddEditServiceCard.vue'
@@ -46,7 +46,6 @@ const {
   error,
   createVeterinaryService,
   updateVeterinaryService,
-  deleteVeterinaryService,
   activateVeterinaryService,
   searchVeterinaryServices
 } = useVeterinaryService()
@@ -57,7 +56,7 @@ const { getAllCategories } = useCategory()
 
 //services
 
-const services = ref<Service[]>([])
+const services = ref<ServiceView[]>([])
 
 const totalRecords = ref<number>(0)
 const rows = ref<number>(10)
@@ -138,7 +137,7 @@ const dialog = useDialog()
 
 //for add
 
-const viewService = (serviceData: Service) => {
+const viewService = (serviceData: ServiceView) => {
   dialog.open(ViewServiceCard, {
     props: {
       modal: true,
@@ -174,7 +173,7 @@ const addService = async () => {
 
 //for edit
 
-const editService = async (serviceData: Service) => {
+const editService = async (serviceData: ServiceView) => {
   dialog.open(AddEditServiceCard, {
     props: {
       modal: true,
@@ -208,10 +207,11 @@ const editService = async (serviceData: Service) => {
 //for confirm
 const confirm = useConfirm()
 
-//for delete with confirm popup
-const deleteService = (event: MouseEvent | KeyboardEvent, service: Service) => {
+const deleteService = (event: MouseEvent | KeyboardEvent, serviceData: ServiceView) => {
+  const isActive = serviceData.status
+
   confirm.require({
-    group:'confirmPopupGeneral',
+    group: 'confirmPopupGeneral',
     target: event.currentTarget as HTMLElement,
     message: '¿Seguro que quiere eliminar este servicio?',
     icon: 'pi pi-exclamation-triangle',
@@ -221,25 +221,18 @@ const deleteService = (event: MouseEvent | KeyboardEvent, service: Service) => {
       outlined: true,
     },
     acceptProps: {
-      label: 'Eliminar',
-      severity: 'danger',
+      label: isActive ? 'Desactivar' : 'Activar',
+      severity: isActive ? 'danger' : 'success',
     },
     accept: async () => {
-      console.log('Eliminando Empleado ', service.id)
-      await deleteVeterinaryService(service.id)
-      showToast('Servicio eliminado exitosamente: ' + service.name)
+      await activateVeterinaryService(serviceData.id)
+      showToast('Servicio eliminado exitosamente: ' + serviceData.name)
+      loadServices()
     },
     reject: () => {
-      console.log('Cancelando')
+      console.log('Acción cancelada')
     },
   })
-}
-
-//for activate service
-const activarServicio = async (service: Service) => {
-  await activateVeterinaryService(service.id)
-  showToast('Servicio activado exitosamente: ' + service.name)
-  loadServices()
 }
 
 //for export
@@ -419,18 +412,10 @@ const exportCSV = () => {
                     icon="pi pi-trash"
                     severity="danger"
                     variant="outlined"
-                    aria-label="Filter"
+                    aria-label="Eliminar"
                     rounded
                     @click="deleteService($event, data)"
-                  ></Button>
-                  <Button
-                    icon="pi pi-check-circle"
-                    severity="success"
-                    variant="outlined"
-                    aria-label="Activar"
-                    rounded
-                    @click="activarServicio(data)"
-                  ></Button>
+                  />
                 </div>
               </template>
             </Column>

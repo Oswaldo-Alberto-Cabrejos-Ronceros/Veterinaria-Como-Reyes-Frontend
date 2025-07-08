@@ -12,7 +12,7 @@ import Button from 'primevue/button'
 import { onMounted, ref } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import type { Specie } from '@/models/Specie'
+import type { Specie as SpecieView } from '@/models/Specie'
 import { useConfirm } from 'primevue'
 import { useDialog, useToast } from 'primevue'
 import AddEditSpecie from './components/AddEditSpecieCard.vue'
@@ -35,9 +35,9 @@ const showToast = (message: string) => {
 
 //for get species
 
-const { loading, error, createSpecie, updateSpecie, deleteSpecie, activateSpecie, searchSpecies } = useSpecie()
+const { loading, error, createSpecie, updateSpecie, activateSpecie, searchSpecies } = useSpecie()
 
-const species = ref<Specie[]>([])
+const species = ref<SpecieView[]>([])
 
 const totalRecords = ref<number>(0)
 const rows = ref<number>(10)
@@ -104,7 +104,7 @@ const addSpecie = () => {
   })
 }
 
-const editPaymentMethod = (specieData: Specie) => {
+const editPaymentMethod = (specieData: SpecieView) => {
   dialog.open(AddEditSpecie, {
     props: {
       modal: true,
@@ -128,11 +128,11 @@ const editPaymentMethod = (specieData: Specie) => {
 //for confirm
 const confirm = useConfirm()
 
-//for delete with confirm popup
+const deleteSpecie = (event: MouseEvent | KeyboardEvent, specieData: SpecieView) => {
+  const isActive = specieData.status
 
-const deleteSpecieAction = (event: MouseEvent | KeyboardEvent, specieData: Specie) => {
   confirm.require({
-    group:'confirmPopupGeneral',
+    group: 'confirmPopupGeneral',
     target: event.currentTarget as HTMLElement,
     message: '¿Seguro que quiere eliminar esta especie?',
     icon: 'pi pi-exclamation-triangle',
@@ -142,48 +142,16 @@ const deleteSpecieAction = (event: MouseEvent | KeyboardEvent, specieData: Speci
       outlined: true,
     },
     acceptProps: {
-      label: 'Eliminar',
-      severity: 'danger',
+      label: isActive ? 'Desactivar' : 'Activar',
+      severity: isActive ? 'danger' : 'success',
     },
     accept: async () => {
-      console.log('Eliminando método ', specieData.id)
-      await deleteSpecie(specieData.id)
+      await activateSpecie(specieData.id)
       showToast('Especie eliminada exitosamente: ' + specieData.name)
       loadSpecies()
-      if(error.deleteSpecie){
-        console.log(error.deleteSpecie)
-      }
     },
     reject: () => {
-      console.log('Cancelando')
-    },
-  })
-}
-
-//for activate specie
-const confirmActivateSpecie = (event: MouseEvent | KeyboardEvent, specie: Specie) => {
-  confirm.require({
-    group: 'confirmPopupGeneral',
-    target: event.currentTarget as HTMLElement,
-    message: '¿Seguro que desea activar esta especie?',
-    icon: 'pi pi-exclamation-triangle',
-    rejectProps: {
-      label: 'Cancelar',
-      severity: 'secondary',
-      outlined: true,
-    },
-    acceptProps: {
-      label: 'Activar',
-      severity: 'success',
-    },
-    accept: async () => {
-      console.log('Activando especie: ', specie.id)
-      await activateSpecie(specie.id)
-      showToast('Especie activada exitosamente: ' + specie.name)
-      loadSpecies()
-    },
-    reject: () => {
-      console.log('Cancelando activación')
+      console.log('Acción cancelada')
     },
   })
 }
@@ -282,18 +250,10 @@ const confirmActivateSpecie = (event: MouseEvent | KeyboardEvent, specie: Specie
                     icon="pi pi-trash"
                     severity="danger"
                     variant="outlined"
-                    aria-label="Filter"
+                    aria-label="Eliminar"
                     rounded
-                    @click="deleteSpecieAction($event, data)"
-                  ></Button>
-                  <Button
-                    icon="pi pi-refresh"
-                    severity="success"
-                    variant="outlined"
-                    aria-label="Activar"
-                    rounded
-                    @click="confirmActivateSpecie($event, data)"
-                  ></Button>
+                    @click="deleteSpecie($event, data)"
+                  />
                 </div>
               </template>
             </Column>
