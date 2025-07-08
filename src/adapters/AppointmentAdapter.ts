@@ -10,6 +10,14 @@ import { DateAdapter } from './DateAdapter'
 import { FormatAdapter } from './FormatAdapter'
 import type { AppointmentList as AppointmentListView } from '@/models/AppointmentList'
 import type { AppointmentList } from '@/services/Appointment/domain/models/Appointment'
+import type { InfoAppointmentForPanel as InfoAppointmentForPanelView } from '@/models/InfoAppointmentForPanel'
+import type { InfoAppointmentForPanel } from '@/services/Appointment/domain/models/Appointment'
+import type { AnimalInfoForAppointment } from '@/services/Appointment/domain/models/Appointment'
+import type { PetInfoForAppointment } from '@/models/PetInfoForAppointment'
+import type { ClientInfoForAppointment as ClientInfoForAppointmentView } from '@/models/ClientInfoForAppointment'
+import type { ClientInfoForAppointment } from '@/services/Appointment/domain/models/Appointment'
+import type { PaymentInfoForAppointment as PaymentInfoForAppointmentView } from '@/models/PaymentInfoForAppointment'
+import type { PaymentInfoForAppointment } from '@/services/Appointment/domain/models/Appointment'
 
 export class AppointmentAdapter {
   static toAppointmentView(appoinment: Appointment): AppointmentView {
@@ -73,6 +81,64 @@ export class AppointmentAdapter {
       headquarter: appointmentList.headquarter,
       categoryService: appointmentList.categoryService,
       appointmentStatus: FormatAdapter.toCaptalizeCaseWithout_ (appointmentList.appointmentStatus),
+    }
+  }
+  static toInfoAppointmentForPanel(appointment:InfoAppointmentForPanel):InfoAppointmentForPanelView{
+    return{
+        id: appointment.idAppointment ,
+  timeAppointment: appointment.timeAppointment,
+  comment: appointment.comment,
+  service: {
+    id: appointment.serviceId,
+    time: appointment.serviceTime,
+    name: appointment.serviceName,
+  },
+  employee: {
+    id: appointment.employeeId,
+    name: appointment.employeeName,
+    role: appointment.employeeRole
+  }
+    }
+  }
+    static toPetInfoAppointmentView(
+    animalInfoAppointment: AnimalInfoForAppointment,
+  ): PetInfoForAppointment {
+    return {
+      id: animalInfoAppointment.animalId,
+      birthdate: animalInfoAppointment.birthDate,
+      name: animalInfoAppointment.name,
+      urlImage: animalInfoAppointment.urlImage,
+      weight: animalInfoAppointment.weight,
+      breedName: animalInfoAppointment.breedName,
+      speciesName: animalInfoAppointment.speciesName,
+      petComment: animalInfoAppointment.animalComment,
+    }
+  }
+
+  static toClientInfoForAppointmentView(
+    clientInfoAppointment: ClientInfoForAppointment,
+  ): ClientInfoForAppointmentView {
+    return {
+      clientId: clientInfoAppointment.clientId,
+      fullName: clientInfoAppointment.fullName,
+      phone: clientInfoAppointment.phoneNumber,
+      email: clientInfoAppointment.email,
+      address: clientInfoAppointment.address,
+    }
+  }
+
+  static toPaymentInfoForAppointmentView(
+    paymentInfo: PaymentInfoForAppointment,
+  ): PaymentInfoForAppointmentView {
+    return {
+      paymentId: paymentInfo.paymentId,
+      amount: paymentInfo.amount,
+      serviceName: paymentInfo.serviceName,
+      paymentMethod: {
+        id: paymentInfo.paymentMethodId,
+        name: paymentInfo.paymentMethod,
+        status: paymentInfo.paymentStatus,
+      },
     }
   }
 }

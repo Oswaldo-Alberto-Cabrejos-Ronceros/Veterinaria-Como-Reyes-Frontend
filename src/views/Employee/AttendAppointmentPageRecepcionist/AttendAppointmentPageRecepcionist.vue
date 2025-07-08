@@ -12,6 +12,7 @@ import { useDialog, useToast } from 'primevue'
 import AddCareFromAppointment from '@/components/AddCareFromAppointment.vue'
 import type { FormValues } from '@/validation-schemas-forms/schema-add-care-from-appointment'
 import CardBilling from '@/components/CardBilling.vue'
+import type { InfoAppointmentForPanel } from '@/models/InfoAppointmentForPanel'
 
 const props = defineProps<{
   appointmentId: string
@@ -19,19 +20,24 @@ const props = defineProps<{
 
 //methods
 
-const { getAppointmentById } = useAppointment()
+const { getAppointmentPanelInfo,getPetInfoForAppointment,getClientInfoForAppointment,getPaymentInfoForAppointment,getAppointmentById } = useAppointment()
 const { createCareFromAppointment } = useCare()
 
 //ref
 const appointmentBasicInfo = ref<Appointment | null>(null)
 
+const appointmentInfo = ref<InfoAppointmentForPanel|null>(null)
 onMounted(async () => {
   console.log(props.appointmentId)
   loadInfo()
 })
 
+
 const loadInfo = async () => {
   appointmentBasicInfo.value = await getAppointmentById(Number(props.appointmentId))
+  if(appointmentBasicInfo.value){
+    appointmentInfo.value=await getAppointmentPanelInfo(appointmentBasicInfo.value.id)
+  }
 }
 
 //for dialog
@@ -57,22 +63,6 @@ const openCreateCareConfirmArrive = () => {
       }
     },
   })
-}
-
-const appointmentInfo: {
-  time: string
-  serviceDuration: number
-  serviceName: string
-  veterinaryName?: string
-  comentario?: string
-  status: string
-} = {
-  time: '9:30',
-  serviceDuration: 30,
-  serviceName: 'Consulta general',
-  veterinaryName: 'Paolo Cueva',
-  comentario: 'Consulta de rutina',
-  status: 'Programada',
 }
 
 const petInfo: {
@@ -125,13 +115,13 @@ const showToast = (message: string) => {
 <template>
   <div class="layout-principal-flex flex-col gap-2">
     <CardAppointmentInfo
-      v-if="appointmentBasicInfo"
-      :time="appointmentBasicInfo.scheduleDateTime"
-      :serviceDuration="appointmentInfo.serviceDuration"
-      :serviceName="appointmentInfo.serviceName"
-      :veterinaryName="appointmentBasicInfo.assignedEmployee?.names"
-      :comentario="appointmentInfo.comentario"
-      :status="appointmentBasicInfo.statusAppointment"
+      v-if="appointmentInfo"
+      :time="appointmentInfo.timeAppointment"
+      :serviceDuration="appointmentInfo.service.time"
+      :serviceName="appointmentInfo.service.name"
+      :veterinaryName="appointmentInfo.employee.name"
+      :comentario="appointmentInfo.comment"
+      :status="appointmentBasicInfo?.statusAppointment"
     />
     <div class="w-full grid grid-cols-2 gap-4">
       <CardPetInfo v-bind="petInfo"></CardPetInfo>

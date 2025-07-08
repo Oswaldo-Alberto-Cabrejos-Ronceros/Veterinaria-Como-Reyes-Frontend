@@ -44,6 +44,7 @@ const {
   createAppointment,
   confirmAppointment,
   completeAppointment,
+  deleteAppointment
 } = useAppointment()
 
 const { getAllPaymentMethods } = usePaymentMethod()
@@ -92,6 +93,10 @@ const handleChangeStatus = async (appointmentId: number, status: string) => {
       showToast('Cita confirmada exitodamente')
     } else if (status === 'COMPLETADA') {
       await completeAppointment(appointmentId)
+      showToast('Cita completada exitodamente')
+    } else if(status=='CANCELADA'){
+      await deleteAppointment(appointmentId)
+      showToast('Cita cancelada exitodamente')
     }
     await loadAppoinments()
   } catch (err) {
@@ -267,6 +272,32 @@ const confirmAppoinmentConfirm = (event: MouseEvent | KeyboardEvent, appointment
   })
 }
 
+
+const cancelAppoinmentConfirm = (event: MouseEvent | KeyboardEvent, appointmentId: number) => {
+  confirm.require({
+    group: 'confirmPopupGeneral',
+    target: event.currentTarget as HTMLElement,
+    message: '¿Seguro que quiere cancelar esta cita?',
+    icon: 'pi pi-exclamation-triangle',
+    rejectProps: {
+      label: 'Abortar',
+      severity: 'secondary',
+      outlined: true,
+    },
+    acceptProps: {
+      label: 'Cancelar',
+      severity: 'danger',
+    },
+    accept: async () => {
+      console.log('Cancelando cita ', appointmentId)
+      handleChangeStatus(appointmentId, 'CANCELADA')
+    },
+    reject: () => {
+      console.log('Cancelando')
+    },
+  })
+}
+
 const router = useRouter()
 const route = useRoute()
 
@@ -430,12 +461,11 @@ const attendAppointment = (appointmentId: number) => {
                 <div class="flex items-center flex-row lg:flex-col xl:flex-row gap-1">
                   <Button
                     icon="pi pi-calendar-clock"
-                    v-tooltip="'Atender'"
+                    v-tooltip="'Ver todos datos'"
                     severity="warn"
                     size="small"
                     variant="text"
-                    aria-label="Atender"
-                    v-if="data.appointmentStatus === 'Confirmada'"
+                    aria-label="Ver todos datos"
                     @click="attendAppointment(data.id)"
                     rounded
                   />
@@ -470,7 +500,8 @@ const attendAppointment = (appointmentId: number) => {
                     variant="text"
                     aria-label="Cancelar"
                     rounded
-                    ariala
+                    v-if="data.appointmentStatus !== 'Completada' && data.appointmentStatus !== 'Cancelada'"
+                    @click="cancelAppoinmentConfirm($event,data.id)"
                   />
                 </div>
               </template>
