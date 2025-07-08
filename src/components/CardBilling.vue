@@ -3,6 +3,8 @@ import Card from 'primevue/card'
 import Button from 'primevue/button'
 import Divider from 'primevue/divider'
 import { ref } from 'vue'
+import Select from 'primevue/select'
+
 
 const props = defineProps<{
   serviceName: string
@@ -32,7 +34,7 @@ const igv = ref<number>(Number((props.price - subtotal.value).toFixed(1)))
         class="mt-4 rounded-sm bg-surface-100 dark:bg-surface-800 flex items-center justify-between p-3"
       >
         <p class="textLg font-semibold">{{ serviceName }}</p>
-        <p class="textLg font-semibold text-green-600 dark:text-green-400">S/ 80</p>
+        <p class="textLg font-semibold text-green-600 dark:text-green-400">S/ {{price}}</p>
       </div>
       <Divider />
       <div class="textLg flex items-center justify-between">

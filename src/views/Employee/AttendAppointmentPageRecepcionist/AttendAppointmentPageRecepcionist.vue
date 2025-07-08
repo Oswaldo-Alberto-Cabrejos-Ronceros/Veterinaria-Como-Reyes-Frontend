@@ -13,6 +13,9 @@ import AddCareFromAppointment from '@/components/AddCareFromAppointment.vue'
 import type { FormValues } from '@/validation-schemas-forms/schema-add-care-from-appointment'
 import CardBilling from '@/components/CardBilling.vue'
 import type { InfoAppointmentForPanel } from '@/models/InfoAppointmentForPanel'
+import type { PetInfoForAppointment } from '@/models/PetInfoForAppointment'
+import type { ClientInfoForAppointment } from '@/models/ClientInfoForAppointment'
+import type { PaymentInfoForAppointment } from '@/models/PaymentInfoForAppointment'
 
 const props = defineProps<{
   appointmentId: string
@@ -27,6 +30,10 @@ const { createCareFromAppointment } = useCare()
 const appointmentBasicInfo = ref<Appointment | null>(null)
 
 const appointmentInfo = ref<InfoAppointmentForPanel|null>(null)
+const petInfo = ref<PetInfoForAppointment|null>(null)
+const ownerInfo = ref<ClientInfoForAppointment|null>(null)
+const paymentInfo = ref<PaymentInfoForAppointment|null>(null)
+
 onMounted(async () => {
   console.log(props.appointmentId)
   loadInfo()
@@ -36,7 +43,12 @@ onMounted(async () => {
 const loadInfo = async () => {
   appointmentBasicInfo.value = await getAppointmentById(Number(props.appointmentId))
   if(appointmentBasicInfo.value){
-    appointmentInfo.value=await getAppointmentPanelInfo(appointmentBasicInfo.value.id)
+    const appoinmentId = appointmentBasicInfo.value.id
+   //r const status = appointmentBasicInfo.value.statusAppointment
+    appointmentInfo.value=await getAppointmentPanelInfo(appoinmentId)
+  petInfo.value= await getPetInfoForAppointment(appoinmentId)
+  ownerInfo.value= await getClientInfoForAppointment(appoinmentId)
+  paymentInfo.value = await getPaymentInfoForAppointment(appoinmentId)
   }
 }
 
@@ -65,39 +77,7 @@ const openCreateCareConfirmArrive = () => {
   })
 }
 
-const petInfo: {
-  name: string
-  specieName: string
-  breedName: string
-  weight: number
-  birthdate: string
-  gender: string
-  comment: string
-  urlImage: string
-} = {
-  name: 'Thor',
-  specieName: 'Perro',
-  breedName: 'Salchicha',
-  weight: 15,
-  birthdate: '05/12/2023',
-  gender: 'Macho',
-  comment: 'Perro juguetón, le encanta correr, celoso, no le gusta que se le acerquen al dueño',
-  urlImage: 'https://www.hola.com/horizon/43/d1eaad20c4c6-adobestock47432136.jpg',
-}
 
-const ownerInfo: {
-  name: string
-  lastname: string
-  phone: string
-    headquarterName: string
-  address: string
-} = {
-  name: 'Oswaldo Alberto',
-  lastname: 'Cabrejos Ronceros',
-  phone: '984156123',
-    headquarterName: 'Ica',
-  address: 'Av. Brasil',
-}
 //for toast
 //toast
 const toast = useToast()
@@ -124,8 +104,16 @@ const showToast = (message: string) => {
       :status="appointmentBasicInfo?.statusAppointment"
     />
     <div class="w-full grid grid-cols-2 gap-4">
-      <CardPetInfo v-bind="petInfo"></CardPetInfo>
-      <CardOwnerInfo v-bind="ownerInfo" />
+      <CardPetInfo v-if="petInfo" :name="petInfo.name"
+      :specieName="petInfo.speciesName"
+      :breedName="petInfo.breedName"
+      :weight="petInfo.weight"
+      :birthdate="petInfo.birthdate"
+      gender="M"
+:comment="petInfo.petComment"
+:urlImage="petInfo.urlImage"
+      ></CardPetInfo>
+      <CardOwnerInfo v-if="ownerInfo" :full-name="ownerInfo.fullName" :phone="ownerInfo.phone" headquarter-name="" :address="ownerInfo.address"/>
     </div>
     <!-- control -->
     <Card class="card-primary w-full">
@@ -174,6 +162,6 @@ const showToast = (message: string) => {
 
     <!-- payment -->
 
-    <CardBilling serviceName="Consulta General" :price="80"/>
+    <CardBilling v-if="paymentInfo" :serviceName="paymentInfo.serviceName" :price="paymentInfo.amount"/>
   </div>
 </template>

@@ -3,8 +3,7 @@ import Card from 'primevue/card'
 import { ref } from 'vue'
 import CardInfoPrimary from './CardInfoPrimary.vue';
 const props = defineProps<{
-  name: string
-  lastname: string
+  fullName: string
   phone: string
   headquarterName: string
   address: string
@@ -41,7 +40,7 @@ const items = ref<{ icon: string; title: string; content: string }[]>([
       <p>Datos de contacto y ubicación</p>
     </template>
     <template #content>
-      <h3 class="h3 font-semibold mb-3">{{ name }} {{ lastname }}</h3>
+      <h3 class="h3 font-semibold mb-3">{{ fullName }}</h3>
       <CardInfoPrimary class="mb-3" v-for="(item, index) of items" :key="index" v-bind="item" />
     </template>
   </Card>
