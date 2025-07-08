@@ -5,6 +5,7 @@ export interface VeterinaryService {
   serviceId: number
   name: string
   description: string
+  status: boolean
   price: number
   duration: number
   specie: Specie

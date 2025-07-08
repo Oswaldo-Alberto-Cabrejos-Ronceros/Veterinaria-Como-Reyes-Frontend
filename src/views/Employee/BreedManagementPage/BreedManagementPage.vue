@@ -15,7 +15,7 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import AddEditBreedCard from './components/AddEditBreedCard.vue'
 import { useDialog, useToast } from 'primevue'
-import type { Breed } from '@/models/Breed'
+import type { Breed as BreedView } from '@/models/Breed'
 import type { FormValues as AddEditBreedSchema } from '@/validation-schemas-forms/schema-add-edit-breed'
 import { useConfirm } from 'primevue'
 import { useBreed } from '@/composables/useBreed'
@@ -39,11 +39,11 @@ const showToast = (message: string) => {
 
 //get from compose
 
-const { loading, error, createBreed, updateBreed, deleteBreed, activateBreed, searchBreeds } = useBreed()
+const { loading, error, createBreed, updateBreed, activateBreed, searchBreeds } = useBreed()
 
 const { getAllSpecies } = useSpecie()
 
-const breeds = ref<Breed[]>([])
+const breeds = ref<BreedView[]>([])
 
 const speciesOptions = ref<OptionSelect[]>([])
 
@@ -126,7 +126,7 @@ const addBreed = () => {
   })
 }
 
-const editBreed = (breedData: Breed) => {
+const editBreed = (breedData: BreedView) => {
   dialog.open(AddEditBreedCard, {
     props: {
       modal: true,
@@ -154,11 +154,11 @@ const editBreed = (breedData: Breed) => {
 //for confirm
 const confirm = useConfirm()
 
-//for delete with confirm popup
+const deleteBreed = (event: MouseEvent | KeyboardEvent, breedData: BreedView) => {
+  const isActive = breedData.status
 
-const deleteBreedAction = (event: MouseEvent | KeyboardEvent, breedData: Breed) => {
   confirm.require({
-    group:'confirmPopupGeneral',
+    group: 'confirmPopupGeneral',
     target: event.currentTarget as HTMLElement,
     message: '¿Seguro que quiere eliminar esta raza?',
     icon: 'pi pi-exclamation-triangle',
@@ -168,49 +168,19 @@ const deleteBreedAction = (event: MouseEvent | KeyboardEvent, breedData: Breed) 
       outlined: true,
     },
     acceptProps: {
-      label: 'Eliminar',
-      severity: 'danger',
+      label: isActive ? 'Desactivar' : 'Activar',
+      severity: isActive ? 'danger' : 'success',
     },
     accept: async () => {
-      console.log('Eliminando método ', breedData.id)
-      await deleteBreed(breedData.id)
-      loadBreeds()
+      await activateBreed(breedData.id)
       showToast('Raza eliminada exitosamente: ' + breedData.name)
-    },
-    reject: () => {
-      console.log('Cancelando')
-    },
-  })
-}
-
-//for activate
-
-const activateBreedAction = (event: MouseEvent | KeyboardEvent, breed: Breed) => {
-  confirm.require({
-    group: 'confirmPopupGeneral',
-    target: event.currentTarget as HTMLElement,
-    message: '¿Seguro que quiere activar esta raza?',
-    icon: 'pi pi-exclamation-triangle',
-    rejectProps: {
-      label: 'Cancelar',
-      severity: 'secondary',
-      outlined: true,
-    },
-    acceptProps: {
-      label: 'Activar',
-      severity: 'success',
-    },
-    accept: async () => {
-      await activateBreed(breed.id)
       loadBreeds()
-      showToast('Raza activada exitosamente: ' + breed.name)
     },
     reject: () => {
-      console.log('Cancelando activación')
+      console.log('Acción cancelada')
     },
   })
 }
-
 
 //for export
 
@@ -345,17 +315,10 @@ const exportCSV = () => {
                     icon="pi pi-trash"
                     severity="danger"
                     variant="outlined"
-                    aria-label="Filter"
+                    aria-label="Eliminar"
                     rounded
-                    @click="deleteBreedAction($event, data)"
-                  ></Button>
-                  <Button
-                    icon="pi pi-power-off"
-                    severity="success"
-                    variant="outlined"
-                    rounded
-                    @click="activateBreedAction($event, data)"
-                  ></Button>
+                    @click="deleteBreed($event, data)"
+                  />
                 </div>
               </template>
             </Column>

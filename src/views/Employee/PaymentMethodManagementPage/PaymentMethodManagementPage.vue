@@ -12,7 +12,7 @@ import Button from 'primevue/button'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import { onMounted, ref } from 'vue'
-import type { PaymentMethod } from '@/models/PaymentMethod'
+import type { PaymentMethod as PaymentMethodView } from '@/models/PaymentMethod'
 import { useConfirm } from 'primevue'
 import AddEditPaymentMethodCard from './components/AddEditPaymentMethodCard.vue'
 import { useDialog, useToast } from 'primevue'
@@ -41,14 +41,13 @@ const {
   error,
   createPaymentMethod,
   updatePaymentMethod,
-  deletePaymentMethod,
   activatePaymentMethod,
   searchPaymentMethods,
 } = usePaymentMethod()
 
 //payment methods
 
-const paymentMethods = ref<PaymentMethod[]>([])
+const paymentMethods = ref<PaymentMethodView[]>([])
 
 const totalRecords = ref<number>(0)
 const rows = ref<number>(10)
@@ -107,7 +106,7 @@ const addPaymentMethod = () => {
   })
 }
 
-const viewPaymentMethod = (paymentMethodData: PaymentMethod) => {
+const viewPaymentMethod = (paymentMethodData: PaymentMethodView) => {
   dialog.open(ViewPaymentMethodCard, {
     props: {
       modal: true,
@@ -119,7 +118,7 @@ const viewPaymentMethod = (paymentMethodData: PaymentMethod) => {
   })
 }
 
-const editPaymentMethod = (paymentMethodData: PaymentMethod) => {
+const editPaymentMethod = (paymentMethodData: PaymentMethodView) => {
   dialog.open(AddEditPaymentMethodCard, {
     props: {
       modal: true,
@@ -143,16 +142,13 @@ const editPaymentMethod = (paymentMethodData: PaymentMethod) => {
 //for confirm
 const confirm = useConfirm()
 
-//for delete with confirm popup
+const deletePaymentMethod = (event: MouseEvent | KeyboardEvent, paymentMethodData: PaymentMethodView) => {
+  const isActive = paymentMethodData.status
 
-const deletePaymentMethodAction = (
-  event: MouseEvent | KeyboardEvent,
-  paymentMethod: PaymentMethod,
-) => {
   confirm.require({
-    group:'confirmPopupGeneral',
+    group: 'confirmPopupGeneral',
     target: event.currentTarget as HTMLElement,
-    message: '¿Seguro que quiere eliminar este método?',
+    message: '¿Seguro que quiere eliminar este método de pago?',
     icon: 'pi pi-exclamation-triangle',
     rejectProps: {
       label: 'Cancelar',
@@ -160,26 +156,18 @@ const deletePaymentMethodAction = (
       outlined: true,
     },
     acceptProps: {
-      label: 'Eliminar',
-      severity: 'danger',
+      label: isActive ? 'Desactivar' : 'Activar',
+      severity: isActive ? 'danger' : 'success',
     },
     accept: async () => {
-      console.log('Eliminando método ', paymentMethod.id)
-      await deletePaymentMethod(paymentMethod.id)
-      showToast('Método de pago eliminado correctamente.')
+      await activatePaymentMethod(paymentMethodData.id)
+      showToast('Método de pago eliminado exitosamente: ' + paymentMethodData.name)
+      loadPaymentMethods()
     },
     reject: () => {
-      console.log('Cancelando')
+      console.log('Acción cancelada')
     },
   })
-}
-
-//for activate
-
-const activatePaymentMethodAction = async (id: number) => {
-  await activatePaymentMethod(id)
-  loadPaymentMethods()
-  showToast('Método de pago activado exitosamente')
 }
 
 
@@ -296,18 +284,10 @@ const exportCSV = () => {
                     icon="pi pi-trash"
                     severity="danger"
                     variant="outlined"
-                    aria-label="Filter"
+                    aria-label="Eliminar"
                     rounded
-                    @click="deletePaymentMethodAction($event, data)"
-                  ></Button>
-                  <Button
-                    icon="pi pi-check"
-                    severity="success"
-                    variant="outlined"
-                    aria-label="Activar"
-                    rounded
-                    @click="activatePaymentMethodAction(data.id)"
-                  ></Button>
+                    @click="deletePaymentMethod($event, data)"
+                  />
                 </div>
               </template>
             </Column>
