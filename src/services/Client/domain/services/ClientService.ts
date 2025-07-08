@@ -2,8 +2,10 @@ import type { PageResponse } from '@/services/models/PageResponse'
 import type {
   Client,
   ClientBasicInfoByDni,
+  ClientInfoPanelAdmin,
   ClientList,
   ClientRequest,
+  ClientStatsPanel,
   ClientUpdateAsClient,
   MyInfoClient,
 } from '../models/Client'
@@ -31,4 +33,9 @@ export interface ClientService {
   ): Promise<string>
   updateBlockNote(clientId: number, blockNote: string): Promise<string>
   getClientByDni(dni: string): Promise<ClientBasicInfoByDni>
+
+  getClientInfoPanelAdmin(): Promise<ClientInfoPanelAdmin[]>
+  getClientStats(): Promise<ClientStatsPanel>
+  getClientInfoPanelByHeadquarterManager(headquarterId: number): Promise<ClientInfoPanelAdmin[]>
+  getClientStatsByHeadquarter(headquarterId: number): Promise<ClientStatsPanel>
 }

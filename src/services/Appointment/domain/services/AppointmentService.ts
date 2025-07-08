@@ -4,8 +4,10 @@ import type { SearchAppointmentParams } from '../models/SearchAppointmentParams'
 import type {
   AnimalInfoForAppointment,
   Appointment,
+  AppointmentInfoPanelAdmin,
   AppointmentList,
   AppointmentRequest,
+  AppointmentStatsToday,
   BasicServiceForAppointment,
   ClientInfoForAppointment,
   InfoAppointmentForPanel,
@@ -36,4 +38,9 @@ export interface AppointmentService {
   getAnimalInfo(appointmentId: number): Promise<AnimalInfoForAppointment>
   getClientInfo(appointmentId: number): Promise<ClientInfoForAppointment>
   getPaymentInfo(appointmentId: number): Promise<PaymentInfoForAppointment>
+getTodayAppointmentStats(): Promise<AppointmentStatsToday>
+  getTodayAppointmentStats(): Promise<AppointmentStatsToday>
+  getAppointmentsByDateForPanelAdmin(): Promise<AppointmentInfoPanelAdmin[]>
+  getAppointmentsByDateForPanelManager(headquarterId: number): Promise<AppointmentInfoPanelAdmin[]>
+  getTodayAppointmentStatsByHeadquarter(headquarterId: number): Promise<AppointmentStatsToday>
 }

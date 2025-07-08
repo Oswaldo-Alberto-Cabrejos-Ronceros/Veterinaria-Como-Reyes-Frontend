@@ -17,6 +17,7 @@ import type { InfoAppointmentForPanel as InfoAppointmentForPanelView } from '@/m
 import type { PetInfoForAppointment as PetInfoForAppointmentView } from '@/models/PetInfoForAppointment'
 import type { ClientInfoForAppointment as ClientInfoForAppointmentView } from '@/models/ClientInfoForAppointment'
 import type { PaymentInfoForAppointment as PaymentInfoForAppointmentView } from '@/models/PaymentInfoForAppointment'
+import type { AppointmentInfoPanelAdmin as AppointmentInfoPanelAdminView } from '@/models/AppointmentInfoPanelAdmin'
 
 export function useAppointment() {
   //get from useAsyncHandle
@@ -165,6 +166,36 @@ export function useAppointment() {
     return AppointmentAdapter.toPaymentInfoForAppointmentView(paymentInfoAppoinment)
   }
 
+  const getTodayAppointmentStats = async()=>{
+    const todayStats = await runUseCase('getTodayAppointmentStats', ()=>
+      appointmentUsesCases.getTodayAppointmentStats.execute()
+    )
+    return todayStats
+  }
+
+  const getTodayAppointmentStatsByHeadquarter = async (headquarterId:number)=>{
+    const stats = await runUseCase('getTodayAppointmentStatsByHeadquarter',()=>
+    appointmentUsesCases.getTodayAppointmentStatsByHeadquarter.execute(headquarterId)
+    )
+    return stats
+  }
+
+const getAppointmentsByDateForPanelAdmin = async (): Promise<AppointmentInfoPanelAdminView[]> => {
+  const appointments = await runUseCase('getAppointmentsByDateForPanelAdmin', () =>
+    appointmentUsesCases.getAppointmentsByDateForPanelAdmin.execute()
+  )
+  return appointments.map((ap)=>AppointmentAdapter.toAppointmentInfoPanelAdminView(ap))
+}
+
+const getAppointmentsByDateForPanelManager = async (
+  headquarterId: number
+): Promise<AppointmentInfoPanelAdminView[]> => {
+  const appointments  = await runUseCase('getAppointmentsByDateForPanelManager', () =>
+    appointmentUsesCases.getAppointmentsByDateForPanelManager.execute(headquarterId)
+  )
+return appointments.map((ap)=>AppointmentAdapter.toAppointmentInfoPanelAdminView(ap))
+}
+
   return {
     loading,
     error,
@@ -183,5 +214,9 @@ export function useAppointment() {
     getPetInfoForAppointment,
     getClientInfoForAppointment,
     getPaymentInfoForAppointment,
+    getTodayAppointmentStats,
+    getTodayAppointmentStatsByHeadquarter,
+    getAppointmentsByDateForPanelManager,
+    getAppointmentsByDateForPanelAdmin
   }
 }

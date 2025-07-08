@@ -1,5 +1,5 @@
 import type { PageResponse } from '@/services/models/PageResponse'
-import type { Payment, PaymentList } from '../models/Payment'
+import type { Payment, PaymentList, PaymentStatsForPanelAdmin } from '../models/Payment'
 
 export interface PaymentService {
   getAllPayments(): Promise<Payment[]>
@@ -21,4 +21,6 @@ export interface PaymentService {
     },
     sort?: string,
   ): Promise<PageResponse<PaymentList>>
+  getCompletedPaymentsStats(): Promise<PaymentStatsForPanelAdmin>
+  getPaymentsStatsByHeadquarter(headquarterId: number): Promise<PaymentStatsForPanelAdmin>
 }

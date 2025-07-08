@@ -27,3 +27,9 @@ export interface PaymentList {
   paymentMethod: string
   paymentDate: string
 }
+
+export interface PaymentStatsForPanelAdmin {
+  currentTotal: number
+  previousTotal: number
+  percentageDifference: string
+}

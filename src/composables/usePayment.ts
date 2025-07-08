@@ -81,6 +81,18 @@ export function usePayment() {
     }
   }
 
+const getPaymentStatsByHeadquarter = async (headquarterId:number)=>{
+  return await runUseCase('getPaymentStatsByHeadquarter',()=>
+
+  paymentUsesCases.getPaymentStatsByHeadquarter.execute(headquarterId))
+}
+
+const getCompletedPaymentsStats = async ()=> {
+  return await runUseCase('getCompletedPaymentsStats', () =>
+    paymentUsesCases.getCompletedPaymentsStats.execute(),
+  )
+}
+
   return {
     loading,
     error,
@@ -91,5 +103,7 @@ export function usePayment() {
     deletePayment,
     getAllPaymentsForTable,
     searchPayments,
+    getPaymentStatsByHeadquarter,
+    getCompletedPaymentsStats
   }
 }

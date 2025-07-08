@@ -1,6 +1,6 @@
 import type { HttpClient } from '@/services/Http/model/HttpClient'
 import type { PaymentService } from '../domain/services/PaymentService'
-import type { Payment, PaymentList } from '../domain/models/Payment'
+import type { Payment, PaymentList, PaymentStatsForPanelAdmin } from '../domain/models/Payment'
 import type { PageResponse } from '@/services/models/PageResponse'
 
 export class PaymentServiceImpl implements PaymentService {
@@ -88,4 +88,19 @@ export class PaymentServiceImpl implements PaymentService {
     const response = await this.httpClient.get<PageResponse<PaymentList>>(`${this.urlBase}/search`, params)
     return response.data
   }
+
+  async getCompletedPaymentsStats(): Promise<PaymentStatsForPanelAdmin> {
+  const response = await this.httpClient.get<PaymentStatsForPanelAdmin>(
+    `${this.urlBase}/panel-admin/stats`
+  )
+  return response.data
+}
+
+async getPaymentsStatsByHeadquarter(headquarterId: number): Promise<PaymentStatsForPanelAdmin> {
+  const response = await this.httpClient.get<PaymentStatsForPanelAdmin>(
+    `${this.urlBase}/panel-manager/stats/${headquarterId}`
+  )
+  return response.data
+}
+
 }

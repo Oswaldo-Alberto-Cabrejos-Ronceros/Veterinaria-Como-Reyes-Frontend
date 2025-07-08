@@ -1,5 +1,5 @@
 import type { VeterinaryServiceService } from '../domain/services/VeterinaryServiceService'
-import type { VeterinaryService, VeterinaryServiceRequest } from '../domain/models/VeterinaryService'
+import type { ServicesInfoTopPanelAdmin, VeterinaryService, VeterinaryServiceRequest } from '../domain/models/VeterinaryService'
 import type { HttpClient } from '@/services/Http/model/HttpClient'
 import type { PageResponse } from '@/services/models/PageResponse'
 
@@ -73,5 +73,17 @@ export class VeterinaryServiceServiceImpl implements VeterinaryServiceService {
     )
     return response.data
   }
+  async getTopServicesForAdmin(): Promise<ServicesInfoTopPanelAdmin[]> {
+    const response = await this.httpClient.get<ServicesInfoTopPanelAdmin[]>(
+      `${this.url}/panel-admin/top-services`
+    )
+    return response.data
+  }
 
+  async getTopServicesForManager(headquarterId: number): Promise<ServicesInfoTopPanelAdmin[]> {
+    const response = await this.httpClient.get<ServicesInfoTopPanelAdmin[]>(
+      `${this.url}/panel-manager/top-services/${headquarterId}`
+    )
+    return response.data
+  }
 }

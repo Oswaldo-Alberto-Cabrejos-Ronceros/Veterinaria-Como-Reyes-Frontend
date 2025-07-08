@@ -5,6 +5,7 @@ import { VeterinaryServiceAdapter } from '@/adapters/VeterinaryServiceAdapter'
 import type { Service as VeterinaryServiceView } from '@/models/Service'
 import type { FormValues as VeterinaryServiceAddEditSchema } from '@/validation-schemas-forms/schema-add-edit-service'
 import type { PageResponse } from '@/services/models/PageResponse'
+import type { ServicesInfoTopPanelAdmin as ServicesInfoTopPanelAdminView } from '@/models/ServicesInfoTopPanelAdmin'
 
 export function useVeterinaryService() {
   const { loading, error, runUseCase } = useAsyncHandler()
@@ -76,6 +77,20 @@ export function useVeterinaryService() {
     }
   }
 
+
+  const getTopServicesForAdmin = async (): Promise<ServicesInfoTopPanelAdminView[]> => {
+    const services = await runUseCase('getTopServicesForAdmin', () =>
+      veterinaryServiceUsesCases.getTopServicesForAdmin.execute()
+    )
+    return services.map((s)=>VeterinaryServiceAdapter.toServiceInfoTopPanelAdmin(s))
+  }
+
+  const getTopServicesForManager = async (headquarterId: number): Promise<ServicesInfoTopPanelAdminView[]> => {
+    const services = await runUseCase('getTopServicesForManager', () =>
+      veterinaryServiceUsesCases.getTopServicesForManager.execute(headquarterId)
+    )
+ return services.map((s)=>VeterinaryServiceAdapter.toServiceInfoTopPanelAdmin(s))
+  }
   return {
     loading,
     error,
@@ -86,5 +101,7 @@ export function useVeterinaryService() {
     updateVeterinaryService,
     activateVeterinaryService,
     searchVeterinaryServices,
+    getTopServicesForAdmin,
+    getTopServicesForManager
   }
 }

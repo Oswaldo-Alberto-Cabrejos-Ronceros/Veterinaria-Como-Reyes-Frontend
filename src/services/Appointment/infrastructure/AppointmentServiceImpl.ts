@@ -11,6 +11,8 @@ import type {
   AnimalInfoForAppointment,
   ClientInfoForAppointment,
   PaymentInfoForAppointment,
+  AppointmentStatsToday,
+  AppointmentInfoPanelAdmin,
 } from '../domain/models/Appointment'
 import type { SearchAppointmentParams } from '../domain/models/SearchAppointmentParams'
 import type { PageResponse } from '@/services/models/PageResponse'
@@ -127,6 +129,32 @@ async getClientInfo(appointmentId: number): Promise<ClientInfoForAppointment> {
 async getPaymentInfo(appointmentId: number): Promise<PaymentInfoForAppointment> {
   const response = await this.httpClient.get<PaymentInfoForAppointment>(
     `${this.url}/panel-info/${appointmentId}/payment-info`
+  )
+  return response.data
+}
+async getTodayAppointmentStats(): Promise<AppointmentStatsToday> {
+  const response = await this.httpClient.get<AppointmentStatsToday>(
+    `${this.url}/panel-admin/stats/today`
+  )
+  return response.data
+}
+async getAppointmentsByDateForPanelAdmin(): Promise<AppointmentInfoPanelAdmin[]> {
+  const response = await this.httpClient.get<AppointmentInfoPanelAdmin[]>(
+    `${this.url}/panel-admin/by-date`
+  )
+  return response.data
+}
+
+async getAppointmentsByDateForPanelManager(headquarterId: number): Promise<AppointmentInfoPanelAdmin[]> {
+  const response = await this.httpClient.get<AppointmentInfoPanelAdmin[]>(
+    `${this.url}/panel-manager/${headquarterId}/by-date`
+  )
+  return response.data
+}
+
+async getTodayAppointmentStatsByHeadquarter(headquarterId: number): Promise<AppointmentStatsToday> {
+  const response = await this.httpClient.get<AppointmentStatsToday>(
+    `${this.url}/panel-manager/stats/${headquarterId}/today`
   )
   return response.data
 }

@@ -11,9 +11,33 @@ import CardAppintmentTerciary from '@/components/CardAppintmentTerciary.vue'
 import ServiceRankingItem from '@/components/ServiceRankingItem.vue'
 import ClientRankingItem from '@/components/ClientRankingItem.vue'
 import Chart from 'primevue/chart'
+import { useAppointment } from '@/composables/useAppointment'
+import type { AppointmentStatsToday } from '@/services/Appointment/domain/models/Appointment'
+import { usePayment } from '@/composables/usePayment'
+import type { PaymentStatsForPanelAdmin } from '@/services/Payment/domain/models/Payment'
+import { useClient } from '@/composables/useClient'
+import type { ClientStatsPanel } from '@/services/Client/domain/models/Client'
+import type { AppointmentInfoPanelAdmin } from '@/models/AppointmentInfoPanelAdmin'
+import type { ClientInfoPanel } from '@/models/ClientInfoPanel'
 
 const { getEntityId } = useAuthentication()
 const { getEmployeeMyInfo } = useEmployee()
+
+const { getTodayAppointmentStats,getAppointmentsByDateForPanelAdmin } = useAppointment()
+
+const { getCompletedPaymentsStats } = usePayment()
+
+const {getClientStatsPanel,getClientInfoPanelAdmin} = useClient()
+
+const clientsRecent = ref<ClientInfoPanel[]>([])
+
+const appointmentsToday = ref<AppointmentInfoPanelAdmin[]>([])
+
+const clientsStats = ref<ClientStatsPanel|null>(null)
+
+const todayAppoinmentStats = ref<AppointmentStatsToday | null>()
+
+const paymentStats = ref<PaymentStatsForPanelAdmin | null>(null)
 
 const myInfoEmployee = ref<MyInfoEmployee | null>(null)
 
@@ -35,64 +59,20 @@ const loadMyInfo = async () => {
   if (entityIdGet) {
     myInfoEmployee.value = await getEmployeeMyInfo(entityIdGet)
   }
+  todayAppoinmentStats.value = await getTodayAppointmentStats()
+  paymentStats.value = await getCompletedPaymentsStats()
+  clientsStats.value = await getClientStatsPanel()
+appointmentsToday.value = await getAppointmentsByDateForPanelAdmin()
+clientsRecent.value = await getClientInfoPanelAdmin()
 }
 
-
 const news: { title: string; icon: string; content: string; plus?: string }[] = [
-  {
-    title: 'Citas hoy',
-    icon: 'pi-calendar',
-    content: '15',
-    plus: '+2 desde ayer',
-  },
   {
     title: 'Pacientes activos',
     icon: 'pi-heart',
     content: '85',
     plus: '+8 este mes',
-  },
-  {
-    title: 'Clientes',
-    icon: 'pi-user',
-    content: '40',
-    plus: '+3 este mes',
-  },
-  {
-    title: 'Ingresos mes',
-    icon: 'pi-chart-line',
-    content: 'S/ 5000',
-    plus: '+15% vs mes anterior',
-  },
-]
-
-const appointments: {
-  petName: string
-  serviceName: string
-  ownerName: string
-  time: string
-  status: string
-}[] = [
-  {
-    petName: 'Toby',
-    serviceName: 'Baño antipulgas',
-    ownerName: 'Oswaldo Cabrejos',
-    time: '09:30',
-    status: 'Completado',
-  },
-  {
-    petName: 'Lucky',
-    serviceName: 'Vacunación distemper',
-    ownerName: 'Diego Aguilar',
-    time: '10:30',
-    status: 'Confirmado',
-  },
-  {
-    petName: 'Negro',
-    serviceName: 'Spa canino',
-    ownerName: 'Juan Huacacchi',
-    time: '13:30',
-    status: 'Confirmado',
-  },
+  }
 ]
 
 const serviceStadistics: {
@@ -137,35 +117,6 @@ const serviceStadistics: {
     value: 15,
   },
 ]
-
-const clientsRecent: { clientName: string; clientLastname: string; clientDni: string }[] = [
-  {
-    clientName: 'Lucía',
-    clientLastname: 'Ramírez',
-    clientDni: '48392157',
-  },
-  {
-    clientName: 'Carlos',
-    clientLastname: 'Fernández',
-    clientDni: '72918364',
-  },
-  {
-    clientName: 'María',
-    clientLastname: 'Gómez',
-    clientDni: '81629475',
-  },
-  {
-    clientName: 'Jorge',
-    clientLastname: 'Castro',
-    clientDni: '50318249',
-  },
-  {
-    clientName: 'Diana',
-    clientLastname: 'Vargas',
-    clientDni: '61284793',
-  },
-]
-
 
 const chartData = ref()
 const chartOptions = ref()
@@ -306,6 +257,31 @@ const setChartOptionsSpecies = () => {
         <!-- news -->
         <div class="w-full grid grid-cols-4 gap-x-12 mt-4">
           <CardNewsPrimary
+            v-if="todayAppoinmentStats"
+            title="Citas hoy"
+            icon="pi-calendar"
+            :content="todayAppoinmentStats.totalAppointments.toString()"
+            :plus="`+${todayAppoinmentStats.totalAppointments - todayAppoinmentStats.todayRegisteredAppointments} desde ayer`"
+          >
+
+          </CardNewsPrimary>
+                      <CardNewsPrimary
+              v-if="paymentStats"
+              title="Ingresos del mes"
+              icon="pi-chart-line"
+              :content="paymentStats.currentTotal.toString()"
+              :plus="`+${paymentStats.percentageDifference}% vs mes anterio`"
+            ></CardNewsPrimary>
+
+                               <CardNewsPrimary
+              v-if="clientsStats"
+              title="Clientes"
+              icon="pi-user"
+              :content="clientsStats.totalClients.toString()"
+              :plus="`+${clientsStats.difference} este mes`"
+            ></CardNewsPrimary>
+
+          <CardNewsPrimary
             v-for="(noticia, index) in news"
             :key="index"
             :title="noticia.title"
@@ -330,12 +306,12 @@ const setChartOptionsSpecies = () => {
             <template #content>
               <div class="w-full flex flex-col gap-1.5">
                 <CardAppintmentTerciary
-                  v-for="(appointment, index) of appointments"
+                  v-for="(appointment, index) of appointmentsToday"
                   :key="index"
                   :pet-name="appointment.petName"
                   :service-name="appointment.serviceName"
-                  :owner-name="appointment.ownerName"
-                  :time="appointment.time"
+                  :owner-name="appointment.clientName"
+                  :time="appointment.hour"
                   :status="appointment.status"
                 >
                 </CardAppintmentTerciary>
@@ -386,9 +362,9 @@ const setChartOptionsSpecies = () => {
                 <ClientRankingItem
                   v-for="(client, index) of clientsRecent"
                   :key="index"
-                  :clientName="client.clientName"
-                  :clientLastname="client.clientLastname"
-                  :clientDni="client.clientDni"
+                  :clientFullName="client.fullName"
+                  :clientInitials="client.initials"
+                  :clientDni="client.phone"
                 ></ClientRankingItem>
               </template>
               <template #footer>
@@ -421,14 +397,13 @@ const setChartOptionsSpecies = () => {
             </template>
             <template #content>
               <div class="w-full min-h-full flex items-end justify-center">
-              <Chart
-                type="bar"
-                :data="chartDataSpecie"
-                :options="chartOptionsSpecie"
-                class="h-[30rem] w-full flex items-center"
-              />
+                <Chart
+                  type="bar"
+                  :data="chartDataSpecie"
+                  :options="chartOptionsSpecie"
+                  class="h-[30rem] w-full flex items-center"
+                />
               </div>
-
             </template>
           </Card>
         </div>

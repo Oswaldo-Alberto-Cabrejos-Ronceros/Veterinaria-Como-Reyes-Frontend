@@ -72,3 +72,18 @@ export interface ClientList {
   headquarterName: string
   status: string
 }
+
+export interface ClientStatsPanel {
+  totalClients: number
+  currentMonth: number
+  previousMonth: number
+  difference: string
+}
+
+export interface ClientInfoPanelAdmin {
+  clientId: number
+  fullName: string
+  initials: string
+  phone: string
+}
+

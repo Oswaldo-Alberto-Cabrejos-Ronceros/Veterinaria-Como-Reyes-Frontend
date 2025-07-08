@@ -1,4 +1,4 @@
-import type { VeterinaryService, VeterinaryServiceRequest } from "../models/VeterinaryService";
+import type { ServicesInfoTopPanelAdmin, VeterinaryService, VeterinaryServiceRequest } from "../models/VeterinaryService";
 import type { PageResponse } from '@/services/models/PageResponse'
 
 export interface VeterinaryServiceService {
@@ -21,4 +21,6 @@ export interface VeterinaryServiceService {
     },
     sort?: string
   ): Promise<PageResponse<VeterinaryService>>
+    getTopServicesForAdmin(): Promise<ServicesInfoTopPanelAdmin[]>
+  getTopServicesForManager(headquarterId: number): Promise<ServicesInfoTopPanelAdmin[]>
 }

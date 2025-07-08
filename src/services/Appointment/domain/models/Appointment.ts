@@ -110,3 +110,17 @@ export interface PaymentInfoForAppointment {
   paymentMethod: string;
   paymentStatus: string;
 }
+
+export interface AppointmentStatsToday {
+  totalAppointments: number;
+  todayRegisteredAppointments: number;
+}
+
+export interface AppointmentInfoPanelAdmin {
+  appointmentId: number
+  animalName: string
+  serviceName: string
+  clientName: string
+  hour: string
+  status: string
+}

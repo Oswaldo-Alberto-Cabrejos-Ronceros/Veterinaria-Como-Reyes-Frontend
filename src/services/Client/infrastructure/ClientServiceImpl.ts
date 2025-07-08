@@ -2,8 +2,10 @@ import type { PageResponse } from '@/services/models/PageResponse'
 import type {
   Client,
   ClientBasicInfoByDni,
+  ClientInfoPanelAdmin,
   ClientList,
   ClientRequest,
+  ClientStatsPanel,
   ClientUpdateAsClient,
   MyInfoClient,
 } from '../domain/models/Client'
@@ -105,4 +107,27 @@ export class ClientServiceImpl implements ClientService {
     )
     return response.data
   }
+  async getClientInfoPanelAdmin(): Promise<ClientInfoPanelAdmin[]> {
+  const response = await this.httpClient.get<ClientInfoPanelAdmin[]>(`${this.urlBase}/panel-admin`)
+  return response.data
+}
+
+async getClientStats(): Promise<ClientStatsPanel> {
+  const response = await this.httpClient.get<ClientStatsPanel>(`${this.urlBase}/panel-admin/stats`)
+  return response.data
+}
+
+async getClientInfoPanelByHeadquarterManager(headquarterId: number): Promise<ClientInfoPanelAdmin[]> {
+  const response = await this.httpClient.get<ClientInfoPanelAdmin[]>(
+    `${this.urlBase}/panel-manager/${headquarterId}`
+  )
+  return response.data
+}
+
+async getClientStatsByHeadquarter(headquarterId: number): Promise<ClientStatsPanel> {
+  const response = await this.httpClient.get<ClientStatsPanel>(
+    `${this.urlBase}/panel-manager/stats/${headquarterId}`
+  )
+  return response.data
+}
 }

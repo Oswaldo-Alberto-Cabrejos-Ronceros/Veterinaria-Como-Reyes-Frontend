@@ -1,4 +1,4 @@
-import type { Client, ClientRequest, MyInfoClient } from '@/services/Client/domain/models/Client'
+import type { Client, ClientInfoPanelAdmin, ClientRequest, MyInfoClient } from '@/services/Client/domain/models/Client'
 import type { Client as ClientView } from '@/models/Client'
 import type { FormValues as ClientAddSchema } from '@/validation-schemas-forms/schema-add-client'
 import type { FormValues as ClientEditSchema } from '@/validation-schemas-forms/schema-edit-client'
@@ -11,6 +11,7 @@ import type { ClientList as ClientListView } from '@/models/ClientList'
 import type { ClientList } from '@/services/Client/domain/models/Client'
 
 import { DateAdapter } from './DateAdapter'
+import type { ClientInfoPanel } from '@/models/ClientInfoPanel'
 
 export class ClientAdapter {
   static toClientView(client: Client): ClientView {
@@ -116,4 +117,12 @@ export class ClientAdapter {
       status: clientList.status,
     }
   }
+  static fromClientInfoPanelAdminToView(client: ClientInfoPanelAdmin): ClientInfoPanel {
+  return {
+    id: client.clientId,
+    fullName: client.fullName,
+    initials: client.initials,
+    phone: client.phone,
+  }
+}
 }

@@ -18,6 +18,8 @@ import type { ClientInfoForAppointment as ClientInfoForAppointmentView } from '@
 import type { ClientInfoForAppointment } from '@/services/Appointment/domain/models/Appointment'
 import type { PaymentInfoForAppointment as PaymentInfoForAppointmentView } from '@/models/PaymentInfoForAppointment'
 import type { PaymentInfoForAppointment } from '@/services/Appointment/domain/models/Appointment'
+import type { AppointmentInfoPanelAdmin } from '@/services/Appointment/domain/models/Appointment'
+import type { AppointmentInfoPanelAdmin as AppointmentInfoPanelAdminView } from '@/models/AppointmentInfoPanelAdmin'
 
 export class AppointmentAdapter {
   static toAppointmentView(appoinment: Appointment): AppointmentView {
@@ -139,6 +141,17 @@ export class AppointmentAdapter {
         name: paymentInfo.paymentMethod,
         status: paymentInfo.paymentStatus,
       },
+    }
+  }
+
+    static toAppointmentInfoPanelAdminView(infoAppointment: AppointmentInfoPanelAdmin): AppointmentInfoPanelAdminView {
+    return {
+      id: infoAppointment.appointmentId,
+      petName: infoAppointment.animalName,
+      serviceName: infoAppointment.serviceName,
+      clientName: infoAppointment.clientName,
+      hour: infoAppointment.hour,
+      status: infoAppointment.status,
     }
   }
 }

@@ -5,9 +5,10 @@ import { UpdatePayment } from '@/services/Payment/aplication/UpdatePayment'
 import { DeletePayment } from '@/services/Payment/aplication/DeletePayment'
 import { GetAllPaymentsForTable } from '@/services/Payment/aplication/GetAllPaymentsForTable'
 import { SearchPayments } from '@/services/Payment/aplication/SearchPayments'
-
+import { GetPaymentStatsByHeadquarter } from '@/services/Payment/aplication/GetPaymentStatsByHeadquarter '
 import { AxiosHttpClient } from '@/services/Http/infrastructure/AxiosHttpClient'
 import { PaymentServiceImpl } from '@/services/Payment/infrastructure/PaymentServiceImpl'
+import { GetCompletedPaymentsStats } from '@/services/Payment/aplication/GetCompletedPaymentsStats '
 
 // Instancia del cliente HTTP
 const axiosHttpClient = new AxiosHttpClient()
@@ -23,5 +24,7 @@ export const paymentUsesCases = {
   updatePayment: new UpdatePayment(paymentService),
   deletePayment: new DeletePayment(paymentService),
   getAllPaymentsForTable: new GetAllPaymentsForTable(paymentService),
-  searchPayments: new SearchPayments(paymentService)
+  searchPayments: new SearchPayments(paymentService),
+  getPaymentStatsByHeadquarter: new GetPaymentStatsByHeadquarter(paymentService),
+  getCompletedPaymentsStats: new GetCompletedPaymentsStats(paymentService)
 }

@@ -14,6 +14,11 @@ import { GetClientByDni } from '@/services/Client/aplication/GetClientByDni'
 import { AxiosHttpClient } from '@/services/Http/infrastructure/AxiosHttpClient'
 //import service implementation
 import { ClientServiceImpl } from '@/services/Client/infrastructure/ClientServiceImpl'
+import { GetClientInfoPanelAdmin } from '@/services/Client/aplication/GetClientInfoPanelAdmin'
+import { GetClientStatsPanel } from '@/services/Client/aplication/GetClientStatsPanel'
+import { GetClientInfoPanelByHeadquarter } from '@/services/Client/aplication/GetClientInfoPanelByHeadquarter'
+import { GetClientStatsByHeadquarter } from '@/services/Client/aplication/GetClientStatsByHeadquarter'
+
 
 //instantiete AxiosHttpClient
 const axiosHttpClient = new AxiosHttpClient()
@@ -35,4 +40,8 @@ export const clientUsesCases = {
   updateClient: new UpdateClient(clientService),
   updateClientAsClient: new UpdateClientAsClient(clientService),
   getClientByDni: new GetClientByDni(clientService),
+    getClientInfoPanelAdmin: new GetClientInfoPanelAdmin(clientService),
+  getClientStatsPanel: new GetClientStatsPanel(clientService),
+  getClientInfoPanelByHeadquarter: new GetClientInfoPanelByHeadquarter(clientService),
+  getClientStatsByHeadquarter: new GetClientStatsByHeadquarter(clientService),
 }
