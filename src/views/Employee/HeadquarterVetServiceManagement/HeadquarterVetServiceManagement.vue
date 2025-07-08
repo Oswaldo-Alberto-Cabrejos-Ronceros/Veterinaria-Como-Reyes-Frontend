@@ -14,7 +14,6 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import type { Service } from '@/models/Service'
 import { onMounted, ref } from 'vue'
-
 import { useVeterinaryService } from '@/composables/useVeterinaryService'
 import type { Specie } from '@/models/Specie'
 import type { OptionSelect } from '@/models/OptionSelect'
@@ -25,8 +24,9 @@ import type { DataTablePageEvent } from 'primevue/datatable'
 import { debounce } from 'lodash'
 import { useHeadquarter } from '@/composables/useHeadquarter'
 import type { Headquarter } from '@/models/Headquarter'
-import type { useHeadquarterVetService } from '@/composables/useHeadquarterVetService'
+import { useHeadquarterVetService } from '@/composables/useHeadquarterVetService'
 import type { HeadquarterVetService } from '@/models/HeadquarterVetService'
+import { ToggleSwitch } from 'primevue'
 
 //methods
 
@@ -43,10 +43,12 @@ const { getAllCategories } = useCategory()
 
 const { getAllHeadquarters } = useHeadquarter()
 
-const {getHeadquarterVetServiceByHeadquarter} = useHeadquarterVetService()
+const { getHeadquarterVetServiceByHeadquarter } = useHeadquarterVetService()
 
 //services
 const headquartersOptions = ref<OptionSelect[]>([])
+
+const headquarters = ref<Headquarter[]>([])
 
 const services = ref<Service[]>([])
 
@@ -58,22 +60,28 @@ const speciesOptions = ref<OptionSelect[]>([])
 
 const categoriesOptions = ref<OptionSelect[]>([])
 
-const headquarterServices = ref<[][]HeadquarterVetService>([])
+const headquarterServices = ref<HeadquarterVetService[][]>([])
 
 onMounted(async () => {
   loadServices()
   speciesOptions.value = speciesToOptionsSelect(await getAllSpecies())
   categoriesOptions.value = categoriesToOptionsSelect(await getAllCategories())
-  headquartersOptions.value = headquartersToOptionsSelect(await getAllHeadquarters())
+  headquarters.value = await getAllHeadquarters()
+  headquartersOptions.value = headquartersToOptionsSelect(headquarters.value)
+  loadHeadquarterServices()
+  console.log(headquarterServices)
 })
 
 //function for load headquarters service
 
-const loadHeadquarterService = async ()=>{
-headquarterServices.value=[]
-  headquartersOptions.value.forEach((item)=>{
-    headquarterServices.value.push(await getHeadquarterVetServiceByHeadquarter(item.value))
-  })
+const loadHeadquarterServices = async () => {
+  headquarterServices.value = []
+
+  for (const item of headquarters.value) {
+    const service = await getHeadquarterVetServiceByHeadquarter(item.id)
+    console.log(item.id, service)
+    headquarterServices.value.push(service)
+  }
 }
 
 const loadServices = async (event?: DataTablePageEvent) => {
@@ -145,6 +153,11 @@ const dt = ref()
 const exportCSV = () => {
   dt.value.exportCSV()
 }
+
+//
+let headquarterServiceAux: HeadquarterVetService | undefined
+//ref when active headquarterservice
+const activedHeadquarterService = ref<boolean>(true)
 </script>
 
 <template>
@@ -273,11 +286,49 @@ const exportCSV = () => {
               class="hidden lg:table-cell"
               style="width: 18%"
             ></Column>
-            <Column
-              v-for="headquarter of headquartersOptions"
-              :header="`Sede ${headquarter.name}`"
-              :key="headquarter.name"
-            >
+            <Column v-for="(headquarter, index) in headquarters" :key="headquarter.id">
+              <template #header>
+                <div class=" p-datatable-column-title w-full text-center">
+                  {{ `Sede ${headquarter.name}` }}
+                </div>
+              </template>
+              <template #body="{ data }">
+                <template
+                  v-if="
+                    headquarterServiceAux = headquarterServices[index]?.find(
+                      (s) => s.service.id === data.id,
+                    )
+                  "
+                >
+                  <div class="flex items-center flex-col justify-center gap-4">
+                    <div class="w-full flex items-center gap-2 justify-center">
+ <ToggleSwitch readonly v-model="activedHeadquarterService" />
+ <i class="pi pi-check text-green-500 dark:text-green-400"></i>
+                    </div>
+                    <Button
+                      icon="pi pi-pen-to-square"
+                      severity="secondary"
+                      variant="outlined"
+                      class="p-1.5"
+                      aria-label="Editar"
+                      size="small"
+                    ></Button>
+                  </div>
+                </template>
+                <template v-else>
+                  <div class="flex items-center flex-col justify-center gap-2">
+                    <p lass="text-neutral-500">No disponible</p>
+                    <Button
+                      icon="pi pi-plus"
+                      severity="secondary"
+                      variant="outlined"
+                      class="p-1.5"
+                      aria-label="Editar"
+                      size="small"
+                    ></Button>
+                  </div>
+                </template>
+              </template>
             </Column>
           </DataTable>
         </div>

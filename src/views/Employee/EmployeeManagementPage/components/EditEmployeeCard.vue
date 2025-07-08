@@ -225,10 +225,10 @@ const cmvpActive = (id:number):boolean=>{
         </Message>
       </div>
 
-      <div>
+      <div v-if="!cmvpActive(roleId)">
         <label class="block mb-2">CMVP</label>
 
-        <InputGroup>
+        <InputGroup         >
           <InputGroupAddon class="text-neutral-400">
             <i class="pi pi-id-card"></i>
           </InputGroupAddon>
@@ -239,6 +239,7 @@ const cmvpActive = (id:number):boolean=>{
             type="text"
             placeholder="Ej: 14125"
             :disabled="cmvpActive(roleId)"
+
           />
         </InputGroup>
 
