@@ -1,5 +1,5 @@
 import type { SpecieService } from '../domain/services/SpecieService'
-import type { Specie, SpecieRequest } from '../domain/models/Specie'
+import type { Specie, SpecieRequest, SpecieList } from '../domain/models/Specie'
 import type { HttpClient } from '@/services/Http/model/HttpClient'
 import type { PageResponse } from '@/services/models/PageResponse'
 
@@ -40,16 +40,15 @@ export class SpecieServiceImpl implements SpecieService {
     size: number,
     name?: string,
     status?: boolean
-  ): Promise<PageResponse<Specie>> {
+  ): Promise<PageResponse<SpecieList>> {
     const params: Record<string, string | number> = {
       page,
       size,
     }
-
     if (name) params.name = name
     if (status !== undefined) params.status = String(status)
 
-    const response = await this.httpClient.get<PageResponse<Specie>>(
+    const response = await this.httpClient.get<PageResponse<SpecieList>>(
       `${this.url}/search`,
       params
     )

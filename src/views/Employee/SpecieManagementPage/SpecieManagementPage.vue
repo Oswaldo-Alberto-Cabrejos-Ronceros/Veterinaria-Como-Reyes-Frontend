@@ -12,7 +12,7 @@ import Button from 'primevue/button'
 import { onMounted, ref } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import type { Specie as SpecieView } from '@/models/Specie'
+import type { SpecieList } from '@/models/SpecieList'
 import { useConfirm } from 'primevue'
 import { useDialog, useToast } from 'primevue'
 import AddEditSpecie from './components/AddEditSpecieCard.vue'
@@ -20,6 +20,7 @@ import type { FormValues as AddEditSpecieSchema } from '@/validation-schemas-for
 import { useSpecie } from '@/composables/useSpecie'
 import type { DataTablePageEvent } from 'primevue/datatable'
 import { debounce } from 'lodash'
+import Tag from 'primevue/tag'
 
 //toast
 const toast = useToast()
@@ -37,7 +38,7 @@ const showToast = (message: string) => {
 
 const { loading, error, createSpecie, updateSpecie, activateSpecie, searchSpecies } = useSpecie()
 
-const species = ref<SpecieView[]>([])
+const species = ref<SpecieList[]>([])
 
 const totalRecords = ref<number>(0)
 const rows = ref<number>(10)
@@ -104,14 +105,17 @@ const addSpecie = () => {
   })
 }
 
-const editPaymentMethod = (specieData: SpecieView) => {
+const editSpecie = (specieData: SpecieList) => {
   dialog.open(AddEditSpecie, {
     props: {
       modal: true,
       header:`${specieData.name}`
     },
     data: {
-      specieData: specieData as AddEditSpecieSchema,
+      specieData: {
+        name: specieData.name,
+        imagePath: '',
+      } as AddEditSpecieSchema,
     },
     onClose: async (options) => {
       const data = options?.data as AddEditSpecieSchema
@@ -128,9 +132,7 @@ const editPaymentMethod = (specieData: SpecieView) => {
 //for confirm
 const confirm = useConfirm()
 
-const deleteSpecie = (event: MouseEvent | KeyboardEvent, specieData: SpecieView) => {
-  const isActive = specieData.status
-
+const deleteSpecie = (event: MouseEvent | KeyboardEvent, specieData: SpecieList) => {
   confirm.require({
     group: 'confirmPopupGeneral',
     target: event.currentTarget as HTMLElement,
@@ -142,8 +144,8 @@ const deleteSpecie = (event: MouseEvent | KeyboardEvent, specieData: SpecieView)
       outlined: true,
     },
     acceptProps: {
-      label: isActive ? 'Desactivar' : 'Activar',
-      severity: isActive ? 'danger' : 'success',
+      label: 'Eliminar',
+      severity: 'danger',
     },
     accept: async () => {
       await activateSpecie(specieData.id)
@@ -200,11 +202,11 @@ const deleteSpecie = (event: MouseEvent | KeyboardEvent, specieData: SpecieView)
           </form>
 
           <!-- for messague loading  -->
-          <Message v-if="loading.getAllSpecies" severity="warn" size="small" variant="simple">
+          <Message v-if="loading.searchSpecies" severity="warn" size="small" variant="simple">
             Cargando ...
           </Message>
           <!-- for messague error -->
-          <Message v-if="error.getAllSpecies" severity="error" size="small" variant="simple">
+          <Message v-if="error.searchSpecies" severity="error" size="small" variant="simple">
             Error al cargar las species
           </Message>
 
@@ -233,8 +235,15 @@ const deleteSpecie = (event: MouseEvent | KeyboardEvent, specieData: SpecieView)
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
             </template>
-            <Column field="name" sortable header="Nombre" style="width: 80%"></Column>
-
+            <Column field="name" sortable header="Nombre" style="width: 60%" />
+            <Column field="status" header="Estado" style="width: 20%">
+              <template #body="{ data }">
+                <Tag
+                  :value="data.status ? 'Activo' : 'Inactivo'"
+                  :severity="data.status ? 'success' : 'danger'"
+                />
+              </template>
+            </Column>
             <Column>
               <template #body="{ data }">
                 <div class="flex justify-between items-center flex-col sm:flex-row gap-1">
@@ -244,7 +253,7 @@ const deleteSpecie = (event: MouseEvent | KeyboardEvent, specieData: SpecieView)
                     variant="outlined"
                     aria-label="Filter"
                     rounded
-                    @click="editPaymentMethod(data)"
+                    @click="editSpecie(data)"
                   ></Button>
                   <Button
                     icon="pi pi-trash"

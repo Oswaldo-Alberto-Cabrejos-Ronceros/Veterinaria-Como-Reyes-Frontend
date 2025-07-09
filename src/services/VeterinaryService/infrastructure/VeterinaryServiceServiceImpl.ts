@@ -1,5 +1,5 @@
 import type { VeterinaryServiceService } from '../domain/services/VeterinaryServiceService'
-import type { VeterinaryService, VeterinaryServiceRequest } from '../domain/models/VeterinaryService'
+import type { VeterinaryService, VeterinaryServiceList, VeterinaryServiceRequest } from '../domain/models/VeterinaryService'
 import type { HttpClient } from '@/services/Http/model/HttpClient'
 import type { PageResponse } from '@/services/models/PageResponse'
 
@@ -48,29 +48,26 @@ export class VeterinaryServiceServiceImpl implements VeterinaryServiceService {
   async searchVeterinaryServices(
     page: number,
     size: number,
-    filters: {
-      name?: string
-      specie?: string
-      category?: string
-      status?: boolean
-    },
-    sort?: string
-  ): Promise<PageResponse<VeterinaryService>> {
+    name?: string,
+    specie?: string,
+    category?: string,
+    status?: boolean,
+  ): Promise<PageResponse<VeterinaryServiceList>> {
     const params: Record<string, string | number> = {
       page,
       size,
     }
 
-    if (filters.name) params.name = filters.name
-    if (filters.specie) params.specie = filters.specie
-    if (filters.category) params.category = filters.category
-    if (filters.status !== undefined) params.status = String(filters.status)
-    if (sort) params.sort = sort
+    if (name) params.name = name
+    if (specie) params.specie = specie
+    if (category) params.category = category
+    if (status !== undefined) params.status = String(status)
 
-    const response = await this.httpClient.get<PageResponse<VeterinaryService>>(
+    const response = await this.httpClient.get<PageResponse<VeterinaryServiceList>>(
       `${this.url}/search`,
       params
     )
+
     return response.data
   }
 

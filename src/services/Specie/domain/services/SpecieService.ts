@@ -1,4 +1,4 @@
-import type { Specie, SpecieRequest } from '../models/Specie'
+import type { Specie, SpecieRequest, SpecieList } from '../models/Specie'
 import type { PageResponse } from '@/services/models/PageResponse'
 
 export interface SpecieService {
@@ -13,5 +13,5 @@ export interface SpecieService {
     size: number,
     name?: string,
     status?: boolean
-  ): Promise<PageResponse<Specie>>
+  ): Promise<PageResponse<SpecieList>>
 }

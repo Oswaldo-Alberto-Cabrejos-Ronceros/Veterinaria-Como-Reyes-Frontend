@@ -4,6 +4,8 @@ import type {
 } from '@/services/VeterinaryService/domain/models/VeterinaryService'
 import type { FormValues as VeterinaryServiceAddEditSchema } from '@/validation-schemas-forms/schema-add-edit-service'
 import type { Service as VeterinaryServiceView } from '@/models/Service'
+import type { VeterinaryServiceList } from '@/services/VeterinaryService/domain/models/VeterinaryService'
+import type { ServiceList as VeterinaryServiceListView } from '@/models/ServiceList'
 
 export class VeterinaryServiceAdapter {
   static toView(service: VeterinaryService): VeterinaryServiceView {
@@ -35,6 +37,17 @@ export class VeterinaryServiceAdapter {
       category: {
         categoryId: schema.categoryId,
       },
+    }
+  }
+
+  static fromVeterinaryServiceListToVeterinaryServiceListView(
+    service: VeterinaryServiceList
+  ): VeterinaryServiceListView {
+    return {
+      serviceId: service.serviceId,
+      name: service.name,
+      specie: service.specie,
+      category: service.category,
     }
   }
 }

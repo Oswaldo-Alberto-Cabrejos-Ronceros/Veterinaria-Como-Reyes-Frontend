@@ -24,3 +24,11 @@ export interface VeterinaryServiceRequest {
     categoryId: number
   }
 }
+
+export interface VeterinaryServiceList {
+  serviceId: number
+  name: string
+  specie: string
+  category: string
+  status: string
+}

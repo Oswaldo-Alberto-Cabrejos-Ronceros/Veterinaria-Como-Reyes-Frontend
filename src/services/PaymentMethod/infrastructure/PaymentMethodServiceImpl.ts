@@ -1,5 +1,5 @@
 import type { PaymentMethodService } from '../domain/services/PaymentMethodService';
-import type { PaymentMethod, PaymentMethodRequest } from '../domain/models/PaymentMethod';
+import type { PaymentMethod, PaymentMethodRequest, PaymentMethodList } from '../domain/models/PaymentMethod';
 import type { HttpClient } from '@/services/Http/model/HttpClient';
 import type { PageResponse } from '@/services/models/PageResponse';
 
@@ -39,7 +39,7 @@ export class PaymentMethodServiceImpl implements PaymentMethodService {
     size: number,
     name?: string,
     status?: boolean,
-  ): Promise<PageResponse<PaymentMethod>> {
+  ): Promise<PageResponse<PaymentMethodList>> {
     const params: Record<string, string | number> = {
       page,
       size,
@@ -48,7 +48,7 @@ export class PaymentMethodServiceImpl implements PaymentMethodService {
     if (name) params.name = name
     if (status !== undefined) params.status = String(status)
 
-    const response = await this.httpClient.get<PageResponse<PaymentMethod>>(
+    const response = await this.httpClient.get<PageResponse<PaymentMethodList>>(
       `${this.url}/search`,
       params,
     )
