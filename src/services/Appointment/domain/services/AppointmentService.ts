@@ -7,6 +7,7 @@ import type {
   AppointmentInfoPanelAdmin,
   AppointmentList,
   AppointmentRequest,
+  AppointmentStatsForReceptionist,
   AppointmentStatsToday,
   BasicServiceForAppointment,
   CareAndAppointmentPanelEmployee,
@@ -45,4 +46,6 @@ getTodayAppointmentStats(): Promise<AppointmentStatsToday>
   getAppointmentsByDateForPanelManager(headquarterId: number): Promise<AppointmentInfoPanelAdmin[]>
   getTodayAppointmentStatsByHeadquarter(headquarterId: number): Promise<AppointmentStatsToday>
 getCareAndAppointmentsForEmployee(employeeId: number): Promise<CareAndAppointmentPanelEmployee[]>;
+  getStatsForReceptionist(): Promise<AppointmentStatsForReceptionist>
+  getAppointmentsByHeadquarterId(headquarterId: number): Promise<CareAndAppointmentPanelEmployee[]>
 }

@@ -18,6 +18,7 @@ import { GetClientInfoPanelAdmin } from '@/services/Client/aplication/GetClientI
 import { GetClientStatsPanel } from '@/services/Client/aplication/GetClientStatsPanel'
 import { GetClientInfoPanelByHeadquarter } from '@/services/Client/aplication/GetClientInfoPanelByHeadquarter'
 import { GetClientStatsByHeadquarter } from '@/services/Client/aplication/GetClientStatsByHeadquarter'
+import { GetClientStatsToday } from '@/services/Client/aplication/GetClientStatsToday'
 
 
 //instantiete AxiosHttpClient
@@ -44,4 +45,5 @@ export const clientUsesCases = {
   getClientStatsPanel: new GetClientStatsPanel(clientService),
   getClientInfoPanelByHeadquarter: new GetClientInfoPanelByHeadquarter(clientService),
   getClientStatsByHeadquarter: new GetClientStatsByHeadquarter(clientService),
+  getClientStatsToday: new GetClientStatsToday(clientService),//for recepcionist
 }

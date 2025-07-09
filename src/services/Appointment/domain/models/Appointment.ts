@@ -134,4 +134,14 @@ export interface CareAndAppointmentPanelEmployee {
   date: string
   hour: string
   status: string
+  commentAppointment:string;
 }
+
+export interface AppointmentStatsForReceptionist{
+    totalAppointmentsToday: number
+  confirmedAppointmentsToday: number
+  pendingAppointmentsToday: number
+}
+
+
+

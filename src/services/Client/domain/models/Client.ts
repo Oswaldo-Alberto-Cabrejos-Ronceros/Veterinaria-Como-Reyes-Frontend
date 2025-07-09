@@ -87,3 +87,7 @@ export interface ClientInfoPanelAdmin {
   phone: string
 }
 
+export interface ClientStatsToday {
+  totalClientsAttended: number
+  todayClientsAttended: number
+}

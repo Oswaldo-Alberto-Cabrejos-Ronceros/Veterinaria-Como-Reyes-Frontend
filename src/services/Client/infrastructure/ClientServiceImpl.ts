@@ -6,6 +6,7 @@ import type {
   ClientList,
   ClientRequest,
   ClientStatsPanel,
+  ClientStatsToday,
   ClientUpdateAsClient,
   MyInfoClient,
 } from '../domain/models/Client'
@@ -127,6 +128,12 @@ async getClientInfoPanelByHeadquarterManager(headquarterId: number): Promise<Cli
 async getClientStatsByHeadquarter(headquarterId: number): Promise<ClientStatsPanel> {
   const response = await this.httpClient.get<ClientStatsPanel>(
     `${this.urlBase}/panel-manager/stats/${headquarterId}`
+  )
+  return response.data
+}
+async getClientStatsToday(): Promise<ClientStatsToday> {
+  const response = await this.httpClient.get<ClientStatsToday>(
+    `${this.urlBase}/panel-receptionist/stats`,
   )
   return response.data
 }

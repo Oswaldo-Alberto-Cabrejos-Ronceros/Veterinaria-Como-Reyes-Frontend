@@ -6,6 +6,7 @@ import type {
   ClientList,
   ClientRequest,
   ClientStatsPanel,
+  ClientStatsToday,
   ClientUpdateAsClient,
   MyInfoClient,
 } from '../models/Client'
@@ -38,4 +39,5 @@ export interface ClientService {
   getClientStats(): Promise<ClientStatsPanel>
   getClientInfoPanelByHeadquarterManager(headquarterId: number): Promise<ClientInfoPanelAdmin[]>
   getClientStatsByHeadquarter(headquarterId: number): Promise<ClientStatsPanel>
+  getClientStatsToday(): Promise<ClientStatsToday>
 }

@@ -309,6 +309,12 @@ const router = createRouter({
               props: true,
               meta: { requiresAuth: true, roles: ['Encargado Sede'] },
             },
+                        {
+              path: 'services-headquarters-management',
+              name: 'manager-services-headquarters-management',
+              component: HeadquarterVetServiceManagement,
+              meta: { requiresAuth: true, roles: ['Encargado Sede'] },
+            },
           ],
         },
         {

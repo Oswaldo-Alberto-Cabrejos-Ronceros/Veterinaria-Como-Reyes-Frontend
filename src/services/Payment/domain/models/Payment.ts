@@ -33,3 +33,19 @@ export interface PaymentStatsForPanelAdmin {
   previousTotal: number
   percentageDifference: string
 }
+
+export interface IncomeStatsToday {
+  todayIncome: number;
+}
+
+export interface RecentPayment {
+  paymentId: number;
+  clientFullName: string;
+  clientInitials: string;
+  animalName: string;
+  serviceName: string;
+  amount: number;
+  paymentDate: string;
+  paymentTime: string;
+  paymentStatus: string;
+}

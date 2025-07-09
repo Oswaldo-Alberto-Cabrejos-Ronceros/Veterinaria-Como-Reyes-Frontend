@@ -145,6 +145,11 @@ const getClientStatsByHeadquarter = async (headquarterId: number) => {
   )
 }
 
+const getClientStatsToday = async () => {
+  return await runUseCase('getClientStatsToday', () =>
+    clientUsesCases.getClientStatsToday.execute(),
+  )
+} //for recepcionist
   return {
     loading,
     error,
@@ -162,6 +167,7 @@ const getClientStatsByHeadquarter = async (headquarterId: number) => {
     getClientInfoPanelAdmin,
     getClientStatsPanel,
     getClientInfoPanelByHeadquarter,
-    getClientStatsByHeadquarter
+    getClientStatsByHeadquarter,
+    getClientStatsToday
   }
 }

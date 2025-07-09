@@ -13,6 +13,8 @@ import { SetPaymentStatusCancelled } from '@/services/Payment/aplication/SetPaym
 import { SetPaymentStatusPending } from '@/services/Payment/aplication/SetPaymentStatusPending'
 import { SetPaymentStatusRefunded } from '@/services/Payment/aplication/SetPaymentStatusRefunded'
 import { SetPaymentStatusComplete } from '@/services/Payment/aplication/SetPaymentStatusComplete'
+import { GetTodayIncomeStatsUseCase } from '@/services/Payment/aplication/GetTodayIncomeStats'
+import { GetRecentCompletedPaymentsUseCase } from '@/services/Payment/aplication/GetRecentCompletedPayments'
 
 // Instancia del cliente HTTP
 const axiosHttpClient = new AxiosHttpClient()
@@ -35,4 +37,6 @@ export const paymentUsesCases = {
   setPaymentStatusCancelled: new SetPaymentStatusCancelled(paymentService),
   setPaymentStatusPending: new SetPaymentStatusPending(paymentService),
   setPaymentStatusRefunded: new SetPaymentStatusRefunded(paymentService),
+    getTodayIncomeStats: new GetTodayIncomeStatsUseCase(paymentService),
+  getRecentCompletedPayments: new GetRecentCompletedPaymentsUseCase(paymentService),
 }

@@ -14,6 +14,7 @@ import type {
   AppointmentStatsToday,
   AppointmentInfoPanelAdmin,
   CareAndAppointmentPanelEmployee,
+  AppointmentStatsForReceptionist,
 } from '../domain/models/Appointment'
 import type { SearchAppointmentParams } from '../domain/models/SearchAppointmentParams'
 import type { PageResponse } from '@/services/models/PageResponse'
@@ -165,5 +166,18 @@ async getCareAndAppointmentsForEmployee(employeeId: number): Promise<CareAndAppo
     `${this.url}/panel-employee/${employeeId}`
   );
   return response.data;
+}
+async getStatsForReceptionist(): Promise<AppointmentStatsForReceptionist> {
+  const response = await this.httpClient.get<AppointmentStatsForReceptionist>(
+    `${this.url}/panel-receptionist/stats`
+  )
+  return response.data
+}
+
+async getAppointmentsByHeadquarterId(headquarterId: number): Promise<CareAndAppointmentPanelEmployee[]> {
+  const response = await this.httpClient.get<CareAndAppointmentPanelEmployee[]>(
+    `${this.url}/panel-receptionist/${headquarterId}`
+  )
+  return response.data
 }
 }

@@ -124,6 +124,11 @@ const items = ref<MenuItem[][]>([
       icon: 'pi pi-github',
       to: '/employee/manager/pets-management',
     },
+        {
+      label: 'Servicios por Sede',
+      icon: 'pi pi-arrow-right-arrow-left',
+      to: '/employee/manager/services-headquarters-management',
+    },
     {
       label: 'Citas',
       icon: 'pi pi-clipboard',
@@ -151,6 +156,7 @@ const items = ref<MenuItem[][]>([
       icon: 'pi pi-github',
       to: '/employee/veterinary/pets-management',
     },
+
   ],
   [
     {

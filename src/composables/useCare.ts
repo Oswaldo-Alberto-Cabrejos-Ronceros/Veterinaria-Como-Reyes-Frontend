@@ -2,10 +2,12 @@ import { careUsesCases } from '@/dependency-injection/care.container'
 import { useAsyncHandler } from './useAsyncHandler'
 import type { Care, Care as CareView } from '@/models/Care'
 import { CareAdapter } from '@/adapters/CareAdapter'
-import type { CareRequest } from '@/services/Care/domain/models/Care'
+import type { CareRequest, CareStatsToday } from '@/services/Care/domain/models/Care'
 import type { FormValues as AddCareFromAppoinmentSchema } from '@/validation-schemas-forms/schema-add-care-from-appointment'
 import type { FormValues as AddCareFromRequestSchema } from '@/validation-schemas-forms/schema-add-care'
 import type { PageResponse } from '@/services/models/PageResponse'
+import type { CareAndAppointmentPanelEmployee as CareAndAppointmentPanelEmployeeView } from '@/models/CareAndAppointmentPanelEmployee'
+import { AppointmentAdapter } from '@/adapters/AppointmentAdapter'
 
 export function useCare() {
   const { loading, error, runUseCase } = useAsyncHandler()
@@ -68,18 +70,40 @@ export function useCare() {
     idHeadquarter?: number,
     idService?: number,
     page?: number,
-    size?: number
+    size?: number,
   ): Promise<PageResponse<CareView>> => {
     const result = await runUseCase('searchCares', () =>
-      careUsesCases.searchCares.execute(status, fecha, idHeadquarter, idService, page, size)
+      careUsesCases.searchCares.execute(status, fecha, idHeadquarter, idService, page, size),
     )
 
     const content = result.content.map((care) => CareAdapter.toView(care))
 
     return {
       ...result,
-      content
+      content,
     }
+  }
+
+  const getCareStatsToday = async (): Promise<CareStatsToday> => {
+    return await runUseCase('getCareStatsToday', () => careUsesCases.getCareStatsToday.execute())
+  }
+
+  const getCaresForEmployee = async (
+    employeeId: number,
+  ): Promise<CareAndAppointmentPanelEmployeeView[]> => {
+    const cares = await runUseCase('getCaresForEmployee', () =>
+      careUsesCases.getCaresForEmployee.execute(employeeId),
+    )
+    return cares.map((c) => AppointmentAdapter.toCareAndAppointmentPanelEmployeeView(c))
+  }
+
+  const getCaresByHeadquarterId = async (
+    headquarterId: number,
+  ): Promise<CareAndAppointmentPanelEmployeeView[]> => {
+    const cares = await runUseCase('getCaresByHeadquarterId', () =>
+      careUsesCases.getCaresByHeadquarterId.execute(headquarterId),
+    )
+    return cares.map((c) => AppointmentAdapter.toCareAndAppointmentPanelEmployeeView(c))
   }
 
   return {
@@ -94,5 +118,8 @@ export function useCare() {
     createCareFromAppointment,
     createCareFromRequest,
     searchCares,
+    getCareStatsToday,
+    getCaresForEmployee,
+    getCaresByHeadquarterId,
   }
 }

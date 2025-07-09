@@ -79,6 +79,8 @@ const headquarters = ref<Headquarter[]>([])
 
 const services = ref<Service[]>([])
 
+const roleMain = ref<string>('')
+
 const totalRecords = ref<number>(0)
 const rows = ref<number>(10)
 const first = ref<number>(0)
@@ -110,7 +112,9 @@ const loadData = async () => {
   //obtenemos el rol
 
   const role = getMainRole()
+
   if (role) {
+    roleMain.value = role
     if (role === 'Administrador') {
       headquarters.value = await getAllHeadquarters()
     } else {
@@ -354,7 +358,7 @@ const activedHeadquarterService = ref<boolean>(true)
               </Message>
             </div>
             <!-- headquarter -->
-            <div>
+            <div                 v-if="roleMain==='Administrador'">
               <label class="block mb-2">Sede</label>
               <Select
                 class="w-full"
@@ -363,6 +367,7 @@ const activedHeadquarterService = ref<boolean>(true)
                 optionValue="value"
                 placeholder="Selecciona Sede"
                 showClear
+
               />
             </div>
           </form>

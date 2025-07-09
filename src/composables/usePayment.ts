@@ -4,6 +4,8 @@ import type { PaymentList as PaymentListView } from '@/models/PaymentList'
 import { PaymentAdapter } from '@/adapters/PaymentAdapter'
 import { paymentUsesCases } from '@/dependency-injection/payment.container'
 import type { PageResponse } from '@/services/models/PageResponse'
+import type { IncomeStatsToday } from '@/services/Payment/domain/models/Payment'
+import type { RecentPayment as RecentPaymentView } from '@/models/RecientPayment'
 
 export function usePayment() {
   const { loading, error, runUseCase } = useAsyncHandler()
@@ -117,6 +119,22 @@ const setPaymentStatusRefunded = async (paymentId: number): Promise<void> => {
   )
 }
 
+//recepcionist
+
+const getTodayIncomeStats = async (): Promise<IncomeStatsToday> => {
+  return await runUseCase('getTodayIncomeStats', () =>
+    paymentUsesCases.getTodayIncomeStats.execute(),
+  )
+}
+const getRecentCompletedPayments = async (
+  headquarterId: number,
+): Promise<RecentPaymentView[]> => {
+  const payments = await runUseCase('getRecentCompletedPayments', () =>
+    paymentUsesCases.getRecentCompletedPayments.execute(headquarterId),
+  )
+  return payments.map((payment) => PaymentAdapter.toRecentPaymentView(payment))
+}
+
   return {
     loading,
     error,
@@ -132,6 +150,8 @@ const setPaymentStatusRefunded = async (paymentId: number): Promise<void> => {
     setPaymentStatusComplete,
     setPaymentStatusCancelled,
     setPaymentStatusPending,
-    setPaymentStatusRefunded
+    setPaymentStatusRefunded,
+    getTodayIncomeStats,
+    getRecentCompletedPayments
   }
 }

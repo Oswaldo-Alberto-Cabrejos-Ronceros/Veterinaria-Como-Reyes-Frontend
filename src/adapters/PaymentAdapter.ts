@@ -3,6 +3,8 @@ import type { Payment as PaymentView } from '@/models/Payment'
 import type { PaymentList } from '@/services/Payment/domain/models/Payment'
 import type { PaymentList as PaymentListView } from '@/models/PaymentList'
 import { FormatAdapter } from './FormatAdapter'
+import type { RecentPayment } from '@/services/Payment/domain/models/Payment'
+import type { RecentPayment as RecentPaymentView } from '@/models/RecientPayment'
 
 export class PaymentAdapter {
   static toPaymentView(payment: Payment): PaymentView {
@@ -29,4 +31,18 @@ export class PaymentAdapter {
       paymentDate: paymentList.paymentDate,
     }
   }
+
+  static toRecentPaymentView(payment: RecentPayment): RecentPaymentView {
+  return {
+    id: payment.paymentId,
+    clientFullName: payment.clientFullName,
+    clientInitials: payment.clientInitials,
+    petName: payment.animalName,
+    serviceName: payment.serviceName,
+    amount: payment.amount,
+    paymentDate: payment.paymentDate,
+    paymentTime: payment.paymentTime,
+    paymentStatus: FormatAdapter.toCaptalizeCaseWithout_(payment.paymentStatus),
+  }
+}
 }

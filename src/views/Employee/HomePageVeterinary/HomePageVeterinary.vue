@@ -15,15 +15,19 @@ import CardVeterinaryRecord from '@/components/CardVeterinaryRecord.vue'
 import ScrollPanel from 'primevue/scrollpanel'
 import CardPetTerciary from '@/components/CardPetTerciary.vue'
 import { useAppointment } from '@/composables/useAppointment'
-import type { AppointmentStatsToday} from '@/services/Appointment/domain/models/Appointment'
+import type { AppointmentStatsToday } from '@/services/Appointment/domain/models/Appointment'
 import type { CareAndAppointmentPanelEmployee } from '@/models/CareAndAppointmentPanelEmployee'
 import { useRouter } from 'vue-router'
+import { useCare } from '@/composables/useCare'
 const { getEntityId } = useAuthentication()
 const { getEmployeeMyInfo } = useEmployee()
 
-const {  getCareAndAppointmentsForEmployee } = useAppointment()
+const { getCareAndAppointmentsForEmployee } = useAppointment()
 const appointments = ref<CareAndAppointmentPanelEmployee[]>([])
 
+const { getCaresForEmployee } = useCare()
+
+const careRecents = ref<CareAndAppointmentPanelEmployee[]>([])
 
 const { getTodayAppointmentStatsByHeadquarter } = useAppointment()
 
@@ -52,7 +56,7 @@ const setChartData = () => {
     labels: ['02/06', '09/06', '16/06', '23/06', '30/06'],
     datasets: [
       {
-        label: 'Ingresos',
+        label: 'Atenciones',
         data: [65, 59, 80, 81, 50],
         fill: false,
         borderColor: documentStyle.getPropertyValue('--p-pink-500'),
@@ -107,12 +111,12 @@ const loadMyInfo = async () => {
     paymentStats.value = await getTodayAppointmentStatsByHeadquarter(
       myInfoEmployee.value.headquarter.id,
     )
-    appointments.value = await getCareAndAppointmentsForEmployee(entityIdGet)
+    careRecents.value = await getCareAndAppointmentsForEmployee(entityIdGet)
+    appointments.value = await getCaresForEmployee(entityIdGet)
   }
 }
 
 const news: { title: string; icon: string; content: string; plus?: string }[] = [
-
   {
     title: 'Atenciones registradas hoy',
     icon: 'pi-clipboard',
@@ -133,50 +137,6 @@ const news: { title: string; icon: string; content: string; plus?: string }[] = 
   },
 ]
 
-
-const petsWaitings: {
-  clientName: string
-  clientLastname: string
-  petName: string
-  serviceName: string
-  breedName: string
-}[] = [
-  {
-    clientName: 'Lucía',
-    clientLastname: 'González',
-    petName: 'Toby',
-    serviceName: 'Consulta General',
-    breedName: 'Labrador Retriever',
-  },
-  {
-    clientName: 'Diego',
-    clientLastname: 'Salas',
-    petName: 'Mish',
-    serviceName: 'Vacunación',
-    breedName: 'Maine Coon',
-  },
-  {
-    clientName: 'Andrea',
-    clientLastname: 'Cáceres',
-    petName: 'Luna',
-    serviceName: 'Desparasitación',
-    breedName: 'Shih Tzu',
-  },
-  {
-    clientName: 'Jorge',
-    clientLastname: 'Ruiz',
-    petName: 'Max',
-    serviceName: 'Baño y Corte',
-    breedName: 'Poodle Toy',
-  },
-  {
-    clientName: 'Camila',
-    clientLastname: 'Fernández',
-    petName: 'Coco',
-    serviceName: 'Chequeo Postoperatorio',
-    breedName: 'Bulldog Francés',
-  },
-]
 
 const newsStadistics: { title: string; icon: string; content: string; plus?: string }[] = [
   {
@@ -378,11 +338,9 @@ const appoinmentsAbstract: { title: string; value: number }[] = [
 
 const router = useRouter()
 
-const redirect =(url:string)=>{
+const redirect = (url: string) => {
   router.push(url)
 }
-
-
 </script>
 
 <template>
@@ -477,16 +435,16 @@ const redirect =(url:string)=>{
             <template #content>
               <div class="w-full flex flex-col gap-1.5">
                 <CardAppointmentQuintary
-            v-for="appoinment of appointments"
-            :appointement-id="appoinment.id"
-            :key="appoinment.id"
-            :pet-name="appoinment.pet.name"
-            :pet-breed="''"
-            :service-name="appoinment.serviceName"
-            :service-duration="''"
-            :owner-name="appoinment.clientName"
-            :time="appoinment.hour"
-            :status="appoinment.status"
+                  v-for="appoinment of appointments"
+                  :appointement-id="appoinment.id"
+                  :key="appoinment.id"
+                  :pet-name="appoinment.pet.name"
+                  :pet-breed="''"
+                  :service-name="appoinment.serviceName"
+                  :service-duration="''"
+                  :owner-name="appoinment.clientName"
+                  :time="appoinment.hour"
+                  :status="appoinment.status"
                 ></CardAppointmentQuintary>
                 <!-- abstract  -->
 
@@ -529,7 +487,7 @@ const redirect =(url:string)=>{
               </template>
               <template #content>
                 <div class="w-full flex flex-col gap-1">
-                  <CardPetWaiting v-for="(pet, index) of petsWaitings" :key="index" v-bind="pet" />
+                  <CardPetWaiting v-for="(care, index) of careRecents" :key="index" :client-name="care.clientName" :pet-name="care.pet.name" :service-name="care.serviceName" breed-name="" />
                 </div>
               </template>
             </Card>

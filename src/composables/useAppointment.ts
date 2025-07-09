@@ -2,7 +2,7 @@ import { useAsyncHandler } from './useAsyncHandler'
 import type { Appointment as AppointmentView } from '@/models/Appointment'
 import { appointmentUsesCases } from '@/dependency-injection/appointment.container'
 import { AppointmentAdapter } from '@/adapters/AppointmentAdapter'
-import type { AppointmentRequest } from '@/services/Appointment/domain/models/Appointment'
+import type { AppointmentRequest, AppointmentStatsForReceptionist } from '@/services/Appointment/domain/models/Appointment'
 import type { TimesForTurn as TimesForTurnView } from '@/models/TimesForTurn'
 import { TimesForTurnAdapter } from '@/adapters/TimesForTurnAdapter'
 import type { BasicServiceForAppointment as BasicServiceForAppointmentView } from '@/models/BasicServiceForAppointment'
@@ -205,6 +205,22 @@ export function useAppointment() {
     )
     return appoinments.map((ap) => AppointmentAdapter.toCareAndAppointmentPanelEmployeeView(ap))
   }
+
+  const getStatsForReceptionist = async (): Promise<AppointmentStatsForReceptionist> => {
+  return await runUseCase('getStatsForReceptionist', () =>
+    appointmentUsesCases.getStatsForReceptionist.execute(),
+  )
+}
+
+const getAppointmentsByHeadquarterId = async (
+  headquarterId: number,
+): Promise<CareAndAppointmentPanelEmployeeView[]> => {
+  const appointments = await runUseCase('getAppointmentsByHeadquarterId', () =>
+    appointmentUsesCases.getAppointmentsByHeadquarterId.execute(headquarterId),
+  )
+  return appointments.map(ap => AppointmentAdapter.toCareAndAppointmentPanelEmployeeView(ap))
+}
+
   return {
     loading,
     error,
@@ -227,6 +243,8 @@ export function useAppointment() {
     getTodayAppointmentStatsByHeadquarter,
     getAppointmentsByDateForPanelManager,
     getAppointmentsByDateForPanelAdmin,
-    getCareAndAppointmentsForEmployee
+    getCareAndAppointmentsForEmployee,
+    getStatsForReceptionist,
+    getAppointmentsByHeadquarterId
   }
 }
