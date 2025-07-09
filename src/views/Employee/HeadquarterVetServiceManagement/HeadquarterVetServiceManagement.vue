@@ -26,9 +26,23 @@ import { useHeadquarter } from '@/composables/useHeadquarter'
 import type { Headquarter } from '@/models/Headquarter'
 import { useHeadquarterVetService } from '@/composables/useHeadquarterVetService'
 import type { HeadquarterVetService } from '@/models/HeadquarterVetService'
-import { ToggleSwitch } from 'primevue'
-
+import { ToggleSwitch, useDialog, useToast } from 'primevue'
+import AddHeadquarterVetServiceCard from './components/AddHeadquarterVetServiceCard.vue'
+import type { FormValues as AddHeadquarterVetServiceSchema} from '@/validation-schemas-forms/schema-add-headquarter-vet-service'
 //methods
+
+//toast
+const toast = useToast()
+
+const showToast = (message: string) => {
+  toast.add({
+    severity: 'success',
+    summary: 'Éxito',
+    detail: message,
+    life: 3000,
+  })
+}
+
 
 const {
   loading,
@@ -43,7 +57,7 @@ const { getAllCategories } = useCategory()
 
 const { getAllHeadquarters } = useHeadquarter()
 
-const { getHeadquarterVetServiceByHeadquarter } = useHeadquarterVetService()
+const { createHeadquarterVetService,getHeadquarterVetServiceByHeadquarter } = useHeadquarterVetService()
 
 //services
 const headquartersOptions = ref<OptionSelect[]>([])
@@ -63,14 +77,17 @@ const categoriesOptions = ref<OptionSelect[]>([])
 const headquarterServices = ref<HeadquarterVetService[][]>([])
 
 onMounted(async () => {
+  loadData()
+})
+
+const loadData = async()=>{
   loadServices()
   speciesOptions.value = speciesToOptionsSelect(await getAllSpecies())
   categoriesOptions.value = categoriesToOptionsSelect(await getAllCategories())
   headquarters.value = await getAllHeadquarters()
   headquartersOptions.value = headquartersToOptionsSelect(headquarters.value)
   loadHeadquarterServices()
-  console.log(headquarterServices)
-})
+}
 
 //function for load headquarters service
 
@@ -152,6 +169,38 @@ const headquartersToOptionsSelect = (headquarters: Headquarter[]): OptionSelect[
 const dt = ref()
 const exportCSV = () => {
   dt.value.exportCSV()
+}
+
+const dialog = useDialog()
+
+const addHeadquarterService = (headquarter:Headquarter, service:Service) => {
+  dialog.open(AddHeadquarterVetServiceCard, {
+    props: {
+      modal: true,
+      header:'Agregar servicio por sede'
+    },
+    data: {
+    headquarterId:headquarter.id,
+    serviceId:service.id,
+    },
+    onClose: async (options) => {
+      const data = options?.data as AddHeadquarterVetServiceSchema
+      if (data) {
+        console.log('data retornada',data)
+
+        try {
+await createHeadquarterVetService(data)
+showToast('Servicio por sede creado exitosamente' + ` ${headquarter.name} - ${service.name}`  )
+loadData()
+        } catch (error) {
+console.error(error,'Error al crear el servicio por sede')
+        }
+
+
+
+      }
+    },
+  })
 }
 
 //
@@ -325,6 +374,7 @@ const activedHeadquarterService = ref<boolean>(true)
                       class="p-1.5"
                       aria-label="Editar"
                       size="small"
+                    @click="addHeadquarterService(headquarter,data)"
                     ></Button>
                   </div>
                 </template>

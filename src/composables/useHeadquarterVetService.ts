@@ -1,18 +1,19 @@
 import type { HeadquarterVetService as HeadquarterVetServiceView } from '@/models/HeadquarterVetService'
-import type { HeadquarterVetServiceRequest } from '@/services/HeadquarterVetService/domain/models/HeadquarterVetService'
 import { useAsyncHandler } from './useAsyncHandler'
 import { headquarterVetServiceUsesCases } from '@/dependency-injection/headquarter-vet-service.container'
 import { HeadquarterVetServiceAdapter } from '@/adapters/HeadquarterVetServiceAdapter'
 import type { EmployeeBasicInfo as EmployeeBasicInfoView } from '@/models/EmployeeBasicInfo'
 import { EmployeeAdapter } from '@/adapters/EmployeeAdapter'
+import type { FormValues as AddHeadquarterVetServiceSchema } from '@/validation-schemas-forms/schema-add-headquarter-vet-service'
 
 export function useHeadquarterVetService() {
   //get from useAsyncHandle
   const { loading, error, runUseCase } = useAsyncHandler()
   //expose use casos
   const createHeadquarterVetService = async (
-    request: HeadquarterVetServiceRequest,
+    schema: AddHeadquarterVetServiceSchema,
   ): Promise<HeadquarterVetServiceView> => {
+    const request = HeadquarterVetServiceAdapter.fromSchemaToRequest(schema)
     const service = await runUseCase('createHeadquarterVetService', () =>
       headquarterVetServiceUsesCases.createHeadquarterVetService.execute(request),
     )
@@ -59,6 +60,18 @@ export function useHeadquarterVetService() {
     return employees.map(EmployeeAdapter.fromEmployeeBasicInfoToEmployeeBasicInfoView)
   }
 
+  const enableHeadquarterVetService = async (id: number): Promise<void> => {
+    await runUseCase('enableHeadquarterVetService', () =>
+      headquarterVetServiceUsesCases.enableHeadquarterVetService.execute(id),
+    )
+  }
+
+  const updateSimultaneousCapacity = async (id: number, capacity: number): Promise<void> => {
+    await runUseCase('updateSimultaneousCapacity', () =>
+      headquarterVetServiceUsesCases.updateSimultaneousCapacity.execute(id, capacity),
+    )
+  }
+
   return {
     loading,
     error,
@@ -68,5 +81,7 @@ export function useHeadquarterVetService() {
     getHeadquarterVetServiceByHeadquarter,
     getHeadquarterVetServiceById,
     listVeterinariansByHeadVetService,
+    enableHeadquarterVetService,
+    updateSimultaneousCapacity,
   }
 }
