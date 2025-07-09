@@ -16,8 +16,8 @@ export function useEmployee() {
 
   //expose use cases
 
-  const blockEmployee = async (employeeId: number) => {
-    await runUseCase('blockEmployee', () => employeeUsesCases.blockEmployee.execute(employeeId))
+  const blockEmployee = async (employeeId: number,blockNote:string) => {
+    await runUseCase('blockEmployee', () => employeeUsesCases.blockEmployee.execute(employeeId,blockNote))
   }
 
   //create

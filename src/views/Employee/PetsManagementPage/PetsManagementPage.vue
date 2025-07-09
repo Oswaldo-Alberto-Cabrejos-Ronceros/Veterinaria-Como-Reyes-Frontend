@@ -11,7 +11,7 @@ import { toTypedSchema } from '@vee-validate/yup'
 import Button from 'primevue/button'
 import Select from 'primevue/select'
 import { useConfirm } from 'primevue'
-import DataTable from 'primevue/datatable'
+import DataTable, { type DataTablePageEvent } from 'primevue/datatable'
 import Column from 'primevue/column'
 import type { Pet } from '@/models/Pet'
 import { onMounted, ref } from 'vue'
@@ -25,6 +25,12 @@ import type { OptionSelect } from '@/models/OptionSelect'
 import type { Specie } from '@/models/Specie'
 import type { Breed } from '@/models/Breed'
 import { useBreed } from '@/composables/useBreed'
+import type { PetList } from '@/models/PetList'
+import { debounce } from 'lodash'
+import { useClient } from '@/composables/useClient'
+import type { Client } from '@/models/Client'
+import { watch } from 'vue'
+import { useAuthentication } from '@/composables/useAuthentication'
 
 //toast
 const toast = useToast()
@@ -40,30 +46,102 @@ const showToast = (message: string) => {
 
 //methods
 
-const { loading, error, getAllPets, createPet, updatePet, deletePet, activatePet } = usePet()
+const { loading, error, searchPets, createPet, getPetById, updatePet, deletePet, activatePet } =
+  usePet()
+
+const { getMainRole } = useAuthentication()
 
 const { getAllSpecies } = useSpecie()
 
-const { getAllBreeds } = useBreed()
+const { getBreedsBySpecie } = useBreed()
+
+const { getClientById } = useClient()
 
 const speciesOptions = ref<OptionSelect[]>([])
 
 const breedsOptions = ref<OptionSelect[]>([])
 
+const species = ref<Specie[]>([])
+
 //pets
-const pets = ref<Pet[]>([])
+const pets = ref<PetList[]>([])
+
+const totalRecords = ref<number>(0)
+
+const rows = ref<number>(1)
+
+const first = ref<number>(0)
+
+const mainRole = ref<string|null>('')
+
 onMounted(async () => {
   loadPets()
 })
 
+const searchPetsDebounce = debounce(() => {
+  loadPets()
+})
+
 //for load pets
-const loadPets = async () => {
-  pets.value = await getAllPets()
-  speciesOptions.value = speciesToOptionsSelect(await getAllSpecies())
-  breedsOptions.value = breedsToOptionsSelect(await getAllBreeds())
+const loadPets = async (event?: DataTablePageEvent) => {
+  const page = event ? event.first / event.rows : 0
+  const size = event ? event.rows : rows.value
+  rows.value = size
+  const pageResponse = await searchPets({
+    name: textFields.name[0].value,
+    owner: textFields.ownerDni[0].value,
+    specie: specie.value,
+    breed: breed.value,
+    gender: gender.value,
+    status: status.value,
+    page: page,
+    size: size,
+  })
+
+  pets.value = pageResponse.content
+  totalRecords.value = pageResponse.totalElements
+  species.value = await getAllSpecies()
+  speciesOptions.value = speciesNameToOptionsSelect(species.value)
+  loadsBreed()
+  const role = getMainRole()
+  if (role != null) mainRole.value = getMainRole()
+}
+
+const loadsBreed = async () => {
+  //find breed
+
+  if (specie.value) {
+    const specieFind = findSpecieByName(specie.value)
+    if (specieFind) {
+      breedsOptions.value = breedsNameToOptionsSelect(await getBreedsBySpecie(specieFind.id))
+    }
+  }
+}
+
+const statusOptions: OptionSelect[] = [
+  {
+    value: true,
+    name: 'Activo',
+  },
+  {
+    value: false,
+    name: 'Desactivado',
+  },
+]
+
+//for find by name
+
+const findSpecieByName = (name: string): Specie | undefined => {
+  return species.value.find((specie) => specie.name === name)
 }
 
 //for species to options Select
+const speciesNameToOptionsSelect = (species: Specie[]): OptionSelect[] => {
+  return species.map((specie) => ({
+    value: specie.name,
+    name: specie.name,
+  }))
+}
 
 const speciesToOptionsSelect = (species: Specie[]): OptionSelect[] => {
   return species.map((specie) => ({
@@ -74,23 +152,24 @@ const speciesToOptionsSelect = (species: Specie[]): OptionSelect[] => {
 
 // for breeds to optionSelect
 
-const breedsToOptionsSelect = (breeds: Breed[]): OptionSelect[] => {
+const breedsNameToOptionsSelect = (breeds: Breed[]): OptionSelect[] => {
   return breeds.map((breed) => ({
-    value: breed.id,
+    value: breed.name,
     name: breed.name,
   }))
 }
 
 //form
 
-const { handleSubmit, errors, defineField } = useForm<SearchEmployeeSchema>({
+const { errors, defineField } = useForm<SearchEmployeeSchema>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
     name: '',
     ownerDni: '',
-    specieId: undefined,
-    breedId: undefined,
+    specie: undefined,
+    breed: undefined,
     gender: undefined,
+    status: true,
   },
 })
 
@@ -101,9 +180,10 @@ const textFields = {
 
 //for selects field
 
-const [specieId, specieIdAttrs] = defineField('specieId')
-const [breedId, breedIdAttrs] = defineField('breedId')
+const [specie, specieAttrs] = defineField('specie')
+const [breed, breedAttrs] = defineField('breed')
 const [gender, genderAttrs] = defineField('gender')
+const [status, statusAttrs] = defineField('status')
 
 const searchTextElementsClient: { title: string; key: keyof typeof textFields; icon: string }[] = [
   {
@@ -124,12 +204,6 @@ const genders = [
   { name: 'Hembra', value: 'H' },
 ]
 
-//for submit
-
-const onSubmit = handleSubmit((values) => {
-  console.log(values)
-})
-
 //for dialog
 const dialog = useDialog()
 
@@ -138,10 +212,10 @@ const addPet = async () => {
   dialog.open(AddEditPetCard, {
     props: {
       modal: true,
-      header:'Agregar mascota'
+      header: 'Agregar mascota',
     },
     data: {
-      speciesOptions: speciesToOptionsSelect(await getAllSpecies())
+      speciesOptions: speciesToOptionsSelect(await getAllSpecies()),
     },
     onClose: async (options) => {
       const data = options?.data as AddEditPetSchema
@@ -157,29 +231,37 @@ const addPet = async () => {
 const router = useRouter()
 const route = useRoute()
 //for view
-const viewPet = (petData: Pet) => {
+const viewPet = (petData: PetList) => {
   router.push(`${route.fullPath}/pet/${petData.id}`)
 }
 
-const editPet = async (petData: Pet) => {
+const editPet = async (petData: PetList) => {
+  const pet: Pet = await getPetById(petData.id)
+  const client = ref<Client | null>(null)
+  console.log(client)
+  if (pet.clientId) {
+    client.value = await getClientById(pet.clientId)
+  }
   dialog.open(AddEditPetCard, {
     props: {
       modal: true,
-      header:`${petData.name}`
+      header: `${petData.name}`,
     },
     data: {
       petData: {
-        name: petData.name,
-        gender: petData.gender,
-        weight: petData.weight,
-        birthdate: new Date(petData.birthdate),
-        comment: petData.comment,
-        specieId: petData.specie.id,
-        breedId: petData.breed.id,
-        urlImage: petData.urlImage,
-        ownerDni: petData.clientId?.toString()||'', //fix
+        name: pet.name,
+        gender: pet.gender,
+        weight: pet.weight,
+        birthdate: new Date(pet.birthdate),
+        comment: pet.comment,
+        specieId: pet.specie.id,
+        breedId: pet.breed.id,
+        urlImage: pet.urlImage,
+        ownerDni: client.value ? client.value?.dni : '',
+        ownerId: pet.clientId,
+        ownerFullName: client.value ? ` ${client.value.names} ${client.value.lastnames}` : '',
       } as AddEditPetSchema,
-      speciesOptions: speciesToOptionsSelect(await getAllSpecies())
+      speciesOptions: speciesToOptionsSelect(await getAllSpecies()),
     },
     onClose: async (options) => {
       const data = options?.data as AddEditPetSchema
@@ -196,9 +278,9 @@ const editPet = async (petData: Pet) => {
 const confirm = useConfirm()
 
 //for delete with confirm popup
-const confirmDeletePet = (event: MouseEvent | KeyboardEvent, pet: Pet) => {
+const confirmDeletePet = (event: MouseEvent | KeyboardEvent, pet: PetList) => {
   confirm.require({
-    group:'confirmPopupGeneral',
+    group: 'confirmPopupGeneral',
     target: event.currentTarget as HTMLElement,
     message: '¿Seguro que quiere eliminar a esta mascota?',
     icon: 'pi pi-exclamation-triangle',
@@ -214,6 +296,7 @@ const confirmDeletePet = (event: MouseEvent | KeyboardEvent, pet: Pet) => {
     accept: async () => {
       console.log('Eliminando mascota: ', pet.id)
       await deletePet(pet.id) // esta es la que viene de usePet()
+      loadPets()
       showToast('Mascota eliminada exitosamente: ' + pet.name)
     },
     reject: () => {
@@ -224,7 +307,7 @@ const confirmDeletePet = (event: MouseEvent | KeyboardEvent, pet: Pet) => {
 
 //for active pet
 
-const confirmActivatePet = (event: MouseEvent | KeyboardEvent, pet: Pet) => {
+const confirmActivatePet = (event: MouseEvent | KeyboardEvent, pet: PetList) => {
   confirm.require({
     group: 'confirmPopupGeneral',
     target: event.currentTarget as HTMLElement,
@@ -257,6 +340,18 @@ const dt = ref()
 const exportCSV = () => {
   dt.value.exportCSV()
 }
+
+//for watch specieId
+
+watch(
+  () => specie.value,
+  (newValue) => {
+    if (newValue === null) {
+      breed.value = undefined
+      breedsOptions.value = []
+    }
+  },
+)
 </script>
 
 <template>
@@ -267,7 +362,7 @@ const exportCSV = () => {
       </template>
       <template #content>
         <div class="flex flex-col gap-6">
-          <form @submit.prevent="onSubmit" class="form-search-grid-col-5">
+          <form class="form-search-grid-col-5">
             <div v-for="element in searchTextElementsClient" :key="element.key">
               <label class="block mb-2">{{ element.title }}</label>
               <InputGroup>
@@ -279,7 +374,9 @@ const exportCSV = () => {
                   v-bind="textFields[element.key][1]"
                   :invalid="Boolean(errors[element.key])"
                   class="w-full"
+                  showClear
                   :placeholder="element.title"
+                  @update:model-value="searchPetsDebounce()"
                 />
               </InputGroup>
               <Message v-if="errors[element.key]" severity="error" size="small" variant="simple">
@@ -290,35 +387,36 @@ const exportCSV = () => {
               <label class="block mb-2">Especie</label>
               <Select
                 class="w-full"
-                v-bind="specieIdAttrs"
-                v-model="specieId"
-                :invalid="Boolean(errors.specieId)"
+                v-bind="specieAttrs"
+                v-model="specie"
+                :invalid="Boolean(errors.specie)"
                 :options="speciesOptions"
                 optionLabel="name"
                 optionValue="value"
                 placeholder="Selecciona Especie"
+                showClear
+                @update:modelValue="
+                  () => {
+                    loadsBreed()
+                    searchPetsDebounce()
+                  }
+                "
               />
-
-              <Message v-if="errors.specieId" severity="error" size="small" variant="simple">
-                {{ errors.specieId }}
-              </Message>
             </div>
             <div>
               <label class="block mb-2">Raza</label>
               <Select
                 class="w-full"
-                v-bind="breedIdAttrs"
-                v-model="breedId"
+                v-bind="breedAttrs"
+                v-model="breed"
                 :options="breedsOptions"
-                :invalid="Boolean(errors.breedId)"
+                :invalid="Boolean(errors.breed)"
                 optionLabel="name"
                 optionValue="value"
                 placeholder="Selecciona Raza"
+                showClear
+                @update:model-value="searchPetsDebounce()"
               />
-
-              <Message v-if="errors.breedId" severity="error" size="small" variant="simple">
-                {{ errors.breedId }}
-              </Message>
             </div>
             <div>
               <label class="block mb-2">Sexo</label>
@@ -331,23 +429,28 @@ const exportCSV = () => {
                 optionLabel="name"
                 optionValue="value"
                 placeholder="Selecciona Sexo"
+                showClear
+                @update:model-value="searchPetsDebounce()"
               />
-
-              <Message v-if="errors.gender" severity="error" size="small" variant="simple">
-                {{ errors.gender }}
-              </Message>
             </div>
-            <div class="form-button-search-container-grid-col-5">
-              <!-- button -->
+            <!-- status -->
 
-              <Button
-                label="Buscar"
-                type="submit"
-                severity="info"
-                icon="pi pi-search"
-                iconPos="right"
+            <div>
+              <label class="block mb-2">Estado</label>
+              <Select
                 class="w-full"
+                v-bind="statusAttrs"
+                v-model="status"
+                :options="statusOptions"
+                optionLabel="name"
+                optionValue="value"
+                placeholder="Selecciona Estado"
+                @update:model-value="searchPetsDebounce()"
               />
+
+              <Message v-if="errors.status" severity="error" size="small" variant="simple">
+                {{ errors.status }}
+              </Message>
             </div>
           </form>
 
@@ -364,8 +467,13 @@ const exportCSV = () => {
           <DataTable
             :value="pets"
             paginator
-            :rows="10"
-            :rows-per-page-options="[10, 15, 20, 25, 30]"
+            :rows="rows"
+            :totalRecords="totalRecords"
+            :lazy="true"
+            :first="first"
+            :loading="loading.searchPets"
+            @page="loadPets"
+            :rows-per-page-options="[1, 2, 3, 4]"
             ref="dt"
           >
             <template #header>
@@ -387,16 +495,22 @@ const exportCSV = () => {
               class="hidden lg:table-cell"
               style="width: 18%"
             ></Column>
-            <Column field="clientId" sortable header="Dueño" style="width: 18%"></Column>
-            <Column class="hidden lg:table-cell" header="Especie" sortable style="width: 15%">
-              <template #body="{ data }">
-                {{ data.specie.name }}
-              </template>
+            <Column field="owner" sortable header="Dueño" style="width: 18%"></Column>
+            <Column
+              class="hidden lg:table-cell"
+              header="Especie"
+              field="specie"
+              sortable
+              style="width: 15%"
+            >
             </Column>
-            <Column class="hidden lg:table-cell" header="Raza" sortable style="width: 15%">
-              <template #body="{ data }">
-                {{ data.breed.name }}
-              </template>
+            <Column
+              class="hidden lg:table-cell"
+              header="Raza"
+              field="breed"
+              sortable
+              style="width: 15%"
+            >
             </Column>
             <Column
               field="gender"
@@ -405,39 +519,45 @@ const exportCSV = () => {
               sortable
               style="width: 15%"
             ></Column>
-            <Column>
+            <Column header="Acciones">
               <template #body="{ data }">
-                <div
-                  class="flex justify-between items-center flex-row lg:flex-col xl:flex-row gap-1"
-                >
+                <div class="flex items-center flex-row lg:flex-col xl:flex-row gap-1">
                   <Button
                     icon="pi pi-eye"
                     severity="info"
-                    variant="outlined"
-                    aria-label="Filter"
+                    variant="text"
+                    size="small"
+                    aria-label="Ver"
                     rounded
                     @click="viewPet(data)"
                   ></Button>
                   <Button
                     icon="pi pi-pencil"
                     severity="warn"
-                    variant="outlined"
-                    aria-label="Filter"
+                    variant="text"
+                    size="small"
+                    aria-label="Editar"
                     rounded
                     @click="editPet(data)"
+                    v-if="mainRole === 'Administrador' || mainRole === 'Encargado'"
                   ></Button>
                   <Button
-                    icon="pi pi-trash"
+          v-if="data.status === 'Activo' && (mainRole === 'Administrador' || mainRole === 'Encargado')"
+
+                    icon="pi pi-ban"
                     severity="danger"
-                    variant="outlined"
-                    aria-label="Filter"
+                    variant="text"
+                    size="small"
+                    aria-label="Bloquear"
                     rounded
                     @click="confirmDeletePet($event, data)"
                   ></Button>
                   <Button
+   v-if="data.status === 'Inactivado' && (mainRole === 'Administrador' || mainRole === 'Encargado')"
                     icon="pi pi-refresh"
-                    severity="success"
-                    variant="outlined"
+                    severity="warn"
+                    variant="text"
+                    size="small"
                     aria-label="Activar"
                     rounded
                     @click="confirmActivatePet($event, data)"

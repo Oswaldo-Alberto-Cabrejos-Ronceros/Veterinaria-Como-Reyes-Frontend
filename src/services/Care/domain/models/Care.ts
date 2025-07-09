@@ -27,3 +27,8 @@ export interface CareRequestCreate {
   animalId:number,
   employeeId:number
 }
+
+export interface  CareStatsToday {
+  totalCares: number;
+  todayCares: number;
+}

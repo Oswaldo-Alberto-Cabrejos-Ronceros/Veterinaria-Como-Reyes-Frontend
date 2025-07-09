@@ -7,6 +7,8 @@ export interface Headquarter {
   district: string
   province: string
   department: string
+  startTime: string
+  endTime: string
 }
 
 export interface HeadquarterRequest {
@@ -17,4 +19,17 @@ export interface HeadquarterRequest {
   district: string
   province: string
   department: string
+  startTime: string
+  endTime: string
+}
+
+export interface HeadquarterList {
+  headquarterId: number
+  name: string
+  phone: string
+  address: string
+  email: string
+  district: string
+  province: string
+  status: string
 }

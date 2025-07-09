@@ -56,25 +56,33 @@ const elements: { title: string; key: keyof Headquarter; icon: string }[] = [
     key: 'departament',
     icon: 'pi-map',
   },
+  {
+    title: 'Hora de apertura',
+    key: 'startTime',
+    icon: 'pi-clock',
+  },
+  {
+    title: 'Hora de cierre',
+    key: 'endTime',
+    icon: 'pi-clock',
+  },
 ]
 </script>
 
 <template>
   <div class="card-dialog-form-layout" v-if="headquarterData">
-
-
-      <div class="flex-1 space-y-6">
-        <div class="form-dialog-layout">
-          <div v-for="(element, id) in elements" :key="id">
-            <label class="block mb-2">{{ element.title }}</label>
-            <InputGroup>
-              <InputGroupAddon class="text-neutral-400">
-                <i :class="`pi ${element.icon}`"></i>
-              </InputGroupAddon>
-              <InputText :value="headquarterData[element.key]" disabled class="w-full" />
-            </InputGroup>
-          </div>
+    <div class="flex-1 space-y-6">
+      <div class="form-dialog-layout">
+        <div v-for="(element, id) in elements" :key="id">
+          <label class="block mb-2">{{ element.title }}</label>
+          <InputGroup>
+            <InputGroupAddon class="text-neutral-400">
+              <i :class="`pi ${element.icon}`"></i>
+            </InputGroupAddon>
+            <InputText :value="headquarterData[element.key]" disabled class="w-full" />
+          </InputGroup>
         </div>
       </div>
     </div>
+  </div>
 </template>

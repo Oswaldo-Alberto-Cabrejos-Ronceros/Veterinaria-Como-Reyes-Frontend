@@ -56,3 +56,96 @@ export interface InfoBasicAppointment{
   status:string
   duration:number
 }
+
+
+export interface AppointmentList{
+    appointmentId:number;
+    day:string;
+    headquarter:string;
+    categoryService:string;
+    appointmentStatus:string;
+}
+
+
+export interface InfoAppointmentForPanel{
+  idAppointment: number;
+  timeAppointment: string;
+  comment: string;
+  serviceId: number;
+  serviceTime: number;
+  serviceName: string;
+  employeeId: number;
+  employeeName: string;
+  employeeRole: string;
+}
+
+
+export interface AnimalInfoForAppointment {
+  animalId: number;
+  birthDate: string;
+  name: string;
+  urlImage: string;
+  weight: number;
+  breedName: string;
+  speciesName: string;
+  animalComment: string;
+}
+
+
+
+export interface ClientInfoForAppointment {
+  clientId: string;
+  fullName: string;
+  phoneNumber: string;
+  email: string;
+  address: string;
+}
+
+
+export interface PaymentInfoForAppointment {
+  paymentId: number;
+  amount: number;
+  serviceName: string;
+  paymentMethodId: number;
+  paymentMethod: string;
+  paymentStatus: string;
+}
+
+export interface AppointmentStatsToday {
+  totalAppointments: number;
+  todayRegisteredAppointments: number;
+}
+
+export interface AppointmentInfoPanelAdmin {
+  appointmentId: number
+  animalName: string
+  serviceName: string
+  clientName: string
+  hour: string
+  status: string
+}
+
+export interface CareAndAppointmentPanelEmployee {
+  id: number;
+  type: string;
+  animalId: number;
+  animalName: string;
+  serviceName: string;
+  clientName: string;
+  date: string;
+  hour: string;
+  status: string;
+  commentAppointment: string;
+  employeeId?: number;
+  employeeName?: string;
+  breedName: string;
+}
+
+export interface AppointmentStatsForReceptionist{
+    totalAppointmentsToday: number
+  confirmedAppointmentsToday: number
+  pendingAppointmentsToday: number
+}
+
+
+

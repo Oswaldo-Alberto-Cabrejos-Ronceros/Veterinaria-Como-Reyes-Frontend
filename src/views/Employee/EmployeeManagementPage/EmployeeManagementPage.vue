@@ -32,7 +32,9 @@ import type { DataTablePageEvent } from 'primevue/datatable'
 import type { EmployeeList } from '@/models/EmployeeList'
 import { debounce } from 'lodash'
 import Tag from 'primevue/tag'
-
+import BlockCardPrimary from '@/components/BlockCardPrimary.vue'
+import type { FormValues as BlockSchema } from '@/validation-schemas-forms/schema-block-employee-client'
+import { useAuthentication } from '@/composables/useAuthentication'
 //toast
 const toast = useToast()
 
@@ -55,11 +57,16 @@ const {
   updateEmployee,
   blockEmployee,
   searchEmployees,
+  restoreEmployee,
+  getEmployeeMyInfo,
 } = useEmployee()
 
 const { getAllRoles } = useRole()
 
 const { getAllHeadquarters } = useHeadquarter()
+const { getMainRole, getEntityId } = useAuthentication()
+
+const roleMain = ref<string>('')
 
 //employees
 
@@ -82,7 +89,7 @@ const statusOptions: OptionSelect[] = [
   },
   {
     value: false,
-    name: 'Desativado',
+    name: 'Desactivado',
   },
 ]
 
@@ -95,6 +102,21 @@ const searchEmployeeDebounce = debounce(() => {
 })
 
 const loadEmployees = async (event?: DataTablePageEvent) => {
+    const role = getMainRole()
+  if (role) {
+    roleMain.value = role
+    if (role === 'Administrador') {
+      headquartersOptions.value = headquartersNameToOptionsSelect(await getAllHeadquarters())
+    } else {
+      const id = getEntityId()
+      if (id) {
+        const info = await getEmployeeMyInfo(id)
+        headquarter.value = info.headquarter.name
+      }
+    }
+  }
+
+  rolesOptions.value = rolesToOptionsNameSelect(await getAllRoles())
   const page = event ? event.first / event.rows : 0
   const size = event ? event.rows : rows.value
   rows.value = size
@@ -112,24 +134,37 @@ const loadEmployees = async (event?: DataTablePageEvent) => {
   employees.value = pageResponse.content
   totalRecords.value = pageResponse.totalElements
 
-  rolesOptions.value = rolesToOptionsSelect(await getAllRoles())
-  headquartersOptions.value = headquartersToOptionsSelect(await getAllHeadquarters())
+
 }
 
 //for get options from roles
 
-const rolesToOptionsSelect = (roles: Role[]): OptionSelect[] => {
+const rolesToOptionsNameSelect = (roles: Role[]): OptionSelect[] => {
   return roles.map((role) => ({
     value: role.name,
     name: role.name,
   }))
 }
 
+const rolesToOptionsSelect = (roles: Role[]): OptionSelect[] => {
+  return roles.map((role) => ({
+    value: role.id,
+    name: role.name,
+  }))
+}
+
 //for get options from headquarters
+
+const headquartersNameToOptionsSelect = (headquarters: Headquarter[]): OptionSelect[] => {
+  return headquarters.map((headquarter) => ({
+    value: headquarter.name,
+    name: headquarter.name,
+  }))
+}
 
 const headquartersToOptionsSelect = (headquarters: Headquarter[]): OptionSelect[] => {
   return headquarters.map((headquarter) => ({
-    value: headquarter.name,
+    value: headquarter.id,
     name: headquarter.name,
   }))
 }
@@ -259,6 +294,26 @@ const editEmployee = async (employeeData: EmployeeList) => {
   })
 }
 
+const openModalBlock = async (employee: EmployeeList) => {
+  dialog.open(BlockCardPrimary, {
+    data: {
+      title: 'Empleado',
+    },
+    props: {
+      modal: true,
+      header: `Bloquear ${employee.names} ${employee.lastnames}`,
+    },
+    onClose: async (options) => {
+      const data = options?.data as BlockSchema
+      if (data) {
+        await blockEmployee(employee.id, data.blockNote)
+        loadEmployees()
+        showToast('Empleado eliminado exitosamente: ' + employee.names)
+      }
+    },
+  })
+}
+
 //for confirm
 const confirm = useConfirm()
 
@@ -280,14 +335,43 @@ const deleteEmployee = (event: MouseEvent | KeyboardEvent, employee: EmployeeLis
     },
     accept: async () => {
       console.log('Eliminando Empleado ', employee.id)
-      await blockEmployee(employee.id)
-      showToast('Cliente eliminado exitosamente: ' + employee.names)
+      openModalBlock(employee)
     },
     reject: () => {
       console.log('Cancelando')
     },
   })
 }
+
+//for restore with confirm popup
+
+const restoreEmployeeConfirm = (event: MouseEvent | KeyboardEvent, employee: EmployeeList) => {
+  confirm.require({
+    group: 'confirmPopupGeneral',
+    target: event.currentTarget as HTMLElement,
+    message: '¿Seguro que quiere restaurar a este empleado?',
+    icon: 'pi pi-exclamation-triangle',
+    rejectProps: {
+      label: 'Cancelar',
+      severity: 'secondary',
+      outlined: true,
+    },
+    acceptProps: {
+      label: 'Reactivar',
+      severity: 'success',
+    },
+    accept: async () => {
+      await restoreEmployee(employee.id)
+      showToast('Empleado restaurado exitosamente: ' + employee.names)
+      loadEmployees()
+    },
+    reject: () => {
+      console.log('Cancelando')
+    },
+  })
+}
+
+//for open modal of bloc
 
 //for export
 
@@ -342,7 +426,7 @@ const exportCSV = () => {
               />
             </div>
             <!-- headquarter -->
-            <div>
+            <div   v-if="roleMain==='Administrador'">
               <label class="block mb-2">Sede</label>
               <Select
                 class="w-full"
@@ -355,6 +439,7 @@ const exportCSV = () => {
                 placeholder="Selecciona Sede"
                 showClear
                 @update:model-value="searchEmployeeDebounce()"
+
               />
             </div>
 
@@ -409,6 +494,7 @@ const exportCSV = () => {
                   severity="success"
                   label="Agregar Empleado"
                   @click="addEmployee"
+                  v-if="roleMain==='Administrador'"
                 />
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
@@ -449,34 +535,49 @@ const exportCSV = () => {
               style="width: 15%"
             >
             </Column>
-            <Column>
+            <Column header="Acciones">
               <template #body="{ data }">
                 <div
-                  class="flex justify-between items-center flex-row lg:flex-col xl:flex-row gap-1"
+                  class="flex justify-center items-center flex-row lg:flex-col xl:flex-row gap-1"
                 >
                   <Button
                     icon="pi pi-eye"
                     severity="info"
-                    variant="outlined"
-                    aria-label="Filter"
+                    variant="text"
+                    aria-label="Ver"
+                    size="small"
                     rounded
                     @click="viewEmployee(data)"
                   ></Button>
                   <Button
                     icon="pi pi-pencil"
                     severity="warn"
-                    variant="outlined"
-                    aria-label="Filter"
+                    variant="text"
+                    aria-label="Editar"
                     rounded
+                    size="small"
+                    v-if="roleMain==='Administrador'"
                     @click="editEmployee(data)"
                   ></Button>
                   <Button
-                    icon="pi pi-trash"
+                    v-if="data.status === 'Activo' && roleMain==='Administrador'"
+                    icon="pi pi-ban"
                     severity="danger"
-                    variant="outlined"
-                    aria-label="Filter"
+                    variant="text"
+                    aria-label="Bloquear"
                     rounded
+                    size="small"
                     @click="deleteEmployee($event, data)"
+                  ></Button>
+                  <Button
+                    v-if="data.status === 'Desactivado' && roleMain==='Administrador'"
+                    icon="pi pi-refresh"
+                    severity="warn"
+                    variant="text"
+                    aria-label="Desbloquear"
+                    rounded
+                    size="small"
+                    @click="restoreEmployeeConfirm($event, data)"
                   ></Button>
                 </div>
               </template>

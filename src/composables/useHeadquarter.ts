@@ -4,6 +4,8 @@ import type { Headquarter as HeadquarterView } from '@/models/Headquarter'
 import type { Headquarter } from '@/services/Headquarter/domain/models/Headquarter'
 import { HeadquarterAdapter } from '@/adapters/HeadquarterAdapter'
 import type { FormValues as HeadquarterAddEditSchema } from '@/validation-schemas-forms/schema-add-edit-headquarter'
+import type { HeadquarterList as HeadquarterListView } from '@/models/HeadquarterList'
+import type { PageResponse } from '@/services/models/PageResponse'
 
 export function useHeadquarter() {
   //get from useAsyncHandle
@@ -65,6 +67,40 @@ export function useHeadquarter() {
     )
   }
 
+  const searchHeadquarters = async (
+    page: number,
+    size: number,
+    name?: string,
+    phone?: string,
+    address?: string,
+    email?: string,
+    district?: string,
+    province?: string,
+    status?: boolean,
+  ): Promise<PageResponse<HeadquarterListView>> => {
+    const pageHeadquarter = await runUseCase('searchHeadquarters', () =>
+      headquarterUsesCases.searchHeadquarters.execute(
+        page,
+        size,
+        name,
+        phone,
+        address,
+        email,
+        district,
+        province,
+        status,
+      ),
+    )
+    const headquarterView = pageHeadquarter.content.map((headquarter) =>
+      HeadquarterAdapter.fromHeadquarterListToHeadquarterListView(headquarter),
+    )
+
+    return {
+      ...pageHeadquarter,
+      content: headquarterView,
+    }
+  }
+
   return {
     loading,
     error,
@@ -74,5 +110,6 @@ export function useHeadquarter() {
     createHeadquarter,
     updateHeadquarter,
     activateHeadquarter,
+    searchHeadquarters,
   }
 }

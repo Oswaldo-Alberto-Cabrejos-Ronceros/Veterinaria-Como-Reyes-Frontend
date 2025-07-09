@@ -1,6 +1,6 @@
 import type { HttpClient } from '@/services/Http/model/HttpClient'
 import type { PaymentService } from '../domain/services/PaymentService'
-import type { Payment, PaymentList } from '../domain/models/Payment'
+import type { IncomeStatsToday, Payment, PaymentList, PaymentStatsForPanelAdmin, RecentPayment } from '../domain/models/Payment'
 import type { PageResponse } from '@/services/models/PageResponse'
 
 export class PaymentServiceImpl implements PaymentService {
@@ -88,4 +88,47 @@ export class PaymentServiceImpl implements PaymentService {
     const response = await this.httpClient.get<PageResponse<PaymentList>>(`${this.urlBase}/search`, params)
     return response.data
   }
+
+  async getCompletedPaymentsStats(): Promise<PaymentStatsForPanelAdmin> {
+  const response = await this.httpClient.get<PaymentStatsForPanelAdmin>(
+    `${this.urlBase}/panel-admin/stats`
+  )
+  return response.data
+}
+
+async getPaymentsStatsByHeadquarter(headquarterId: number): Promise<PaymentStatsForPanelAdmin> {
+  const response = await this.httpClient.get<PaymentStatsForPanelAdmin>(
+    `${this.urlBase}/panel-manager/stats/${headquarterId}`
+  )
+  return response.data
+}
+
+async setPaymentStatusComplete(paymentId: number): Promise<void> {
+  await this.httpClient.put<void>(`${this.urlBase}/${paymentId}/status/completed`,{})
+}
+
+async setPaymentStatusCancelled(paymentId: number): Promise<void> {
+  await this.httpClient.put<void>(`${this.urlBase}/${paymentId}/status/cancelled`,{})
+}
+
+async setPaymentStatusPending(paymentId: number): Promise<void> {
+  await this.httpClient.put<void>(`${this.urlBase}/${paymentId}/status/pending`,{})
+}
+
+async setPaymentStatusRefunded(paymentId: number): Promise<void> {
+  await this.httpClient.put<void>(`${this.urlBase}/${paymentId}/status/refunded`,{})
+}
+async getTodayIncomeStats(): Promise<IncomeStatsToday> {
+  const response = await this.httpClient.get<IncomeStatsToday>(
+    `${this.urlBase}/panel-receptionist/income-today`
+  )
+  return response.data
+}
+
+async getRecentCompletedPayments(headquarterId: number): Promise<RecentPayment[]> {
+  const response = await this.httpClient.get<RecentPayment[]>(
+    `${this.urlBase}/recent-completed/${headquarterId}`
+  )
+  return response.data
+}
 }

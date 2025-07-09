@@ -1,10 +1,12 @@
 import { CreateHeadquarterVetService } from '@/services/HeadquarterVetService/application/CreateHeadquarterVetService'
 import { DeleteHeadquarterVetService } from '@/services/HeadquarterVetService/application/DeleteHeadquarterVetService'
+import { EnableHeadquarterVetService } from '@/services/HeadquarterVetService/application/EnableHeadquarterVetService'
 import { GetAllHeadquarterVetService } from '@/services/HeadquarterVetService/application/GetAllHeadquarterVetService'
 import { GetHeadquarterVetServiceByHeadquarter } from '@/services/HeadquarterVetService/application/GetHeadquarterVetServiceByHeadquarter'
 import { GetHeadquarterVetServiceById } from '@/services/HeadquarterVetService/application/GetHeadquarterVetServiceById'
 import { ListVeterinariansByHeadVetService } from '@/services/HeadquarterVetService/application/ListVeterinariansByHeadVetService'
 import { UpdateHeadquarterVetService } from '@/services/HeadquarterVetService/application/UpdateHeadquarterVetService'
+import { UpdateSimultaneousCapacity } from '@/services/HeadquarterVetService/application/UpdateSimultaneousCapacity'
 
 import { HeadquarterVetServiceServiceImpl } from '@/services/HeadquarterVetService/infrastructure/HeadquarterVetServiceServiceImpl'
 import { AxiosHttpClient } from '@/services/Http/infrastructure/AxiosHttpClient'
@@ -26,4 +28,6 @@ export const headquarterVetServiceUsesCases = {
   getHeadquarterVetServiceById: new GetHeadquarterVetServiceById(headquarterVetService),
   listVeterinariansByHeadVetService: new ListVeterinariansByHeadVetService(headquarterVetService),
   updateHeadquarterVetService: new UpdateHeadquarterVetService(headquarterVetService),
+  enableHeadquarterVetService: new EnableHeadquarterVetService(headquarterVetService),
+  updateSimultaneousCapacity: new UpdateSimultaneousCapacity(headquarterVetService), 
 }

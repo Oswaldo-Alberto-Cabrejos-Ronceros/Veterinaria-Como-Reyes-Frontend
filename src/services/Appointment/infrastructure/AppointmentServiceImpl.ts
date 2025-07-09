@@ -6,12 +6,22 @@ import type {
   TimesForTurn,
   BasicServiceForAppointment,
   InfoBasicAppointment,
+  AppointmentList,
+  InfoAppointmentForPanel,
+  AnimalInfoForAppointment,
+  ClientInfoForAppointment,
+  PaymentInfoForAppointment,
+  AppointmentStatsToday,
+  AppointmentInfoPanelAdmin,
+  CareAndAppointmentPanelEmployee,
+  AppointmentStatsForReceptionist,
 } from '../domain/models/Appointment'
 import type { SearchAppointmentParams } from '../domain/models/SearchAppointmentParams'
 import type { PageResponse } from '@/services/models/PageResponse'
 
 export class AppointmentServiceImpl implements AppointmentService {
   constructor(private readonly httpClient: HttpClient) {}
+
 
   private readonly url = '/appointments'
 
@@ -81,7 +91,7 @@ export class AppointmentServiceImpl implements AppointmentService {
     return response.data
   }
 
-  async searchAppointments(params: SearchAppointmentParams): Promise<PageResponse<Appointment>> {
+  async searchAppointments(params: SearchAppointmentParams): Promise<PageResponse<AppointmentList>> {
     const queryParams: Record<string, string | number> = {}
 
     if (params.day) queryParams.day = params.day
@@ -92,10 +102,82 @@ export class AppointmentServiceImpl implements AppointmentService {
     if (params.size !== undefined) queryParams.size = params.size
     if (params.sort) queryParams.sort = params.sort
 
-    const response = await this.httpClient.get<PageResponse<Appointment>>(
+    const response = await this.httpClient.get<PageResponse<AppointmentList>>(
       `${this.url}/search`,
       queryParams,
     )
     return response.data
   }
+
+  async  getAppointmentPanelInfo(appointmentId: number): Promise<InfoAppointmentForPanel> {
+    const response = await this.httpClient.get<InfoAppointmentForPanel>(`${this.url}/panel-info/${appointmentId}`)
+    return response.data
+  }
+
+  async getAnimalInfo(appointmentId: number): Promise<AnimalInfoForAppointment> {
+  const response = await this.httpClient.get<AnimalInfoForAppointment>(
+    `${this.url}/panel-info/${appointmentId}/animal-info`
+  )
+  return response.data
+}
+
+async getClientInfo(appointmentId: number): Promise<ClientInfoForAppointment> {
+  const response = await this.httpClient.get<ClientInfoForAppointment>(
+    `${this.url}/panel-info/${appointmentId}/client-info`
+  )
+  return response.data
+}
+
+async getPaymentInfo(appointmentId: number): Promise<PaymentInfoForAppointment> {
+  const response = await this.httpClient.get<PaymentInfoForAppointment>(
+    `${this.url}/panel-info/${appointmentId}/payment-info`
+  )
+  return response.data
+}
+async getTodayAppointmentStats(): Promise<AppointmentStatsToday> {
+  const response = await this.httpClient.get<AppointmentStatsToday>(
+    `${this.url}/panel-admin/stats/today`
+  )
+  return response.data
+}
+async getAppointmentsByDateForPanelAdmin(): Promise<AppointmentInfoPanelAdmin[]> {
+  const response = await this.httpClient.get<AppointmentInfoPanelAdmin[]>(
+    `${this.url}/panel-admin/by-date`
+  )
+  return response.data
+}
+
+async getAppointmentsByDateForPanelManager(headquarterId: number): Promise<AppointmentInfoPanelAdmin[]> {
+  const response = await this.httpClient.get<AppointmentInfoPanelAdmin[]>(
+    `${this.url}/panel-manager/${headquarterId}/by-date`
+  )
+  return response.data
+}
+
+async getTodayAppointmentStatsByHeadquarter(headquarterId: number): Promise<AppointmentStatsToday> {
+  const response = await this.httpClient.get<AppointmentStatsToday>(
+    `${this.url}/panel-manager/stats/${headquarterId}/today`
+  )
+  return response.data
+}
+
+async getCareAndAppointmentsForEmployee(employeeId: number): Promise<CareAndAppointmentPanelEmployee[]> {
+  const response = await this.httpClient.get<CareAndAppointmentPanelEmployee[]>(
+    `${this.url}/panel-employee/${employeeId}`
+  );
+  return response.data;
+}
+async getStatsForReceptionist(): Promise<AppointmentStatsForReceptionist> {
+  const response = await this.httpClient.get<AppointmentStatsForReceptionist>(
+    `${this.url}/panel-receptionist/stats`
+  )
+  return response.data
+}
+
+async getAppointmentsByHeadquarterId(headquarterId: number): Promise<CareAndAppointmentPanelEmployee[]> {
+  const response = await this.httpClient.get<CareAndAppointmentPanelEmployee[]>(
+    `${this.url}/panel-receptionist/${headquarterId}`
+  )
+  return response.data
+}
 }

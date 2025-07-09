@@ -73,11 +73,6 @@ const items = ref<MenuItem[][]>([
       to: '/employee/administrator/headquarter-management',
     },
     {
-      label: 'Roles y Permisos',
-      icon: 'pi pi-user-plus',
-      to: '/employee/administrator/roles-permission',
-    },
-    {
       label: 'Especies',
       icon: 'pi pi-github',
       to: '/employee/administrator/species-management',
@@ -129,6 +124,43 @@ const items = ref<MenuItem[][]>([
       icon: 'pi pi-github',
       to: '/employee/manager/pets-management',
     },
+      {
+      label: 'Categorias',
+      icon: 'pi pi-sort-amount-up-alt',
+      to: '/employee/manager/category-management',
+    },
+    {
+      label: 'Servicios',
+      icon: 'pi pi-calendar-plus',
+      to: '/employee/manager/services-management',
+    },
+    {
+      label: 'Métodos de Pago',
+      icon: 'pi pi-wallet',
+      to: '/employee/manager/payment-method-management',
+    },
+
+    {
+      label: 'Especies',
+      icon: 'pi pi-github',
+      to: '/employee/manager/species-management',
+    },
+    {
+      label: 'Razas',
+      icon: 'pi pi-github',
+      to: '/employee/manager/breeds-management',
+    },
+
+        {
+      label: 'Servicios por Sede',
+      icon: 'pi pi-arrow-right-arrow-left',
+      to: '/employee/manager/services-headquarters-management',
+    },
+        {
+      label: 'Pagos',
+      icon: 'pi pi-receipt',
+      to: '/employee/manager/payment-management',
+    },
     {
       label: 'Citas',
       icon: 'pi pi-clipboard',
@@ -149,13 +181,14 @@ const items = ref<MenuItem[][]>([
     {
       label: 'Citas',
       icon: 'pi pi-clipboard',
-      to: '/',
+      to: '/employee/veterinary/appointments',
     },
     {
       label: 'Mascotas',
       icon: 'pi pi-github',
       to: '/employee/veterinary/pets-management',
     },
+
   ],
   [
     {
@@ -163,10 +196,10 @@ const items = ref<MenuItem[][]>([
       icon: 'pi pi-home',
       to: '/employee/receptionist/home',
     },
-    {
-      label: 'Citas',
-      icon: 'pi pi-clipboard',
-      to: '/',
+        {
+      label: 'Clientes',
+      icon: 'pi pi-users',
+      to: '/employee/receptionist/client-management',
     },
     {
       label: 'Mascotas',

@@ -25,10 +25,19 @@ export interface VeterinaryServiceRequest {
   }
 }
 
+
 export interface VeterinaryServiceList {
   serviceId: number
   name: string
   specie: string
   category: string
   status: string
+
+export interface ServicesInfoTopPanelAdmin {
+  serviceId: number
+  serviceName: string
+  categoryName: string
+  imageServiceUrl: string
+  totalCares: number
+
 }

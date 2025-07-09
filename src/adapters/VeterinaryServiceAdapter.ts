@@ -4,8 +4,13 @@ import type {
 } from '@/services/VeterinaryService/domain/models/VeterinaryService'
 import type { FormValues as VeterinaryServiceAddEditSchema } from '@/validation-schemas-forms/schema-add-edit-service'
 import type { Service as VeterinaryServiceView } from '@/models/Service'
+
 import type { VeterinaryServiceList } from '@/services/VeterinaryService/domain/models/VeterinaryService'
 import type { ServiceList as VeterinaryServiceListView } from '@/models/ServiceList'
+
+import type { ServicesInfoTopPanelAdmin as ServicesInfoTopPanelAdminView } from '@/models/ServicesInfoTopPanelAdmin'
+import type { ServicesInfoTopPanelAdmin } from '@/services/VeterinaryService/domain/models/VeterinaryService'
+
 
 export class VeterinaryServiceAdapter {
   static toView(service: VeterinaryService): VeterinaryServiceView {
@@ -20,6 +25,7 @@ export class VeterinaryServiceAdapter {
       specieId: service.specie.specieId,
       category: service.category.name,
       categoryId: service.category.categoryId,
+      status:service.status
     }
   }
 
@@ -40,6 +46,7 @@ export class VeterinaryServiceAdapter {
     }
   }
 
+
   static fromVeterinaryServiceListToVeterinaryServiceListView(
     service: VeterinaryServiceList
   ): VeterinaryServiceListView {
@@ -50,4 +57,17 @@ export class VeterinaryServiceAdapter {
       category: service.category,
     }
   }
+
+  static toServiceInfoTopPanelAdmin(service:ServicesInfoTopPanelAdmin):ServicesInfoTopPanelAdminView{
+    return{
+            id: service.serviceId,
+      name: service.serviceName,
+      categoryName: service.categoryName,
+      imageServiceUrl: service.imageServiceUrl,
+      totalCares: service.totalCares,
+
+    }
+  }
+
+
 }

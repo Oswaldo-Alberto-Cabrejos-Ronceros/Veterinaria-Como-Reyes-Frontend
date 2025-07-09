@@ -11,9 +11,10 @@ import Message from 'primevue/message'
 import Select from 'primevue/select'
 import DatePicker from 'primevue/datepicker'
 import type { Ref } from 'vue'
-import { inject } from 'vue'
+import { inject, onMounted, ref } from 'vue'
 import Button from 'primevue/button'
 import { useReniec } from '@/composables/useReniec'
+import type { OptionSelect } from '@/models/OptionSelect'
 
 //methods
 
@@ -92,17 +93,23 @@ const onSubmit = handleSubmit((values) => {
 
 //for dynamicDialog
 const dialogRef = inject('dialogRef') as Ref<{
-  close: (data?: FormValues) => void
+  close: (data?: FormValues) => void,
+  data:{
+    headquartersOptions?: OptionSelect[]
+  }
 }>
 
-//headquarterIds
-const headquarkers = [
-  { name: 'Ica', value: 1 },
-  { name: 'Parcona', value: 2 },
-  { name: 'Tinguiña', value: 3 },
-]
-
+const headquartersOptions = ref<OptionSelect[]>([])
 //for search
+
+onMounted(()=>{
+  if (dialogRef.value.data) {
+const headquartersOptionsGet = dialogRef.value.data.headquartersOptions
+    if (headquartersOptionsGet) {
+      headquartersOptions.value = headquartersOptionsGet
+    }
+  }
+})
 
 const searchInfoReniec = async () => {
   if (dni.value?.length === 8) {
@@ -193,7 +200,7 @@ const searchInfoReniec = async () => {
           class="w-full"
           v-bind="headquarterIdAttrs"
           v-model="headquarterId"
-          :options="headquarkers"
+          :options="headquartersOptions"
           optionLabel="name"
           optionValue="value"
           placeholder="Selecciona Sede"

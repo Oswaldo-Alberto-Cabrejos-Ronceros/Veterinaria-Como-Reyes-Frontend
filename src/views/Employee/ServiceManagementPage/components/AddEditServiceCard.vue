@@ -126,6 +126,9 @@ onMounted(() => {
               fluid
               class="w-full"
               placeholder="Precio del servicio"
+               mode="decimal"
+  :minFractionDigits="2"
+  :maxFractionDigits="2"
             />
           </InputGroup>
           <Message v-if="errors.price" severity="error" size="small" variant="simple">

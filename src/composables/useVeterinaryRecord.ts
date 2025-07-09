@@ -2,13 +2,15 @@ import type { VeterinaryRecordRequest } from '@/services/VeterinaryRecord/domain
 import { useAsyncHandler } from './useAsyncHandler'
 import { veterinaryRecordUsesCases } from '@/dependency-injection/veterinary-record.container'
 import { VeterinaryRecordAdapter } from '@/adapters/VeterinaryRecordAdapter'
+import type { FormValues as SchemaAddEditVeterinaryRecord } from '@/validation-schemas-forms/schema-add-edit-veterinary-record'
 
 export function useVeterinaryRecord() {
   const { loading, error, runUseCase } = useAsyncHandler()
 
-  const createVeterinaryRecord = async (veterinaryRecordRequest: VeterinaryRecordRequest) => {
+  const createVeterinaryRecord = async (schemaVeterinaryRecord: SchemaAddEditVeterinaryRecord) => {
+   const request = VeterinaryRecordAdapter.fromSchemaToVeterinaryRecordRequest(schemaVeterinaryRecord)
     const veterinaryRecord = await runUseCase('createVeterinaryRecord', () =>
-      veterinaryRecordUsesCases.createVeterinaryRecord.execute(veterinaryRecordRequest),
+      veterinaryRecordUsesCases.createVeterinaryRecord.execute(request),
     )
     return VeterinaryRecordAdapter.toVeterinaryRecordView(veterinaryRecord)
   }

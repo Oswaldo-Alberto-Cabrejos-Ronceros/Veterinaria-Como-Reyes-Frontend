@@ -1,4 +1,8 @@
+
 import type { VeterinaryService, VeterinaryServiceList, VeterinaryServiceRequest } from "../models/VeterinaryService";
+
+import type { ServicesInfoTopPanelAdmin, VeterinaryService, VeterinaryServiceRequest } from "../models/VeterinaryService";
+
 import type { PageResponse } from '@/services/models/PageResponse'
 
 export interface VeterinaryServiceService {
@@ -13,9 +17,22 @@ export interface VeterinaryServiceService {
   searchVeterinaryServices(
     page: number,
     size: number,
+
     name?: string,
     specie?: string,
     category?: string,
     status?: boolean,
   ): Promise<PageResponse<VeterinaryServiceList>>
+
+    filters: {
+      name?: string
+      specie?: string
+      category?: string
+      status?: boolean
+    },
+    sort?: string
+  ): Promise<PageResponse<VeterinaryService>>
+    getTopServicesForAdmin(): Promise<ServicesInfoTopPanelAdmin[]>
+  getTopServicesForManager(headquarterId: number): Promise<ServicesInfoTopPanelAdmin[]>
+
 }

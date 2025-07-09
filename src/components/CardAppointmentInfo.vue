@@ -9,7 +9,7 @@ const props = defineProps<{
   serviceName: string
   veterinaryName?: string
   comentario?: string,
-  status:string
+  status?:string
   isCare?:boolean
 }>()
 

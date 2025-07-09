@@ -16,11 +16,46 @@ import InputGroupAddon from 'primevue/inputgroupaddon'
 import CardServiceTerciary from '@/components/CardServiceTerciary.vue'
 import CardClientWaiting from '@/components/CardClientWaiting.vue'
 import CardPaymentPrimary from '@/components/CardPaymentPrimary.vue'
+import { useAppointment } from '@/composables/useAppointment'
+import type { AppointmentStatsForReceptionist } from '@/services/Appointment/domain/models/Appointment'
+import { useClient } from '@/composables/useClient'
+import type { ClientStatsToday } from '@/services/Client/domain/models/Client'
+import type { CareStatsToday } from '@/services/Care/domain/models/Care'
+import { useCare } from '@/composables/useCare'
+import type { IncomeStatsToday } from '@/services/Payment/domain/models/Payment'
+import { usePayment } from '@/composables/usePayment'
+import type { CareAndAppointmentPanelEmployee } from '@/models/CareAndAppointmentPanelEmployee'
+import type { RecentPayment } from '@/models/RecientPayment'
+import { useRouter } from 'vue-router'
 
 const { getEntityId } = useAuthentication()
 const { getEmployeeMyInfo } = useEmployee()
 
+const { getAppointmentsByHeadquarterId, getStatsForReceptionist } = useAppointment()
+
+const { getRecentCompletedPayments, getTodayIncomeStats } = usePayment()
+
+const { getClientStatsToday } = useClient()
+
+const { getCareStatsToday } = useCare()
+
+const { getCaresByHeadquarterId } = useCare()
+
+const paymentsRecent = ref<RecentPayment[]>([])
+
 const myInfoEmployee = ref<MyInfoEmployee | null>(null)
+
+const carePending = ref<CareAndAppointmentPanelEmployee[]>([])
+
+const appointmentsTotayStats = ref<AppointmentStatsForReceptionist | null>(null)
+
+const todayAppointments = ref<CareAndAppointmentPanelEmployee[]>([])
+
+const paymentStatsToday = ref<IncomeStatsToday | null>(null)
+
+const clientStatsToday = ref<ClientStatsToday | null>()
+
+const careStatsToday = ref<CareStatsToday | null>(null)
 
 const entityId = ref<number | null>(null)
 
@@ -36,82 +71,17 @@ const loadMyInfo = async () => {
   if (entityIdGet) {
     myInfoEmployee.value = await getEmployeeMyInfo(entityIdGet)
   }
+  appointmentsTotayStats.value = await getStatsForReceptionist()
+  clientStatsToday.value = await getClientStatsToday()
+  careStatsToday.value = await getCareStatsToday()
+  paymentStatsToday.value = await getTodayIncomeStats()
+  if (myInfoEmployee.value) {
+    const headquarterId = myInfoEmployee.value.headquarter.id
+    todayAppointments.value = await getAppointmentsByHeadquarterId(headquarterId)
+    carePending.value = await getCaresByHeadquarterId(headquarterId)
+    paymentsRecent.value = await getRecentCompletedPayments(headquarterId)
+  }
 }
-
-const news: { title: string; icon: string; content: string; plus?: string }[] = [
-  {
-    title: 'Citas hoy',
-    icon: 'pi-calendar',
-    content: '15',
-    plus: '3 confirmadas, 2 pendientes',
-  },
-  {
-    title: 'Clientes atendidos',
-    icon: 'pi-users',
-    content: '10',
-    plus: '+3 desde ayer',
-  },
-  {
-    title: 'Atenciones registradas',
-    icon: 'pi-user',
-    content: '15',
-    plus: '+4 desde ayer',
-  },
-  {
-    title: 'Ingresos hoy',
-    icon: 'pi-chart-line',
-    content: 'S/ 150',
-    plus: '+5% desde ayer',
-  },
-]
-
-const appointments = [
-  {
-    petName: 'Luna',
-    petBreed: 'Labrador Retriever',
-    employeeName: 'Dra. María Torres',
-    serviceName: 'Consulta general',
-    ownerName: 'Juan Pérez',
-    time: '09:00 AM',
-    status: 'En curso',
-  },
-  {
-    petName: 'Max',
-    petBreed: 'Bulldog Francés',
-    employeeName: 'Dr. Carlos Ramos',
-    serviceName: 'Vacunación',
-    ownerName: 'Laura Díaz',
-    time: '10:15 AM',
-    status: 'Programada',
-  },
-  {
-    petName: 'Nala',
-    petBreed: 'Pomerania',
-    employeeName: 'Dra. Ana Gutiérrez',
-    serviceName: 'Desparasitación',
-    ownerName: 'Ricardo Torres',
-    time: '11:30 AM',
-    status: 'Finalizada',
-  },
-  {
-    petName: 'Rocky',
-    petBreed: 'Rottweiler',
-    employeeName: 'Dr. Luis Mendoza',
-    serviceName: 'Control dental',
-    ownerName: 'Mariana Salas',
-    time: '01:00 PM',
-    status: 'Programada',
-  },
-  {
-    petName: 'Mía',
-    petBreed: 'Golden Retriever',
-    employeeName: 'Dra. Valeria Soto',
-    serviceName: 'Cirugía menor',
-    ownerName: 'Pedro García',
-    time: '03:45 PM',
-    status: 'Cancelada',
-  },
-]
 
 const services: {
   serviceId: number
@@ -244,111 +214,10 @@ const services: {
   },
 ]
 
-const clientWaiting: {
-  clientName: string
-  clientLastname: string
-  petName: string
-  serviceName: string
-}[] = [
-  {
-    clientName: 'Carlos',
-    clientLastname: 'Ramírez',
-    petName: 'Toby',
-    serviceName: 'Consulta general',
-  },
-  {
-    clientName: 'Andrea',
-    clientLastname: 'Mendoza',
-    petName: 'Luna',
-    serviceName: 'Vacunación',
-  },
-  {
-    clientName: 'Luis',
-    clientLastname: 'García',
-    petName: 'Rocky',
-    serviceName: 'Corte de uñas',
-  },
-  {
-    clientName: 'María',
-    clientLastname: 'Lopez',
-    petName: 'Mimi',
-    serviceName: 'Desparasitación',
-  },
-  {
-    clientName: 'Pedro',
-    clientLastname: 'Fernández',
-    petName: 'Max',
-    serviceName: 'Control dental',
-  },
-]
-
-const payments: {
-  clientName: string
-  clientLastname: string
-  petName: string
-  serviceName: string
-  clientDni: string
-  date: string
-  time: string
-  amount: number
-  status: string
-}[] = [
-  {
-    clientName: 'Ana',
-    clientLastname: 'Gómez',
-    petName: 'Luna',
-    serviceName: 'Consulta general',
-    clientDni: '72839471',
-    date: '2025-07-03',
-    time: '09:00 AM',
-    amount: 50.0,
-    status: 'Pagado',
-  },
-  {
-    clientName: 'Luis',
-    clientLastname: 'Ramírez',
-    petName: 'Toby',
-    serviceName: 'Vacunación',
-    clientDni: '71583924',
-    date: '2025-07-02',
-    time: '10:30 AM',
-    amount: 25.0,
-    status: 'Pendiente',
-  },
-  {
-    clientName: 'María',
-    clientLastname: 'Fernández',
-    petName: 'Nina',
-    serviceName: 'Desparasitación',
-    clientDni: '74920385',
-    date: '2025-07-01',
-    time: '11:15 AM',
-    amount: 30.0,
-    status: 'Pagado',
-  },
-  {
-    clientName: 'Pedro',
-    clientLastname: 'Sánchez',
-    petName: 'Rocky',
-    serviceName: 'Control dental',
-    clientDni: '73819264',
-    date: '2025-07-03',
-    time: '01:45 PM',
-    amount: 45.0,
-    status: 'Pagado',
-  },
-  {
-    clientName: 'Laura',
-    clientLastname: 'Vargas',
-    petName: 'Mimi',
-    serviceName: 'Corte de uñas',
-    clientDni: '76283917',
-    date: '2025-07-03',
-    time: '03:00 PM',
-    amount: 15.0,
-    status: 'Pendiente',
-  },
-]
+const router = useRouter()
+const redirect = (name: string) => {
+  router.push({ name: name })
+}
 </script>
 
 <template>
@@ -367,14 +236,35 @@ const payments: {
         <!-- news -->
         <div class="w-full grid grid-cols-4 gap-x-12 mt-4">
           <CardNewsPrimary
-            v-for="(noticia, index) in news"
-            :key="index"
-            :title="noticia.title"
-            :icon="noticia.icon"
-            :content="noticia.content"
-            :plus="noticia.plus"
+            v-if="appointmentsTotayStats"
+            title="Citas hoy"
+            icon="pi-calendar"
+            :content="appointmentsTotayStats.totalAppointmentsToday.toString()"
+            :plus="`${appointmentsTotayStats.confirmedAppointmentsToday} confirmada, ${appointmentsTotayStats.pendingAppointmentsToday} pendientes`"
           >
           </CardNewsPrimary>
+          <CardNewsPrimary
+            v-if="clientStatsToday"
+            title="Clientes atendidos"
+            icon="pi-users"
+            :content="clientStatsToday.todayClientsAttended.toString()"
+            :plus="`+${clientStatsToday.totalClientsAttended - clientStatsToday.todayClientsAttended} desde ayer`"
+          ></CardNewsPrimary>
+
+          <CardNewsPrimary
+            v-if="careStatsToday"
+            title="Atenciones registradas"
+            icon="pi-users"
+            :content="careStatsToday.todayCares.toString()"
+            :plus="`+${careStatsToday.totalCares - careStatsToday.todayCares} desde ayer`"
+          ></CardNewsPrimary>
+
+          <CardNewsPrimary
+            v-if="careStatsToday"
+            title="Ingresos hoy"
+            icon="pi-chart-line"
+            :content="`S/ ${careStatsToday.todayCares.toString()}`"
+          ></CardNewsPrimary>
         </div>
         <!-- quicky actions -->
         <Card class="card-primary min-h-24 mt-4">
@@ -384,13 +274,19 @@ const payments: {
           <template #subtitle>
             <p>Funciones utilizadas frecuentemente</p>
             <div class="grid grid-cols-4 gap-x-12 mt-2">
-              <Button label="Nueva cita" iconPos="top" icon="pi pi-plus"></Button>
+              <Button
+                label="Nueva cita"
+                iconPos="top"
+                icon="pi pi-plus"
+                @click="redirect('receptionist-appointment-management')"
+              ></Button>
               <Button
                 label="Buscar cliente"
                 variant="outlined"
                 iconPos="top"
                 icon="pi pi-search"
                 severity="secondary"
+                @click="redirect('receptionist-client-management')"
               ></Button>
               <Button
                 label="Registrar atención"
@@ -398,6 +294,7 @@ const payments: {
                 variant="outlined"
                 iconPos="top"
                 icon="pi pi-clipboard"
+                @click="redirect('receptionist-care-management')"
               ></Button>
               <Button
                 label="Procesar pago"
@@ -405,6 +302,7 @@ const payments: {
                 variant="outlined"
                 iconPos="top"
                 icon="pi pi-credit-card"
+                @click="redirect('receptionist-payment-management')"
               ></Button>
             </div>
           </template>
@@ -424,15 +322,15 @@ const payments: {
             <template #content>
               <div class="w-full flex flex-col gap-1.5">
                 <CardAppointmentQuaternary
-                  v-for="(appointment, index) of appointments"
+                  v-for="(appointment, index) of todayAppointments"
                   :key="index"
-                  :pet-name="appointment.petName"
+                  :pet-name="appointment.pet.name"
                   :service-name="appointment.serviceName"
-                  :owner-name="appointment.ownerName"
-                  :time="appointment.time"
+                  :owner-name="appointment.clientName"
+                  :time="appointment.hour"
                   :status="appointment.status"
-                  :employee-name="appointment.employeeName"
-                  :pet-breed="appointment.petBreed"
+                  :employee-name="''"
+                  :pet-breed="''"
                 >
                 </CardAppointmentQuaternary>
                 <Button
@@ -461,11 +359,10 @@ const payments: {
               <template #content>
                 <div class="w-full flex flex-col gap-1">
                   <CardClientWaiting
-                    v-for="(client, index) of clientWaiting"
+                    v-for="(client, index) of carePending"
                     :key="index"
                     :clientName="client.clientName"
-                    :clientLastname="client.clientLastname"
-                    :petName="client.petName"
+                    :petName="client.pet.name"
                     :serviceName="client.serviceName"
                   ></CardClientWaiting>
                 </div>
@@ -483,17 +380,16 @@ const payments: {
               <template #content>
                 <div class="w-full flex flex-col gap-1">
                   <CardPaymentPrimary
-                    v-for="(payment, index) in payments"
+                    v-for="(payment, index) in paymentsRecent"
                     :key="index"
-                    :clientName="payment.clientName"
-                    :clientLastname="payment.clientLastname"
+                    :clientName="payment.clientFullName"
                     :petName="payment.petName"
                     :serviceName="payment.serviceName"
-                    :clientDni="payment.clientDni"
-                    :date="payment.date"
-                    :time="payment.time"
+                    clientDni="''"
+                    :date="payment.paymentDate"
+                    :time="payment.paymentTime"
                     :amount="payment.amount"
-                    :status="payment.status"
+                    :status="payment.paymentStatus"
                   />
                 </div>
               </template>

@@ -7,4 +7,6 @@ export interface Headquarter {
   district: string
   province: string
   departament: string
+    startTime: string
+  endTime: string
 }

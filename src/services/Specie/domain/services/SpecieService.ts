@@ -1,4 +1,8 @@
+
 import type { Specie, SpecieRequest, SpecieList } from '../models/Specie'
+
+import type { Specie, SpecieRequest, TopSpeciesByAppointments } from '../models/Specie'
+
 import type { PageResponse } from '@/services/models/PageResponse'
 
 export interface SpecieService {
@@ -13,5 +17,10 @@ export interface SpecieService {
     size: number,
     name?: string,
     status?: boolean
+
   ): Promise<PageResponse<SpecieList>>
+
+  ): Promise<PageResponse<Specie>>
+  getTopSpeciesGeneral(): Promise<TopSpeciesByAppointments>
+
 }

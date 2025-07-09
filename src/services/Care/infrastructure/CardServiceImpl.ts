@@ -1,7 +1,8 @@
 import type { HttpClient } from '@/services/Http/model/HttpClient'
-import type { Care, CareRequest, CareRequestCreate, CreateCareFromAppointmentRequest } from '../domain/models/Care'
+import type { Care, CareRequest, CareRequestCreate, CareStatsToday, CreateCareFromAppointmentRequest } from '../domain/models/Care'
 import type { CareService } from '../domain/services/CareService'
 import type { PageResponse } from '@/services/models/PageResponse'
+import type { CareAndAppointmentPanelEmployee } from '@/services/Appointment/domain/models/Appointment'
 
 export class CareServiceImpl implements CareService {
   constructor(private readonly httpClient: HttpClient) {}
@@ -67,6 +68,32 @@ export class CareServiceImpl implements CareService {
       `${this.urlBase}/search?${params.toString()}`
     )
 
+    return response.data
+  }
+
+async getCaresForEmployee(employeeId: number): Promise<CareAndAppointmentPanelEmployee[]> {
+  const response = await this.httpClient.get<CareAndAppointmentPanelEmployee[]>(
+    `${this.urlBase}/panel-employee/${employeeId}`,
+  )
+  return response.data
+}
+
+async getCareStatsToday(): Promise<CareStatsToday> {
+  const response = await this.httpClient.get<CareStatsToday>(
+    `${this.urlBase}/panel-receptionist/stats-today`,
+  )
+  return response.data
+}
+
+async getCaresByHeadquarterId(headquarterId: number): Promise<CareAndAppointmentPanelEmployee[]> {
+  const response = await this.httpClient.get<CareAndAppointmentPanelEmployee[]>(
+    `${this.urlBase}/panel-receptionist/${headquarterId}`,
+  )
+  return response.data
+}
+
+  async onGoingCare(id: number): Promise<Care> {
+    const response = await this.httpClient.patch<Care>(`${this.urlBase}/${id}/on-going`, {})
     return response.data
   }
 }

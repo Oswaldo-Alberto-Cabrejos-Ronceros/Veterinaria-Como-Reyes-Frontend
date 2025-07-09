@@ -5,6 +5,8 @@ import { DateAdapter } from './DateAdapter'
 import type { AnimalByClient } from '@/services/Animal/domain/models/Animal'
 import type { PetByClient } from '@/models/PetByClient'
 import type { FormValues as AddMyPetSchema } from '@/validation-schemas-forms/schema-add-pet-client'
+import type { AnimalList } from '@/services/Animal/domain/models/Animal'
+import type { PetList } from '@/models/PetList'
 
 export class AnimalAdapter {
   static toPetView(animal: Animal): PetView {
@@ -74,4 +76,18 @@ export class AnimalAdapter {
       clientId: clientId,
     }
   }
+
+  static fromAnimalListToPetList(animalList: AnimalList): PetList {
+    return {
+      id: animalList.animalId,
+      name: animalList.name,
+      owner: animalList.owner,
+      specie: animalList.specie,
+      breed: animalList.breed,
+      gender: animalList.gender,
+      status: animalList.status,
+    }
+  }
+
+
 }

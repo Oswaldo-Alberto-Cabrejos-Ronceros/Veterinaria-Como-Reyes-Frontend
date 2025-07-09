@@ -32,8 +32,11 @@ export class EmployeeServiceImpl implements EmployeeService {
     )
     return response.data
   }
-  async blockEmployee(employeeId: number): Promise<void> {
-    await this.httpClient.patch(`${this.urlBase}/${employeeId}/block`)
+  async blockEmployee(employeeId: number, blockNote: string): Promise<void> {
+    const params: Record<string, string | number> = {
+      reason: blockNote,
+    }
+    await this.httpClient.patch(`${this.urlBase}/${employeeId}/block`, null, params)
   }
   async restoreEmployee(employeeId: number): Promise<void> {
     console.log(employeeId)

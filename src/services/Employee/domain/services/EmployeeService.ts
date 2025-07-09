@@ -7,7 +7,7 @@ export interface EmployeeService {
   getEmployeeById(employeeId: number): Promise<Employee>
   createEmployee(employeeRequest: EmployeeRequest): Promise<Employee>
   updateEmployee(employeeId: number, employeeRequest: EmployeeRequest): Promise<Employee>
-  blockEmployee(employeeId: number): Promise<void>
+  blockEmployee(employeeId: number,blockNote:string): Promise<void>
   restoreEmployee(employeeId: number): Promise<void>
   searchEmployees(
     status: boolean,
