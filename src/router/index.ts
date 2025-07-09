@@ -27,6 +27,7 @@ import AttendAppointmentPageRecepcionist from '@/views/Employee/AttendAppointmen
 import AttendAppointmentVeterinaryPage from '@/views/Employee/AttendAppointmentVeterinaryPage/AttendAppointmentVeterinaryPage.vue'
 import CareUnitaryPage from '@/views/Employee/CareUnitaryPage/CareUnitaryPage.vue'
 import HeadquarterVetServiceManagement from '@/views/Employee/HeadquarterVetServiceManagement/HeadquarterVetServiceManagement.vue'
+import AppointmentsVeterinaryPage from '@/views/Employee/AppointmentsVeterinaryPage/AppointmentsVeterinaryPage.vue'
 //client
 import MyAppointmentsClientPage from '@/views/Client/MyAppointmentsClientPage/MyAppointmentsClientPage.vue'
 import MyPetsPage from '@/views/Client/MyPetsPage/MyPetsPage.vue'
@@ -281,6 +282,13 @@ const router = createRouter({
               component: AppointmentManagementPage,
               meta: { requiresAuth: true, roles: ['Encargado Sede'] },
             },
+                        {
+              path: 'pets-management/pet/:petId',
+              name: 'manager-pets-unitary-pet',
+              component: PetUnitaryClientPage,
+              props: true,
+              meta: { requiresAuth: true, roles: ['Encargado Sede'] },
+            },
             {
               path: 'appoinment-management/attend/:appointmentId',
               name: 'manager-appointment-management-attend',
@@ -392,8 +400,22 @@ const router = createRouter({
               component: PetsManagementPage,
               meta: { requiresAuth: true, roles: ['Veterinario'] },
             },
+                                    {
+              path: 'pets-management/pet/:petId',
+              name: 'veterinary-pets-unitary-pet',
+              component: PetUnitaryClientPage,
+              props: true,
+              meta: { requiresAuth: true, roles: ['Veterinario'] },
+            },
             {
-              path: 'appoinments/attend/:appointmentId',
+              path:'appointments',
+              name:'appointments',
+              component:AppointmentsVeterinaryPage,
+                            props: true,
+              meta: { requiresAuth: true, roles: ['Veterinario'] },
+            },
+            {
+              path: 'appointments/attend/:appointmentId',
               name: 'veterinary-appointments-attend',
               component: AttendAppointmentVeterinaryPage,
               meta: { requiresAuth: true, roles: ['Veterinario'] },

@@ -19,15 +19,21 @@ import { useClient } from '@/composables/useClient'
 import type { ClientStatsPanel } from '@/services/Client/domain/models/Client'
 import type { AppointmentInfoPanelAdmin } from '@/models/AppointmentInfoPanelAdmin'
 import type { ClientInfoPanel } from '@/models/ClientInfoPanel'
+import type { ServicesInfoTopPanelAdmin } from '@/models/ServicesInfoTopPanelAdmin'
+import { useVeterinaryService } from '@/composables/useVeterinaryService'
 
 const { getEntityId } = useAuthentication()
 const { getEmployeeMyInfo } = useEmployee()
 
 const { getTodayAppointmentStats,getAppointmentsByDateForPanelAdmin } = useAppointment()
 
+const {getTopServicesForAdmin}= useVeterinaryService()
+
 const { getCompletedPaymentsStats } = usePayment()
 
 const {getClientStatsPanel,getClientInfoPanelAdmin} = useClient()
+
+const servicesTop = ref<ServicesInfoTopPanelAdmin[]>([])
 
 const clientsRecent = ref<ClientInfoPanel[]>([])
 
@@ -64,6 +70,7 @@ const loadMyInfo = async () => {
   clientsStats.value = await getClientStatsPanel()
 appointmentsToday.value = await getAppointmentsByDateForPanelAdmin()
 clientsRecent.value = await getClientInfoPanelAdmin()
+servicesTop.value= await getTopServicesForAdmin()
 }
 
 const news: { title: string; icon: string; content: string; plus?: string }[] = [
@@ -75,48 +82,6 @@ const news: { title: string; icon: string; content: string; plus?: string }[] = 
   }
 ]
 
-const serviceStadistics: {
-  serviceName: string
-  serviceImageUrl: string
-  categoryName: string
-  value: number
-}[] = [
-  {
-    serviceName: 'Consulta general',
-    serviceImageUrl:
-      'https://clinicaveterinarium.es/wp-content/uploads/2019/11/Realmente-es-necesario-llevar-el-gato-al-veterinario.jpg',
-    categoryName: 'Salud',
-    value: 25,
-  },
-  {
-    serviceName: 'Vacunación',
-    serviceImageUrl:
-      'https://www.animalshealth.es/fileuploads/news/perro-vacunacion-guia-mascota-veterinaria-216624624471.jpg',
-    categoryName: 'Prevención',
-    value: 20,
-  },
-  {
-    serviceName: 'Desparasitación',
-    serviceImageUrl:
-      'https://petvet.cl/cdn/shop/articles/Guia-completa-de-desparasitacion-para-perros-y-gatos-en-Chile_4000x.jpg?v=1739239655',
-    categoryName: 'Prevención',
-    value: 18,
-  },
-  {
-    serviceName: 'Cirugía menor',
-    serviceImageUrl:
-      'https://images.ctfassets.net/denf86kkcx7r/5O20xRkP4ICjnSqkX8zr5z/25e2f3f24f2bafe01dee49ae54bacc99/precio_cirugi_a_canina_-_image_2.jpg?fit=fill&w=1024&q=80',
-    categoryName: 'Tratamiento',
-    value: 22,
-  },
-  {
-    serviceName: 'Chequeo dental',
-    serviceImageUrl:
-      'https://cdn.shopify.com/s/files/1/0268/6861/files/How-to-clean-your-dogs-teeth_grande.jpg?v=1528464965',
-    categoryName: 'Higiene',
-    value: 15,
-  },
-]
 
 const chartData = ref()
 const chartOptions = ref()
@@ -334,12 +299,12 @@ const setChartOptionsSpecies = () => {
               </template>
               <template #content>
                 <ServiceRankingItem
-                  v-for="(service, index) of serviceStadistics"
+                  v-for="(service, index) of servicesTop"
                   :key="index"
-                  :serviceName="service.serviceName"
-                  :serviceImageUrl="service.serviceImageUrl"
+                  :serviceName="service.name"
+                  :serviceImageUrl="service.imageServiceUrl"
                   :categoryName="service.categoryName"
-                  :value="service.value"
+                  :value="service.totalCares"
                 >
                 </ServiceRankingItem>
               </template>

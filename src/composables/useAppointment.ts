@@ -18,6 +18,7 @@ import type { PetInfoForAppointment as PetInfoForAppointmentView } from '@/model
 import type { ClientInfoForAppointment as ClientInfoForAppointmentView } from '@/models/ClientInfoForAppointment'
 import type { PaymentInfoForAppointment as PaymentInfoForAppointmentView } from '@/models/PaymentInfoForAppointment'
 import type { AppointmentInfoPanelAdmin as AppointmentInfoPanelAdminView } from '@/models/AppointmentInfoPanelAdmin'
+import type { CareAndAppointmentPanelEmployee as CareAndAppointmentPanelEmployeeView } from '@/models/CareAndAppointmentPanelEmployee'
 
 export function useAppointment() {
   //get from useAsyncHandle
@@ -166,36 +167,44 @@ export function useAppointment() {
     return AppointmentAdapter.toPaymentInfoForAppointmentView(paymentInfoAppoinment)
   }
 
-  const getTodayAppointmentStats = async()=>{
-    const todayStats = await runUseCase('getTodayAppointmentStats', ()=>
-      appointmentUsesCases.getTodayAppointmentStats.execute()
+  const getTodayAppointmentStats = async () => {
+    const todayStats = await runUseCase('getTodayAppointmentStats', () =>
+      appointmentUsesCases.getTodayAppointmentStats.execute(),
     )
     return todayStats
   }
 
-  const getTodayAppointmentStatsByHeadquarter = async (headquarterId:number)=>{
-    const stats = await runUseCase('getTodayAppointmentStatsByHeadquarter',()=>
-    appointmentUsesCases.getTodayAppointmentStatsByHeadquarter.execute(headquarterId)
+  const getTodayAppointmentStatsByHeadquarter = async (headquarterId: number) => {
+    const stats = await runUseCase('getTodayAppointmentStatsByHeadquarter', () =>
+      appointmentUsesCases.getTodayAppointmentStatsByHeadquarter.execute(headquarterId),
     )
     return stats
   }
 
-const getAppointmentsByDateForPanelAdmin = async (): Promise<AppointmentInfoPanelAdminView[]> => {
-  const appointments = await runUseCase('getAppointmentsByDateForPanelAdmin', () =>
-    appointmentUsesCases.getAppointmentsByDateForPanelAdmin.execute()
-  )
-  return appointments.map((ap)=>AppointmentAdapter.toAppointmentInfoPanelAdminView(ap))
-}
+  const getAppointmentsByDateForPanelAdmin = async (): Promise<AppointmentInfoPanelAdminView[]> => {
+    const appointments = await runUseCase('getAppointmentsByDateForPanelAdmin', () =>
+      appointmentUsesCases.getAppointmentsByDateForPanelAdmin.execute(),
+    )
+    return appointments.map((ap) => AppointmentAdapter.toAppointmentInfoPanelAdminView(ap))
+  }
 
-const getAppointmentsByDateForPanelManager = async (
-  headquarterId: number
-): Promise<AppointmentInfoPanelAdminView[]> => {
-  const appointments  = await runUseCase('getAppointmentsByDateForPanelManager', () =>
-    appointmentUsesCases.getAppointmentsByDateForPanelManager.execute(headquarterId)
-  )
-return appointments.map((ap)=>AppointmentAdapter.toAppointmentInfoPanelAdminView(ap))
-}
+  const getAppointmentsByDateForPanelManager = async (
+    headquarterId: number,
+  ): Promise<AppointmentInfoPanelAdminView[]> => {
+    const appointments = await runUseCase('getAppointmentsByDateForPanelManager', () =>
+      appointmentUsesCases.getAppointmentsByDateForPanelManager.execute(headquarterId),
+    )
+    return appointments.map((ap) => AppointmentAdapter.toAppointmentInfoPanelAdminView(ap))
+  }
 
+  const getCareAndAppointmentsForEmployee = async (
+    employeeId: number,
+  ): Promise<CareAndAppointmentPanelEmployeeView[]> => {
+    const appoinments = await runUseCase('getCareAndAppointmentsForEmployee', () =>
+      appointmentUsesCases.getCareAndAppointmentsForEmployeeUseCase.execute(employeeId),
+    )
+    return appoinments.map((ap) => AppointmentAdapter.toCareAndAppointmentPanelEmployeeView(ap))
+  }
   return {
     loading,
     error,
@@ -217,6 +226,7 @@ return appointments.map((ap)=>AppointmentAdapter.toAppointmentInfoPanelAdminView
     getTodayAppointmentStats,
     getTodayAppointmentStatsByHeadquarter,
     getAppointmentsByDateForPanelManager,
-    getAppointmentsByDateForPanelAdmin
+    getAppointmentsByDateForPanelAdmin,
+    getCareAndAppointmentsForEmployee
   }
 }

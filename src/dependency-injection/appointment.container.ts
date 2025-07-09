@@ -20,6 +20,7 @@ import { AxiosHttpClient } from '@/services/Http/infrastructure/AxiosHttpClient'
 import { GetAppointmentsByDateForPanelAdmin } from '@/services/Appointment/aplication/GetAppointmentsByDateForPanelAdmin'
 import { GetAppointmentsByDateForPanelManager } from '@/services/Appointment/aplication/GetAppointmentsByDateForPanelManager'
 import { GetTodayAppointmentStatsByHeadquarter } from '@/services/Appointment/aplication/GetTodayAppointmentStatsByHeadquarter'
+import { GetCareAndAppointmentsForEmployee } from '@/services/Appointment/aplication/GetCareAndAppointmentsForEmployee'
 
 // Instancia de cliente HTTP
 const axiosHttpClient = new AxiosHttpClient()
@@ -49,5 +50,5 @@ export const appointmentUsesCases = {
   getAppointmentsByDateForPanelAdmin: new GetAppointmentsByDateForPanelAdmin(appointmentService),
   getAppointmentsByDateForPanelManager: new GetAppointmentsByDateForPanelManager(appointmentService),
   getTodayAppointmentStatsByHeadquarter: new GetTodayAppointmentStatsByHeadquarter(appointmentService),
-
+ getCareAndAppointmentsForEmployeeUseCase: new GetCareAndAppointmentsForEmployee(appointmentService)
 }

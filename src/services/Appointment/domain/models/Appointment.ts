@@ -124,3 +124,14 @@ export interface AppointmentInfoPanelAdmin {
   hour: string
   status: string
 }
+
+export interface CareAndAppointmentPanelEmployee {
+  id: number
+  type: string
+  animalName: string
+  serviceName: string
+  clientName: string
+  date: string
+  hour: string
+  status: string
+}

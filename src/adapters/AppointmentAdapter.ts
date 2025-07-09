@@ -20,6 +20,9 @@ import type { PaymentInfoForAppointment as PaymentInfoForAppointmentView } from 
 import type { PaymentInfoForAppointment } from '@/services/Appointment/domain/models/Appointment'
 import type { AppointmentInfoPanelAdmin } from '@/services/Appointment/domain/models/Appointment'
 import type { AppointmentInfoPanelAdmin as AppointmentInfoPanelAdminView } from '@/models/AppointmentInfoPanelAdmin'
+import type { CareAndAppointmentPanelEmployee as CareAndAppointmentPanelEmployeeView } from '@/models/CareAndAppointmentPanelEmployee'
+import type { CareAndAppointmentPanelEmployee } from '@/services/Appointment/domain/models/Appointment'
+
 
 export class AppointmentAdapter {
   static toAppointmentView(appoinment: Appointment): AppointmentView {
@@ -152,6 +155,23 @@ export class AppointmentAdapter {
       clientName: infoAppointment.clientName,
       hour: infoAppointment.hour,
       status: infoAppointment.status,
+    }
+  }
+
+    static toCareAndAppointmentPanelEmployeeView(
+    item: CareAndAppointmentPanelEmployee,
+  ): CareAndAppointmentPanelEmployeeView {
+    return {
+      id: item.id,
+      type: item.type,
+      pet: {
+        name: item.animalName,
+      },
+      serviceName: item.serviceName,
+      clientName: item.clientName,
+      date: item.date,
+      hour: item.hour,
+      status: FormatAdapter.toCaptalizeCaseWithout_( item.status),
     }
   }
 }

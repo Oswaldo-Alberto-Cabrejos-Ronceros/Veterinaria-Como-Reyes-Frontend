@@ -149,7 +149,7 @@ const items = ref<MenuItem[][]>([
     {
       label: 'Citas',
       icon: 'pi pi-clipboard',
-      to: '/',
+      to: '/employee/veterinary/appointments',
     },
     {
       label: 'Mascotas',
