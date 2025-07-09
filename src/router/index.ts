@@ -309,10 +309,10 @@ const router = createRouter({
               props: true,
               meta: { requiresAuth: true, roles: ['Encargado Sede'] },
             },
-                        {
-              path: 'services-headquarters-management',
-              name: 'manager-services-headquarters-management',
-              component: HeadquarterVetServiceManagement,
+            {
+              path: 'services-management',
+              name: 'manager-services-management',
+              component: ServiceManagementPage,
               meta: { requiresAuth: true, roles: ['Encargado Sede'] },
             },
                         {
@@ -414,6 +414,12 @@ const router = createRouter({
               name: 'receptionist-care-management-unitary',
               component: CareUnitaryPage,
               props: true,
+              meta: { requiresAuth: true, roles: ['Recepcionista'] },
+            },
+                        {
+              path: 'client-management',
+              name: 'receptionist-client-management',
+              component: ClientManagementPage,
               meta: { requiresAuth: true, roles: ['Recepcionista'] },
             },
           ],

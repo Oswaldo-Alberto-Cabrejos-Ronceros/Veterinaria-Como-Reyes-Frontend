@@ -494,6 +494,7 @@ const exportCSV = () => {
                   severity="success"
                   label="Agregar Empleado"
                   @click="addEmployee"
+                  v-if="roleMain==='Administrador'"
                 />
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
@@ -555,10 +556,11 @@ const exportCSV = () => {
                     aria-label="Editar"
                     rounded
                     size="small"
+                    v-if="roleMain==='Administrador'"
                     @click="editEmployee(data)"
                   ></Button>
                   <Button
-                    v-if="data.status === 'Activo'"
+                    v-if="data.status === 'Activo' && roleMain==='Administrador'"
                     icon="pi pi-ban"
                     severity="danger"
                     variant="text"
@@ -568,7 +570,7 @@ const exportCSV = () => {
                     @click="deleteEmployee($event, data)"
                   ></Button>
                   <Button
-                    v-else
+                    v-if="data.status === 'Desactivado' && roleMain==='Administrador'"
                     icon="pi pi-refresh"
                     severity="warn"
                     variant="text"

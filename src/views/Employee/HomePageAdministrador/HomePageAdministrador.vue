@@ -234,6 +234,8 @@ const router = useRouter()
 const redirect = (url: string) => {
   router.push(url)
 }
+
+
 </script>
 
 <template>
@@ -349,6 +351,7 @@ const redirect = (url: string) => {
                     rounded
                     icon="pi pi-plus"
                     v-tooltip.left="`Agregar cliente`"
+                  hidden
                   >
                   </Button>
                 </div>
@@ -369,6 +372,7 @@ const redirect = (url: string) => {
                   icon="pi pi-users"
                   size="small"
                   class="mt-2 w-full"
+                  @click="redirect('client-management')"
                 >
                 </Button>
               </template>

@@ -26,6 +26,7 @@ import type { IncomeStatsToday } from '@/services/Payment/domain/models/Payment'
 import { usePayment } from '@/composables/usePayment'
 import type { CareAndAppointmentPanelEmployee } from '@/models/CareAndAppointmentPanelEmployee'
 import type { RecentPayment } from '@/models/RecientPayment'
+import { useRouter } from 'vue-router'
 
 const { getEntityId } = useAuthentication()
 const { getEmployeeMyInfo } = useEmployee()
@@ -212,6 +213,11 @@ const services: {
     price: '100.00',
   },
 ]
+
+const router = useRouter()
+const redirect = (name: string) => {
+  router.push({ name: name })
+}
 </script>
 
 <template>
@@ -268,13 +274,19 @@ const services: {
           <template #subtitle>
             <p>Funciones utilizadas frecuentemente</p>
             <div class="grid grid-cols-4 gap-x-12 mt-2">
-              <Button label="Nueva cita" iconPos="top" icon="pi pi-plus"></Button>
+              <Button
+                label="Nueva cita"
+                iconPos="top"
+                icon="pi pi-plus"
+                @click="redirect('receptionist-appointment-management')"
+              ></Button>
               <Button
                 label="Buscar cliente"
                 variant="outlined"
                 iconPos="top"
                 icon="pi pi-search"
                 severity="secondary"
+                @click="redirect('receptionist-client-management')"
               ></Button>
               <Button
                 label="Registrar atención"
@@ -282,6 +294,7 @@ const services: {
                 variant="outlined"
                 iconPos="top"
                 icon="pi pi-clipboard"
+                @click="redirect('receptionist-care-management')"
               ></Button>
               <Button
                 label="Procesar pago"
@@ -289,6 +302,7 @@ const services: {
                 variant="outlined"
                 iconPos="top"
                 icon="pi pi-credit-card"
+                @click="redirect('receptionist-payment-management')"
               ></Button>
             </div>
           </template>

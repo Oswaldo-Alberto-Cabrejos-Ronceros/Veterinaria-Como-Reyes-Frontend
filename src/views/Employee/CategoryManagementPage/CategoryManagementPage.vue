@@ -21,6 +21,7 @@ import { useConfirm } from 'primevue'
 import { useCategory } from '@/composables/useCategory'
 import type { DataTablePageEvent } from 'primevue/datatable'
 import { debounce } from 'lodash'
+import { useAuthentication } from '@/composables/useAuthentication'
 
 //for toast
 const toast = useToast()
@@ -33,6 +34,10 @@ const showToast = (message: string) => {
     life: 3000,
   })
 }
+
+const roleMain = ref<string>('')
+
+const { getMainRole } = useAuthentication()
 
 //methods
 
@@ -67,6 +72,10 @@ const loadCategories = async (event?: DataTablePageEvent) => {
 
   categories.value = response.content
   totalRecords.value = response.totalElements
+  const role = getMainRole()
+  if(role){
+    roleMain.value = role
+  }
 }
 
 //form
@@ -249,6 +258,7 @@ const exportCSV = () => {
                   severity="success"
                   label="Agregar Categoria"
                   @click="addCategory"
+                  v-if="roleMain==='Administrador'"
                 />
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
@@ -279,6 +289,7 @@ const exportCSV = () => {
                     variant="outlined"
                     aria-label="Filter"
                     rounded
+                    v-if="roleMain==='Administrador'"
                     @click="editCategory(data)"
                   ></Button>
                   <Button
@@ -287,6 +298,7 @@ const exportCSV = () => {
                     variant="outlined"
                     aria-label="Eliminar"
                     rounded
+                    v-if="roleMain==='Administrador'"
                     @click="deleteCategory($event, data)"
                   />
                 </div>

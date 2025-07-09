@@ -30,6 +30,8 @@ import { DateAdapter } from '@/adapters/DateAdapter'
 import { debounce } from 'lodash'
 import type { AppointmentList } from '@/models/AppointmentList'
 import { useConfirm } from 'primevue/useconfirm'
+import { useAuthentication } from '@/composables/useAuthentication'
+import { useEmployee } from '@/composables/useEmployee'
 
 onMounted(async () => {
   loadAppoinments()
@@ -44,10 +46,16 @@ const {
   createAppointment,
   confirmAppointment,
   completeAppointment,
-  deleteAppointment
+  deleteAppointment,
 } = useAppointment()
 
 const { getAllPaymentMethods } = usePaymentMethod()
+
+const { getMainRole, getEntityId } = useAuthentication()
+
+const { getEmployeeMyInfo } = useEmployee()
+
+const roleMain = ref<string>('')
 
 //for appoinments
 
@@ -67,6 +75,20 @@ const searchAppointmentsDebounce = debounce(() => {
 //for load appoinments
 
 const loadAppoinments = async (event?: DataTablePageEvent) => {
+  const role = getMainRole()
+  if (role) {
+    roleMain.value = role
+    if (role === 'Administrador') {
+      headquartersOptions.value = headquartersCategoriesToOptionsSelect(await getAllHeadquarters())
+    } else {
+      const id = getEntityId()
+      if (id) {
+        const info = await getEmployeeMyInfo(id)
+        headquarter.value = info.headquarter.name
+      }
+    }
+  }
+
   const page = event ? event.first / event.rows : 0
   const size = event ? event.rows : rows.value
   rows.value = size
@@ -81,8 +103,6 @@ const loadAppoinments = async (event?: DataTablePageEvent) => {
 
   appointments.value = pageResponse.content
   totalRecords.value = pageResponse.totalElements
-
-  headquartersOptions.value = headquartersCategoriesToOptionsSelect(await getAllHeadquarters())
   categoriesOptions.value = headquartersCategoriesToOptionsSelect(await getAllCategories())
 }
 
@@ -94,7 +114,7 @@ const handleChangeStatus = async (appointmentId: number, status: string) => {
     } else if (status === 'COMPLETADA') {
       await completeAppointment(appointmentId)
       showToast('Cita completada exitodamente')
-    } else if(status=='CANCELADA'){
+    } else if (status == 'CANCELADA') {
       await deleteAppointment(appointmentId)
       showToast('Cita cancelada exitodamente')
     }
@@ -271,7 +291,6 @@ const confirmAppoinmentConfirm = (event: MouseEvent | KeyboardEvent, appointment
     },
   })
 }
-
 
 const cancelAppoinmentConfirm = (event: MouseEvent | KeyboardEvent, appointmentId: number) => {
   confirm.require({
@@ -500,8 +519,11 @@ const attendAppointment = (appointmentId: number) => {
                     variant="text"
                     aria-label="Cancelar"
                     rounded
-                    v-if="data.appointmentStatus !== 'Completada' && data.appointmentStatus !== 'Cancelada'"
-                    @click="cancelAppoinmentConfirm($event,data.id)"
+                    v-if="
+                      data.appointmentStatus !== 'Completada' &&
+                      data.appointmentStatus !== 'Cancelada'
+                    "
+                    @click="cancelAppoinmentConfirm($event, data.id)"
                   />
                 </div>
               </template>

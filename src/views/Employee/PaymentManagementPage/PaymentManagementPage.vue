@@ -25,6 +25,8 @@ import { DateAdapter } from '@/adapters/DateAdapter'
 import { debounce } from 'lodash'
 import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
+import { useAuthentication } from '@/composables/useAuthentication'
+import { useEmployee } from '@/composables/useEmployee'
 
 //methods
 
@@ -32,6 +34,8 @@ const { error, loading,setPaymentStatusComplete, setPaymentStatusCancelled,searc
 const { getAllHeadquarters } = useHeadquarter()
 
 const { getAllVeterinaryServices } = useVeterinaryService()
+
+const {getEmployeeMyInfo}= useEmployee()
 
 const payments = ref<PaymentList[]>([])
 const totalRecords = ref<number>(0)
@@ -50,7 +54,26 @@ const searchPaymentsDebounce = debounce(() => {
   loadPayments()
 })
 
+const { getMainRole,getEntityId } = useAuthentication()
+
+const roleMain = ref<string>('')
+
 const loadPayments = async (event?: DataTablePageEvent) => {
+
+      const role = getMainRole()
+  if (role) {
+    roleMain.value = role
+    if (role === 'Administrador') {
+      headquartersOptions.value = headquartersServicesToOptionsSelect(await getAllHeadquarters())
+    } else {
+      const id = getEntityId()
+      if (id) {
+        const info = await getEmployeeMyInfo(id)
+        headquarterId.value = info.headquarter.id
+      }
+    }
+  }
+
   const page = event ? event.first / event.rows : 0
   const size = event ? event.rows : rows.value
   rows.value = size
@@ -240,7 +263,7 @@ const exportCSV = () => {
               </Message>
             </div>
             <!-- sedes -->
-            <div>
+            <div v-if="roleMain==='Administrador'">
               <label class="block mb-2">Sede</label>
               <Select
                 class="w-full"

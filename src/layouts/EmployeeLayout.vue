@@ -196,10 +196,10 @@ const items = ref<MenuItem[][]>([
       icon: 'pi pi-home',
       to: '/employee/receptionist/home',
     },
-    {
-      label: 'Citas',
-      icon: 'pi pi-clipboard',
-      to: '/',
+        {
+      label: 'Clientes',
+      icon: 'pi pi-users',
+      to: '/employee/receptionist/client-management',
     },
     {
       label: 'Mascotas',
