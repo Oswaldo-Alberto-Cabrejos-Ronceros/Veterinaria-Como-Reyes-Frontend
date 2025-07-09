@@ -5,6 +5,7 @@ import { SpecieAdapter } from '@/adapters/SpecieAdapter'
 import type { Specie as SpecieView } from '@/models/Specie'
 import type { FormValues as SpecieAddEditSchema } from '@/validation-schemas-forms/schema-add-edit-specie'
 import type { PageResponse } from '@/services/models/PageResponse'
+import type { SpecieList as SpecieListView } from '@/models/SpecieList'
 
 export function useSpecie() {
   //get from useAsyncHandle
@@ -63,13 +64,13 @@ export function useSpecie() {
     size: number,
     name?: string,
     status?: boolean
-  ): Promise<PageResponse<SpecieView>> => {
+  ): Promise<PageResponse<SpecieListView>> => {
     const result = await runUseCase('searchSpecies', () =>
       specieUsesCases.searchSpecies.execute(page, size, name, status)
     )
     return {
       ...result,
-      content: result.content.map(SpecieAdapter.toSpecieView),
+      content: result.content.map(SpecieAdapter.fromSpecieListToSpecieListView),
     }
   }
 

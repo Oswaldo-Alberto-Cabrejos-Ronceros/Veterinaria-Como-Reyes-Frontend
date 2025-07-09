@@ -15,7 +15,7 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import AddEditBreedCard from './components/AddEditBreedCard.vue'
 import { useDialog, useToast } from 'primevue'
-import type { Breed as BreedView } from '@/models/Breed'
+import type { BreedList } from '@/models/BreedList'
 import type { FormValues as AddEditBreedSchema } from '@/validation-schemas-forms/schema-add-edit-breed'
 import { useConfirm } from 'primevue'
 import { useBreed } from '@/composables/useBreed'
@@ -43,7 +43,7 @@ const { loading, error, createBreed, updateBreed, activateBreed, searchBreeds } 
 
 const { getAllSpecies } = useSpecie()
 
-const breeds = ref<BreedView[]>([])
+const breeds = ref<BreedList[]>([])
 
 const speciesOptions = ref<OptionSelect[]>([])
 
@@ -73,7 +73,6 @@ const loadBreeds = async (event?: DataTablePageEvent) => {
     specieName,
   })
 
-  breeds.value = response.content
   totalRecords.value = response.totalElements
 }
 
@@ -126,7 +125,7 @@ const addBreed = () => {
   })
 }
 
-const editBreed = (breedData: BreedView) => {
+const editBreed = (breedData: BreedList) => {
   dialog.open(AddEditBreedCard, {
     props: {
       modal: true,
@@ -135,7 +134,6 @@ const editBreed = (breedData: BreedView) => {
     data: {
       breedData: {
         name: breedData.name,
-        specieId: breedData.specie.id,
       } as AddEditBreedSchema,
       speciesOptions: speciesOptions,
     },
@@ -154,7 +152,7 @@ const editBreed = (breedData: BreedView) => {
 //for confirm
 const confirm = useConfirm()
 
-const deleteBreed = (event: MouseEvent | KeyboardEvent, breedData: BreedView) => {
+const deleteBreed = (event: MouseEvent | KeyboardEvent, breedData: BreedList) => {
   const isActive = breedData.status
 
   confirm.require({

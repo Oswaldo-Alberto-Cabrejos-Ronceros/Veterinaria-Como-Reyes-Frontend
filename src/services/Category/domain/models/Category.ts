@@ -9,3 +9,9 @@ export interface CategoryRequest {
   name: string
   description: string
 }
+
+export interface CategoryList {
+  categoryId: number
+  name: string
+  status: string
+}

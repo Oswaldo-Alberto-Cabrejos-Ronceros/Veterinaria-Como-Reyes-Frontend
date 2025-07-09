@@ -9,3 +9,8 @@ export interface PaymentMethodRequest {
   name: string;
   description?: string;
 }
+
+export interface PaymentMethodList {
+  id: number;
+  name: string;
+}
