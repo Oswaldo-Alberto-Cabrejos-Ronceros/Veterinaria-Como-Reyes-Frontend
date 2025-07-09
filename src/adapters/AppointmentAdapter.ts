@@ -168,13 +168,20 @@ export class AppointmentAdapter {
       id: item.id,
       type: item.type,
       pet: {
+        id: item.animalId,
         name: item.animalName,
+        breedName: item.breedName,
       },
       serviceName: item.serviceName,
       clientName: item.clientName,
       date: item.date,
       hour: item.hour,
       status: FormatAdapter.toCaptalizeCaseWithout_(item.status),
+      commentAppointment: item.commentAppointment,
+      employee: {
+        id: item.employeeId,
+        name: item.employeeName,
+      },
     }
   }
 }

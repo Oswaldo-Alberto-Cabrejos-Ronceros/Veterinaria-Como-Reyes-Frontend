@@ -126,15 +126,19 @@ export interface AppointmentInfoPanelAdmin {
 }
 
 export interface CareAndAppointmentPanelEmployee {
-  id: number
-  type: string
-  animalName: string
-  serviceName: string
-  clientName: string
-  date: string
-  hour: string
-  status: string
-  commentAppointment:string;
+  id: number;
+  type: string;
+  animalId: number;
+  animalName: string;
+  serviceName: string;
+  clientName: string;
+  date: string;
+  hour: string;
+  status: string;
+  commentAppointment: string;
+  employeeId?: number;
+  employeeName?: string;
+  breedName: string;
 }
 
 export interface AppointmentStatsForReceptionist{
