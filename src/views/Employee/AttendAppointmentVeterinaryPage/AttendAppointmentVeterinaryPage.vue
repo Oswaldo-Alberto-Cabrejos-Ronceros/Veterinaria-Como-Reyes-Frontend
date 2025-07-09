@@ -35,6 +35,9 @@ onMounted(async () => {
 })
 
 const { loading, updatePetWeight } = usePet()
+
+const {completeCare,setOnGoingCare}=useCare()
+
 //for toast
 //toast
 const toast = useToast()
@@ -84,6 +87,20 @@ const loadInfo = async () => {
   if (pet.value.clientId) {
     client.value = await getClientById(pet.value.clientId)
   }
+}
+
+const setOnGoingTo = async ()=>{
+  const response = await setOnGoingCare(Number(props.appointmentId))
+  if(response){
+    showToast('Cambiado en curso exitosamente')
+  }
+}
+
+const handleCompleteCare = async ()=>{
+const response = await completeCare(Number(props.appointmentId))
+if(response){
+    showToast('Cambiado en curso exitosamente')
+}
 }
 
 const records = [
@@ -136,7 +153,18 @@ const records = [
 </script>
 
 <template>
-  <div class="layout-principal-flex flex-col gap-2">
+  <div  class="layout-principal-flex flex-col gap-2" v-if="headquarterVetService && care">
+            <div class="w-full flex justify-end">
+          <Button
+            severity="success"
+            icon-pos="left"
+            icon="pi pi-check-circle"
+            v-if="care.statusCare==='En espera'"
+            variant="outlined"
+            label="Atender consulta"
+            @click="setOnGoingTo()"
+          />
+        </div>
     <CardAppointmentInfo
       v-if="headquarterVetService && care"
       is-care
@@ -185,16 +213,18 @@ const records = [
             <TabPanel value="1">
               <CardHistoryVeterinaryRecord :veterinaryRecords="records" />
             </TabPanel>
-            <TabPanel value="2"><CardAddVeterinaryRecord /></TabPanel>
+            <TabPanel value="2"><CardAddVeterinaryRecord v-if="employee" :careId="Number(appointmentId)" :employeeId="employee.employeeId"  /></TabPanel>
           </TabPanels>
         </Tabs>
         <Divider />
-        <div class="w-full flex justify-end">
+        <div class="w-full flex justify-end" v-if="headquarterVetService && care">
           <Button
             severity="success"
             icon-pos="left"
             icon="pi pi-check-circle"
             label="Finalizar consulta"
+            v-if="care.statusCare==='En curso'"
+            @click="handleCompleteCare()"
           />
         </div>
       </template>

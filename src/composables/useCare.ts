@@ -1,6 +1,6 @@
 import { careUsesCases } from '@/dependency-injection/care.container'
 import { useAsyncHandler } from './useAsyncHandler'
-import type { Care, Care as CareView } from '@/models/Care'
+import type {  Care as CareView } from '@/models/Care'
 import { CareAdapter } from '@/adapters/CareAdapter'
 import type { CareRequest, CareStatsToday } from '@/services/Care/domain/models/Care'
 import type { FormValues as AddCareFromAppoinmentSchema } from '@/validation-schemas-forms/schema-add-care-from-appointment'
@@ -29,7 +29,7 @@ export function useCare() {
     return cares.map((care) => CareAdapter.toView(care))
   }
 
-  const createCare = async (careRequest: CareRequest): Promise<Care> => {
+  const createCare = async (careRequest: CareRequest): Promise<CareView> => {
     const care = await runUseCase('createCare', () => careUsesCases.createCare.execute(careRequest))
     return CareAdapter.toView(care)
   }
@@ -106,6 +106,14 @@ export function useCare() {
     return cares.map((c) => AppointmentAdapter.toCareAndAppointmentPanelEmployeeView(c))
   }
 
+  const setOnGoingCare = async (id: number): Promise<CareView> => {
+    const care= await runUseCase('setOnGoingCare', () =>
+      careUsesCases.setOnGoingCare.execute(id)
+    )
+    return CareAdapter.toView(care)
+  }
+
+
   return {
     loading,
     error,
@@ -121,5 +129,6 @@ export function useCare() {
     getCareStatsToday,
     getCaresForEmployee,
     getCaresByHeadquarterId,
+    setOnGoingCare
   }
 }

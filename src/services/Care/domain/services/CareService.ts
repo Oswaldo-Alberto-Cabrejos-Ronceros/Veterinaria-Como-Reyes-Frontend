@@ -22,4 +22,5 @@ export interface CareService {
   getCaresForEmployee(employeeId: number): Promise<CareAndAppointmentPanelEmployee[]>
 getCareStatsToday(): Promise<CareStatsToday>
 getCaresByHeadquarterId(headquarterId: number): Promise<CareAndAppointmentPanelEmployee[]>
+  onGoingCare(id: number): Promise<Care>
 }

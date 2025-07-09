@@ -2,6 +2,9 @@ import type { VeterinaryRecord } from '@/services/VeterinaryRecord/domain/models
 import type { VeterinaryRecord as VeterinaryRecordView } from '@/models/VeterinaryRecord'
 import type { VeterinaryRecordInfoTable } from '@/services/VeterinaryRecord/domain/models/VeterinaryRecord'
 import type { VeterinaryRecordInfoTable as VeterinaryRecordInfoTableView } from '@/models/VeterinaryRecordInfoTable'
+import type { VeterinaryRecordRequest } from '@/services/VeterinaryRecord/domain/models/VeterinaryRecord'
+import type { FormValues } from '@/validation-schemas-forms/schema-add-edit-veterinary-record'
+import { DateAdapter } from './DateAdapter'
 
 export class VeterinaryRecordAdapter {
   static toVeterinaryRecordView(veterinaryRecord: VeterinaryRecord): VeterinaryRecordView {
@@ -32,4 +35,17 @@ export class VeterinaryRecordAdapter {
       status: veterinaryRecordInfo.status,
     }
   }
+
+    static fromSchemaToVeterinaryRecordRequest(schema: FormValues): VeterinaryRecordRequest {
+    return {
+      careId: schema.careId,
+      employeeId: schema.employeeId,
+      dateCreate: DateAdapter.toDateYYYYmmDD(schema.dateCreate),
+      diagnosis: schema.diagnosis,
+      treatment: schema.treatment,
+      observation: schema.observation,
+      resultUrl: schema.resultUrl
+    }
+  }
+
 }

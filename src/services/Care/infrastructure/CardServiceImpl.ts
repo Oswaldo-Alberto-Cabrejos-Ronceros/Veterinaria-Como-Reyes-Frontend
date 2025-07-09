@@ -91,4 +91,9 @@ async getCaresByHeadquarterId(headquarterId: number): Promise<CareAndAppointment
   )
   return response.data
 }
+
+  async onGoingCare(id: number): Promise<Care> {
+    const response = await this.httpClient.patch<Care>(`${this.urlBase}/${id}/on-going`, {})
+    return response.data
+  }
 }
