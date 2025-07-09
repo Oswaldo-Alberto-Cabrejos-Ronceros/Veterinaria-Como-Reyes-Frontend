@@ -124,10 +124,42 @@ const items = ref<MenuItem[][]>([
       icon: 'pi pi-github',
       to: '/employee/manager/pets-management',
     },
+      {
+      label: 'Categorias',
+      icon: 'pi pi-sort-amount-up-alt',
+      to: '/employee/manager/category-management',
+    },
+    {
+      label: 'Servicios',
+      icon: 'pi pi-calendar-plus',
+      to: '/employee/manager/services-management',
+    },
+    {
+      label: 'Métodos de Pago',
+      icon: 'pi pi-wallet',
+      to: '/employee/manager/payment-method-management',
+    },
+
+    {
+      label: 'Especies',
+      icon: 'pi pi-github',
+      to: '/employee/manager/species-management',
+    },
+    {
+      label: 'Razas',
+      icon: 'pi pi-github',
+      to: '/employee/manager/breeds-management',
+    },
+
         {
       label: 'Servicios por Sede',
       icon: 'pi pi-arrow-right-arrow-left',
       to: '/employee/manager/services-headquarters-management',
+    },
+        {
+      label: 'Pagos',
+      icon: 'pi pi-receipt',
+      to: '/employee/manager/payment-management',
     },
     {
       label: 'Citas',

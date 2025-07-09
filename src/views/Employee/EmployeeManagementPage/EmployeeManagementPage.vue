@@ -34,6 +34,7 @@ import { debounce } from 'lodash'
 import Tag from 'primevue/tag'
 import BlockCardPrimary from '@/components/BlockCardPrimary.vue'
 import type { FormValues as BlockSchema } from '@/validation-schemas-forms/schema-block-employee-client'
+import { useAuthentication } from '@/composables/useAuthentication'
 //toast
 const toast = useToast()
 
@@ -57,11 +58,15 @@ const {
   blockEmployee,
   searchEmployees,
   restoreEmployee,
+  getEmployeeMyInfo,
 } = useEmployee()
 
 const { getAllRoles } = useRole()
 
 const { getAllHeadquarters } = useHeadquarter()
+const { getMainRole, getEntityId } = useAuthentication()
+
+const roleMain = ref<string>('')
 
 //employees
 
@@ -97,6 +102,21 @@ const searchEmployeeDebounce = debounce(() => {
 })
 
 const loadEmployees = async (event?: DataTablePageEvent) => {
+    const role = getMainRole()
+  if (role) {
+    roleMain.value = role
+    if (role === 'Administrador') {
+      headquartersOptions.value = headquartersNameToOptionsSelect(await getAllHeadquarters())
+    } else {
+      const id = getEntityId()
+      if (id) {
+        const info = await getEmployeeMyInfo(id)
+        headquarter.value = info.headquarter.name
+      }
+    }
+  }
+
+  rolesOptions.value = rolesToOptionsNameSelect(await getAllRoles())
   const page = event ? event.first / event.rows : 0
   const size = event ? event.rows : rows.value
   rows.value = size
@@ -114,8 +134,7 @@ const loadEmployees = async (event?: DataTablePageEvent) => {
   employees.value = pageResponse.content
   totalRecords.value = pageResponse.totalElements
 
-  rolesOptions.value = rolesToOptionsNameSelect(await getAllRoles())
-  headquartersOptions.value = headquartersNameToOptionsSelect(await getAllHeadquarters())
+
 }
 
 //for get options from roles
@@ -407,7 +426,7 @@ const exportCSV = () => {
               />
             </div>
             <!-- headquarter -->
-            <div>
+            <div   v-if="roleMain==='Administrador'">
               <label class="block mb-2">Sede</label>
               <Select
                 class="w-full"
@@ -420,6 +439,7 @@ const exportCSV = () => {
                 placeholder="Selecciona Sede"
                 showClear
                 @update:model-value="searchEmployeeDebounce()"
+
               />
             </div>
 

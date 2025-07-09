@@ -315,6 +315,41 @@ const router = createRouter({
               component: HeadquarterVetServiceManagement,
               meta: { requiresAuth: true, roles: ['Encargado Sede'] },
             },
+                        {
+              path: 'category-management',
+              name: 'manager-category-management',
+              component: CategoryManagementPage,
+              meta: { requiresAuth: true, roles: ['Encargado Sede'] },
+            },            {
+              path: 'services-headquarters-management',
+              name: 'manager-services-headquarters-management',
+              component: HeadquarterVetServiceManagement,
+              meta: { requiresAuth: true, roles: ['Encargado Sede'] },
+            },
+                        {
+              path: 'payment-method-management',
+              name: 'manager-payment-method-management',
+              component: PaymentMethodManagementPage,
+              meta: { requiresAuth: true, roles: ['Encargado Sede'] },
+            },
+                        {
+              path: 'species-management',
+              name: 'manager-species-management',
+              component: SpecieManagementPage,
+              meta: { requiresAuth: true, roles: ['Encargado Sede'] },
+            },
+            {
+              path: 'breeds-management',
+              name: 'manager-breeds-management',
+              component: BreedManagementPage,
+              meta: { requiresAuth: true, roles: ['Encargado Sede'] },
+            },
+                        {
+              path: 'payment-management',
+              name: 'manager-payment-management',
+              component: PaymentManagementPage,
+              meta: { requiresAuth: true, roles: ['Encargado Sede'] },
+            },
           ],
         },
         {
