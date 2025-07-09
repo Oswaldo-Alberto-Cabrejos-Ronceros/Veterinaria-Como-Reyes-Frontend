@@ -9,3 +9,8 @@ export interface SpecieRequest {
   name: string
   imagePath: string
 }
+
+export interface TopSpeciesByAppointments {
+  speciesNames: string[]
+  appointmentCounts: number[]
+}

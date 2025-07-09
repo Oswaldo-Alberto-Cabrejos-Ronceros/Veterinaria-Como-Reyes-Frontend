@@ -2,7 +2,8 @@
 import Card from 'primevue/card'
 import Image from 'primevue/image'
 import Tag from 'primevue/image'
-import { ref } from 'vue'
+import { computed } from 'vue';
+
 
 const props = defineProps<{
   name: string
@@ -15,7 +16,7 @@ const props = defineProps<{
   urlImage: string
 }>()
 
-const infoBasic = ref<{ title: string; icon: string; content: string }[]>([
+const infoBasic = computed(() => [
   {
     title: 'Especie',
     icon: 'pi pi-heart',
@@ -32,6 +33,7 @@ const infoBasic = ref<{ title: string; icon: string; content: string }[]>([
     content: props.birthdate,
   },
 ])
+
 </script>
 
 <template>

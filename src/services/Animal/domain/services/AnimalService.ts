@@ -11,4 +11,5 @@ export interface AnimalService{
   deleteAnimal(animalId:number):Promise<void>
   activateAnimal(animalId:number):Promise<void>;
   searchAnimals(params: SearchAnimalParams): Promise<PageResponse<AnimalList>>;
+updateAnimalWeight(id: number, weight: number): Promise<{ name: string; weight: number }>
 }

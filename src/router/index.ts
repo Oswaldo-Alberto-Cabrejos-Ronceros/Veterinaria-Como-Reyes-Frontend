@@ -464,6 +464,7 @@ const router = createRouter({
             {
               path: 'appointments/attend/:appointmentId',
               name: 'veterinary-appointments-attend',
+              props:true,
               component: AttendAppointmentVeterinaryPage,
               meta: { requiresAuth: true, roles: ['Veterinario'] },
             },

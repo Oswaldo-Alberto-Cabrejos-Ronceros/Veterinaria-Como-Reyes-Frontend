@@ -73,6 +73,14 @@ export function useSpecie() {
     }
   }
 
+
+
+  const getTopSpeciesGeneral = async()=>{
+    return await runUseCase('getTopSpeciesGeneral',()=>
+    specieUsesCases.getTopSpeciesGeneral.execute()
+    )
+  }
+
   return {
     loading,
     error,
@@ -83,5 +91,6 @@ export function useSpecie() {
     updateSpecie,
     activateSpecie,
     searchSpecies,
+    getTopSpeciesGeneral
   }
 }

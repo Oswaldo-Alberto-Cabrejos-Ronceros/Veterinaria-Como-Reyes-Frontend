@@ -1,17 +1,17 @@
 <script lang="ts" setup>
-import { useAppointment } from '@/composables/useAppointment'
 import Card from 'primevue/card'
 import CardAppointmentLarge from '@/components/CardAppointmentLarge.vue'
 import { onMounted, ref } from 'vue'
 import type { CareAndAppointmentPanelEmployee } from '@/models/CareAndAppointmentPanelEmployee'
 import { useAuthentication } from '@/composables/useAuthentication'
-const { loading, error, getCareAndAppointmentsForEmployee } = useAppointment()
+import { useCare } from '@/composables/useCare'
 const appointments = ref<CareAndAppointmentPanelEmployee[]>([])
 const { getEntityId } = useAuthentication()
+const { loading, error,getCaresForEmployee } = useCare()
 
 onMounted(async () => {
   const employeeId = getEntityId()
-  if (employeeId) appointments.value = await getCareAndAppointmentsForEmployee(employeeId)
+  if (employeeId) appointments.value = await getCaresForEmployee(employeeId)
 })
 </script>
 
@@ -27,7 +27,7 @@ onMounted(async () => {
       <template #content>
         <!-- for messague loading  -->
         <Message
-          v-if="loading.getCareAndAppointmentsForEmployee"
+          v-if="loading.getCaresForEmployee"
           severity="warn"
           size="small"
           variant="simple"
@@ -36,7 +36,7 @@ onMounted(async () => {
         </Message>
         <!-- for messague error -->
         <Message
-          v-if="error.getCareAndAppointmentsForEmployee"
+          v-if="error.getCaresForEmployee"
           severity="error"
           size="small"
           variant="simple"
@@ -56,6 +56,7 @@ onMounted(async () => {
             :owner-name="appoinment.clientName"
             :time="appoinment.hour"
             :status="appoinment.status"
+            :type="appoinment.type"
           />
         </div>
       </template>

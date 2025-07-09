@@ -67,6 +67,7 @@ export function useHeadquarterVetService() {
   }
 
   const updateSimultaneousCapacity = async (id: number, capacity: number): Promise<void> => {
+    console.log(id,capacity)
     await runUseCase('updateSimultaneousCapacity', () =>
       headquarterVetServiceUsesCases.updateSimultaneousCapacity.execute(id, capacity),
     )

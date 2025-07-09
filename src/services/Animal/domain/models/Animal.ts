@@ -52,3 +52,7 @@ export interface AnimalList {
   gender: string
   status: string
 }
+
+export interface AnimalWeightUpdate {
+  weight: number
+}

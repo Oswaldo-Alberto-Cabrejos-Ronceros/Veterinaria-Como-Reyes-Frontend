@@ -22,6 +22,8 @@ import type { ClientInfoPanel } from '@/models/ClientInfoPanel'
 import type { ServicesInfoTopPanelAdmin } from '@/models/ServicesInfoTopPanelAdmin'
 import { useVeterinaryService } from '@/composables/useVeterinaryService'
 import { useRouter } from 'vue-router'
+import { useSpecie } from '@/composables/useSpecie'
+import type { TopSpeciesByAppointments } from '@/services/Specie/domain/models/Specie'
 
 const { getMainRole, getEntityId } = useAuthentication()
 const { getEmployeeMyInfo } = useEmployee()
@@ -62,11 +64,16 @@ const entityId = ref<number | null>(null)
 
 const today = DateAdapter.toFormatView(new Date())
 
-onMounted(() => {
-  loadMyInfo()
+const topsSpeciesGeneral = ref<TopSpeciesByAppointments|null>(null)
+
+const {getTopSpeciesGeneral} = useSpecie()
+
+onMounted( async () => {
+  await loadMyInfo()
   chartData.value = setChartData()
   chartOptions.value = setChartOptions()
   chartDataSpecie.value = setChartDataSpecies()
+  console.log(chartDataSpecie.value)
   chartOptionsSpecie.value = setChartOptionsSpecies()
 })
 
@@ -97,6 +104,8 @@ const loadMyInfo = async () => {
       }
     }
   }
+  topsSpeciesGeneral.value = await getTopSpeciesGeneral()
+  console.log(topsSpeciesGeneral.value)
 }
 
 const news: { title: string; icon: string; content: string; plus?: string }[] = [
@@ -171,12 +180,13 @@ const setChartOptions = () => {
 //data and options for species
 
 const setChartDataSpecies = () => {
+  console.log('Desde function',topsSpeciesGeneral)
   return {
-    labels: ['Gallo', 'Gato', 'Perro', 'Loro'],
+    labels:topsSpeciesGeneral.value?.speciesNames,
     datasets: [
       {
         label: 'Citas',
-        data: [54, 60, 100, 20],
+        data: topsSpeciesGeneral.value?.appointmentCounts,
         backgroundColor: [
           'rgba(249, 115, 22, 0.2)',
           'rgba(6, 182, 212, 0.2)',

@@ -2,7 +2,8 @@
 import Tag from 'primevue/tag'
 import Avatar from 'primevue/avatar'
 import Button from 'primevue/button'
-defineProps<{
+import { useRoute, useRouter } from 'vue-router';
+const props = defineProps<{
   appointementId: number
   petName: string
   petBreed: string
@@ -10,8 +11,16 @@ defineProps<{
   serviceDuration: string
   ownerName: string
   time: string
-  status: string
+  status: string,
+  type:string
 }>()
+
+const router = useRouter()
+const route = useRoute()
+const redirect= ()=>{
+ router.push(`${route.fullPath}/attend/${props.appointementId}`)
+}
+
 </script>
 <template>
   <div class="card-primary flex items-center w-full p-4">
@@ -46,20 +55,22 @@ defineProps<{
         >
         </Button>
         <Button
-          v-if="status === 'En curso'"
-          label="Finalizar"
-          severity="success"
+        label="Finalizar"
+        severity="success"
+        v-if="status === 'Completada'||status==='En curso'"
           icon-pos="left"
           icon=" pi pi-check-circle"
           class="py-1.5"
+          @click="redirect()"
         />
         <Button
-          v-if="status === 'Confirmada'"
+          v-if="status === 'Confirmada'||status==='En espera'"
           label="Atender"
           severity="info"
           icon-pos="left"
           icon="pi pi-clipboard"
           class="py-1.5"
+          @click="redirect()"
         />
       </div>
     </div>

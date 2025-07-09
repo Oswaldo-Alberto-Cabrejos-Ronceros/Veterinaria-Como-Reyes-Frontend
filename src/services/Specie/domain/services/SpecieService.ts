@@ -1,4 +1,4 @@
-import type { Specie, SpecieRequest } from '../models/Specie'
+import type { Specie, SpecieRequest, TopSpeciesByAppointments } from '../models/Specie'
 import type { PageResponse } from '@/services/models/PageResponse'
 
 export interface SpecieService {
@@ -14,4 +14,6 @@ export interface SpecieService {
     name?: string,
     status?: boolean
   ): Promise<PageResponse<Specie>>
+  getTopSpeciesGeneral(): Promise<TopSpeciesByAppointments>
+
 }

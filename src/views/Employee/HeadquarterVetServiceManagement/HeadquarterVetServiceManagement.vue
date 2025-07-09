@@ -65,8 +65,8 @@ const { getEmployeeMyInfo } = useEmployee()
 const { getMainRole, getEntityId } = useAuthentication()
 
 const {
-  enableHeadquarterVetService,
-  deleteHeadquarterVetService,
+ /* enableHeadquarterVetService,
+  deleteHeadquarterVetService,*/
   updateSimultaneousCapacity,
   createHeadquarterVetService,
   getHeadquarterVetServiceByHeadquarter,
@@ -246,6 +246,7 @@ const addHeadquarterService = (headquarter: Headquarter, service: Service) => {
 
 const editHeadquarterService = async (headquarterService: HeadquarterVetService | undefined) => {
   if (headquarterService) {
+    console.log(headquarterService)
     dialog.open(EditHeadquarterVetServiceCard, {
       props: {
         modal: true,
@@ -259,7 +260,7 @@ const editHeadquarterService = async (headquarterService: HeadquarterVetService 
         const data = options?.data as EditHeadquarterVetServiceSchema
         if (data) {
           console.log('data retornada', data)
-          if (data.status) {
+        /*  if (data.status) {
             if (data.status === headquarterService.status) {
               return
             } else {
@@ -269,10 +270,11 @@ const editHeadquarterService = async (headquarterService: HeadquarterVetService 
                 await deleteHeadquarterVetService(headquarterService.id)
               }
             }
-            await updateSimultaneousCapacity(headquarterService.id, data.simultaneousCapacity)
+
+          }*/
+                      await updateSimultaneousCapacity(headquarterService.id, data.simultaneousCapacity)
             showToast('Servicio por sede actualizado correctamente')
             loadHeadquarterServices()
-          }
           try {
           } catch (error) {
             console.error(error, 'Error al crear el servicio por sede')
