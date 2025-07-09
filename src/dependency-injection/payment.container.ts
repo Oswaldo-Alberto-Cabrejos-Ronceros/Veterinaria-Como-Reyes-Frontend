@@ -9,6 +9,10 @@ import { GetPaymentStatsByHeadquarter } from '@/services/Payment/aplication/GetP
 import { AxiosHttpClient } from '@/services/Http/infrastructure/AxiosHttpClient'
 import { PaymentServiceImpl } from '@/services/Payment/infrastructure/PaymentServiceImpl'
 import { GetCompletedPaymentsStats } from '@/services/Payment/aplication/GetCompletedPaymentsStats '
+import { SetPaymentStatusCancelled } from '@/services/Payment/aplication/SetPaymentStatusCancelled'
+import { SetPaymentStatusPending } from '@/services/Payment/aplication/SetPaymentStatusPending'
+import { SetPaymentStatusRefunded } from '@/services/Payment/aplication/SetPaymentStatusRefunded'
+import { SetPaymentStatusComplete } from '@/services/Payment/aplication/SetPaymentStatusComplete'
 
 // Instancia del cliente HTTP
 const axiosHttpClient = new AxiosHttpClient()
@@ -26,5 +30,9 @@ export const paymentUsesCases = {
   getAllPaymentsForTable: new GetAllPaymentsForTable(paymentService),
   searchPayments: new SearchPayments(paymentService),
   getPaymentStatsByHeadquarter: new GetPaymentStatsByHeadquarter(paymentService),
-  getCompletedPaymentsStats: new GetCompletedPaymentsStats(paymentService)
+  getCompletedPaymentsStats: new GetCompletedPaymentsStats(paymentService),
+  setPaymentStatusComplete: new SetPaymentStatusComplete(paymentService),
+  setPaymentStatusCancelled: new SetPaymentStatusCancelled(paymentService),
+  setPaymentStatusPending: new SetPaymentStatusPending(paymentService),
+  setPaymentStatusRefunded: new SetPaymentStatusRefunded(paymentService),
 }

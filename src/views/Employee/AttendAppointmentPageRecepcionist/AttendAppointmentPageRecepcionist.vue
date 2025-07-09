@@ -71,6 +71,7 @@ const openCreateCareConfirmArrive = () => {
     onClose: async (options) => {
       const data = options?.data as FormValues
       if (data) {
+        console.log(data)
         const care = await createCareFromAppointment(data)
         loadInfo()
         showToast(`Atención creada correctamente: ${care.dateTime}`)
@@ -164,6 +165,6 @@ const showToast = (message: string) => {
 
     <!-- payment -->
 
-    <CardBilling v-if="paymentInfo" :payment-method-id="paymentInfo.paymentMethod.id" :serviceName="paymentInfo.serviceName" :price="paymentInfo.amount"/>
+    <CardBilling v-if="paymentInfo" :button-active="false" :payment-id="paymentInfo.paymentId" :status="paymentInfo.status" :payment-method-id="paymentInfo.paymentMethod.id" :serviceName="paymentInfo.serviceName" :price="paymentInfo.amount"/>
   </div>
 </template>

@@ -103,4 +103,19 @@ async getPaymentsStatsByHeadquarter(headquarterId: number): Promise<PaymentStats
   return response.data
 }
 
+async setPaymentStatusComplete(paymentId: number): Promise<void> {
+  await this.httpClient.put<void>(`${this.urlBase}/${paymentId}/status/completed`,{})
+}
+
+async setPaymentStatusCancelled(paymentId: number): Promise<void> {
+  await this.httpClient.put<void>(`${this.urlBase}/${paymentId}/status/cancelled`,{})
+}
+
+async setPaymentStatusPending(paymentId: number): Promise<void> {
+  await this.httpClient.put<void>(`${this.urlBase}/${paymentId}/status/pending`,{})
+}
+
+async setPaymentStatusRefunded(paymentId: number): Promise<void> {
+  await this.httpClient.put<void>(`${this.urlBase}/${paymentId}/status/refunded`,{})
+}
 }

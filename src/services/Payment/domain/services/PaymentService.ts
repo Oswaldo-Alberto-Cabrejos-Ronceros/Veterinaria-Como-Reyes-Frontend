@@ -23,4 +23,8 @@ export interface PaymentService {
   ): Promise<PageResponse<PaymentList>>
   getCompletedPaymentsStats(): Promise<PaymentStatsForPanelAdmin>
   getPaymentsStatsByHeadquarter(headquarterId: number): Promise<PaymentStatsForPanelAdmin>
+setPaymentStatusComplete(paymentId: number): Promise<void>
+  setPaymentStatusCancelled(paymentId: number): Promise<void>
+setPaymentStatusPending(paymentId: number): Promise<void>
+setPaymentStatusRefunded(paymentId: number): Promise<void>
 }

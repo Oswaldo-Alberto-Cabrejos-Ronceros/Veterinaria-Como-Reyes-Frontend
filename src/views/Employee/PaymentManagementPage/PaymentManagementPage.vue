@@ -23,10 +23,12 @@ import { useVeterinaryService } from '@/composables/useVeterinaryService'
 import type { Service } from '@/models/Service'
 import { DateAdapter } from '@/adapters/DateAdapter'
 import { debounce } from 'lodash'
+import { useConfirm } from 'primevue/useconfirm'
+import { useToast } from 'primevue/usetoast'
 
 //methods
 
-const { error, loading, searchPayments } = usePayment()
+const { error, loading,setPaymentStatusComplete, setPaymentStatusCancelled,searchPayments } = usePayment()
 const { getAllHeadquarters } = useHeadquarter()
 
 const { getAllVeterinaryServices } = useVeterinaryService()
@@ -122,6 +124,82 @@ const headquartersServicesToOptionsSelect = (items: Headquarter[] | Service[]): 
     value: item.id,
     name: item.name,
   }))
+}
+
+//for confirm
+
+
+//toast
+const toast = useToast()
+
+const showToast = (message: string) => {
+  toast.add({
+    severity: 'success',
+    summary: 'Éxito',
+    detail: message,
+    life: 3000,
+  })
+}
+
+
+
+//for confirm
+const confirm = useConfirm()
+
+//for delete with confirm popup
+const confirmCacelPayment = (event: MouseEvent | KeyboardEvent, payment:PaymentList) => {
+  confirm.require({
+    group: 'confirmPopupGeneral',
+    target: event.currentTarget as HTMLElement,
+    message: '¿Seguro que quiere eliminar a esta mascota?',
+    icon: 'pi pi-exclamation-triangle',
+    rejectProps: {
+      label: 'Cancelar',
+      severity: 'secondary',
+      outlined: true,
+    },
+    acceptProps: {
+      label: 'Cancelar',
+      severity: 'danger',
+    },
+    accept: async () => {
+      await setPaymentStatusCancelled(payment.id) // esta es la que viene de usePet()
+      loadPayments()
+      showToast('Pago cancelado correctamente')
+    },
+    reject: () => {
+      console.log('Cancelando eliminación')
+    },
+  })
+}
+
+//for confirm
+
+//for delete with confirm popup
+const confirmCompletePayment = (event: MouseEvent | KeyboardEvent, payment:PaymentList) => {
+  confirm.require({
+    group: 'confirmPopupGeneral',
+    target: event.currentTarget as HTMLElement,
+    message: '¿Seguro que quiere eliminar a esta mascota?',
+    icon: 'pi pi-exclamation-triangle',
+    rejectProps: {
+      label: 'Cancelar',
+      severity: 'secondary',
+      outlined: true,
+    },
+    acceptProps: {
+      label: 'Completar',
+      severity: 'success',
+    },
+    accept: async () => {
+      await setPaymentStatusComplete(payment.id) // esta es la que viene de usePet()
+      loadPayments()
+      showToast('Pago completado correctamente')
+    },
+    reject: () => {
+      console.log('Cancelando eliminación')
+    },
+  })
 }
 
 //for export
@@ -331,7 +409,7 @@ const exportCSV = () => {
               style="width: 12%"
             ></Column>
             <Column header="Acciones">
-              <template #body>
+              <template #body="{data}">
                 <div class="flex items-center flex-col sm:flex-row lg:flex-row gap-1">
                   <Button
                     icon="pi pi-eye"
@@ -342,13 +420,27 @@ const exportCSV = () => {
                     rounded
                   ></Button>
                   <Button
-                    icon="pi pi-pencil"
-                    severity="warn"
+                    icon="pi pi-ban"
+                    severity="danger"
                     variant="text"
                     size="small"
-                    aria-label="Editar"
+                    aria-label="Cancelar"
                     rounded
+                    v-if="data.status!=='Cancelada'&&data.status!=='Completada'"
+                    @click="confirmCacelPayment($event,data)"
                   ></Button>
+
+                                <Button
+                    icon="pi pi-check"
+                    severity="success"
+                    variant="text"
+                    size="small"
+                    aria-label="Completar"
+                    rounded
+                    v-if="data.status!=='Completada'&&data.status!=='Cancelada'"
+                    @click="confirmCompletePayment($event,data)"
+                  ></Button>
+
                   <Button
                     icon="pi pi-file"
                     severity="success"

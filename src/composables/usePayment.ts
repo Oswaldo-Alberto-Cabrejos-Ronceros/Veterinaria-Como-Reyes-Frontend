@@ -93,6 +93,30 @@ const getCompletedPaymentsStats = async ()=> {
   )
 }
 
+const setPaymentStatusComplete = async (paymentId: number): Promise<void> => {
+  await runUseCase('setPaymentStatusComplete', () =>
+    paymentUsesCases.setPaymentStatusComplete.execute(paymentId),
+  )
+}
+
+const setPaymentStatusCancelled = async (paymentId: number): Promise<void> => {
+  await runUseCase('setPaymentStatusCancelled', () =>
+    paymentUsesCases.setPaymentStatusCancelled.execute(paymentId),
+  )
+}
+
+const setPaymentStatusPending = async (paymentId: number): Promise<void> => {
+  await runUseCase('setPaymentStatusPending', () =>
+    paymentUsesCases.setPaymentStatusPending.execute(paymentId),
+  )
+}
+
+const setPaymentStatusRefunded = async (paymentId: number): Promise<void> => {
+  await runUseCase('setPaymentStatusRefunded', () =>
+    paymentUsesCases.setPaymentStatusRefunded.execute(paymentId),
+  )
+}
+
   return {
     loading,
     error,
@@ -104,6 +128,10 @@ const getCompletedPaymentsStats = async ()=> {
     getAllPaymentsForTable,
     searchPayments,
     getPaymentStatsByHeadquarter,
-    getCompletedPaymentsStats
+    getCompletedPaymentsStats,
+    setPaymentStatusComplete,
+    setPaymentStatusCancelled,
+    setPaymentStatusPending,
+    setPaymentStatusRefunded
   }
 }

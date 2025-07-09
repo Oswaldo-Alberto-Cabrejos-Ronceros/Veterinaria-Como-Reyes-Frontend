@@ -5,5 +5,5 @@ export interface HeadquarterVetService {
   headquarterId: number
   service: Service
   simultaneousCapacity: number
-  status: string
+  status: boolean
 }

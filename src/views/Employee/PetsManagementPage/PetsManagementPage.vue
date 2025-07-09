@@ -478,7 +478,7 @@ watch(
           >
             <template #header>
               <div class="w-full flex flex-col xs:flex-row justify-between gap-2 pb-4">
-                <Button v-if="mainRole==='Administrador|'||mainRole==='Encargado de sede'"
+                <Button
                   icon="pi pi-plus-circle"
                   iconPos="right"
                   severity="success"

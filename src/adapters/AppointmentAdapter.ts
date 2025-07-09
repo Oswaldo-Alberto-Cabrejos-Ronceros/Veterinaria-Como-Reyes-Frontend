@@ -23,7 +23,6 @@ import type { AppointmentInfoPanelAdmin as AppointmentInfoPanelAdminView } from 
 import type { CareAndAppointmentPanelEmployee as CareAndAppointmentPanelEmployeeView } from '@/models/CareAndAppointmentPanelEmployee'
 import type { CareAndAppointmentPanelEmployee } from '@/services/Appointment/domain/models/Appointment'
 
-
 export class AppointmentAdapter {
   static toAppointmentView(appoinment: Appointment): AppointmentView {
     return {
@@ -85,27 +84,29 @@ export class AppointmentAdapter {
       date: appointmentList.day,
       headquarter: appointmentList.headquarter,
       categoryService: appointmentList.categoryService,
-      appointmentStatus: FormatAdapter.toCaptalizeCaseWithout_ (appointmentList.appointmentStatus),
+      appointmentStatus: FormatAdapter.toCaptalizeCaseWithout_(appointmentList.appointmentStatus),
     }
   }
-  static toInfoAppointmentForPanel(appointment:InfoAppointmentForPanel):InfoAppointmentForPanelView{
-    return{
-        id: appointment.idAppointment ,
-  timeAppointment: appointment.timeAppointment,
-  comment: appointment.comment,
-  service: {
-    id: appointment.serviceId,
-    time: appointment.serviceTime,
-    name: appointment.serviceName,
-  },
-  employee: {
-    id: appointment.employeeId,
-    name: appointment.employeeName,
-    role: appointment.employeeRole
-  }
+  static toInfoAppointmentForPanel(
+    appointment: InfoAppointmentForPanel,
+  ): InfoAppointmentForPanelView {
+    return {
+      id: appointment.idAppointment,
+      timeAppointment: appointment.timeAppointment,
+      comment: appointment.comment,
+      service: {
+        id: appointment.serviceId,
+        time: appointment.serviceTime,
+        name: appointment.serviceName,
+      },
+      employee: {
+        id: appointment.employeeId,
+        name: appointment.employeeName,
+        role: appointment.employeeRole,
+      },
     }
   }
-    static toPetInfoAppointmentView(
+  static toPetInfoAppointmentView(
     animalInfoAppointment: AnimalInfoForAppointment,
   ): PetInfoForAppointment {
     return {
@@ -142,12 +143,14 @@ export class AppointmentAdapter {
       paymentMethod: {
         id: paymentInfo.paymentMethodId,
         name: paymentInfo.paymentMethod,
-        status: paymentInfo.paymentStatus,
       },
+      status: FormatAdapter.toCaptalizeCaseWithout_(paymentInfo.paymentStatus),
     }
   }
 
-    static toAppointmentInfoPanelAdminView(infoAppointment: AppointmentInfoPanelAdmin): AppointmentInfoPanelAdminView {
+  static toAppointmentInfoPanelAdminView(
+    infoAppointment: AppointmentInfoPanelAdmin,
+  ): AppointmentInfoPanelAdminView {
     return {
       id: infoAppointment.appointmentId,
       petName: infoAppointment.animalName,
@@ -158,7 +161,7 @@ export class AppointmentAdapter {
     }
   }
 
-    static toCareAndAppointmentPanelEmployeeView(
+  static toCareAndAppointmentPanelEmployeeView(
     item: CareAndAppointmentPanelEmployee,
   ): CareAndAppointmentPanelEmployeeView {
     return {
@@ -171,7 +174,7 @@ export class AppointmentAdapter {
       clientName: item.clientName,
       date: item.date,
       hour: item.hour,
-      status: FormatAdapter.toCaptalizeCaseWithout_( item.status),
+      status: FormatAdapter.toCaptalizeCaseWithout_(item.status),
     }
   }
 }

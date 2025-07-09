@@ -217,7 +217,7 @@ const cmvpActive = (id:number):boolean=>{
         </Message>
       </div>
 
-      <div>
+      <div      v-if="!cmvpActive(roleId)">
         <label class="block mb-2">CMVP</label>
 
         <InputGroup>
@@ -231,6 +231,7 @@ const cmvpActive = (id:number):boolean=>{
             type="text"
             placeholder="Ej: 14125"
             :disabled="cmvpActive(roleId)"
+
           />
         </InputGroup>
 

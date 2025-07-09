@@ -7,13 +7,22 @@ import Select from 'primevue/select'
 import { usePaymentMethod } from '@/composables/usePaymentMethod'
 import type { PaymentMethod } from '@/models/PaymentMethod'
 import type { OptionSelect } from '@/models/OptionSelect'
-
+import { Tag } from 'primevue'
+import { usePayment } from '@/composables/usePayment'
 
 const props = defineProps<{
   serviceName: string
   price: number
   paymentMethodId:number
+  status:string,
+  paymentId:number,
+  buttonActive:boolean
 }>()
+
+
+//for
+
+const {loading,setPaymentStatusComplete} = usePayment()
 
 //ref
 const paymentMethodIdref=ref<number>(0)
@@ -42,16 +51,19 @@ const igv = ref<number>(Number((props.price - subtotal.value).toFixed(1)))
 <template>
   <Card class="card-primary w-full">
     <template #title>
-      <div class="flex gap-2 items-center">
+      <div class="flex gap-2 items-center justify-between">
+        <div class="flex gap-2 items-center">
         <i class="pi pi-money-bill"></i>
         <p>Facturación</p>
+        </div>
+        <Tag severity="secondary" :value="status"/>
       </div>
     </template>
     <template #subtitle>
       <p>Procesamiento de pago</p>
     </template>
     <template #content>
-      <form >
+      <div >
       <h3 class="textLg font-semibold">Servicio programado</h3>
       <div
         class="mt-4 rounded-sm bg-surface-100 dark:bg-surface-800 flex items-center justify-between p-3"
@@ -87,6 +99,9 @@ const igv = ref<number>(Number((props.price - subtotal.value).toFixed(1)))
           label="Procesar pago"
           class="flex-1"
           type="submit"
+          :disabled="status==='Completada'||buttonActive"
+          :loading="loading.setPaymentStatusComplete"
+          @click="setPaymentStatusComplete(paymentId)"
         />
         <Button
           label="Generar Boleta"
@@ -96,7 +111,7 @@ const igv = ref<number>(Number((props.price - subtotal.value).toFixed(1)))
           severity="secondary"
         />
       </div>
-      </form>
+    </div>
     </template>
   </Card>
 </template>

@@ -73,11 +73,6 @@ const items = ref<MenuItem[][]>([
       to: '/employee/administrator/headquarter-management',
     },
     {
-      label: 'Roles y Permisos',
-      icon: 'pi pi-user-plus',
-      to: '/employee/administrator/roles-permission',
-    },
-    {
       label: 'Especies',
       icon: 'pi pi-github',
       to: '/employee/administrator/species-management',

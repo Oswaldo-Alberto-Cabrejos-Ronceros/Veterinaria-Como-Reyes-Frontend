@@ -21,17 +21,28 @@ import type { AppointmentInfoPanelAdmin } from '@/models/AppointmentInfoPanelAdm
 import type { ClientInfoPanel } from '@/models/ClientInfoPanel'
 import type { ServicesInfoTopPanelAdmin } from '@/models/ServicesInfoTopPanelAdmin'
 import { useVeterinaryService } from '@/composables/useVeterinaryService'
+import { useRouter } from 'vue-router'
 
-const { getEntityId } = useAuthentication()
+const { getMainRole, getEntityId } = useAuthentication()
 const { getEmployeeMyInfo } = useEmployee()
 
-const { getTodayAppointmentStats,getAppointmentsByDateForPanelAdmin } = useAppointment()
+const {
+  getAppointmentsByDateForPanelManager,
+  getTodayAppointmentStatsByHeadquarter,
+  getTodayAppointmentStats,
+  getAppointmentsByDateForPanelAdmin,
+} = useAppointment()
 
-const {getTopServicesForAdmin}= useVeterinaryService()
+const { getTopServicesForManager, getTopServicesForAdmin } = useVeterinaryService()
 
-const { getCompletedPaymentsStats } = usePayment()
+const { getPaymentStatsByHeadquarter, getCompletedPaymentsStats } = usePayment()
 
-const {getClientStatsPanel,getClientInfoPanelAdmin} = useClient()
+const {
+  getClientStatsByHeadquarter,
+  getClientInfoPanelByHeadquarter,
+  getClientStatsPanel,
+  getClientInfoPanelAdmin,
+} = useClient()
 
 const servicesTop = ref<ServicesInfoTopPanelAdmin[]>([])
 
@@ -39,7 +50,7 @@ const clientsRecent = ref<ClientInfoPanel[]>([])
 
 const appointmentsToday = ref<AppointmentInfoPanelAdmin[]>([])
 
-const clientsStats = ref<ClientStatsPanel|null>(null)
+const clientsStats = ref<ClientStatsPanel | null>(null)
 
 const todayAppoinmentStats = ref<AppointmentStatsToday | null>()
 
@@ -65,12 +76,27 @@ const loadMyInfo = async () => {
   if (entityIdGet) {
     myInfoEmployee.value = await getEmployeeMyInfo(entityIdGet)
   }
-  todayAppoinmentStats.value = await getTodayAppointmentStats()
-  paymentStats.value = await getCompletedPaymentsStats()
-  clientsStats.value = await getClientStatsPanel()
-appointmentsToday.value = await getAppointmentsByDateForPanelAdmin()
-clientsRecent.value = await getClientInfoPanelAdmin()
-servicesTop.value= await getTopServicesForAdmin()
+  const role = getMainRole()
+  if (role != null) {
+    if (role === 'Administrador') {
+      todayAppoinmentStats.value = await getTodayAppointmentStats()
+      paymentStats.value = await getCompletedPaymentsStats()
+      clientsStats.value = await getClientStatsPanel()
+      appointmentsToday.value = await getAppointmentsByDateForPanelAdmin()
+      clientsRecent.value = await getClientInfoPanelAdmin()
+      servicesTop.value = await getTopServicesForAdmin()
+    } else {
+      const headquarterId = myInfoEmployee.value?.headquarter.id
+      if (headquarterId) {
+        todayAppoinmentStats.value = await getTodayAppointmentStatsByHeadquarter(headquarterId)
+        paymentStats.value = await getPaymentStatsByHeadquarter(headquarterId)
+        clientsStats.value = await getClientStatsByHeadquarter(headquarterId)
+        appointmentsToday.value = await getAppointmentsByDateForPanelManager(headquarterId)
+        clientsRecent.value = await getClientInfoPanelByHeadquarter(headquarterId)
+        servicesTop.value = await getTopServicesForManager(headquarterId)
+      }
+    }
+  }
 }
 
 const news: { title: string; icon: string; content: string; plus?: string }[] = [
@@ -79,9 +105,8 @@ const news: { title: string; icon: string; content: string; plus?: string }[] = 
     icon: 'pi-heart',
     content: '85',
     plus: '+8 este mes',
-  }
+  },
 ]
-
 
 const chartData = ref()
 const chartOptions = ref()
@@ -204,6 +229,11 @@ const setChartOptionsSpecies = () => {
     },
   }
 }
+
+const router = useRouter()
+const redirect = (url: string) => {
+  router.push(url)
+}
 </script>
 
 <template>
@@ -228,23 +258,22 @@ const setChartOptionsSpecies = () => {
             :content="todayAppoinmentStats.totalAppointments.toString()"
             :plus="`+${todayAppoinmentStats.totalAppointments - todayAppoinmentStats.todayRegisteredAppointments} desde ayer`"
           >
-
           </CardNewsPrimary>
-                      <CardNewsPrimary
-              v-if="paymentStats"
-              title="Ingresos del mes"
-              icon="pi-chart-line"
-              :content="paymentStats.currentTotal.toString()"
-              :plus="`+${paymentStats.percentageDifference}% vs mes anterio`"
-            ></CardNewsPrimary>
+          <CardNewsPrimary
+            v-if="paymentStats"
+            title="Ingresos del mes"
+            icon="pi-chart-line"
+            :content="paymentStats.currentTotal.toString()"
+            :plus="`+${paymentStats.percentageDifference} vs mes anterior`"
+          ></CardNewsPrimary>
 
-                               <CardNewsPrimary
-              v-if="clientsStats"
-              title="Clientes"
-              icon="pi-user"
-              :content="clientsStats.totalClients.toString()"
-              :plus="`+${clientsStats.difference} este mes`"
-            ></CardNewsPrimary>
+          <CardNewsPrimary
+            v-if="clientsStats"
+            title="Clientes"
+            icon="pi-user"
+            :content="clientsStats.totalClients.toString()"
+            :plus="`${clientsStats.difference} este mes`"
+          ></CardNewsPrimary>
 
           <CardNewsPrimary
             v-for="(noticia, index) in news"
@@ -262,7 +291,7 @@ const setChartOptionsSpecies = () => {
             <template #title>
               <div class="w-full flex justify-between items-baseline">
                 <h2 class="h3 font-semibold">Proximas citas</h2>
-                <Button label="Nueva Cita" icon="pi pi-plus"> </Button>
+                <Button hidden label="Nueva Cita" icon="pi pi-plus"> </Button>
               </div>
             </template>
             <template #subtitle>
@@ -286,6 +315,7 @@ const setChartOptionsSpecies = () => {
                   icon="pi pi-eye"
                   size="small"
                   class="mt-2"
+                  @click="redirect('appoinment-management')"
                 >
                 </Button>
               </div>

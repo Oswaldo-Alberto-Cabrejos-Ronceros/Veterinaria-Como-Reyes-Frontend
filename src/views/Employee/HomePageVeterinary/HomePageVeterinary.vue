@@ -14,8 +14,20 @@ import Chart from 'primevue/chart'
 import CardVeterinaryRecord from '@/components/CardVeterinaryRecord.vue'
 import ScrollPanel from 'primevue/scrollpanel'
 import CardPetTerciary from '@/components/CardPetTerciary.vue'
+import { useAppointment } from '@/composables/useAppointment'
+import type { AppointmentStatsToday} from '@/services/Appointment/domain/models/Appointment'
+import type { CareAndAppointmentPanelEmployee } from '@/models/CareAndAppointmentPanelEmployee'
+import { useRouter } from 'vue-router'
 const { getEntityId } = useAuthentication()
 const { getEmployeeMyInfo } = useEmployee()
+
+const {  getCareAndAppointmentsForEmployee } = useAppointment()
+const appointments = ref<CareAndAppointmentPanelEmployee[]>([])
+
+
+const { getTodayAppointmentStatsByHeadquarter } = useAppointment()
+
+const paymentStats = ref<AppointmentStatsToday | null>(null)
 
 const myInfoEmployee = ref<MyInfoEmployee | null>(null)
 
@@ -23,7 +35,7 @@ const entityId = ref<number | null>(null)
 
 const today = DateAdapter.toFormatView(new Date())
 
-onMounted(() => {
+onMounted(async () => {
   loadMyInfo()
   chartData.value = setChartData()
   chartOptions.value = setChartOptions()
@@ -92,16 +104,15 @@ const loadMyInfo = async () => {
   entityId.value = entityIdGet
   if (entityIdGet) {
     myInfoEmployee.value = await getEmployeeMyInfo(entityIdGet)
+    paymentStats.value = await getTodayAppointmentStatsByHeadquarter(
+      myInfoEmployee.value.headquarter.id,
+    )
+    appointments.value = await getCareAndAppointmentsForEmployee(entityIdGet)
   }
 }
 
 const news: { title: string; icon: string; content: string; plus?: string }[] = [
-  {
-    title: 'Citas hoy',
-    icon: 'pi-calendar',
-    content: '15',
-    plus: '3 confirmadas, 2 pendientes',
-  },
+
   {
     title: 'Atenciones registradas hoy',
     icon: 'pi-clipboard',
@@ -122,67 +133,6 @@ const news: { title: string; icon: string; content: string; plus?: string }[] = 
   },
 ]
 
-const vetAppointments: {
-  appointementId: number
-  petName: string
-  petBreed: string
-  serviceName: string
-  serviceDuration: string
-  ownerName: string
-  time: string
-  status: string
-}[] = [
-  {
-    appointementId: 5,
-    petName: 'Luna',
-    petBreed: 'Golden Retriever',
-    serviceName: 'Consulta General',
-    serviceDuration: '30 minutos',
-    ownerName: 'Carlos Rojas',
-    time: '08:30',
-    status: 'Confirmada',
-  },
-  {
-    appointementId: 7,
-    petName: 'Milo',
-    petBreed: 'Persa',
-    serviceName: 'Vacunación',
-    serviceDuration: '15 minutos',
-    ownerName: 'Ana Torres',
-    time: '09:00',
-    status: 'En curso',
-  },
-  {
-    appointementId: 8,
-    petName: 'Rocky',
-    petBreed: 'Bulldog Inglés',
-    serviceName: 'Desparasitación',
-    serviceDuration: '20 minutos',
-    ownerName: 'Luis Fernández',
-    time: '10:15',
-    status: 'Completada',
-  },
-  {
-    appointementId: 9,
-    petName: 'Nina',
-    petBreed: 'Labrador',
-    serviceName: 'Control postoperatorio',
-    serviceDuration: '25 minutos',
-    ownerName: 'Sandra Díaz',
-    time: '11:00',
-    status: 'Confirmada',
-  },
-  {
-    appointementId: 10,
-    petName: 'Max',
-    petBreed: 'Shih Tzu',
-    serviceName: 'Consulta General',
-    serviceDuration: '30 minutos',
-    ownerName: 'Diego Herrera',
-    time: '11:45',
-    status: 'En curso',
-  },
-]
 
 const petsWaitings: {
   clientName: string
@@ -425,6 +375,14 @@ const appoinmentsAbstract: { title: string; value: number }[] = [
     value: 5,
   },
 ]
+
+const router = useRouter()
+
+const redirect =(url:string)=>{
+  router.push(url)
+}
+
+
 </script>
 
 <template>
@@ -442,6 +400,14 @@ const appoinmentsAbstract: { title: string; value: number }[] = [
       <template #content>
         <!-- news -->
         <div class="w-full grid grid-cols-4 gap-x-12 mt-4">
+          <CardNewsPrimary
+            v-if="paymentStats"
+            title="Citas hoy"
+            icon="pi-calendar"
+            :content="paymentStats.totalAppointments.toString()"
+          >
+          </CardNewsPrimary>
+
           <CardNewsPrimary
             v-for="(noticia, index) in news"
             :key="index"
@@ -468,18 +434,21 @@ const appoinmentsAbstract: { title: string; value: number }[] = [
                 iconPos="top"
                 icon="pi pi-clipboard"
                 severity="success"
+                @click="redirect('/employee/veterinary/appointments')"
               ></Button>
               <Button
                 label="Buscar paciente"
                 iconPos="top"
                 icon="pi pi-search"
                 severity="info"
+                @click="redirect('/employee/veterinary/pets-management')"
               ></Button>
               <Button
                 label="Registrar informe médico"
                 severity="warn"
                 iconPos="top"
                 icon="pi pi-pen-to-square"
+                @click="redirect('/employee/veterinary/pets-management')"
               ></Button>
               <Button
                 label="Solicitar cita"
@@ -508,9 +477,16 @@ const appoinmentsAbstract: { title: string; value: number }[] = [
             <template #content>
               <div class="w-full flex flex-col gap-1.5">
                 <CardAppointmentQuintary
-                  v-for="appoinment of vetAppointments"
-                  :key="appoinment.appointementId"
-                  v-bind="appoinment"
+            v-for="appoinment of appointments"
+            :appointement-id="appoinment.id"
+            :key="appoinment.id"
+            :pet-name="appoinment.pet.name"
+            :pet-breed="''"
+            :service-name="appoinment.serviceName"
+            :service-duration="''"
+            :owner-name="appoinment.clientName"
+            :time="appoinment.hour"
+            :status="appoinment.status"
                 ></CardAppointmentQuintary>
                 <!-- abstract  -->
 
@@ -613,7 +589,7 @@ const appoinmentsAbstract: { title: string; value: number }[] = [
 
         <div class="grid grid-cols-2 gap-x-12 mt-4">
           <!-- last diagnosis  -->
-          <Card class="card-primary min-h-24">
+          <Card class="card-primary min-h-24" hidden>
             <template #title>
               <div class="w-full flex justify-between items-baseline">
                 <div class="flex gap-2 items-center">
@@ -660,7 +636,7 @@ const appoinmentsAbstract: { title: string; value: number }[] = [
             </template>
           </Card>
           <!-- pet recent -->
-          <Card class="card-primary min-h-24">
+          <Card class="card-primary min-h-24" hidden>
             <template #title>
               <div class="w-full flex justify-between items-baseline">
                 <div class="flex gap-2 items-center">

@@ -5,7 +5,7 @@ export interface HeadquarterVetService {
   headquarterId: number
   service: VeterinaryService
   simultaneousCapacity: number
-  status: string
+  status: boolean
 }
 
 export interface HeadquarterVetServiceRequest {
