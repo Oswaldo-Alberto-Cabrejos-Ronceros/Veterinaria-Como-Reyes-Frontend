@@ -16,8 +16,10 @@ export interface SpecieList {
   name: string
   status: boolean
 
-export interface TopSpeciesByAppointments {
-  speciesNames: string[]
-  appointmentCounts: number[]
 
 }
+
+
+export interface TopSpeciesByAppointments {
+  speciesNames: string[]
+  appointmentCounts: number[]}

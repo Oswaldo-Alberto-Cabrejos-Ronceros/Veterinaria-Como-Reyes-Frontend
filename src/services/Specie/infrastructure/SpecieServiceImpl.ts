@@ -1,8 +1,5 @@
 import type { SpecieService } from '../domain/services/SpecieService'
-
-import type { Specie, SpecieRequest, SpecieList } from '../domain/models/Specie'
-
-import type { Specie, SpecieRequest, TopSpeciesByAppointments } from '../domain/models/Specie'
+import type { Specie, SpecieRequest, SpecieList, TopSpeciesByAppointments } from '../domain/models/Specie'
 import type { HttpClient } from '@/services/Http/model/HttpClient'
 import type { PageResponse } from '@/services/models/PageResponse'
 
@@ -34,6 +31,7 @@ export class SpecieServiceImpl implements SpecieService {
   async deleteSpecie(specieId: number): Promise<void> {
     await this.httpClient.delete(`${this.url}/${specieId}`)
   }
+
   async activateSpecie(specieId: number): Promise<void> {
     await this.httpClient.put(`${this.url}/${specieId}/activate`, {})
   }
@@ -42,13 +40,8 @@ export class SpecieServiceImpl implements SpecieService {
     page: number,
     size: number,
     name?: string,
-
     status?: boolean
   ): Promise<PageResponse<SpecieList>> {
-
-    status?: boolean,
-  ): Promise<PageResponse<Specie>> {
-
     const params: Record<string, string | number> = {
       page,
       size,
@@ -56,17 +49,13 @@ export class SpecieServiceImpl implements SpecieService {
     if (name) params.name = name
     if (status !== undefined) params.status = String(status)
 
-
-    const response = await this.httpClient.get<PageResponse<SpecieList>>(
-      `${this.url}/search`,
-      params
-
-    const response = await this.httpClient.get<PageResponse<Specie>>(`${this.url}/search`, params)
+    const response = await this.httpClient.get<PageResponse<SpecieList>>(`${this.url}/search`, params)
     return response.data
   }
+
   async getTopSpeciesGeneral(): Promise<TopSpeciesByAppointments> {
     const response = await this.httpClient.get<TopSpeciesByAppointments>(
-      `/panel-admin/appointments/top-species`,
+      `/panel-admin/appointments/top-species`
     )
     return response.data
   }

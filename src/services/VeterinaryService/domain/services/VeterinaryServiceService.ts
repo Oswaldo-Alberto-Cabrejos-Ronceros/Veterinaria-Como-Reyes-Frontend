@@ -1,29 +1,24 @@
-
-import type { VeterinaryService, VeterinaryServiceList, VeterinaryServiceRequest } from "../models/VeterinaryService";
-
-import type { ServicesInfoTopPanelAdmin, VeterinaryService, VeterinaryServiceRequest } from "../models/VeterinaryService";
-
+import type {
+  VeterinaryService,
+  VeterinaryServiceList,
+  VeterinaryServiceRequest,
+  ServicesInfoTopPanelAdmin,
+} from '../models/VeterinaryService'
 import type { PageResponse } from '@/services/models/PageResponse'
 
 export interface VeterinaryServiceService {
-  getVeterinaryServiceById(id: number): Promise<VeterinaryService>;
-  getAllVeterinaryServices(): Promise<VeterinaryService[]>;
-  getAllServicesBySpecie(specieId: number): Promise<VeterinaryService[]>;
-  getAllServicesByCategory(categoryId: number): Promise<VeterinaryService[]>;
-  createVeterinaryService(service: VeterinaryServiceRequest): Promise<VeterinaryService>;
-  updateVeterinaryService(id: number, service: VeterinaryServiceRequest): Promise<VeterinaryService>;
-  deleteVeterinaryService(id: number): Promise<void>;
+  getVeterinaryServiceById(id: number): Promise<VeterinaryService>
+  getAllVeterinaryServices(): Promise<VeterinaryService[]>
+  getAllServicesBySpecie(specieId: number): Promise<VeterinaryService[]>
+  getAllServicesByCategory(categoryId: number): Promise<VeterinaryService[]>
+  createVeterinaryService(service: VeterinaryServiceRequest): Promise<VeterinaryService>
+  updateVeterinaryService(id: number, service: VeterinaryServiceRequest): Promise<VeterinaryService>
+  deleteVeterinaryService(id: number): Promise<void>
   activateVeterinaryService(serviceId: number): Promise<void>
+
   searchVeterinaryServices(
     page: number,
     size: number,
-
-    name?: string,
-    specie?: string,
-    category?: string,
-    status?: boolean,
-  ): Promise<PageResponse<VeterinaryServiceList>>
-
     filters: {
       name?: string
       specie?: string
@@ -31,8 +26,8 @@ export interface VeterinaryServiceService {
       status?: boolean
     },
     sort?: string
-  ): Promise<PageResponse<VeterinaryService>>
-    getTopServicesForAdmin(): Promise<ServicesInfoTopPanelAdmin[]>
-  getTopServicesForManager(headquarterId: number): Promise<ServicesInfoTopPanelAdmin[]>
+  ): Promise<PageResponse<VeterinaryServiceList>>
 
+  getTopServicesForAdmin(): Promise<ServicesInfoTopPanelAdmin[]>
+  getTopServicesForManager(headquarterId: number): Promise<ServicesInfoTopPanelAdmin[]>
 }

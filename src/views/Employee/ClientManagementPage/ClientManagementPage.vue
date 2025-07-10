@@ -383,7 +383,7 @@ const headquartersToOptionsSelect = (headquarters: Headquarter[]): OptionSelect[
             :first="first"
             :loading="loading.searchClient"
             @page="loadClients"
-            :rows-per-page-options="[1, 2, 3, 4]"
+            :rows-per-page-options="[4,8,12]"
             ref="dt"
           >
             <template #header>

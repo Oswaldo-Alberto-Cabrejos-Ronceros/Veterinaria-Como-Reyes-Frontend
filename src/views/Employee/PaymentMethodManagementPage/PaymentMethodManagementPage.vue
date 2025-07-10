@@ -21,6 +21,7 @@ import ViewPaymentMethodCard from './components/ViewPaymentMethodCard.vue'
 import { usePaymentMethod } from '@/composables/usePaymentMethod'
 import { debounce } from 'lodash'
 import type { DataTablePageEvent } from 'primevue/datatable'
+import type { PaymentMethodList } from '@/models/PaymentMethodList'
 
 //toast
 const toast = useToast()
@@ -47,7 +48,7 @@ const {
 
 //payment methods
 
-const paymentMethods = ref<PaymentMethodView[]>([])
+const paymentMethods = ref<PaymentMethodList[]>([])
 
 const totalRecords = ref<number>(0)
 const rows = ref<number>(10)
@@ -143,7 +144,7 @@ const editPaymentMethod = (paymentMethodData: PaymentMethodView) => {
 const confirm = useConfirm()
 
 const deletePaymentMethod = (event: MouseEvent | KeyboardEvent, paymentMethodData: PaymentMethodView) => {
-  const isActive = paymentMethodData.status
+  const isActive = true
 
   confirm.require({
     group: 'confirmPopupGeneral',

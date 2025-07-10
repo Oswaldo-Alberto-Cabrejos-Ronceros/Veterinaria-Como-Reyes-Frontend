@@ -26,6 +26,7 @@ import type { Category } from '@/models/Category'
 import { useCategory } from '@/composables/useCategory'
 import type { DataTablePageEvent } from 'primevue/datatable'
 import { debounce } from 'lodash'
+import type { ServiceList } from '@/models/ServiceList'
 
 //toast
 const toast = useToast()
@@ -56,7 +57,7 @@ const { getAllCategories } = useCategory()
 
 //services
 
-const services = ref<ServiceView[]>([])
+const services = ref<ServiceList[]>([])
 
 const totalRecords = ref<number>(0)
 const rows = ref<number>(10)
@@ -80,13 +81,10 @@ const loadServices = async (event?: DataTablePageEvent) => {
   const response = await searchVeterinaryServices(
     page,
     size,
-    {
-      name: name.value,
-      specie: specieId.value?.toString(),
-      category: categoryId.value?.toString(),
-    }
+    name.value,
+     specieId.value?.toString(),
+      categoryId.value?.toString(),
   )
-
   services.value = response.content
   totalRecords.value = response.totalElements
 }
@@ -207,7 +205,7 @@ const editService = async (serviceData: ServiceView) => {
 //for confirm
 const confirm = useConfirm()
 
-const deleteService = (event: MouseEvent | KeyboardEvent, serviceData: ServiceView) => {
+const deleteService = (event: MouseEvent | KeyboardEvent, serviceData: ServiceList) => {
   const isActive = serviceData.status
 
   confirm.require({
@@ -225,7 +223,7 @@ const deleteService = (event: MouseEvent | KeyboardEvent, serviceData: ServiceVi
       severity: isActive ? 'danger' : 'success',
     },
     accept: async () => {
-      await activateVeterinaryService(serviceData.id)
+      await activateVeterinaryService(serviceData.serviceId)
       showToast('Servicio eliminado exitosamente: ' + serviceData.name)
       loadServices()
     },
@@ -387,33 +385,36 @@ const exportCSV = () => {
               sortable
               style="width: 15%"
             ></Column>
-            <Column>
+            <Column header="Acciones">
               <template #body="{ data }">
                 <div
-                  class="flex justify-between items-center flex-row lg:flex-col xl:flex-row gap-1"
+                  class="flex items-center flex-row lg:flex-col xl:flex-row gap-1"
                 >
                   <Button
                     icon="pi pi-eye"
                     severity="info"
-                    variant="outlined"
+                    variant="text"
                     aria-label="Filter"
                     rounded
+                    size="small"
                     @click="viewService(data)"
                   ></Button>
                   <Button
                     icon="pi pi-pencil"
                     severity="warn"
-                    variant="outlined"
+                    variant="text"
                     aria-label="Filter"
                     rounded
                     @click="editService(data)"
+                    size="small"
                   ></Button>
                   <Button
                     icon="pi pi-trash"
                     severity="danger"
-                    variant="outlined"
+                    variant="text"
                     aria-label="Eliminar"
                     rounded
+                    size="small"
                     @click="deleteService($event, data)"
                   />
                 </div>

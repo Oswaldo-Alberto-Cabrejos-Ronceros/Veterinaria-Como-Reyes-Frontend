@@ -70,7 +70,14 @@ export function useVeterinaryService() {
     status?: boolean
   ): Promise<PageResponse<VeterinaryServiceListView>> => {
       const result = await runUseCase('searchVeterinaryServices', () =>
-        veterinaryServiceUsesCases.searchVeterinaryServices.execute(page, size, name, specie, category, status),
+        veterinaryServiceUsesCases.searchVeterinaryServices.execute(page, size,
+          {
+            name:name,
+            specie:specie,
+            category:category,
+            status:status
+          }
+        ),
       )
 
       return {

@@ -6,13 +6,16 @@ export class SearchVeterinaryServices {
   constructor(private readonly service: VeterinaryServiceService) {}
 
   execute(
-    page: number,
+   page: number,
     size: number,
-    name?: string,
-    specie?: string,
-    category?: string,
-    status?: boolean,
+    filters: {
+      name?: string
+      specie?: string
+      category?: string
+      status?: boolean
+    },
+    sort?: string
   ): Promise<PageResponse<VeterinaryServiceList>> {
-    return this.service.searchVeterinaryServices(page, size, name, specie, category, status)
+    return this.service.searchVeterinaryServices(page, size, filters, sort)
   }
 }

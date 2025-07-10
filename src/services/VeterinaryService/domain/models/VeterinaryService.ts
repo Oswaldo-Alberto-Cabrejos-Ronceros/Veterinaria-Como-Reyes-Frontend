@@ -32,6 +32,9 @@ export interface VeterinaryServiceList {
   specie: string
   category: string
   status: string
+}
+
+
 
 export interface ServicesInfoTopPanelAdmin {
   serviceId: number
@@ -39,5 +42,4 @@ export interface ServicesInfoTopPanelAdmin {
   categoryName: string
   imageServiceUrl: string
   totalCares: number
-
 }

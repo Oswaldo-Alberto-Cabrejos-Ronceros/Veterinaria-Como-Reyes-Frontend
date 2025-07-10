@@ -22,6 +22,7 @@ import { useCategory } from '@/composables/useCategory'
 import type { DataTablePageEvent } from 'primevue/datatable'
 import { debounce } from 'lodash'
 import { useAuthentication } from '@/composables/useAuthentication'
+import type { CategoryList } from '@/models/CategoryList'
 
 //for toast
 const toast = useToast()
@@ -46,7 +47,7 @@ const { loading, error, createCategory, updateCategory, activateCategory, search
 
 //categories
 
-const categories = ref<CategoryView[]>([])
+const categories = ref<CategoryList[]>([])
 
 const totalRecords = ref<number>(0)
 const rows = ref<number>(10)
@@ -153,7 +154,7 @@ const viewCategory = (categoryData: CategoryView) => {
 //for confirm
 const confirm = useConfirm()
 
-const deleteCategory = (event: MouseEvent | KeyboardEvent, categoryData: CategoryView) => {
+const deleteCategory = (event: MouseEvent | KeyboardEvent, categoryData: CategoryList) => {
   const isActive = categoryData.status
 
   confirm.require({
@@ -171,7 +172,7 @@ const deleteCategory = (event: MouseEvent | KeyboardEvent, categoryData: Categor
       severity: isActive ? 'danger' : 'success',
     },
     accept: async () => {
-      await activateCategory(categoryData.id)
+      await activateCategory(categoryData.categoryId)
       showToast('Categoría eliminado exitosamente: ' + categoryData.name)
       loadCategories()
     },
@@ -272,22 +273,24 @@ const exportCSV = () => {
               sortable
               style="width: 60%"
             ></Column>
-            <Column>
+            <Column header="Acciones">
               <template #body="{ data }">
-                <div class="flex justify-between items-center flex-col sm:flex-row gap-1">
+                <div class="flex items-center flex-col sm:flex-row gap-1">
                   <Button
                     icon="pi pi-eye"
                     severity="info"
-                    variant="outlined"
+                    variant="text"
                     aria-label="Filter"
+                    size="small"
                     rounded
                     @click="viewCategory(data)"
                   ></Button>
                   <Button
                     icon="pi pi-pencil"
                     severity="warn"
-                    variant="outlined"
+                    variant="text"
                     aria-label="Filter"
+                    size="small"
                     rounded
                     v-if="roleMain==='Administrador'"
                     @click="editCategory(data)"
@@ -295,9 +298,10 @@ const exportCSV = () => {
                   <Button
                     icon="pi pi-trash"
                     severity="danger"
-                    variant="outlined"
+                    variant="text"
                     aria-label="Eliminar"
                     rounded
+                    size="small"
                     v-if="roleMain==='Administrador'"
                     @click="deleteCategory($event, data)"
                   />

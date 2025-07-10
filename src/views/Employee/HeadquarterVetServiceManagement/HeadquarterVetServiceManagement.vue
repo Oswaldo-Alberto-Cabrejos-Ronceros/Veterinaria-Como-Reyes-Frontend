@@ -33,6 +33,7 @@ import type { FormValues as AddHeadquarterVetServiceSchema } from '@/validation-
 import type { FormValues as EditHeadquarterVetServiceSchema } from '@/validation-schemas-forms/schema-edit-headquarter-vet-service'
 import { useAuthentication } from '@/composables/useAuthentication'
 import { useEmployee } from '@/composables/useEmployee'
+import type { ServiceList } from '@/models/ServiceList'
 //methods
 
 //toast
@@ -77,7 +78,7 @@ const headquartersOptions = ref<OptionSelect[]>([])
 
 const headquarters = ref<Headquarter[]>([])
 
-const services = ref<Service[]>([])
+const services = ref<ServiceList[]>([])
 
 const roleMain = ref<string>('')
 
@@ -148,11 +149,11 @@ const loadServices = async (event?: DataTablePageEvent) => {
   const size = event ? event.rows : rows.value
   rows.value = size
 
-  const response = await searchVeterinaryServices(page, size, {
-    name: name.value,
-    specie: specieId.value?.toString(),
-    category: categoryId.value?.toString(),
-  })
+  const response = await searchVeterinaryServices(page, size,
+   name.value,
+    specieId.value?.toString(),
+    categoryId.value?.toString(),
+  )
 
   services.value = response.content
   totalRecords.value = response.totalElements
