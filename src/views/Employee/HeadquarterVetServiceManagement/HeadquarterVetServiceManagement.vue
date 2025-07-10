@@ -12,7 +12,6 @@ import Select from 'primevue/select'
 import Button from 'primevue/button'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import type { Service } from '@/models/Service'
 import { onMounted, ref } from 'vue'
 import { useVeterinaryService } from '@/composables/useVeterinaryService'
 import type { Specie } from '@/models/Specie'
@@ -66,8 +65,8 @@ const { getEmployeeMyInfo } = useEmployee()
 const { getMainRole, getEntityId } = useAuthentication()
 
 const {
- /* enableHeadquarterVetService,
-  deleteHeadquarterVetService,*/
+  enableHeadquarterVetService,
+  deleteHeadquarterVetService,
   updateSimultaneousCapacity,
   createHeadquarterVetService,
   getHeadquarterVetServiceByHeadquarter,
@@ -149,8 +148,10 @@ const loadServices = async (event?: DataTablePageEvent) => {
   const size = event ? event.rows : rows.value
   rows.value = size
 
-  const response = await searchVeterinaryServices(page, size,
-   name.value,
+  const response = await searchVeterinaryServices(
+    page,
+    size,
+    name.value,
     specieId.value?.toString(),
     categoryId.value?.toString(),
   )
@@ -216,7 +217,7 @@ const exportCSV = () => {
 
 const dialog = useDialog()
 
-const addHeadquarterService = (headquarter: Headquarter, service: Service) => {
+const addHeadquarterService = (headquarter: Headquarter, service: ServiceList) => {
   dialog.open(AddHeadquarterVetServiceCard, {
     props: {
       modal: true,
@@ -224,7 +225,7 @@ const addHeadquarterService = (headquarter: Headquarter, service: Service) => {
     },
     data: {
       headquarterId: headquarter.id,
-      serviceId: service.id,
+      serviceId: service.serviceId,
     },
     onClose: async (options) => {
       const data = options?.data as AddHeadquarterVetServiceSchema
@@ -261,24 +262,34 @@ const editHeadquarterService = async (headquarterService: HeadquarterVetService 
         const data = options?.data as EditHeadquarterVetServiceSchema
         if (data) {
           console.log('data retornada', data)
-        /*  if (data.status) {
-            if (data.status === headquarterService.status) {
-              return
-            } else {
-              if (data.status) {
-                await enableHeadquarterVetService(headquarterService.headquarterId)
-              } else {
-                await deleteHeadquarterVetService(headquarterService.id)
-              }
-            }
+          const changeStatus = data.status !== headquarterService.status
+          const changeCapacity =
+            data.simultaneousCapacity !== headquarterService.simultaneousCapacity
 
-          }*/
-                      await updateSimultaneousCapacity(headquarterService.id, data.simultaneousCapacity)
-            showToast('Servicio por sede actualizado correctamente')
-            loadHeadquarterServices()
-          try {
-          } catch (error) {
-            console.error(error, 'Error al crear el servicio por sede')
+          if (!changeStatus && !changeCapacity) {
+            return
+          }
+
+          if (changeStatus) {
+            if (data.status) {
+              await enableHeadquarterVetService(headquarterService.headquarterId)
+            } else {
+              await deleteHeadquarterVetService(headquarterService.id)
+            }
+          }
+          if (changeCapacity) {
+            try {
+              console.log('intentando actualizar capacidad...')
+              const response = await updateSimultaneousCapacity(
+                headquarterService.id,
+                data.simultaneousCapacity,
+              )
+              console.log('respuesta de actualización', response)
+              showToast('Servicio por sede actualizado correctamente')
+              loadHeadquarterServices()
+            } catch (error) {
+              console.error(error, 'Error al crear el servicio por sede')
+            }
           }
         }
       },
@@ -290,6 +301,7 @@ const editHeadquarterService = async (headquarterService: HeadquarterVetService 
 let headquarterServiceAux: HeadquarterVetService | undefined
 //ref when active headquarterservice
 const activedHeadquarterService = ref<boolean>(true)
+//const inanctivedHeadquarterService = ref<boolean>(false)
 </script>
 
 <template>
@@ -336,6 +348,7 @@ const activedHeadquarterService = ref<boolean>(true)
                 optionValue="value"
                 placeholder="Selecciona Especie"
                 @update:model-value="searchServicesDebounced"
+                showClear
               />
 
               <Message v-if="errors.specieId" severity="error" size="small" variant="simple">
@@ -355,13 +368,14 @@ const activedHeadquarterService = ref<boolean>(true)
                 optionValue="value"
                 placeholder="Selecciona Categoria"
                 @update:model-value="searchServicesDebounced"
+                showClear
               />
               <Message v-if="errors.specieId" severity="error" size="small" variant="simple">
                 {{ errors.specieId }}
               </Message>
             </div>
             <!-- headquarter -->
-            <div                 v-if="roleMain==='Administrador'">
+            <div v-if="roleMain === 'Administrador'">
               <label class="block mb-2">Sede</label>
               <Select
                 class="w-full"
@@ -370,7 +384,6 @@ const activedHeadquarterService = ref<boolean>(true)
                 optionValue="value"
                 placeholder="Selecciona Sede"
                 showClear
-
               />
             </div>
           </form>
@@ -429,7 +442,7 @@ const activedHeadquarterService = ref<boolean>(true)
                 <template
                   v-if="
                     headquarterServiceAux = headquarterServices[index]?.find(
-                      (s) => s.service.id === data.id,
+                      (s) => s.service.id === data.serviceId,
                     )
                   "
                 >
@@ -446,7 +459,9 @@ const activedHeadquarterService = ref<boolean>(true)
                       aria-label="Editar"
                       size="small"
                       @click="
-                        editHeadquarterService(findHeadquarterVetService(headquarter.id, data.id))
+                        editHeadquarterService(
+                          findHeadquarterVetService(headquarter.id, data.serviceId),
+                        )
                       "
                     ></Button>
                   </div>

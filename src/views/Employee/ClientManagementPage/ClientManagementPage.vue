@@ -285,7 +285,7 @@ const statusOptions: OptionSelect[] = [
   },
   {
     value: false,
-    name: 'Desativado',
+    name: 'Desactivado',
   },
 ]
 
@@ -443,7 +443,7 @@ const headquartersToOptionsSelect = (headquarters: Headquarter[]): OptionSelect[
                     @click="editClient(data)"
                   ></Button>
                   <Button
-                    icon="pi pi-trash"
+                    icon="pi pi-ban"
                     severity="danger"
                     variant="text"
                     aria-label="Bloquear"

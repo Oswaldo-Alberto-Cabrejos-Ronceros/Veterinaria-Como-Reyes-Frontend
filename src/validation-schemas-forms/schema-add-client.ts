@@ -8,8 +8,8 @@ export const schema = yup.object({
     .string()
     .required('Dni es obligatorio')
     .matches(/^\d{8}$/, 'Dni inválido (debe tener 8 dígitos)'),
-  names: yup.string().required().max(50, 'Nombres debe tener menos de 50 dígitos'),
-  lastnames: yup.string().required().max(50, 'Nombres debe tener menos de 50 dígitos'),
+  names: yup.string().required('Nombres es obligatorio').max(50, 'Nombres debe tener menos de 50 dígitos'),
+  lastnames: yup.string().required('Apellidos es obligatorio').max(50, 'Nombres debe tener menos de 50 dígitos'),
   phone: yup
   .string()
   .required('El celular es obligatorio')

@@ -18,7 +18,7 @@ import type { OptionSelect } from '@/models/OptionSelect'
 
 //methods
 
-const { getInfoSimpleByReniec } = useReniec()
+const { loading,getInfoSimpleByReniec } = useReniec()
 
 //form
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
@@ -153,6 +153,7 @@ const searchInfoReniec = async () => {
               severity="secondary"
               variant="text"
               @click="searchInfoReniec()"
+              :loading="loading.getInfoSimpleByReniec"
             />
           </InputGroupAddon>
         </InputGroup>

@@ -275,6 +275,7 @@ const exportCSV = () => {
                 optionValue="value"
                 placeholder="Selecciona Especie"
                 @update:model-value="searchServicesDebounced"
+                showClear
               />
 
               <Message v-if="errors.specieId" severity="error" size="small" variant="simple">
@@ -293,22 +294,12 @@ const exportCSV = () => {
                 optionLabel="name"
                 optionValue="value"
                 placeholder="Selecciona Categoria"
+                showClear
                 @update:model-value="searchServicesDebounced"
               />
               <Message v-if="errors.specieId" severity="error" size="small" variant="simple">
                 {{ errors.specieId }}
               </Message>
-            </div>
-            <div class="form-button-search-container-grid-col-5">
-              <!-- button -->
-              <Button
-                label="Buscar"
-                type="submit"
-                severity="info"
-                icon="pi pi-search"
-                iconPos="right"
-                class="w-full"
-              />
             </div>
           </form>
 
@@ -409,7 +400,7 @@ const exportCSV = () => {
                     size="small"
                   ></Button>
                   <Button
-                    icon="pi pi-trash"
+                    icon="pi pi-ban"
                     severity="danger"
                     variant="text"
                     aria-label="Eliminar"

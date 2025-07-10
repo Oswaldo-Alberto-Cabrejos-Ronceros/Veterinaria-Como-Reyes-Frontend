@@ -218,17 +218,7 @@ const exportCSV = () => {
                 {{ errors.name }}
               </Message>
             </div>
-            <div class="form-button-search-container-grid-col-5">
-              <!-- button -->
-              <Button
-                label="Buscar"
-                type="submit"
-                severity="info"
-                icon="pi pi-search"
-                iconPos="right"
-                class="w-full"
-              />
-            </div>
+
           </form>
           <!-- for messague loading  -->
           <Message v-if="loading.getAllCategories" severity="warn" size="small" variant="simple">
@@ -296,7 +286,7 @@ const exportCSV = () => {
                     @click="editCategory(data)"
                   ></Button>
                   <Button
-                    icon="pi pi-trash"
+                    icon="pi pi-ban"
                     severity="danger"
                     variant="text"
                     aria-label="Eliminar"

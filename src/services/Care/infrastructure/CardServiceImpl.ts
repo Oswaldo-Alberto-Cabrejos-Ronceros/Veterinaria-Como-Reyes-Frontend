@@ -1,5 +1,5 @@
 import type { HttpClient } from '@/services/Http/model/HttpClient'
-import type { Care, CareRequest, CareRequestCreate, CareStatsToday, CreateCareFromAppointmentRequest } from '../domain/models/Care'
+import type { Care, CareList, CareRequest, CareRequestCreate, CareStatsToday, CreateCareFromAppointmentRequest } from '../domain/models/Care'
 import type { CareService } from '../domain/services/CareService'
 import type { PageResponse } from '@/services/models/PageResponse'
 import type { CareAndAppointmentPanelEmployee } from '@/services/Appointment/domain/models/Appointment'
@@ -54,7 +54,7 @@ export class CareServiceImpl implements CareService {
     idService?: number,
     page?: number,
     size?: number
-  ): Promise<PageResponse<Care>> {
+  ): Promise<PageResponse<CareList>> {
     const params = new URLSearchParams()
 
     if (status) params.append('estado', status)
@@ -64,7 +64,7 @@ export class CareServiceImpl implements CareService {
     if (page !== undefined) params.append('page', page.toString())
     if (size !== undefined) params.append('size', size.toString())
 
-    const response = await this.httpClient.get<PageResponse<Care>>(
+    const response = await this.httpClient.get<PageResponse<CareList>>(
       `${this.urlBase}/search?${params.toString()}`
     )
 

@@ -32,3 +32,23 @@ export interface  CareStatsToday {
   totalCares: number;
   todayCares: number;
 }
+
+
+export interface CareList {
+  careId: number
+  careDateTime: string
+  statusCare: string
+
+  animalName: string
+  animalSpecies: string
+  animalBreed: string
+
+  employeeFullName: string
+
+  serviceName: string
+  servicePrice: number
+
+  headquarterName: string
+
+  appointmentId: number
+}

@@ -1,6 +1,6 @@
 import { careUsesCases } from '@/dependency-injection/care.container'
 import { useAsyncHandler } from './useAsyncHandler'
-import type {  Care as CareView } from '@/models/Care'
+import type { Care as CareView } from '@/models/Care'
 import { CareAdapter } from '@/adapters/CareAdapter'
 import type { CareRequest, CareStatsToday } from '@/services/Care/domain/models/Care'
 import type { FormValues as AddCareFromAppoinmentSchema } from '@/validation-schemas-forms/schema-add-care-from-appointment'
@@ -8,6 +8,7 @@ import type { FormValues as AddCareFromRequestSchema } from '@/validation-schema
 import type { PageResponse } from '@/services/models/PageResponse'
 import type { CareAndAppointmentPanelEmployee as CareAndAppointmentPanelEmployeeView } from '@/models/CareAndAppointmentPanelEmployee'
 import { AppointmentAdapter } from '@/adapters/AppointmentAdapter'
+import type { CareList as CareListView } from '@/models/CareList'
 
 export function useCare() {
   const { loading, error, runUseCase } = useAsyncHandler()
@@ -71,12 +72,12 @@ export function useCare() {
     idService?: number,
     page?: number,
     size?: number,
-  ): Promise<PageResponse<CareView>> => {
+  ): Promise<PageResponse<CareListView>> => {
     const result = await runUseCase('searchCares', () =>
       careUsesCases.searchCares.execute(status, fecha, idHeadquarter, idService, page, size),
     )
 
-    const content = result.content.map((care) => CareAdapter.toView(care))
+    const content = result.content.map((care) => CareAdapter.fromCareListToCareListView(care))
 
     return {
       ...result,
@@ -107,12 +108,9 @@ export function useCare() {
   }
 
   const setOnGoingCare = async (id: number): Promise<CareView> => {
-    const care= await runUseCase('setOnGoingCare', () =>
-      careUsesCases.setOnGoingCare.execute(id)
-    )
+    const care = await runUseCase('setOnGoingCare', () => careUsesCases.setOnGoingCare.execute(id))
     return CareAdapter.toView(care)
   }
-
 
   return {
     loading,
@@ -129,6 +127,6 @@ export function useCare() {
     getCareStatsToday,
     getCaresForEmployee,
     getCaresByHeadquarterId,
-    setOnGoingCare
+    setOnGoingCare,
   }
 }

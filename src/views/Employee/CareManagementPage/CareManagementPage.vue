@@ -15,7 +15,6 @@ import { onMounted, ref } from 'vue'
 import type { Headquarter } from '@/models/Headquarter'
 import type { Service } from '@/models/Service'
 import { useCare } from '@/composables/useCare'
-import type { Care } from '@/models/Care'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import { useDialog, useToast } from 'primevue'
@@ -24,6 +23,7 @@ import type { FormValues as AddCareFromRequestSchema } from '@/validation-schema
 import { useRoute, useRouter } from 'vue-router'
 import type { DataTablePageEvent } from 'primevue/datatable'
 import { debounce } from 'lodash'
+import type { CareList } from '@/models/CareList'
 
 onMounted(async () => {
   headquartersOptions.value = headquartersServicesToOptionsSelect(await getAllHeadquarters())
@@ -36,7 +36,7 @@ const { loading, error, searchCares, completeCare, createCareFromRequest } = use
 
 //for cares
 
-const cares = ref<Care[]>([])
+const cares = ref<CareList[]>([])
 
 const totalRecords = ref(0)
 const rows = ref(10)
@@ -56,17 +56,17 @@ const loadCares = async (event?: DataTablePageEvent) => {
     headquarterId.value,
     headquarterServiceId.value,
     page,
-    size
+    size,
   )
 
   cares.value = result.content
   totalRecords.value = result.totalElements
+  console.log(cares.value)
 }
 
 const searchCaresDebounced = debounce(() => {
   loadCares()
 }, 400)
-
 
 const onCompleteCare = async (careId: number) => {
   try {
@@ -235,7 +235,12 @@ const viewCare = (careId: number) => {
                 placeholder="Selecciona Servicio"
               />
 
-              <Message v-if="errors.headquarterServiceId" severity="error" size="small" variant="simple">
+              <Message
+                v-if="errors.headquarterServiceId"
+                severity="error"
+                size="small"
+                variant="simple"
+              >
                 {{ errors.headquarterServiceId }}
               </Message>
             </div>
@@ -258,18 +263,7 @@ const viewCare = (careId: number) => {
                 {{ errors.status }}
               </Message>
             </div>
-            <div class="form-button-search-container-grid-col-5">
-              <!-- button -->
 
-              <Button
-                label="Buscar"
-                type="submit"
-                severity="info"
-                icon="pi pi-search"
-                iconPos="right"
-                class="w-full"
-              />
-            </div>
           </form>
 
           <!-- for messague loading  -->
@@ -306,43 +300,80 @@ const viewCare = (careId: number) => {
               </div>
             </template>
             <Column
-              field="dateTime"
+              field="careDateTime"
               sortable
               header="Dia programado"
               class="hidden lg:table-cell"
-              style="width: 30%"
+              style="width: 18%"
             ></Column>
             <Column
-              field="statusCare"
+              field="status"
               sortable
               header="Estado"
               class="hidden lg:table-cell"
-              style="width: 30%"
+              style="width: 18%"
             ></Column>
-            <Column>
+            <Column
+
+              sortable
+              header="Mascota"
+              class="hidden lg:table-cell"
+              style="width: 16%"
+            >
+              <template #body="{ data }">
+                {{ data.pet.name }}
+              </template>
+            </Column>
+
+            <Column
+
+              sortable
+              header="Empleado"
+              class="hidden lg:table-cell"
+              style="width: 20%"
+            >
+              <template #body="{ data }">
+                {{ data.employee.fullName?data.employee.fullName:'' }}
+              </template>
+            </Column>
+
+                        <Column
+
+              sortable
+              header="Sede"
+              class="hidden lg:table-cell"
+              style="width: 20%"
+            >
+              <template #body="{ data }">
+                {{ data.headquarter.name }}
+              </template>
+            </Column>
+
+            <Column header="Acciones">
               <template #body="slotProps">
-                <div
-                  class="flex justify-between items-center flex-row lg:flex-col xl:flex-row gap-1"
-                >
+                <div class="flex items-center flex-row lg:flex-col xl:flex-row gap-1">
                   <Button
                     icon="pi pi-eye"
                     severity="info"
-                    variant="outlined"
-                    aria-label="Filter"
+                    variant="text"
+                    size="small"
+                    aria-label="Ver"
                     rounded
                   ></Button>
                   <Button
                     icon="pi pi-calendar-clock"
                     severity="warn"
-                    variant="outlined"
-                    aria-label="Filter"
+                      variant="text"
+                    size="small"
+                    aria-label="Atender"
                     rounded
                     @click="viewCare(slotProps.data.id)"
                   ></Button>
                   <Button
                     icon="pi pi-trash"
                     severity="danger"
-                    variant="outlined"
+                      variant="text"
+                      size="small"
                     aria-label="Eliminar"
                     rounded
                   ></Button>

@@ -67,7 +67,7 @@ export class ClientServiceImpl implements ClientService {
     return response.data
   }
   async blockClient(clientId: number, note: string): Promise<void> {
-    await this.httpClient.patch<void>(`${this.urlBase}/${clientId}/block`, {
+    await this.httpClient.patch<void>(`${this.urlBase}/${clientId}/block`,null, {
       note: note,
     })
   }

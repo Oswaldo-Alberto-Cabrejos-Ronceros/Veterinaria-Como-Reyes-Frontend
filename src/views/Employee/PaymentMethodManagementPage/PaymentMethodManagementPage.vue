@@ -201,17 +201,6 @@ const exportCSV = () => {
                 {{ errors.name }}
               </Message>
             </div>
-            <div class="form-button-search-container-grid-col-5">
-              <!-- button -->
-              <Button
-                label="Buscar"
-                type="submit"
-                severity="info"
-                icon="pi pi-search"
-                iconPos="right"
-                class="w-full"
-              />
-            </div>
           </form>
 
           <!-- for messague loading  -->
@@ -262,30 +251,33 @@ const exportCSV = () => {
               sortable
               style="width: 60%"
             ></Column>
-            <Column>
+            <Column header="Acciones">
               <template #body="{ data }">
-                <div class="flex justify-between items-center flex-col sm:flex-row gap-1">
+                <div class="flex items-center flex-col sm:flex-row gap-1">
                   <Button
                     icon="pi pi-eye"
                     severity="info"
-                    variant="outlined"
-                    aria-label="Filter"
+                    variant="text"
+                    size="small"
+                    aria-label="Ver"
                     rounded
                     @click="viewPaymentMethod(data)"
                   ></Button>
                   <Button
                     icon="pi pi-pencil"
                     severity="warn"
-                    variant="outlined"
-                    aria-label="Filter"
+                    variant="text"
+                    size="small"
+                    aria-label="Editar"
                     rounded
                     @click="editPaymentMethod(data)"
                   ></Button>
                   <Button
-                    icon="pi pi-trash"
+                    icon="pi pi-ban"
                     severity="danger"
-                    variant="outlined"
-                    aria-label="Eliminar"
+                    variant="text"
+                    size="small"
+                    aria-label="Bloquear"
                     rounded
                     @click="deletePaymentMethod($event, data)"
                   />

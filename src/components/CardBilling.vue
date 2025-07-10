@@ -13,36 +13,37 @@ import { usePayment } from '@/composables/usePayment'
 const props = defineProps<{
   serviceName: string
   price: number
-  paymentMethodId:number
-  status:string,
-  paymentId:number,
-  buttonActive:boolean
+  paymentMethodId: number
+  status: string
+  paymentId: number
+  buttonActive: boolean
 }>()
-
 
 //for
 
-const {loading,setPaymentStatusComplete} = usePayment()
+const { loading, setPaymentStatusComplete } = usePayment()
 
 //ref
-const paymentMethodIdref=ref<number>(0)
+const paymentMethodIdref = ref<number>(0)
 
 const paymentMethodsOptions = ref<OptionSelect[]>([])
 
 const { getAllPaymentMethods } = usePaymentMethod()
-const paymentIdsToOptionsSelect = (
-  items: PaymentMethod[],
-): OptionSelect[] => {
+const paymentIdsToOptionsSelect = (items: PaymentMethod[]): OptionSelect[] => {
   return items.map((item) => ({
     value: item.id,
     name: item.name,
   }))
 }
 
-onMounted(async ()=>{
-   paymentMethodsOptions.value = paymentIdsToOptionsSelect(await getAllPaymentMethods())
-  paymentMethodIdref.value=props.paymentMethodId
-  })
+const handleCompletePayment = async () => {
+  setPaymentStatusComplete(props.paymentId)
+}
+
+onMounted(async () => {
+  paymentMethodsOptions.value = paymentIdsToOptionsSelect(await getAllPaymentMethods())
+  paymentMethodIdref.value = props.paymentMethodId
+})
 
 const subtotal = ref<number>(props.price * 0.82)
 const igv = ref<number>(Number((props.price - subtotal.value).toFixed(1)))
@@ -53,65 +54,71 @@ const igv = ref<number>(Number((props.price - subtotal.value).toFixed(1)))
     <template #title>
       <div class="flex gap-2 items-center justify-between">
         <div class="flex gap-2 items-center">
-        <i class="pi pi-money-bill"></i>
-        <p>Facturación</p>
+          <i class="pi pi-money-bill"></i>
+          <p>Facturación</p>
         </div>
-        <Tag severity="secondary" :value="status"/>
+        <Tag severity="secondary" :value="status" />
       </div>
     </template>
     <template #subtitle>
       <p>Procesamiento de pago</p>
     </template>
     <template #content>
-      <div >
-      <h3 class="textLg font-semibold">Servicio programado</h3>
-      <div
-        class="mt-4 rounded-sm bg-surface-100 dark:bg-surface-800 flex items-center justify-between p-3"
-      >
-        <p class="textLg font-semibold">{{ serviceName }}</p>
-        <p class="textLg font-semibold text-green-600 dark:text-green-400">S/ {{price}}</p>
-      </div>
-      <Divider />
-      <div class="textLg flex items-center justify-between">
-        <p>Subtotal:</p>
-        <p>S/ {{ subtotal }}</p>
-      </div>
-      <div class="textLg flex items-center justify-between mt-2">
-        <p>IGV (18%):</p>
-        <p>S/ {{ igv }}</p>
-      </div>
-      <Divider />
-      <div
-        class="textLg mb-4 font-bold text-green-600 dark:text-green-400 flex items-center justify-between"
-      >
-        <p>Total:</p>
-        <p>S/ {{ price }}</p>
-      </div>
-      <p>Método de pago</p>
-      <Select       v-model="paymentMethodIdref"      optionLabel="name"
-            optionValue="value"
-            placeholder="Selecciona método de pago" :options="paymentMethodsOptions" class="w-full mt-4" fluid />
-      <div class="w-full flex gap-4 mt-4">
-        <Button
-          severity="success"
-          icon-pos="left"
-          icon="pi pi-credit-card"
-          label="Procesar pago"
-          class="flex-1"
-          type="submit"
-          :disabled="status==='Completada'||buttonActive"
-          :loading="loading.setPaymentStatusComplete"
-          @click="setPaymentStatusComplete(paymentId)"
+      <div>
+        <h3 class="textLg font-semibold">Servicio programado</h3>
+        <div
+          class="mt-4 rounded-sm bg-surface-100 dark:bg-surface-800 flex items-center justify-between p-3"
+        >
+          <p class="textLg font-semibold">{{ serviceName }}</p>
+          <p class="textLg font-semibold text-green-600 dark:text-green-400">S/ {{ price }}</p>
+        </div>
+        <Divider />
+        <div class="textLg flex items-center justify-between">
+          <p>Subtotal:</p>
+          <p>S/ {{ subtotal }}</p>
+        </div>
+        <div class="textLg flex items-center justify-between mt-2">
+          <p>IGV (18%):</p>
+          <p>S/ {{ igv }}</p>
+        </div>
+        <Divider />
+        <div
+          class="textLg mb-4 font-bold text-green-600 dark:text-green-400 flex items-center justify-between"
+        >
+          <p>Total:</p>
+          <p>S/ {{ price }}</p>
+        </div>
+        <p>Método de pago</p>
+        <Select
+          v-model="paymentMethodIdref"
+          optionLabel="name"
+          optionValue="value"
+          placeholder="Selecciona método de pago"
+          :options="paymentMethodsOptions"
+          class="w-full mt-4"
+          fluid
         />
-        <Button
-          label="Generar Boleta"
-          icon="pi pi-receipt"
-          icon-pos="left"
-          variant="outlined"
-          severity="secondary"
-        />
+        <div class="w-full flex gap-4 mt-4">
+          <Button
+            severity="success"
+            icon-pos="left"
+            icon="pi pi-credit-card"
+            label="Procesar pago"
+            class="flex-1"
+            type="submit"
+            :disabled="status === 'Completada' || buttonActive"
+            :loading="loading.setPaymentStatusComplete"
+            @click="handleCompletePayment()"
+          />
+          <Button
+            label="Generar Boleta"
+            icon="pi pi-receipt"
+            icon-pos="left"
+            variant="outlined"
+            severity="secondary"
+          />
+        </div>
       </div>
-    </div>
     </template>
   </Card>
 </template>

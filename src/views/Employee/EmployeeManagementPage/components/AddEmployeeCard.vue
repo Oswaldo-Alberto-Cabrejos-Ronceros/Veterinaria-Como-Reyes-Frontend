@@ -18,7 +18,7 @@ import { useReniec } from '@/composables/useReniec'
 
 //methods
 
-const { getInfoSimpleByReniec } = useReniec()
+const { loading,getInfoSimpleByReniec } = useReniec()
 
 //form
 
@@ -188,6 +188,7 @@ const cmvpActive = (id:number):boolean=>{
               severity="secondary"
               variant="text"
               @click="searchInfoReniec()"
+              :loading="loading.getInfoSimpleByReniec"
             />
           </InputGroupAddon>
         </InputGroup>
