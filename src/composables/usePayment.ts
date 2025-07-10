@@ -4,7 +4,7 @@ import type { PaymentList as PaymentListView } from '@/models/PaymentList'
 import { PaymentAdapter } from '@/adapters/PaymentAdapter'
 import { paymentUsesCases } from '@/dependency-injection/payment.container'
 import type { PageResponse } from '@/services/models/PageResponse'
-import type { IncomeStatsToday } from '@/services/Payment/domain/models/Payment'
+import type { IncomeStatsToday, WeeklyIncome } from '@/services/Payment/domain/models/Payment'
 import type { RecentPayment as RecentPaymentView } from '@/models/RecientPayment'
 
 export function usePayment() {
@@ -83,56 +83,68 @@ export function usePayment() {
     }
   }
 
-const getPaymentStatsByHeadquarter = async (headquarterId:number)=>{
-  return await runUseCase('getPaymentStatsByHeadquarter',()=>
+  const getPaymentStatsByHeadquarter = async (headquarterId: number) => {
+    return await runUseCase('getPaymentStatsByHeadquarter', () =>
+      paymentUsesCases.getPaymentStatsByHeadquarter.execute(headquarterId),
+    )
+  }
 
-  paymentUsesCases.getPaymentStatsByHeadquarter.execute(headquarterId))
-}
+  const getCompletedPaymentsStats = async () => {
+    return await runUseCase('getCompletedPaymentsStats', () =>
+      paymentUsesCases.getCompletedPaymentsStats.execute(),
+    )
+  }
 
-const getCompletedPaymentsStats = async ()=> {
-  return await runUseCase('getCompletedPaymentsStats', () =>
-    paymentUsesCases.getCompletedPaymentsStats.execute(),
+  const setPaymentStatusComplete = async (paymentId: number): Promise<void> => {
+    await runUseCase('setPaymentStatusComplete', () =>
+      paymentUsesCases.setPaymentStatusComplete.execute(paymentId),
+    )
+  }
+
+  const setPaymentStatusCancelled = async (paymentId: number): Promise<void> => {
+    await runUseCase('setPaymentStatusCancelled', () =>
+      paymentUsesCases.setPaymentStatusCancelled.execute(paymentId),
+    )
+  }
+
+  const setPaymentStatusPending = async (paymentId: number): Promise<void> => {
+    await runUseCase('setPaymentStatusPending', () =>
+      paymentUsesCases.setPaymentStatusPending.execute(paymentId),
+    )
+  }
+
+  const setPaymentStatusRefunded = async (paymentId: number): Promise<void> => {
+    await runUseCase('setPaymentStatusRefunded', () =>
+      paymentUsesCases.setPaymentStatusRefunded.execute(paymentId),
+    )
+  }
+
+  //recepcionist
+
+  const getTodayIncomeStats = async (): Promise<IncomeStatsToday> => {
+    return await runUseCase('getTodayIncomeStats', () =>
+      paymentUsesCases.getTodayIncomeStats.execute(),
+    )
+  }
+  const getRecentCompletedPayments = async (
+    headquarterId: number,
+  ): Promise<RecentPaymentView[]> => {
+    const payments = await runUseCase('getRecentCompletedPayments', () =>
+      paymentUsesCases.getRecentCompletedPayments.execute(headquarterId),
+    )
+    return payments.map((payment) => PaymentAdapter.toRecentPaymentView(payment))
+  }
+
+  const getWeeklyIncomeGeneral = async (): Promise<WeeklyIncome> => {
+    return await runUseCase('getWeeklyIncomeGeneral', () =>
+      paymentUsesCases.getWeeklyIncomeGeneral.execute(),
+    )
+  }
+
+  const getWeeklyIncomeByHeadquarter = async (headquarterId: number) => {
+  return await runUseCase('getWeeklyIncomeByHeadquarter', () =>
+    paymentUsesCases.getWeeklyIncomeByHeadquarter.execute(headquarterId),
   )
-}
-
-const setPaymentStatusComplete = async (paymentId: number): Promise<void> => {
-  await runUseCase('setPaymentStatusComplete', () =>
-    paymentUsesCases.setPaymentStatusComplete.execute(paymentId),
-  )
-}
-
-const setPaymentStatusCancelled = async (paymentId: number): Promise<void> => {
-  await runUseCase('setPaymentStatusCancelled', () =>
-    paymentUsesCases.setPaymentStatusCancelled.execute(paymentId),
-  )
-}
-
-const setPaymentStatusPending = async (paymentId: number): Promise<void> => {
-  await runUseCase('setPaymentStatusPending', () =>
-    paymentUsesCases.setPaymentStatusPending.execute(paymentId),
-  )
-}
-
-const setPaymentStatusRefunded = async (paymentId: number): Promise<void> => {
-  await runUseCase('setPaymentStatusRefunded', () =>
-    paymentUsesCases.setPaymentStatusRefunded.execute(paymentId),
-  )
-}
-
-//recepcionist
-
-const getTodayIncomeStats = async (): Promise<IncomeStatsToday> => {
-  return await runUseCase('getTodayIncomeStats', () =>
-    paymentUsesCases.getTodayIncomeStats.execute(),
-  )
-}
-const getRecentCompletedPayments = async (
-  headquarterId: number,
-): Promise<RecentPaymentView[]> => {
-  const payments = await runUseCase('getRecentCompletedPayments', () =>
-    paymentUsesCases.getRecentCompletedPayments.execute(headquarterId),
-  )
-  return payments.map((payment) => PaymentAdapter.toRecentPaymentView(payment))
 }
 
   return {
@@ -152,6 +164,8 @@ const getRecentCompletedPayments = async (
     setPaymentStatusPending,
     setPaymentStatusRefunded,
     getTodayIncomeStats,
-    getRecentCompletedPayments
+    getRecentCompletedPayments,
+    getWeeklyIncomeGeneral,
+    getWeeklyIncomeByHeadquarter
   }
 }

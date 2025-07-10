@@ -7,7 +7,7 @@ export interface Appointment {
   creationDate: string
   cancellationNote?: string
   statusAppointment: string
-  headquarterVetService: {id:number}
+  headquarterVetService: { id: number }
   assignedEmployee?: Employee
   animal: Animal
 }
@@ -19,7 +19,6 @@ export interface AppointmentRequest {
   animalId: number
   paymentMethodId: number
 }
-
 
 export interface TimesForTurn {
   turn: string
@@ -33,87 +32,80 @@ export interface FormatTime {
 
 export interface BasicServiceForAppointment {
   headquarterServiceId: number
-  serviceId:number
+  serviceId: number
   name: string
   description: string
   price: string
   duration: number
-  specieName:string
-  serviceImageUrl:string
-  categoryName:string
+  specieName: string
+  serviceImageUrl: string
+  categoryName: string
 }
 
-
-export interface InfoBasicAppointment{
-  id:number
-  date:string
-  time:string
-  animalName:string
-  serviceName:string
-  serviceDescription:string
-  serviceImage:string
-  categoryServiceName:string
-  status:string
-  duration:number
+export interface InfoBasicAppointment {
+  id: number
+  date: string
+  time: string
+  animalName: string
+  serviceName: string
+  serviceDescription: string
+  serviceImage: string
+  categoryServiceName: string
+  status: string
+  duration: number
 }
 
-
-export interface AppointmentList{
-    appointmentId:number;
-    day:string;
-    headquarter:string;
-    categoryService:string;
-    appointmentStatus:string;
+export interface AppointmentList {
+  appointmentId: number
+  day: string
+  headquarter: string
+  categoryService: string
+  appointmentStatus: string
 }
 
-
-export interface InfoAppointmentForPanel{
-  idAppointment: number;
-  timeAppointment: string;
-  comment: string;
-  serviceId: number;
-  serviceTime: number;
-  serviceName: string;
-  employeeId: number;
-  employeeName: string;
-  employeeRole: string;
+export interface InfoAppointmentForPanel {
+  idAppointment: number
+  timeAppointment: string
+  comment: string
+  serviceId: number
+  serviceTime: number
+  serviceName: string
+  employeeId: number
+  employeeName: string
+  employeeRole: string
 }
-
 
 export interface AnimalInfoForAppointment {
-  animalId: number;
-  birthDate: string;
-  name: string;
-  urlImage: string;
-  weight: number;
-  breedName: string;
-  speciesName: string;
-  animalComment: string;
+  animalId: number
+  birthDate: string
+  name: string
+  urlImage: string
+  weight: number
+  breedName: string
+  speciesName: string
+  animalComment: string
 }
-
-
 
 export interface ClientInfoForAppointment {
-  clientId: string;
-  fullName: string;
-  phoneNumber: string;
-  email: string;
-  address: string;
+  clientId: string
+  fullName: string
+  phoneNumber: string
+  email: string
+  address: string
 }
 
-
 export interface PaymentInfoForAppointment {
-  paymentId: number;
-  amount: number;
-  serviceName: string;
-  paymentMethodId: number;
-  paymentMethod: string;
-  paymentStatus: string;
+  paymentId: number
+  amount: number
+  serviceName: string
+  paymentMethodId: number
+  paymentMethod: string
+  paymentStatus: string
 }
 
 export interface AppointmentStatsToday {
-  totalAppointments: number;
-  todayRegisteredAppointments: number;
+  totalAppointments: number
+  todayRegisteredAppointments: number
 }
 
 export interface AppointmentInfoPanelAdmin {
@@ -126,26 +118,24 @@ export interface AppointmentInfoPanelAdmin {
 }
 
 export interface CareAndAppointmentPanelEmployee {
-  id: number;
-  type: string;
-  animalId: number;
-  animalName: string;
-  serviceName: string;
-  clientName: string;
-  date: string;
-  hour: string;
-  status: string;
-  commentAppointment: string;
-  employeeId?: number;
-  employeeName?: string;
-  breedName: string;
+  id: number
+  type: string
+  animalId: number
+  animalName: string
+  serviceName: string
+  clientName: string
+  date: string
+  hour: string
+  status: string
+  commentAppointment: string
+  employeeId?: number
+  employeeName?: string
+  breedName: string
 }
 
-export interface AppointmentStatsForReceptionist{
-    totalAppointmentsToday: number
+export interface AppointmentStatsForReceptionist {
+  totalAppointmentsToday: number
   confirmedAppointmentsToday: number
   pendingAppointmentsToday: number
 }
-
-
 

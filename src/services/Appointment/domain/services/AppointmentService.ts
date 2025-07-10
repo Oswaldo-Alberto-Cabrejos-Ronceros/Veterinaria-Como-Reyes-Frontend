@@ -36,16 +36,17 @@ export interface AppointmentService {
   ): Promise<BasicServiceForAppointment[]>
   getAppointmentsForClient(clientId: number): Promise<InfoBasicAppointment[]>
   searchAppointments(params: SearchAppointmentParams): Promise<PageResponse<AppointmentList>>
-  getAppointmentPanelInfo(appointmentId:number):Promise<InfoAppointmentForPanel>
+  getAppointmentPanelInfo(appointmentId: number): Promise<InfoAppointmentForPanel>
   getAnimalInfo(appointmentId: number): Promise<AnimalInfoForAppointment>
   getClientInfo(appointmentId: number): Promise<ClientInfoForAppointment>
   getPaymentInfo(appointmentId: number): Promise<PaymentInfoForAppointment>
-getTodayAppointmentStats(): Promise<AppointmentStatsToday>
+  getTodayAppointmentStats(): Promise<AppointmentStatsToday>
   getTodayAppointmentStats(): Promise<AppointmentStatsToday>
   getAppointmentsByDateForPanelAdmin(): Promise<AppointmentInfoPanelAdmin[]>
   getAppointmentsByDateForPanelManager(headquarterId: number): Promise<AppointmentInfoPanelAdmin[]>
   getTodayAppointmentStatsByHeadquarter(headquarterId: number): Promise<AppointmentStatsToday>
-getCareAndAppointmentsForEmployee(employeeId: number): Promise<CareAndAppointmentPanelEmployee[]>;
+  getCareAndAppointmentsForEmployee(employeeId: number): Promise<CareAndAppointmentPanelEmployee[]>
   getStatsForReceptionist(): Promise<AppointmentStatsForReceptionist>
   getAppointmentsByHeadquarterId(headquarterId: number): Promise<CareAndAppointmentPanelEmployee[]>
+
 }

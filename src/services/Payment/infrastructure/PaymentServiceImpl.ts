@@ -1,6 +1,6 @@
 import type { HttpClient } from '@/services/Http/model/HttpClient'
 import type { PaymentService } from '../domain/services/PaymentService'
-import type { IncomeStatsToday, Payment, PaymentList, PaymentStatsForPanelAdmin, RecentPayment } from '../domain/models/Payment'
+import type { IncomeStatsToday, Payment, PaymentList, PaymentStatsForPanelAdmin, RecentPayment, WeeklyIncome } from '../domain/models/Payment'
 import type { PageResponse } from '@/services/models/PageResponse'
 
 export class PaymentServiceImpl implements PaymentService {
@@ -131,4 +131,16 @@ async getRecentCompletedPayments(headquarterId: number): Promise<RecentPayment[]
   )
   return response.data
 }
+  async getWeeklyIncomeGeneral(): Promise<WeeklyIncome> {
+    const response = await this.httpClient.get<WeeklyIncome>('/panel-admin/payment/weekly')
+    return response.data
+  }
+
+  async getWeeklyIncomeByHeadquarter(headquarterId: number): Promise<WeeklyIncome> {
+  const response = await this.httpClient.get<WeeklyIncome>(
+    `${this.urlBase}/weekly/${headquarterId}`,
+  )
+  return response.data
+}
+
 }

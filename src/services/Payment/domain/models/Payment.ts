@@ -49,3 +49,8 @@ export interface RecentPayment {
   paymentTime: string;
   paymentStatus: string;
 }
+
+export interface WeeklyIncome {
+  days: string[]
+  totals: number[]
+}

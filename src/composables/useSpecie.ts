@@ -55,18 +55,17 @@ export function useSpecie() {
   }
 
   const activateSpecie = async (specieId: number): Promise<void> => {
-    await runUseCase('activateSpecie', () =>
-      specieUsesCases.activateSpecie.execute(specieId))
+    await runUseCase('activateSpecie', () => specieUsesCases.activateSpecie.execute(specieId))
   }
 
   const searchSpecies = async (
     page: number,
     size: number,
     name?: string,
-    status?: boolean
+    status?: boolean,
   ): Promise<PageResponse<SpecieListView>> => {
     const result = await runUseCase('searchSpecies', () =>
-      specieUsesCases.searchSpecies.execute(page, size, name, status)
+      specieUsesCases.searchSpecies.execute(page, size, name, status),
     )
     return {
       ...result,
@@ -74,11 +73,15 @@ export function useSpecie() {
     }
   }
 
+  const getTopSpeciesGeneral = async () => {
+    return await runUseCase('getTopSpeciesGeneral', () =>
+      specieUsesCases.getTopSpeciesGeneral.execute(),
+    )
+  }
 
-
-  const getTopSpeciesGeneral = async()=>{
-    return await runUseCase('getTopSpeciesGeneral',()=>
-    specieUsesCases.getTopSpeciesGeneral.execute()
+  const getTopSpeciesByHeadquarter = async (headquarterId: number) => {
+    return await runUseCase('getTopSpeciesByHeadquarter', () =>
+      specieUsesCases.getTopSpeciesGeneralByHeadquarter.execute(headquarterId),
     )
   }
 
@@ -92,6 +95,7 @@ export function useSpecie() {
     updateSpecie,
     activateSpecie,
     searchSpecies,
-    getTopSpeciesGeneral
+    getTopSpeciesGeneral,
+    getTopSpeciesByHeadquarter
   }
 }

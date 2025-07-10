@@ -15,6 +15,8 @@ import { SetPaymentStatusRefunded } from '@/services/Payment/aplication/SetPayme
 import { SetPaymentStatusComplete } from '@/services/Payment/aplication/SetPaymentStatusComplete'
 import { GetTodayIncomeStatsUseCase } from '@/services/Payment/aplication/GetTodayIncomeStats'
 import { GetRecentCompletedPaymentsUseCase } from '@/services/Payment/aplication/GetRecentCompletedPayments'
+import { GetWeeklyIncomeGeneral } from '@/services/Payment/aplication/GetWeeklyIncomeGeneral'
+import { GetWeeklyIncomeByHeadquarter } from '@/services/Payment/aplication/GetWeeklyIncomeByHeadquarter'
 
 // Instancia del cliente HTTP
 const axiosHttpClient = new AxiosHttpClient()
@@ -39,4 +41,7 @@ export const paymentUsesCases = {
   setPaymentStatusRefunded: new SetPaymentStatusRefunded(paymentService),
     getTodayIncomeStats: new GetTodayIncomeStatsUseCase(paymentService),
   getRecentCompletedPayments: new GetRecentCompletedPaymentsUseCase(paymentService),
+getWeeklyIncomeGeneral: new GetWeeklyIncomeGeneral(paymentService),
+getWeeklyIncomeByHeadquarter: new GetWeeklyIncomeByHeadquarter(paymentService),
+
 }

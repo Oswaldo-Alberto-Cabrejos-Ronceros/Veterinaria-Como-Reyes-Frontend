@@ -17,4 +17,5 @@ export interface SpecieService {
   ): Promise<PageResponse<SpecieList>>
 
   getTopSpeciesGeneral(): Promise<TopSpeciesByAppointments>
+getTopSpeciesByHeadquarter(headquarterId: number): Promise<TopSpeciesByAppointments>
 }
