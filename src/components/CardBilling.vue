@@ -97,6 +97,7 @@ const igv = ref<number>(Number((props.price - subtotal.value).toFixed(1)))
           placeholder="Selecciona método de pago"
           :options="paymentMethodsOptions"
           class="w-full mt-4"
+          :disabled="status === 'Completada' || buttonActive"
           fluid
         />
         <div class="w-full flex gap-4 mt-4">

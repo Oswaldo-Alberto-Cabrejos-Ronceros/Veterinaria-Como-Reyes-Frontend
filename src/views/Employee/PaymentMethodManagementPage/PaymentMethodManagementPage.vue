@@ -23,6 +23,8 @@ import { debounce } from 'lodash'
 import type { DataTablePageEvent } from 'primevue/datatable'
 import type { PaymentMethodList } from '@/models/PaymentMethodList'
 import { useAuthentication } from '@/composables/useAuthentication'
+import type { OptionSelect } from '@/models/OptionSelect'
+import Select from 'primevue/select'
 
 //toast
 const toast = useToast()
@@ -71,7 +73,7 @@ const loadPaymentMethods = async (event?: DataTablePageEvent) => {
   const size = event ? event.rows : rows.value
   rows.value = size
 
-  const response = await searchPaymentMethods(page, size, name.value)
+  const response = await searchPaymentMethods(page, size, name.value,status.value)
 
   paymentMethods.value = response.content
   totalRecords.value = response.totalElements
@@ -86,10 +88,13 @@ const { handleSubmit, errors, defineField } = useForm<SearchPaymentMethotSchema>
   validationSchema: toTypedSchema(schema),
   initialValues: {
     name: '',
+     status: true,
   },
 })
 
 const [name, nameAttrs] = defineField('name')
+const [status, statusAttrs] = defineField('status')
+
 
 const onSubmit = handleSubmit((values) => {
   console.log(values)
@@ -189,6 +194,19 @@ const dt = ref()
 const exportCSV = () => {
   dt.value.exportCSV()
 }
+
+
+const statusOptions: OptionSelect[] = [
+  {
+    value: true,
+    name: 'Activo',
+  },
+  {
+    value: false,
+    name: 'Desactivado',
+  },
+]
+
 </script>
 
 <template>
@@ -219,6 +237,26 @@ const exportCSV = () => {
                 {{ errors.name }}
               </Message>
             </div>
+                                    <!-- status -->
+
+            <div>
+              <label class="block mb-2">Estado</label>
+              <Select
+                class="w-full"
+                v-bind="statusAttrs"
+                v-model="status"
+                :options="statusOptions"
+                optionLabel="name"
+                optionValue="value"
+                placeholder="Selecciona Estado"
+                @update:model-value="searchPaymentMethodsDebounced"
+              />
+
+              <Message v-if="errors.status" severity="error" size="small" variant="simple">
+                {{ errors.status }}
+              </Message>
+            </div>
+
           </form>
 
           <!-- for messague loading  -->

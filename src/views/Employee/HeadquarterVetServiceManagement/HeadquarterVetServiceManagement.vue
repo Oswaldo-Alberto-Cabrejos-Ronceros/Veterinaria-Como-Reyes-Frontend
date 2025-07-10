@@ -81,6 +81,8 @@ const services = ref<ServiceList[]>([])
 
 const roleMain = ref<string>('')
 
+const headquarterIdSelected = ref<number | null>(null)
+
 const totalRecords = ref<number>(0)
 const rows = ref<number>(10)
 const first = ref<number>(0)
@@ -116,7 +118,14 @@ const loadData = async () => {
   if (role) {
     roleMain.value = role
     if (role === 'Administrador') {
-      headquarters.value = await getAllHeadquarters()
+      if (headquarterIdSelected.value === null) {
+        headquarters.value = await getAllHeadquarters()
+      } else {
+        headquarters.value = []
+        headquarters.value.push(await getHeadquarterById(headquarterIdSelected.value))
+        loadHeadquarterServices()
+        return
+      }
     } else {
       const id = getEntityId()
       if (id) {
@@ -384,6 +393,8 @@ const activedHeadquarterService = ref<boolean>(true)
                 optionValue="value"
                 placeholder="Selecciona Sede"
                 showClear
+                v-model="headquarterIdSelected"
+                @update:model-value="loadData"
               />
             </div>
           </form>

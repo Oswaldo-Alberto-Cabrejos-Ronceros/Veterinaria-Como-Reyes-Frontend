@@ -22,6 +22,8 @@ import type { DataTablePageEvent } from 'primevue/datatable'
 import { debounce } from 'lodash'
 import Tag from 'primevue/tag'
 import { useAuthentication } from '@/composables/useAuthentication'
+import type { OptionSelect } from '@/models/OptionSelect'
+import Select from 'primevue/select'
 
 //toast
 const toast = useToast()
@@ -58,7 +60,7 @@ const loadSpecies = async (event?: DataTablePageEvent) => {
   const page = event ? event.first / event.rows : 0
   const size = event ? event.rows : rows.value
   rows.value = size
-  const response = await searchSpecies(page, size, name.value)
+  const response = await searchSpecies(page, size, name.value,status.value)
   species.value = response.content
   totalRecords.value = response.totalElements
   const role = getMainRole()
@@ -72,10 +74,12 @@ const { handleSubmit, errors, defineField } = useForm<SearchSpecieSchema>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
     name: '',
+    status: true,
   },
 })
 
 const [name, nameAttrs] = defineField('name')
+const [status, statusAttrs] = defineField('status')
 
 const searchSpeciesDebounced = debounce(() => {
   loadSpecies()
@@ -166,6 +170,17 @@ const deleteSpecie = (event: MouseEvent | KeyboardEvent, specieData: SpecieList)
     },
   })
 }
+
+const statusOptions: OptionSelect[] = [
+  {
+    value: true,
+    name: 'Activo',
+  },
+  {
+    value: false,
+    name: 'Desactivado',
+  },
+]
 </script>
 
 <template>
@@ -194,6 +209,26 @@ const deleteSpecie = (event: MouseEvent | KeyboardEvent, specieData: SpecieList)
               </InputGroup>
               <Message v-if="errors.name" severity="error" size="small" variant="simple">
                 {{ errors.name }}
+              </Message>
+            </div>
+
+            <!-- status -->
+
+            <div>
+              <label class="block mb-2">Estado</label>
+              <Select
+                class="w-full"
+                v-bind="statusAttrs"
+                v-model="status"
+                :options="statusOptions"
+                optionLabel="name"
+                optionValue="value"
+                placeholder="Selecciona Estado"
+                @update:model-value="searchSpeciesDebounced"
+              />
+
+              <Message v-if="errors.status" severity="error" size="small" variant="simple">
+                {{ errors.status }}
               </Message>
             </div>
           </form>
@@ -226,8 +261,7 @@ const deleteSpecie = (event: MouseEvent | KeyboardEvent, specieData: SpecieList)
                   icon="pi pi-plus-circle"
                   iconPos="right"
                   severity="success"
-                  label="Agregar Especie
-                         "
+                  label="Agregar Especie"
                   v-if="roleMain === 'Administrador'"
                   @click="addSpecie"
                 />
@@ -243,7 +277,7 @@ const deleteSpecie = (event: MouseEvent | KeyboardEvent, specieData: SpecieList)
                 />
               </template>
             </Column>
-            <Column header="Acciones">
+            <Column header="Acciones" v-if="roleMain === 'Administrador'">
               <template #body="{ data }">
                 <div class="flex items-center flex-col sm:flex-row gap-1">
                   <Button

@@ -93,6 +93,7 @@ const setOnGoingTo = async ()=>{
   const response = await setOnGoingCare(Number(props.appointmentId))
   if(response){
     showToast('Cambiado en curso exitosamente')
+    loadInfo()
   }
 }
 
@@ -100,6 +101,7 @@ const handleCompleteCare = async ()=>{
 const response = await completeCare(Number(props.appointmentId))
 if(response){
     showToast('Cambiado en curso exitosamente')
+    loadInfo()
 }
 }
 

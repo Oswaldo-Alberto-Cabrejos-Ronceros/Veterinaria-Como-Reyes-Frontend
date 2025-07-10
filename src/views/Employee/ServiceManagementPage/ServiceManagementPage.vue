@@ -49,7 +49,7 @@ const {
   createVeterinaryService,
   updateVeterinaryService,
   activateVeterinaryService,
-  searchVeterinaryServices
+  searchVeterinaryServices,
 } = useVeterinaryService()
 
 const { getAllSpecies } = useSpecie()
@@ -60,6 +60,16 @@ const roleMain = ref<string>('')
 
 const { getMainRole } = useAuthentication()
 
+const statusOptions: OptionSelect[] = [
+  {
+    value: true,
+    name: 'Activo',
+  },
+  {
+    value: false,
+    name: 'Desactivado',
+  },
+]
 
 //services
 
@@ -88,13 +98,14 @@ const loadServices = async (event?: DataTablePageEvent) => {
     page,
     size,
     name.value,
-     specieId.value?.toString(),
-      categoryId.value?.toString(),
+    specieId.value?.toString(),
+    categoryId.value?.toString(),
+    status.value,
   )
   services.value = response.content
   totalRecords.value = response.totalElements
-    const role = getMainRole()
-  if(role){
+  const role = getMainRole()
+  if (role) {
     roleMain.value = role
   }
 }
@@ -106,6 +117,7 @@ const { handleSubmit, errors, defineField } = useForm<SearchServiceSchema>({
     name: '',
     specieId: undefined,
     categoryId: undefined,
+    status: true,
   },
 })
 
@@ -113,6 +125,7 @@ const { handleSubmit, errors, defineField } = useForm<SearchServiceSchema>({
 const [name, nameAttrs] = defineField('name')
 const [specieId, specieIdAttrs] = defineField('specieId')
 const [categoryId, categoryIdAttrs] = defineField('categoryId')
+const [status, statusAttrs] = defineField('status')
 
 //for submit
 
@@ -149,7 +162,7 @@ const viewService = (serviceData: ServiceView) => {
   dialog.open(ViewServiceCard, {
     props: {
       modal: true,
-            header:`${serviceData.name}`
+      header: `${serviceData.name}`,
     },
     data: {
       serviceData: serviceData,
@@ -161,7 +174,7 @@ const addService = async () => {
   dialog.open(AddEditServiceCard, {
     props: {
       modal: true,
-      header:'Agregar servicio'
+      header: 'Agregar servicio',
     },
     data: {
       speciesOptions: speciesToOptionsSelect(await getAllSpecies()),
@@ -185,7 +198,7 @@ const editService = async (serviceData: ServiceView) => {
   dialog.open(AddEditServiceCard, {
     props: {
       modal: true,
-      header:`${serviceData.name}`
+      header: `${serviceData.name}`,
     },
     data: {
       serviceData: {
@@ -266,7 +279,14 @@ const exportCSV = () => {
                 <InputGroupAddon class="text-neutral-400">
                   <i class="pi pi-info"></i>
                 </InputGroupAddon>
-                <InputText v-model="name" v-bind="nameAttrs" :invalid="Boolean(errors.name)" class="w-full" placeholder="Nombre" @update:model-value="searchServicesDebounced" />
+                <InputText
+                  v-model="name"
+                  v-bind="nameAttrs"
+                  :invalid="Boolean(errors.name)"
+                  class="w-full"
+                  placeholder="Nombre"
+                  @update:model-value="searchServicesDebounced"
+                />
               </InputGroup>
               <Message v-if="errors.name" severity="error" size="small" variant="simple">
                 {{ errors.name }}
@@ -311,6 +331,26 @@ const exportCSV = () => {
                 {{ errors.specieId }}
               </Message>
             </div>
+
+            <!-- status -->
+
+            <div>
+              <label class="block mb-2">Estado</label>
+              <Select
+                class="w-full"
+                v-bind="statusAttrs"
+                v-model="status"
+                :options="statusOptions"
+                optionLabel="name"
+                optionValue="value"
+                placeholder="Selecciona Estado"
+                @update:model-value="searchServicesDebounced"
+              />
+
+              <Message v-if="errors.status" severity="error" size="small" variant="simple">
+                {{ errors.status }}
+              </Message>
+            </div>
           </form>
 
           <!-- for messague loading  -->
@@ -353,7 +393,7 @@ const exportCSV = () => {
                   severity="success"
                   label="Agregar Servicio"
                   @click="addService"
-                  v-if="roleMain==='Administrador'"
+                  v-if="roleMain === 'Administrador'"
                 />
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
@@ -389,9 +429,7 @@ const exportCSV = () => {
             ></Column>
             <Column header="Acciones">
               <template #body="{ data }">
-                <div
-                  class="flex items-center flex-row lg:flex-col xl:flex-row gap-1"
-                >
+                <div class="flex items-center flex-row lg:flex-col xl:flex-row gap-1">
                   <Button
                     icon="pi pi-eye"
                     severity="info"
@@ -409,7 +447,7 @@ const exportCSV = () => {
                     rounded
                     @click="editService(data)"
                     size="small"
-                    v-if="roleMain==='Administrador'"
+                    v-if="roleMain === 'Administrador'"
                   ></Button>
                   <Button
                     icon="pi pi-ban"
@@ -418,7 +456,7 @@ const exportCSV = () => {
                     aria-label="Eliminar"
                     rounded
                     size="small"
-                     v-if="roleMain==='Administrador'"
+                    v-if="roleMain === 'Administrador'"
                     @click="deleteService($event, data)"
                   />
                 </div>

@@ -71,9 +71,10 @@ const loadBreeds = async (event?: DataTablePageEvent) => {
     size,
     name: name.value,
     specieName,
+    status: status.value,
   })
 
-  breeds.value=response.content
+  breeds.value = response.content
   totalRecords.value = response.totalElements
 }
 
@@ -92,11 +93,13 @@ const { handleSubmit, errors, defineField } = useForm<SearchBreedSchema>({
   initialValues: {
     name: '',
     specieId: undefined,
+    status: true,
   },
 })
 
 const [name, nameAttrs] = defineField('name')
 const [specieId, specieIdAttrs] = defineField('specieId')
+const [status, statusAttrs] = defineField('status')
 
 const onSubmit = handleSubmit((values) => {
   console.log(values)
@@ -109,7 +112,7 @@ const addBreed = () => {
   dialog.open(AddEditBreedCard, {
     props: {
       modal: true,
-      header:'Agregar raza'
+      header: 'Agregar raza',
     },
     data: {
       speciesOptions: speciesOptions,
@@ -130,7 +133,7 @@ const editBreed = (breedData: BreedList) => {
   dialog.open(AddEditBreedCard, {
     props: {
       modal: true,
-      header:`${breedData.name}`
+      header: `${breedData.name}`,
     },
     data: {
       breedData: {
@@ -187,6 +190,17 @@ const dt = ref()
 const exportCSV = () => {
   dt.value.exportCSV()
 }
+
+const statusOptions: OptionSelect[] = [
+  {
+    value: true,
+    name: 'Activo',
+  },
+  {
+    value: false,
+    name: 'Desactivado',
+  },
+]
 </script>
 
 <template>
@@ -237,6 +251,26 @@ const exportCSV = () => {
                 {{ errors.specieId }}
               </Message>
             </div>
+
+            <!-- status -->
+
+            <div>
+              <label class="block mb-2">Estado</label>
+              <Select
+                class="w-full"
+                v-bind="statusAttrs"
+                v-model="status"
+                :options="statusOptions"
+                optionLabel="name"
+                optionValue="value"
+                placeholder="Selecciona Estado"
+                @update:model-value="searchBreedsDebounced"
+              />
+
+              <Message v-if="errors.status" severity="error" size="small" variant="simple">
+                {{ errors.status }}
+              </Message>
+            </div>
           </form>
 
           <!-- for messague loading  -->
@@ -274,14 +308,17 @@ const exportCSV = () => {
               </div>
             </template>
             <Column field="name" sortable header="Nombre" style="width: 40%"></Column>
-            <Column sortable header="Especie" field="specieName"  style="width: 30%" class="hidden xs:table-cell">
-
+            <Column
+              sortable
+              header="Especie"
+              field="specieName"
+              style="width: 30%"
+              class="hidden xs:table-cell"
+            >
             </Column>
-            <Column header="Acciones" >
+            <Column header="Acciones">
               <template #body="{ data }">
-                <div
-                  class="flex items-center flex-row xs:flex-col lg:flex-row gap-1"
-                >
+                <div class="flex items-center flex-row xs:flex-col lg:flex-row gap-1">
                   <Button
                     icon="pi pi-eye"
                     severity="info"

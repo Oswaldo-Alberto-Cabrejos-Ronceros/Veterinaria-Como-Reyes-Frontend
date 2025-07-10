@@ -23,6 +23,8 @@ import type { DataTablePageEvent } from 'primevue/datatable'
 import { debounce } from 'lodash'
 import { useAuthentication } from '@/composables/useAuthentication'
 import type { CategoryList } from '@/models/CategoryList'
+import type { OptionSelect } from '@/models/OptionSelect'
+import Select from 'primevue/select'
 
 //for toast
 const toast = useToast()
@@ -69,12 +71,13 @@ const loadCategories = async (event?: DataTablePageEvent) => {
     page,
     size,
     name: name.value,
+    status: status.value,
   })
 
   categories.value = response.content
   totalRecords.value = response.totalElements
   const role = getMainRole()
-  if(role){
+  if (role) {
     roleMain.value = role
   }
 }
@@ -84,14 +87,27 @@ const { handleSubmit, errors, defineField } = useForm<SearchCategorySchema>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
     name: '',
+    status: true,
   },
 })
 
 const [name, nameAttrs] = defineField('name')
+const [status, statusAttrs] = defineField('status')
 
 const onSubmit = handleSubmit((values) => {
   console.log(values)
 })
+
+const statusOptions: OptionSelect[] = [
+  {
+    value: true,
+    name: 'Activo',
+  },
+  {
+    value: false,
+    name: 'Desactivado',
+  },
+]
 
 //for add
 
@@ -102,7 +118,7 @@ const addCategory = () => {
   dialog.open(AddEditCategoryCard, {
     props: {
       modal: true,
-      header: 'Agregar categoria'
+      header: 'Agregar categoria',
     },
     onClose: async (options) => {
       const data = options?.data as AddEditCategorySchema
@@ -122,7 +138,7 @@ const editCategory = (categoryData: CategoryView) => {
   dialog.open(AddEditCategoryCard, {
     props: {
       modal: true,
-      header:`${categoryData.name}`
+      header: `${categoryData.name}`,
     },
     data: {
       categoryData: categoryData as AddEditCategorySchema,
@@ -143,7 +159,7 @@ const viewCategory = (categoryData: CategoryView) => {
   dialog.open(ViewCategoryCard, {
     props: {
       modal: true,
-      header:`${categoryData.name}`
+      header: `${categoryData.name}`,
     },
     data: {
       categoryData: categoryData,
@@ -218,7 +234,25 @@ const exportCSV = () => {
                 {{ errors.name }}
               </Message>
             </div>
+            <!-- status -->
 
+            <div>
+              <label class="block mb-2">Estado</label>
+              <Select
+                class="w-full"
+                v-bind="statusAttrs"
+                v-model="status"
+                :options="statusOptions"
+                optionLabel="name"
+                optionValue="value"
+                placeholder="Selecciona Estado"
+                @update:model-value="searchCategoriesDebounced"
+              />
+
+              <Message v-if="errors.status" severity="error" size="small" variant="simple">
+                {{ errors.status }}
+              </Message>
+            </div>
           </form>
           <!-- for messague loading  -->
           <Message v-if="loading.getAllCategories" severity="warn" size="small" variant="simple">
@@ -249,7 +283,7 @@ const exportCSV = () => {
                   severity="success"
                   label="Agregar Categoria"
                   @click="addCategory"
-                  v-if="roleMain==='Administrador'"
+                  v-if="roleMain === 'Administrador'"
                 />
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
@@ -282,7 +316,7 @@ const exportCSV = () => {
                     aria-label="Filter"
                     size="small"
                     rounded
-                    v-if="roleMain==='Administrador'"
+                    v-if="roleMain === 'Administrador'"
                     @click="editCategory(data)"
                   ></Button>
                   <Button
@@ -292,7 +326,7 @@ const exportCSV = () => {
                     aria-label="Eliminar"
                     rounded
                     size="small"
-                    v-if="roleMain==='Administrador'"
+                    v-if="roleMain === 'Administrador'"
                     @click="deleteCategory($event, data)"
                   />
                 </div>
