@@ -22,6 +22,7 @@ import { usePaymentMethod } from '@/composables/usePaymentMethod'
 import { debounce } from 'lodash'
 import type { DataTablePageEvent } from 'primevue/datatable'
 import type { PaymentMethodList } from '@/models/PaymentMethodList'
+import { useAuthentication } from '@/composables/useAuthentication'
 
 //toast
 const toast = useToast()
@@ -34,6 +35,10 @@ const showToast = (message: string) => {
     life: 3000,
   })
 }
+
+const roleMain = ref<string>('')
+
+const { getMainRole } = useAuthentication()
 
 //get from compose
 
@@ -70,6 +75,10 @@ const loadPaymentMethods = async (event?: DataTablePageEvent) => {
 
   paymentMethods.value = response.content
   totalRecords.value = response.totalElements
+  const role = getMainRole()
+  if (role) {
+    roleMain.value = role
+  }
 }
 
 //form
@@ -93,7 +102,7 @@ const addPaymentMethod = () => {
   dialog.open(AddEditPaymentMethodCard, {
     props: {
       modal: true,
-      header:'Agregar método de pago'
+      header: 'Agregar método de pago',
     },
     onClose: async (options) => {
       const data = options?.data as AddEditPaymentMethodSchema
@@ -111,7 +120,7 @@ const viewPaymentMethod = (paymentMethodData: PaymentMethodView) => {
   dialog.open(ViewPaymentMethodCard, {
     props: {
       modal: true,
-      header:`${paymentMethodData.name}`
+      header: `${paymentMethodData.name}`,
     },
     data: {
       paymentMethodData: paymentMethodData,
@@ -123,7 +132,7 @@ const editPaymentMethod = (paymentMethodData: PaymentMethodView) => {
   dialog.open(AddEditPaymentMethodCard, {
     props: {
       modal: true,
-      header:`${paymentMethodData.name}`
+      header: `${paymentMethodData.name}`,
     },
     data: {
       paymentMethodData: paymentMethodData as AddEditPaymentMethodSchema,
@@ -143,7 +152,10 @@ const editPaymentMethod = (paymentMethodData: PaymentMethodView) => {
 //for confirm
 const confirm = useConfirm()
 
-const deletePaymentMethod = (event: MouseEvent | KeyboardEvent, paymentMethodData: PaymentMethodView) => {
+const deletePaymentMethod = (
+  event: MouseEvent | KeyboardEvent,
+  paymentMethodData: PaymentMethodView,
+) => {
   const isActive = true
 
   confirm.require({
@@ -171,7 +183,6 @@ const deletePaymentMethod = (event: MouseEvent | KeyboardEvent, paymentMethodDat
   })
 }
 
-
 //for export
 
 const dt = ref()
@@ -195,7 +206,14 @@ const exportCSV = () => {
                 <InputGroupAddon class="text-neutral-400">
                   <i class="pi pi-info"></i>
                 </InputGroupAddon>
-                <InputText v-model="name" v-bind="nameAttrs" :invalid="Boolean(errors.name)" @update:model-value="searchPaymentMethodsDebounced" class="w-full" placeholder="Nombre" />
+                <InputText
+                  v-model="name"
+                  v-bind="nameAttrs"
+                  :invalid="Boolean(errors.name)"
+                  @update:model-value="searchPaymentMethodsDebounced"
+                  class="w-full"
+                  placeholder="Nombre"
+                />
               </InputGroup>
               <Message v-if="errors.name" severity="error" size="small" variant="simple">
                 {{ errors.name }}
@@ -238,6 +256,7 @@ const exportCSV = () => {
                   severity="success"
                   label="Agregar Método"
                   @click="addPaymentMethod"
+                    v-if="roleMain==='Administrador'"
                 />
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
@@ -270,6 +289,7 @@ const exportCSV = () => {
                     size="small"
                     aria-label="Editar"
                     rounded
+                      v-if="roleMain==='Administrador'"
                     @click="editPaymentMethod(data)"
                   ></Button>
                   <Button
@@ -279,6 +299,7 @@ const exportCSV = () => {
                     size="small"
                     aria-label="Bloquear"
                     rounded
+                      v-if="roleMain==='Administrador'"
                     @click="deletePaymentMethod($event, data)"
                   />
                 </div>

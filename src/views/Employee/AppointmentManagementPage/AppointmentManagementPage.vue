@@ -94,9 +94,9 @@ const loadAppoinments = async (event?: DataTablePageEvent) => {
   rows.value = size
   const pageResponse = await searchAppointments({
     day: date.value ? DateAdapter.toDateYYYYmmDD(date.value) : undefined,
-    headquarter: headquarter.value,
-    categoryService: category.value,
-    appointmentStatus: status.value,
+    headquarter: headquarter.value ?? undefined,
+    categoryService: category.value ?? undefined,
+    appointmentStatus: status.value ?? undefined,
     page: page,
     size: size,
   })
@@ -347,6 +347,7 @@ const attendAppointment = (appointmentId: number) => {
                 v-model="date"
                 :invalid="Boolean(errors.date)"
                 placeholder="Selecciona Fecha"
+                showButtonBar
                 @update:model-value="searchAppointmentsDebounce()"
               />
 
@@ -366,6 +367,7 @@ const attendAppointment = (appointmentId: number) => {
                 optionLabel="name"
                 optionValue="value"
                 placeholder="Selecciona Sede"
+                showClear
                 @update:model-value="searchAppointmentsDebounce()"
               />
 
@@ -385,6 +387,7 @@ const attendAppointment = (appointmentId: number) => {
                 optionLabel="name"
                 optionValue="value"
                 placeholder="Selecciona Categoria"
+                showClear
                 @update:model-value="searchAppointmentsDebounce()"
               />
 
@@ -404,6 +407,7 @@ const attendAppointment = (appointmentId: number) => {
                 optionLabel="name"
                 optionValue="value"
                 placeholder="Selecciona Estado"
+                showClear
                 @update:model-value="searchAppointmentsDebounce()"
               />
 

@@ -27,6 +27,7 @@ import { useCategory } from '@/composables/useCategory'
 import type { DataTablePageEvent } from 'primevue/datatable'
 import { debounce } from 'lodash'
 import type { ServiceList } from '@/models/ServiceList'
+import { useAuthentication } from '@/composables/useAuthentication'
 
 //toast
 const toast = useToast()
@@ -54,6 +55,11 @@ const {
 const { getAllSpecies } = useSpecie()
 
 const { getAllCategories } = useCategory()
+
+const roleMain = ref<string>('')
+
+const { getMainRole } = useAuthentication()
+
 
 //services
 
@@ -87,6 +93,10 @@ const loadServices = async (event?: DataTablePageEvent) => {
   )
   services.value = response.content
   totalRecords.value = response.totalElements
+    const role = getMainRole()
+  if(role){
+    roleMain.value = role
+  }
 }
 
 //form
@@ -343,6 +353,7 @@ const exportCSV = () => {
                   severity="success"
                   label="Agregar Servicio"
                   @click="addService"
+                  v-if="roleMain==='Administrador'"
                 />
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
@@ -398,6 +409,7 @@ const exportCSV = () => {
                     rounded
                     @click="editService(data)"
                     size="small"
+                    v-if="roleMain==='Administrador'"
                   ></Button>
                   <Button
                     icon="pi pi-ban"
@@ -406,6 +418,7 @@ const exportCSV = () => {
                     aria-label="Eliminar"
                     rounded
                     size="small"
+                     v-if="roleMain==='Administrador'"
                     @click="deleteService($event, data)"
                   />
                 </div>

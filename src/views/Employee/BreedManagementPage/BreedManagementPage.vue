@@ -230,6 +230,7 @@ const exportCSV = () => {
                 optionLabel="name"
                 optionValue="value"
                 placeholder="Selecciona Especie"
+                showClear
               />
 
               <Message v-if="errors.specieId" severity="error" size="small" variant="simple">

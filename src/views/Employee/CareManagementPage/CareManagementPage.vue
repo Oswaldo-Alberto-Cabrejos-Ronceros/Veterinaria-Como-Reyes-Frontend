@@ -51,10 +51,10 @@ const loadCares = async (event?: DataTablePageEvent) => {
   const formattedDate = date.value ? date.value.toISOString().split('T')[0] : undefined
 
   const result = await searchCares(
-    status.value,
+    status.value??undefined,
     formattedDate,
-    headquarterId.value,
-    headquarterServiceId.value,
+    headquarterId.value??undefined,
+    headquarterServiceId.value??undefined,
     page,
     size,
   )
@@ -190,6 +190,7 @@ const viewCare = (careId: number) => {
                 class="w-full"
                 v-bind="dateAttrs"
                 v-model="date"
+                showButtonBar
                 :invalid="Boolean(errors.date)"
                 @update:model-value="searchCaresDebounced"
                 placeholder="Selecciona Fecha"
@@ -211,6 +212,7 @@ const viewCare = (careId: number) => {
                 :invalid="Boolean(errors.headquarterId)"
                 optionLabel="name"
                 optionValue="value"
+                showClear
                 placeholder="Selecciona Sede"
               />
 
@@ -232,6 +234,7 @@ const viewCare = (careId: number) => {
                 :invalid="Boolean(errors.headquarterServiceId)"
                 optionLabel="name"
                 optionValue="value"
+                showClear
                 placeholder="Selecciona Servicio"
               />
 
@@ -256,6 +259,7 @@ const viewCare = (careId: number) => {
                 :invalid="Boolean(errors.status)"
                 optionLabel="name"
                 optionValue="value"
+                showClear
                 placeholder="Selecciona Estado"
               />
 
@@ -369,20 +373,14 @@ const viewCare = (careId: number) => {
                     rounded
                     @click="viewCare(slotProps.data.id)"
                   ></Button>
-                  <Button
-                    icon="pi pi-trash"
-                    severity="danger"
-                      variant="text"
-                      size="small"
-                    aria-label="Eliminar"
-                    rounded
-                  ></Button>
+
                   <!-- completar si esta en curso -->
                   <Button
-                    v-if="slotProps.data.statusCare === 'EN_CURSO'"
+                    v-if="slotProps.data.status === 'En curso'"
                     icon="pi pi-check-circle"
                     severity="success"
-                    variant="outlined"
+                    variant="text"
+                    size="small"
                     aria-label="Completar"
                     rounded
                     @click="onCompleteCare(slotProps.data.id)"

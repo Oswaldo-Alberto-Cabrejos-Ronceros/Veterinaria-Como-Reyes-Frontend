@@ -16,6 +16,7 @@ import type { InfoAppointmentForPanel } from '@/models/InfoAppointmentForPanel'
 import type { PetInfoForAppointment } from '@/models/PetInfoForAppointment'
 import type { ClientInfoForAppointment } from '@/models/ClientInfoForAppointment'
 import type { PaymentInfoForAppointment } from '@/models/PaymentInfoForAppointment'
+import { usePayment } from '@/composables/usePayment'
 
 const props = defineProps<{
   appointmentId: string
@@ -26,6 +27,7 @@ const props = defineProps<{
 const { getAppointmentPanelInfo,getPetInfoForAppointment,getClientInfoForAppointment,getPaymentInfoForAppointment,getAppointmentById } = useAppointment()
 const { createCareFromAppointment } = useCare()
 
+const {setPaymentStatusComplete}=usePayment()
 
 
 //ref
@@ -40,6 +42,15 @@ onMounted(async () => {
   console.log(props.appointmentId)
   loadInfo()
 })
+
+
+const handleCompletePayment = async()=>{
+  if(paymentInfo.value){
+    await setPaymentStatusComplete(paymentInfo.value.paymentId)
+    showToast('Pago completado')
+    loadInfo()
+  }
+}
 
 
 const loadInfo = async () => {
@@ -165,6 +176,6 @@ const showToast = (message: string) => {
 
     <!-- payment -->
 
-    <CardBilling v-if="paymentInfo" :button-active="false" :payment-id="paymentInfo.paymentId" :status="paymentInfo.status" :payment-method-id="paymentInfo.paymentMethod.id" :serviceName="paymentInfo.serviceName" :price="paymentInfo.amount"/>
+    <CardBilling @complete-payment="handleCompletePayment" v-if="paymentInfo" :button-active="false" :payment-id="paymentInfo.paymentId" :status="paymentInfo.status" :payment-method-id="paymentInfo.paymentMethod.id" :serviceName="paymentInfo.serviceName" :price="paymentInfo.amount"/>
   </div>
 </template>

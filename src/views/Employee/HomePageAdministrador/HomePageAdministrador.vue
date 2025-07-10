@@ -14,7 +14,7 @@ import Chart from 'primevue/chart'
 import { useAppointment } from '@/composables/useAppointment'
 import type { AppointmentStatsToday } from '@/services/Appointment/domain/models/Appointment'
 import { usePayment } from '@/composables/usePayment'
-import type { PaymentStatsForPanelAdmin } from '@/services/Payment/domain/models/Payment'
+import type { PaymentStatsForPanelAdmin, WeeklyIncome } from '@/services/Payment/domain/models/Payment'
 import { useClient } from '@/composables/useClient'
 import type { ClientStatsPanel } from '@/services/Client/domain/models/Client'
 import type { AppointmentInfoPanelAdmin } from '@/models/AppointmentInfoPanelAdmin'
@@ -54,7 +54,7 @@ const appointmentsToday = ref<AppointmentInfoPanelAdmin[]>([])
 
 const clientsStats = ref<ClientStatsPanel | null>(null)
 
-const todayAppoinmentStats = ref<AppointmentStatsToday | null>()
+const todayAppoinmentStats = ref<AppointmentStatsToday | null>(null)
 
 const paymentStats = ref<PaymentStatsForPanelAdmin | null>(null)
 
@@ -66,7 +66,11 @@ const today = DateAdapter.toFormatView(new Date())
 
 const topsSpeciesGeneral = ref<TopSpeciesByAppointments|null>(null)
 
-const {getTopSpeciesGeneral} = useSpecie()
+const paymentWeekly = ref<WeeklyIncome|null>(null)
+
+const {getTopSpeciesByHeadquarter ,getTopSpeciesGeneral} = useSpecie()
+
+const {getWeeklyIncomeByHeadquarter ,getWeeklyIncomeGeneral}= usePayment()
 
 onMounted( async () => {
   await loadMyInfo()
@@ -92,6 +96,8 @@ const loadMyInfo = async () => {
       appointmentsToday.value = await getAppointmentsByDateForPanelAdmin()
       clientsRecent.value = await getClientInfoPanelAdmin()
       servicesTop.value = await getTopServicesForAdmin()
+      topsSpeciesGeneral.value = await getTopSpeciesGeneral()
+  paymentWeekly.value = await getWeeklyIncomeGeneral()
     } else {
       const headquarterId = myInfoEmployee.value?.headquarter.id
       if (headquarterId) {
@@ -101,10 +107,12 @@ const loadMyInfo = async () => {
         appointmentsToday.value = await getAppointmentsByDateForPanelManager(headquarterId)
         clientsRecent.value = await getClientInfoPanelByHeadquarter(headquarterId)
         servicesTop.value = await getTopServicesForManager(headquarterId)
+        topsSpeciesGeneral.value = await getTopSpeciesByHeadquarter(headquarterId)
+        paymentWeekly.value = await getWeeklyIncomeByHeadquarter(headquarterId)
       }
     }
   }
-  topsSpeciesGeneral.value = await getTopSpeciesGeneral()
+
   console.log(topsSpeciesGeneral.value)
 }
 
@@ -127,11 +135,11 @@ const setChartData = () => {
   const documentStyle = getComputedStyle(document.documentElement)
 
   return {
-    labels: ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'],
+    labels: paymentWeekly.value?.days,
     datasets: [
       {
         label: 'Ingresos',
-        data: [65, 59, 80, 81, 56, 55, 40],
+        data: paymentWeekly.value?.totals,
         fill: false,
         borderColor: documentStyle.getPropertyValue('--p-pink-500'),
         tension: 0.4,
@@ -276,7 +284,7 @@ const redirect = (url: string) => {
             title="Ingresos del mes"
             icon="pi-chart-line"
             :content="paymentStats.currentTotal.toString()"
-            :plus="`+${paymentStats.percentageDifference} vs mes anterior`"
+            :plus="`${paymentStats.percentageDifference} vs mes anterior`"
           ></CardNewsPrimary>
 
           <CardNewsPrimary

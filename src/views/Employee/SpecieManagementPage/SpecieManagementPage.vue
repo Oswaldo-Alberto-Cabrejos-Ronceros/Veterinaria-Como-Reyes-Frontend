@@ -21,6 +21,7 @@ import { useSpecie } from '@/composables/useSpecie'
 import type { DataTablePageEvent } from 'primevue/datatable'
 import { debounce } from 'lodash'
 import Tag from 'primevue/tag'
+import { useAuthentication } from '@/composables/useAuthentication'
 
 //toast
 const toast = useToast()
@@ -33,6 +34,10 @@ const showToast = (message: string) => {
     life: 3000,
   })
 }
+
+const roleMain = ref<string>('')
+
+const { getMainRole } = useAuthentication()
 
 //for get species
 
@@ -56,6 +61,10 @@ const loadSpecies = async (event?: DataTablePageEvent) => {
   const response = await searchSpecies(page, size, name.value)
   species.value = response.content
   totalRecords.value = response.totalElements
+  const role = getMainRole()
+  if (role) {
+    roleMain.value = role
+  }
 }
 
 //form
@@ -217,7 +226,9 @@ const deleteSpecie = (event: MouseEvent | KeyboardEvent, specieData: SpecieList)
                   icon="pi pi-plus-circle"
                   iconPos="right"
                   severity="success"
-                  label="Agregar Especie"
+                  label="Agregar Especie
+                         "
+                  v-if="roleMain === 'Administrador'"
                   @click="addSpecie"
                 />
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
@@ -242,6 +253,7 @@ const deleteSpecie = (event: MouseEvent | KeyboardEvent, specieData: SpecieList)
                     size="small"
                     aria-label="Editar"
                     rounded
+                    v-if="roleMain === 'Administrador'"
                     @click="editSpecie(data)"
                   ></Button>
                   <Button
@@ -251,6 +263,7 @@ const deleteSpecie = (event: MouseEvent | KeyboardEvent, specieData: SpecieList)
                     size="small"
                     aria-label="Bloquear"
                     rounded
+                    v-if="roleMain === 'Administrador'"
                     @click="deleteSpecie($event, data)"
                   />
                 </div>

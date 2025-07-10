@@ -8,7 +8,7 @@ import { usePaymentMethod } from '@/composables/usePaymentMethod'
 import type { PaymentMethod } from '@/models/PaymentMethod'
 import type { OptionSelect } from '@/models/OptionSelect'
 import { Tag } from 'primevue'
-import { usePayment } from '@/composables/usePayment'
+
 
 const props = defineProps<{
   serviceName: string
@@ -19,9 +19,10 @@ const props = defineProps<{
   buttonActive: boolean
 }>()
 
+const emit = defineEmits(['complete-payment'])
+
 //for
 
-const { loading, setPaymentStatusComplete } = usePayment()
 
 //ref
 const paymentMethodIdref = ref<number>(0)
@@ -36,8 +37,8 @@ const paymentIdsToOptionsSelect = (items: PaymentMethod[]): OptionSelect[] => {
   }))
 }
 
-const handleCompletePayment = async () => {
-  setPaymentStatusComplete(props.paymentId)
+const handleCompletePayment = () => {
+  emit('complete-payment')
 }
 
 onMounted(async () => {
@@ -107,7 +108,6 @@ const igv = ref<number>(Number((props.price - subtotal.value).toFixed(1)))
             class="flex-1"
             type="submit"
             :disabled="status === 'Completada' || buttonActive"
-            :loading="loading.setPaymentStatusComplete"
             @click="handleCompletePayment()"
           />
           <Button

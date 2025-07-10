@@ -138,7 +138,7 @@ async getRecentCompletedPayments(headquarterId: number): Promise<RecentPayment[]
 
   async getWeeklyIncomeByHeadquarter(headquarterId: number): Promise<WeeklyIncome> {
   const response = await this.httpClient.get<WeeklyIncome>(
-    `${this.urlBase}/weekly/${headquarterId}`,
+    `/panel-manager/payment/weekly/${headquarterId}`,
   )
   return response.data
 }
