@@ -6,6 +6,7 @@ import { FormatAdapter } from './FormatAdapter'
 import type { RecentPayment } from '@/services/Payment/domain/models/Payment'
 import type { RecentPayment as RecentPaymentView } from '@/models/RecientPayment'
 
+
 export class PaymentAdapter {
   static toPaymentView(payment: Payment): PaymentView {
     return {
@@ -45,4 +46,6 @@ export class PaymentAdapter {
     paymentStatus: FormatAdapter.toCaptalizeCaseWithout_(payment.paymentStatus),
   }
 }
+
+
 }

@@ -9,6 +9,8 @@ import type { PageResponse } from '@/services/models/PageResponse'
 import type { CareAndAppointmentPanelEmployee as CareAndAppointmentPanelEmployeeView } from '@/models/CareAndAppointmentPanelEmployee'
 import { AppointmentAdapter } from '@/adapters/AppointmentAdapter'
 import type { CareList as CareListView } from '@/models/CareList'
+import type { RecentPatient as RecentPatientView } from '@/models/RecentPatient'
+import { AnimalAdapter } from '@/adapters/AnimalAdapter'
 
 export function useCare() {
   const { loading, error, runUseCase } = useAsyncHandler()
@@ -112,6 +114,13 @@ export function useCare() {
     return CareAdapter.toView(care)
   }
 
+  const getRecentPatientsByEmployee = async (employeeId: number): Promise<RecentPatientView[]> => {
+    const patients = await runUseCase('getRecentPatientsByEmployee', () =>
+      careUsesCases.getRecentPatientsByEmployee.execute(employeeId),
+    )
+    return patients.map((p) => AnimalAdapter.toRecentPatientView(p))
+  }
+
   return {
     loading,
     error,
@@ -128,5 +137,6 @@ export function useCare() {
     getCaresForEmployee,
     getCaresByHeadquarterId,
     setOnGoingCare,
+    getRecentPatientsByEmployee,
   }
 }

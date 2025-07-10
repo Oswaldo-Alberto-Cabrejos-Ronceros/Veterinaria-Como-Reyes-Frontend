@@ -7,6 +7,8 @@ import type { PetByClient } from '@/models/PetByClient'
 import type { FormValues as AddMyPetSchema } from '@/validation-schemas-forms/schema-add-pet-client'
 import type { AnimalList } from '@/services/Animal/domain/models/Animal'
 import type { PetList } from '@/models/PetList'
+import type { RecentPatient as RecentPatientView  } from '@/models/RecentPatient'
+import type { RecentPatient } from '@/services/Care/domain/models/Care'
 
 export class AnimalAdapter {
   static toPetView(animal: Animal): PetView {
@@ -89,5 +91,16 @@ export class AnimalAdapter {
     }
   }
 
-
+  static toRecentPatientView(patient: RecentPatient): RecentPatientView {
+    return {
+      petId: patient.animalId,
+      petName: patient.animalName,
+      breedName: patient.breedName,
+      clientFullName: patient.clientFullName,
+      lastVisitDate: patient.lastVisitDate,
+      petWeight: patient.animalWeight,
+      petSex: patient.animalSex,
+      petBirthdate: patient.animalBirthDate,
+    }
+  }
 }

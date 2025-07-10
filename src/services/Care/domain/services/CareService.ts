@@ -1,5 +1,5 @@
 import type { CareAndAppointmentPanelEmployee } from '@/services/Appointment/domain/models/Appointment'
-import type { Care, CareList, CareRequest,CareRequestCreate, CareStatsToday, CreateCareFromAppointmentRequest } from '../models/Care'
+import type { Care, CareList, CareRequest,CareRequestCreate, CareStatsToday, CreateCareFromAppointmentRequest, RecentPatient } from '../models/Care'
 import type { PageResponse } from '@/services/models/PageResponse'
 
 export interface CareService {
@@ -23,4 +23,5 @@ export interface CareService {
 getCareStatsToday(): Promise<CareStatsToday>
 getCaresByHeadquarterId(headquarterId: number): Promise<CareAndAppointmentPanelEmployee[]>
   onGoingCare(id: number): Promise<Care>
+  getRecentPatientsByEmployee(employeeId: number): Promise<RecentPatient[]>
 }

@@ -1,8 +1,10 @@
-import type { VeterinaryRecordRequest } from '@/services/VeterinaryRecord/domain/models/VeterinaryRecord'
+import type { VeterinaryRecordRequest, VeterinaryRecordStats } from '@/services/VeterinaryRecord/domain/models/VeterinaryRecord'
 import { useAsyncHandler } from './useAsyncHandler'
 import { veterinaryRecordUsesCases } from '@/dependency-injection/veterinary-record.container'
 import { VeterinaryRecordAdapter } from '@/adapters/VeterinaryRecordAdapter'
 import type { FormValues as SchemaAddEditVeterinaryRecord } from '@/validation-schemas-forms/schema-add-edit-veterinary-record'
+import type { RecentMedicalRecord as RecentMedicalRecordView  } from '@/models/RecentMedicalRecord'
+import type { VeterinaryRecordInfoTable as VeterinaryRecordInfoTableView } from '@/models/VeterinaryRecordInfoTable'
 
 export function useVeterinaryRecord() {
   const { loading, error, runUseCase } = useAsyncHandler()
@@ -72,6 +74,29 @@ export function useVeterinaryRecord() {
     return VeterinaryRecordAdapter.toVeterinaryRecordView(veterinaryRecord)
   }
 
+  const getRecentRecordsByEmployee = async (employeeId: number): Promise<RecentMedicalRecordView[]> => {
+  const records = await runUseCase('getRecentRecordsByEmployee', () =>
+    veterinaryRecordUsesCases.getRecentRecordsByEmployee.execute(employeeId),
+  )
+  return records.map(VeterinaryRecordAdapter.toRecentMedicalRecordView)
+}
+
+  const getStatsByVeterinarian = async (
+    employeeId: number
+  ): Promise<VeterinaryRecordStats> => {
+    const stats = await runUseCase('getStatsByVeterinarian', () =>
+      veterinaryRecordUsesCases.getStatsByVeterinarian.execute(employeeId)
+    )
+    return stats
+  }
+
+  const getRecordsByAnimalId = async (animalId: number): Promise<VeterinaryRecordInfoTableView[]> => {
+  const records = await runUseCase('getRecordsByAnimalId', () =>
+    veterinaryRecordUsesCases.getRecordsByAnimalId.execute(animalId)
+  )
+  return records.map((v)=>VeterinaryRecordAdapter.fromVetRecordInfoTableToVetRecorIndoTableView(v))
+}
+
   return {
     loading,
     error,
@@ -83,5 +108,8 @@ export function useVeterinaryRecord() {
     setVeterinaryRecordCompletado,
     setVeterinaryRecordEnCurso,
     setVeterinaryRecordObservacion,
+    getRecentRecordsByEmployee,
+    getStatsByVeterinarian,
+    getRecordsByAnimalId
   }
 }

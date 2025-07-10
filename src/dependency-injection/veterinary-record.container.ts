@@ -8,6 +8,9 @@ import { VeterinaryRecordSetEnCurso } from '@/services/VeterinaryRecord/applicat
 import { VeterinaryRecordSetObservacion } from '@/services/VeterinaryRecord/application/VeterinaryRecordSetObservacion'
 import { AxiosHttpClient } from '@/services/Http/infrastructure/AxiosHttpClient'
 import { VeterinaryRecordServiceImpl } from '@/services/VeterinaryRecord/infrastructure/VeterinaryRecordServiceImpl'
+import { GetRecentRecordsByEmployee } from '@/services/VeterinaryRecord/application/GetRecentRecordsByEmployee'
+import { GetVeterinaryRecordStatsByVeterinarian } from '@/services/VeterinaryRecord/application/GetVeterinaryRecordStatsByVeterinarian'
+import { GetRecordsByAnimalId } from '@/services/VeterinaryRecord/application/GetRecordsByAnimalId'
 
 const axiosHttpClient = new AxiosHttpClient()
 const veterinaryRecordService = new VeterinaryRecordServiceImpl(axiosHttpClient)
@@ -23,4 +26,7 @@ export const veterinaryRecordUsesCases = {
   setVeterinaryRecordCompletado: new VeterinaryRecordSetCompletado(veterinaryRecordService),
   setVeterinaryRecordEnCurso: new VeterinaryRecordSetEnCurso(veterinaryRecordService),
   setVeterinaryRecordObservacion: new VeterinaryRecordSetObservacion(veterinaryRecordService),
+getRecentRecordsByEmployee: new GetRecentRecordsByEmployee(veterinaryRecordService),
+ getStatsByVeterinarian: new GetVeterinaryRecordStatsByVeterinarian(veterinaryRecordService),
+ getRecordsByAnimalId: new GetRecordsByAnimalId(veterinaryRecordService),
 }

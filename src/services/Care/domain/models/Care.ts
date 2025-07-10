@@ -52,3 +52,15 @@ export interface CareList {
 
   appointmentId: number
 }
+
+
+export interface RecentPatient {
+  animalId: number;
+  animalName: string;
+  breedName: string;
+  clientFullName: string;
+  lastVisitDate: string;
+  animalWeight: number;
+  animalSex: string;
+  animalBirthDate: string;
+}

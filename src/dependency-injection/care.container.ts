@@ -13,6 +13,7 @@ import { GetCaresForEmployee } from '@/services/Care/aplication/GetCaresForEmplo
 import { GetCareStatsToday } from '@/services/Care/aplication/GetCareStatsToday'
 import { GetCaresByHeadquarterId } from '@/services/Care/aplication/GetCaresByHeadquarterId'
 import { SetOnGoingCare } from '@/services/Care/aplication/SetOnGoingCare'
+import { GetRecentPatientsByEmployee } from '@/services/Care/aplication/GetRecentPatientsByEmployee'
 
 // Instancia del cliente HTTP
 const axiosHttpClient = new AxiosHttpClient()
@@ -35,4 +36,5 @@ export const careUsesCases = {
   getCareStatsToday: new GetCareStatsToday(careService),
   getCaresByHeadquarterId: new GetCaresByHeadquarterId(careService),
   setOnGoingCare: new SetOnGoingCare(careService),
+  getRecentPatientsByEmployee: new GetRecentPatientsByEmployee(careService),
 }

@@ -1,5 +1,5 @@
 import type { HttpClient } from '@/services/Http/model/HttpClient'
-import type { Care, CareList, CareRequest, CareRequestCreate, CareStatsToday, CreateCareFromAppointmentRequest } from '../domain/models/Care'
+import type { Care, CareList, CareRequest, CareRequestCreate, CareStatsToday, CreateCareFromAppointmentRequest, RecentPatient } from '../domain/models/Care'
 import type { CareService } from '../domain/services/CareService'
 import type { PageResponse } from '@/services/models/PageResponse'
 import type { CareAndAppointmentPanelEmployee } from '@/services/Appointment/domain/models/Appointment'
@@ -96,4 +96,11 @@ async getCaresByHeadquarterId(headquarterId: number): Promise<CareAndAppointment
     const response = await this.httpClient.patch<Care>(`${this.urlBase}/${id}/on-going`, {})
     return response.data
   }
+
+  async getRecentPatientsByEmployee(employeeId: number): Promise<RecentPatient[]> {
+  const response = await this.httpClient.get<RecentPatient[]>(
+    `/care/recent-patients/${employeeId}`,
+  )
+  return response.data
+}
 }
