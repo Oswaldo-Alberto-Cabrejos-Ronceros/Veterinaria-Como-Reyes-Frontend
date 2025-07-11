@@ -102,7 +102,7 @@ const isActive = (path: string) => route.path.startsWith(path)
   <aside
     ref="asideRef"
     :class="[
-      'transition-all duration-200 ease-out fixed top-0 left-0 h-screen max-h-screen z-[100] backdrop-blur-xs dark:bg-surface-800 border-r border-neutral-200 dark:border-neutral-800 ',
+      'transition-all duration-200 ease-out fixed top-0 left-0 h-screen max-h-screen z-[100] backdrop-blur-xs border-r border-neutral-200 dark:border-neutral-800 ',
       showMenu ? ' w-screen md:w-64' : 'w-0 md:w-20 overflow-hidden',
     ]"
   >
