@@ -4,7 +4,7 @@ import type { AppointmentStatsForReceptionist } from '../domain/models/Appointme
 export class GetStatsForReceptionistUseCase {
   constructor(private readonly service: AppointmentService) {}
 
-  async execute(): Promise<AppointmentStatsForReceptionist> {
-    return await this.service.getStatsForReceptionist()
+  async execute(headquarterId:number): Promise<AppointmentStatsForReceptionist> {
+    return await this.service.getStatsForReceptionist(headquarterId)
   }
 }

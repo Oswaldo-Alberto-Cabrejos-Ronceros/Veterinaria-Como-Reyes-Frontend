@@ -35,6 +35,7 @@ import Tag from 'primevue/tag'
 import BlockCardPrimary from '@/components/BlockCardPrimary.vue'
 import type { FormValues as BlockSchema } from '@/validation-schemas-forms/schema-block-employee-client'
 import { useAuthentication } from '@/composables/useAuthentication'
+import Panel from 'primevue/panel'
 //toast
 const toast = useToast()
 
@@ -391,8 +392,10 @@ const exportCSV = () => {
         <h3 class="h3">Gestión de empleados</h3>
       </template>
       <template #content>
+
         <div class="flex flex-col gap-6">
-          <form class="form-search-grid-col-5">
+          <Panel   expandIcon="pi pi-chevron-down"
+  collapseIcon="pi pi-chevron-up" toggleable header="Buscar empleados">          <form class="form-search-grid-col-5">
             <div v-for="element in searchElementsEmployee" :key="element.key">
               <label class="block mb-2">{{ element.title }}</label>
               <InputGroup>
@@ -464,7 +467,8 @@ const exportCSV = () => {
                 {{ errors.status }}
               </Message>
             </div>
-          </form>
+          </form></Panel>
+
           <!-- imporve design responsive -->
           <!-- for messague loading  -->
           <Message v-if="loading.getAllEmployees" severity="warn" size="small" variant="simple">

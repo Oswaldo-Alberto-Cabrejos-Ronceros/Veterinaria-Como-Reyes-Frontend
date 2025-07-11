@@ -12,7 +12,6 @@ import Select from 'primevue/select'
 import Button from 'primevue/button'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import type { Service as ServiceView } from '@/models/Service'
 import { useConfirm, useDialog, useToast } from 'primevue'
 import { onMounted, ref } from 'vue'
 import AddEditServiceCard from './components/AddEditServiceCard.vue'
@@ -50,6 +49,7 @@ const {
   updateVeterinaryService,
   activateVeterinaryService,
   searchVeterinaryServices,
+  getVeterinaryServiceById
 } = useVeterinaryService()
 
 const { getAllSpecies } = useSpecie()
@@ -158,14 +158,15 @@ const dialog = useDialog()
 
 //for add
 
-const viewService = (serviceData: ServiceView) => {
+const viewService = async (serviceData: ServiceList) => {
+  const service = await getVeterinaryServiceById(serviceData.serviceId)
   dialog.open(ViewServiceCard, {
     props: {
       modal: true,
       header: `${serviceData.name}`,
     },
     data: {
-      serviceData: serviceData,
+      serviceData: service,
     },
   })
 }
@@ -194,7 +195,8 @@ const addService = async () => {
 
 //for edit
 
-const editService = async (serviceData: ServiceView) => {
+const editService = async (serviceData: ServiceList) => {
+  const service = await getVeterinaryServiceById(serviceData.serviceId)
   dialog.open(AddEditServiceCard, {
     props: {
       modal: true,
@@ -202,13 +204,13 @@ const editService = async (serviceData: ServiceView) => {
     },
     data: {
       serviceData: {
-        name: serviceData.name,
-        description: serviceData.description,
-        price: serviceData.price,
-        duration: serviceData.duration,
-        dirImage: serviceData.dirImage,
-        specieId: serviceData.specieId,
-        categoryId: serviceData.categoryId,
+        name: service.name,
+        description: service.description,
+        price: service.price,
+        duration: service.duration,
+        dirImage: service.dirImage,
+        specieId: service.specieId,
+        categoryId: service.categoryId,
       } as AddEditServiceSchema,
       speciesOptions: speciesToOptionsSelect(await getAllSpecies()),
       categoriesOptions: categoriesToOptionsSelect(await getAllCategories()),
@@ -216,7 +218,7 @@ const editService = async (serviceData: ServiceView) => {
     onClose: async (options) => {
       const data = options?.data
       if (data) {
-        const service = await updateVeterinaryService(serviceData.id, data)
+        const service = await updateVeterinaryService(serviceData.serviceId, data)
         console.log('Datos recibidos', service)
         showToast('Servicio editado exitosamente: ' + data.name)
         loadServices()

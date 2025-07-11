@@ -78,9 +78,9 @@ async getCaresForEmployee(employeeId: number): Promise<CareAndAppointmentPanelEm
   return response.data
 }
 
-async getCareStatsToday(): Promise<CareStatsToday> {
+async getCareStatsToday(headquarterId:number): Promise<CareStatsToday> {
   const response = await this.httpClient.get<CareStatsToday>(
-    `${this.urlBase}/panel-receptionist/stats-today`,
+    `${this.urlBase}/panel-receptionist/${headquarterId}/stats-today`,
   )
   return response.data
 }

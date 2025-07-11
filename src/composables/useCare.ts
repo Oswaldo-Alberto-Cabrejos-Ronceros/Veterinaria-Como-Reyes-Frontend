@@ -87,8 +87,8 @@ export function useCare() {
     }
   }
 
-  const getCareStatsToday = async (): Promise<CareStatsToday> => {
-    return await runUseCase('getCareStatsToday', () => careUsesCases.getCareStatsToday.execute())
+  const getCareStatsToday = async (headquarterId:number): Promise<CareStatsToday> => {
+    return await runUseCase('getCareStatsToday', () => careUsesCases.getCareStatsToday.execute(headquarterId))
   }
 
   const getCaresForEmployee = async (

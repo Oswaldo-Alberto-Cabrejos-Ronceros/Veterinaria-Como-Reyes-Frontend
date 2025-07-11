@@ -27,6 +27,8 @@ import { usePayment } from '@/composables/usePayment'
 import type { CareAndAppointmentPanelEmployee } from '@/models/CareAndAppointmentPanelEmployee'
 import type { RecentPayment } from '@/models/RecientPayment'
 import { useRouter } from 'vue-router'
+import ScrollPanel from 'primevue/scrollpanel'
+
 import Paginator from 'primevue/paginator'
 
 const { getEntityId } = useAuthentication()
@@ -72,12 +74,15 @@ const loadMyInfo = async () => {
   if (entityIdGet) {
     myInfoEmployee.value = await getEmployeeMyInfo(entityIdGet)
   }
-  appointmentsTotayStats.value = await getStatsForReceptionist()
+
   clientStatsToday.value = await getClientStatsToday()
-  careStatsToday.value = await getCareStatsToday()
+
   paymentStatsToday.value = await getTodayIncomeStats()
   if (myInfoEmployee.value) {
     const headquarterId = myInfoEmployee.value.headquarter.id
+    careStatsToday.value = await getCareStatsToday(headquarterId)
+    appointmentsTotayStats.value = await getStatsForReceptionist(headquarterId)
+
     todayAppointments.value = await getAppointmentsByHeadquarterId(headquarterId)
     carePending.value = await getCaresByHeadquarterId(headquarterId)
     paymentsRecent.value = await getRecentCompletedPayments(headquarterId)
@@ -328,7 +333,7 @@ const first = ref<number>(0)
             </template>
             <template #content>
               <div class="w-full flex flex-col gap-1.5">
-                <ScrollPanel class="w-56">
+                <ScrollPanel v-if="todayAppointments.length > 0" class="min-h-44 max-h-56">
                   <CardAppointmentQuaternary
                     v-for="(appointment, index) of todayAppointments"
                     :key="index"
@@ -341,16 +346,24 @@ const first = ref<number>(0)
                     :pet-breed="''"
                   >
                   </CardAppointmentQuaternary>
-                  <Button
-                    label="Ver todas las citas"
-                    variant="text"
-                    icon="pi pi-eye"
-                    size="small"
-                    class="mt-2"
-                  >
-                  </Button>
                 </ScrollPanel>
+                           <div
+                  class="flex min-h-44 max-h-56 items-center justify-center"
+                  v-if="todayAppointments.length === 0"
+                >
+                  <p>No citas que mostrar</p>
+                </div>
               </div>
+            </template>
+            <template #footer>
+              <Button
+                label="Ver todas las citas"
+                variant="text"
+                icon="pi pi-eye"
+                size="small"
+                class="mt-2 w-full"
+              >
+              </Button>
             </template>
           </Card>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-6 lg:gap-x-12">
@@ -366,7 +379,7 @@ const first = ref<number>(0)
                 <p>Clientes en espera</p>
               </template>
               <template #content>
-                <ScrollPanel class="h-56">
+                <ScrollPanel v-if="carePending.length > 0" class="min-h-44 max-h-56">
                   <div class="w-full flex flex-col gap-1">
                     <CardClientWaiting
                       v-for="(client, index) of carePending"
@@ -376,6 +389,12 @@ const first = ref<number>(0)
                       :serviceName="client.serviceName"
                     ></CardClientWaiting></div
                 ></ScrollPanel>
+                                <div
+                  class="flex min-h-44 max-h-56 items-center justify-center"
+                  v-if="carePending.length === 0"
+                >
+                  <p>No atenciones que mostrar</p>
+                </div>
               </template>
             </Card>
             <!-- payments -->
@@ -389,20 +408,28 @@ const first = ref<number>(0)
               </template>
               <template #content>
                 <div class="w-full flex flex-col gap-1">
-                  <ScrollPanel class="h-56">
+                  <ScrollPanel v-if="paymentsRecent.length > 0" class="h-64"><!-- key -->
+                  <div class="w-full flex flex-col gap-1">
                     <CardPaymentPrimary
                       v-for="(payment, index) in paymentsRecent"
                       :key="index"
                       :clientName="payment.clientFullName"
                       :petName="payment.petName"
                       :serviceName="payment.serviceName"
-                      clientDni="''"
-                      :date="payment.paymentDate"
-                      :time="payment.paymentTime"
+                      clientDni=""
+                      :date="payment.paymentDate||''"
+                      :time="payment.paymentTime||''"
                       :amount="payment.amount"
                       :status="payment.paymentStatus"
                     />
+                    </div>
                   </ScrollPanel>
+                             <div
+                  class="flex min-h-44 max-h-56 items-center justify-center"
+                  v-if="paymentsRecent.length === 0"
+                >
+                  <p>No pagos que mostrar</p>
+                </div>
                 </div>
               </template>
             </Card>
@@ -449,14 +476,15 @@ const first = ref<number>(0)
                   :price="service.price"
                 >
                 </CardServiceTerciary>
-                <Paginator
+
+              </div>
+                              <Paginator
                   lazy
                   :rows="rows"
                   :first="first"
                   :totalRecords="totalRecords"
                   :rows-per-page-options="[2, 4, 6, 8, 10]"
                 />
-              </div>
             </div>
           </template>
         </Card>

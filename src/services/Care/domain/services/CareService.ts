@@ -20,7 +20,7 @@ export interface CareService {
     size?: number
   ): Promise<PageResponse<CareList>>
   getCaresForEmployee(employeeId: number): Promise<CareAndAppointmentPanelEmployee[]>
-getCareStatsToday(): Promise<CareStatsToday>
+getCareStatsToday(headquarterId:number): Promise<CareStatsToday>
 getCaresByHeadquarterId(headquarterId: number): Promise<CareAndAppointmentPanelEmployee[]>
   onGoingCare(id: number): Promise<Care>
   getRecentPatientsByEmployee(employeeId: number): Promise<RecentPatient[]>

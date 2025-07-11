@@ -43,7 +43,7 @@ const { getMainRole } = useAuthentication()
 
 //for get species
 
-const { loading, error, createSpecie, updateSpecie, activateSpecie, searchSpecies } = useSpecie()
+const { loading, error, getSpecieById,createSpecie, updateSpecie, activateSpecie, searchSpecies } = useSpecie()
 
 const species = ref<SpecieList[]>([])
 
@@ -118,7 +118,8 @@ const addSpecie = () => {
   })
 }
 
-const editSpecie = (specieData: SpecieList) => {
+const editSpecie = async (specieData: SpecieList) => {
+  const specie = await getSpecieById(specieData.id)
   dialog.open(AddEditSpecie, {
     props: {
       modal: true,
@@ -126,8 +127,8 @@ const editSpecie = (specieData: SpecieList) => {
     },
     data: {
       specieData: {
-        name: specieData.name,
-        imagePath: '',
+        name: specie.name,
+        imagePath: specie.imagePath,
       } as AddEditSpecieSchema,
     },
     onClose: async (options) => {

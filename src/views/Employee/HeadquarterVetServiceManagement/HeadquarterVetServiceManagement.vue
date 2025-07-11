@@ -282,9 +282,12 @@ const editHeadquarterService = async (headquarterService: HeadquarterVetService 
           if (changeStatus) {
             if (data.status) {
               await enableHeadquarterVetService(headquarterService.headquarterId)
+              showToast('Habilitado con exito')
             } else {
               await deleteHeadquarterVetService(headquarterService.id)
+              showToast('Desabilitado con exito con exito')
             }
+            loadData()
           }
           if (changeCapacity) {
             try {
@@ -295,7 +298,8 @@ const editHeadquarterService = async (headquarterService: HeadquarterVetService 
               )
               console.log('respuesta de actualización', response)
               showToast('Servicio por sede actualizado correctamente')
-              loadHeadquarterServices()
+              loadData()
+              loadData()
             } catch (error) {
               console.error(error, 'Error al crear el servicio por sede')
             }

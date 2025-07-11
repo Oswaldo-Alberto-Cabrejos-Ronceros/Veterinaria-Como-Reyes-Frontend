@@ -176,9 +176,9 @@ export class AppointmentServiceImpl implements AppointmentService {
     )
     return response.data
   }
-  async getStatsForReceptionist(): Promise<AppointmentStatsForReceptionist> {
+  async getStatsForReceptionist(headquarterId:number): Promise<AppointmentStatsForReceptionist> {
     const response = await this.httpClient.get<AppointmentStatsForReceptionist>(
-      `${this.url}/panel-receptionist/stats`,
+      `${this.url}/panel-receptionist/${headquarterId}/stats`,
     )
     return response.data
   }

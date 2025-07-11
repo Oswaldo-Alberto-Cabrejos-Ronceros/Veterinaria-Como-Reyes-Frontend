@@ -14,7 +14,6 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import AddEditCategoryCard from './components/AddEditCategoryCard.vue'
 import { useDialog, useToast } from 'primevue'
-import type { Category as CategoryView } from '@/models/Category'
 import type { FormValues as AddEditCategorySchema } from '@/validation-schemas-forms/schema-add-edit-category'
 import ViewCategoryCard from './components/ViewCategoryCard.vue'
 import { useConfirm } from 'primevue'
@@ -44,7 +43,7 @@ const { getMainRole } = useAuthentication()
 
 //methods
 
-const { loading, error, createCategory, updateCategory, activateCategory, searchCategories } =
+const { loading, error, getCategoryById,createCategory, updateCategory, activateCategory, searchCategories } =
   useCategory()
 
 //categories
@@ -134,18 +133,19 @@ const addCategory = () => {
 
 //edit
 
-const editCategory = (categoryData: CategoryView) => {
+const editCategory = async (categoryData: CategoryList) => {
+  const category = await getCategoryById(categoryData.categoryId)
   dialog.open(AddEditCategoryCard, {
     props: {
       modal: true,
       header: `${categoryData.name}`,
     },
     data: {
-      categoryData: categoryData as AddEditCategorySchema,
+      categoryData: category as AddEditCategorySchema,
     },
     onClose: async (options) => {
       const data = options?.data as AddEditCategorySchema
-      const category = await updateCategory(categoryData.id, data)
+      const category = await updateCategory(categoryData.categoryId, data)
       console.log('Datos recibidos', category)
       loadCategories()
       showToast('Categoria editada exitosamente: ' + category.name)
@@ -155,14 +155,15 @@ const editCategory = (categoryData: CategoryView) => {
 
 //for view
 
-const viewCategory = (categoryData: CategoryView) => {
+const viewCategory = async (categoryData: CategoryList) => {
+const category = await getCategoryById(categoryData.categoryId)
   dialog.open(ViewCategoryCard, {
     props: {
       modal: true,
       header: `${categoryData.name}`,
     },
     data: {
-      categoryData: categoryData,
+      categoryData: category,
     },
   })
 }

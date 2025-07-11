@@ -11,6 +11,6 @@ export interface PaymentMethodRequest {
 }
 
 export interface PaymentMethodList {
-  id: number;
+  paymentMethodId: number;
   name: string;
 }

@@ -14,7 +14,10 @@ import Chart from 'primevue/chart'
 import { useAppointment } from '@/composables/useAppointment'
 import type { AppointmentStatsToday } from '@/services/Appointment/domain/models/Appointment'
 import { usePayment } from '@/composables/usePayment'
-import type { PaymentStatsForPanelAdmin, WeeklyIncome } from '@/services/Payment/domain/models/Payment'
+import type {
+  PaymentStatsForPanelAdmin,
+  WeeklyIncome,
+} from '@/services/Payment/domain/models/Payment'
 import { useClient } from '@/composables/useClient'
 import type { ClientStatsPanel } from '@/services/Client/domain/models/Client'
 import type { AppointmentInfoPanelAdmin } from '@/models/AppointmentInfoPanelAdmin'
@@ -65,15 +68,15 @@ const entityId = ref<number | null>(null)
 
 const today = DateAdapter.toFormatView(new Date())
 
-const topsSpeciesGeneral = ref<TopSpeciesByAppointments|null>(null)
+const topsSpeciesGeneral = ref<TopSpeciesByAppointments | null>(null)
 
-const paymentWeekly = ref<WeeklyIncome|null>(null)
+const paymentWeekly = ref<WeeklyIncome | null>(null)
 
-const {getTopSpeciesByHeadquarter ,getTopSpeciesGeneral} = useSpecie()
+const { getTopSpeciesByHeadquarter, getTopSpeciesGeneral } = useSpecie()
 
-const {getWeeklyIncomeByHeadquarter ,getWeeklyIncomeGeneral}= usePayment()
+const { getWeeklyIncomeByHeadquarter, getWeeklyIncomeGeneral } = usePayment()
 
-onMounted( async () => {
+onMounted(async () => {
   await loadMyInfo()
   chartData.value = setChartData()
   chartOptions.value = setChartOptions()
@@ -98,7 +101,7 @@ const loadMyInfo = async () => {
       clientsRecent.value = await getClientInfoPanelAdmin()
       servicesTop.value = await getTopServicesForAdmin()
       topsSpeciesGeneral.value = await getTopSpeciesGeneral()
-  paymentWeekly.value = await getWeeklyIncomeGeneral()
+      paymentWeekly.value = await getWeeklyIncomeGeneral()
     } else {
       const headquarterId = myInfoEmployee.value?.headquarter.id
       if (headquarterId) {
@@ -189,9 +192,9 @@ const setChartOptions = () => {
 //data and options for species
 
 const setChartDataSpecies = () => {
-  console.log('Desde function',topsSpeciesGeneral)
+  console.log('Desde function', topsSpeciesGeneral)
   return {
-    labels:topsSpeciesGeneral.value?.speciesNames,
+    labels: topsSpeciesGeneral.value?.speciesNames,
     datasets: [
       {
         label: 'Citas',
@@ -253,8 +256,6 @@ const router = useRouter()
 const redirect = (url: string) => {
   router.push(url)
 }
-
-
 </script>
 
 <template>
@@ -320,54 +321,66 @@ const redirect = (url: string) => {
             </template>
             <template #content>
               <div class="w-full flex flex-col gap-1.5">
-                       <div class="flex flex-col gap-2">
-                <ScrollPanel class="h-122">
-
-                <CardAppintmentTerciary
-                  v-for="(appointment, index) of appointmentsToday"
-                  :key="index"
-                  :pet-name="appointment.petName"
-                  :service-name="appointment.serviceName"
-                  :owner-name="appointment.clientName"
-                  :time="appointment.hour"
-                  :status="appointment.status"
-                >
-                </CardAppintmentTerciary>
-                </ScrollPanel>
-
-                <Button
-                  label="Ver todas las citas"
-                  variant="text"
-                  icon="pi pi-eye"
-                  size="small"
-                  @click="redirect('appoinment-management')"
-                >
-                </Button>
+                <div class="flex flex-col gap-2">
+                  <div
+                    class="flex min-h-44 max-h-56 items-center justify-center"
+                    v-if="appointmentsToday.length === 0"
+                  >
+                    <p>No tiene citas agendadas</p>
                   </div>
-
+                  <ScrollPanel v-if="appointmentsToday.length > 0" class="min-h-44 max-h-56">
+                    <CardAppintmentTerciary
+                      v-for="(appointment, index) of appointmentsToday"
+                      :key="index"
+                      :pet-name="appointment.petName"
+                      :service-name="appointment.serviceName"
+                      :owner-name="appointment.clientName"
+                      :time="appointment.hour"
+                      :status="appointment.status"
+                    >
+                    </CardAppintmentTerciary>
+                  </ScrollPanel>
+                </div>
               </div>
             </template>
+            <template #footer>
+              <Button
+                label="Ver todas las citas"
+                variant="text"
+                icon="pi pi-eye"
+                size="small"
+                class="w-full"
+                @click="redirect('appoinment-management')"
+              >
+              </Button>
+            </template>
           </Card>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 gap-y-4 gap-x-6 lg:gap-x-12">
+          <div
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 gap-y-4 gap-x-6 lg:gap-x-12"
+          >
             <!-- servicios mas pedidos -->
             <Card class="card-primary min-h-24 max-h-full">
               <template #title>
                 <p>Servicios más perdidos</p>
               </template>
               <template #content>
-<ScrollPanel class="h-56">
-
-                <ServiceRankingItem
-                  v-for="(service, index) of servicesTop"
-                  :key="index"
-                  :serviceName="service.name"
-                  :serviceImageUrl="service.imageServiceUrl"
-                  :categoryName="service.categoryName"
-                  :value="service.totalCares"
+                <ScrollPanel v-if="servicesTop.length > 0" class="min-h-44 max-h-56">
+                  <ServiceRankingItem
+                    v-for="(service, index) of servicesTop"
+                    :key="index"
+                    :serviceName="service.name"
+                    :serviceImageUrl="service.imageServiceUrl"
+                    :categoryName="service.categoryName"
+                    :value="service.totalCares"
+                  >
+                  </ServiceRankingItem>
+                </ScrollPanel>
+                <div
+                  class="flex min-h-44 max-h-56 items-center justify-center"
+                  v-if="servicesTop.length === 0"
                 >
-                </ServiceRankingItem>
-</ScrollPanel>
-
+                  <p>No servicios que mostrar</p>
+                </div>
               </template>
             </Card>
             <!-- clientes recientes -->
@@ -380,7 +393,7 @@ const redirect = (url: string) => {
                     rounded
                     icon="pi pi-plus"
                     v-tooltip.left="`Agregar cliente`"
-                  hidden
+                    hidden
                   >
                   </Button>
                 </div>
@@ -393,6 +406,13 @@ const redirect = (url: string) => {
                   :clientInitials="client.initials"
                   :clientDni="client.phone"
                 ></ClientRankingItem>
+                <div
+                  class="flex size-full items-center justify-center"
+                  v-if="clientsRecent.length === 0"
+                >
+                  <p>No hay clientes que mostrar</p>
+                </div>
+                <div></div>
               </template>
               <template #footer>
                 <Button

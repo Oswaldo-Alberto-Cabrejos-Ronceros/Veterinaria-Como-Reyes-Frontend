@@ -51,6 +51,7 @@ const {
   updatePaymentMethod,
   activatePaymentMethod,
   searchPaymentMethods,
+  getPaymentMethodById
 } = usePaymentMethod()
 
 //payment methods
@@ -121,26 +122,28 @@ const addPaymentMethod = () => {
   })
 }
 
-const viewPaymentMethod = (paymentMethodData: PaymentMethodView) => {
+const viewPaymentMethod = async (paymentMethodData: PaymentMethodList) => {
+  const paymentMethod = await getPaymentMethodById(paymentMethodData.id)
   dialog.open(ViewPaymentMethodCard, {
     props: {
       modal: true,
       header: `${paymentMethodData.name}`,
     },
     data: {
-      paymentMethodData: paymentMethodData,
+      paymentMethodData: paymentMethod,
     },
   })
 }
 
-const editPaymentMethod = (paymentMethodData: PaymentMethodView) => {
+const editPaymentMethod = async (paymentMethodData: PaymentMethodList) => {
+  const paymentMethod = await getPaymentMethodById(paymentMethodData.id)
   dialog.open(AddEditPaymentMethodCard, {
     props: {
       modal: true,
       header: `${paymentMethodData.name}`,
     },
     data: {
-      paymentMethodData: paymentMethodData as AddEditPaymentMethodSchema,
+      paymentMethodData: paymentMethod as AddEditPaymentMethodSchema,
     },
     onClose: async (options) => {
       const data = options?.data as AddEditPaymentMethodSchema

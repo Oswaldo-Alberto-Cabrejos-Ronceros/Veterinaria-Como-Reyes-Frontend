@@ -39,7 +39,7 @@ const showToast = (message: string) => {
 
 //get from compose
 
-const { loading, error, createBreed, updateBreed, activateBreed, searchBreeds } = useBreed()
+const { loading, error, getBreedByUd,createBreed, updateBreed, activateBreed, searchBreeds } = useBreed()
 
 const { getAllSpecies } = useSpecie()
 
@@ -129,7 +129,8 @@ const addBreed = () => {
   })
 }
 
-const editBreed = (breedData: BreedList) => {
+const editBreed = async (breedData: BreedList) => {
+  const breed= await getBreedByUd(breedData.id)
   dialog.open(AddEditBreedCard, {
     props: {
       modal: true,
@@ -137,7 +138,8 @@ const editBreed = (breedData: BreedList) => {
     },
     data: {
       breedData: {
-        name: breedData.name,
+        name: breed.name,
+        specieId:breed.specie.id
       } as AddEditBreedSchema,
       speciesOptions: speciesOptions,
     },
@@ -319,14 +321,6 @@ const statusOptions: OptionSelect[] = [
             <Column header="Acciones">
               <template #body="{ data }">
                 <div class="flex items-center flex-row xs:flex-col lg:flex-row gap-1">
-                  <Button
-                    icon="pi pi-eye"
-                    severity="info"
-                    variant="text"
-                    size="small"
-                    aria-label="Ver"
-                    rounded
-                  ></Button>
                   <Button
                     icon="pi pi-pencil"
                     severity="warn"

@@ -206,9 +206,9 @@ export function useAppointment() {
     return appoinments.map((ap) => AppointmentAdapter.toCareAndAppointmentPanelEmployeeView(ap))
   }
 
-  const getStatsForReceptionist = async (): Promise<AppointmentStatsForReceptionist> => {
+  const getStatsForReceptionist = async (headquarterId:number): Promise<AppointmentStatsForReceptionist> => {
   return await runUseCase('getStatsForReceptionist', () =>
-    appointmentUsesCases.getStatsForReceptionist.execute(),
+    appointmentUsesCases.getStatsForReceptionist.execute(headquarterId),
   )
 }
 

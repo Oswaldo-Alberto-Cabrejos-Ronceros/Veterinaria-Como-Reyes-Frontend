@@ -46,7 +46,7 @@ export interface AppointmentService {
   getAppointmentsByDateForPanelManager(headquarterId: number): Promise<AppointmentInfoPanelAdmin[]>
   getTodayAppointmentStatsByHeadquarter(headquarterId: number): Promise<AppointmentStatsToday>
   getCareAndAppointmentsForEmployee(employeeId: number): Promise<CareAndAppointmentPanelEmployee[]>
-  getStatsForReceptionist(): Promise<AppointmentStatsForReceptionist>
+  getStatsForReceptionist(headquarterId:number): Promise<AppointmentStatsForReceptionist>
   getAppointmentsByHeadquarterId(headquarterId: number): Promise<CareAndAppointmentPanelEmployee[]>
 
 }

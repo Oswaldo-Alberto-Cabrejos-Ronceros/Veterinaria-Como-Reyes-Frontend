@@ -23,7 +23,7 @@ export class PaymentMethodAdapter {
     method: PaymentMethodListDTO
   ): PaymentMethodListView {
     return {
-      id: method.id,
+      id: method.paymentMethodId,
       name: method.name,
     }
   }

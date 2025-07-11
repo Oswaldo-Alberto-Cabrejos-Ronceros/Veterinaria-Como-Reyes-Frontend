@@ -23,6 +23,7 @@ import type { VeterinaryRecordStats } from '@/services/VeterinaryRecord/domain/m
 import { useVeterinaryRecord } from '@/composables/useVeterinaryRecord'
 import type { RecentMedicalRecord } from '@/models/RecentMedicalRecord'
 import type { RecentPatient } from '@/models/RecentPatient'
+
 const { getEntityId } = useAuthentication()
 const { getEmployeeMyInfo } = useEmployee()
 
@@ -35,13 +36,13 @@ const { getRecentPatientsByEmployee, getCaresForEmployee } = useCare()
 
 const recentsPacients = ref<RecentPatient[]>([])
 
-const { getStatsByVeterinarian } = useVeterinaryRecord()
+const { getRecentRecordsByEmployee, getStatsByVeterinarian } = useVeterinaryRecord()
 
 const careRecents = ref<CareAndAppointmentPanelEmployee[]>([])
 
 const { getTodayAppointmentStatsByHeadquarter } = useAppointment()
 
-const paymentStats = ref<AppointmentStatsToday | null>(null)
+const appointmentStats = ref<AppointmentStatsToday | null>(null)
 
 const myInfoEmployee = ref<MyInfoEmployee | null>(null)
 
@@ -118,13 +119,14 @@ const loadMyInfo = async () => {
   entityId.value = entityIdGet
   if (entityIdGet) {
     myInfoEmployee.value = await getEmployeeMyInfo(entityIdGet)
-    paymentStats.value = await getTodayAppointmentStatsByHeadquarter(
+    appointmentStats.value = await getTodayAppointmentStatsByHeadquarter(
       myInfoEmployee.value.headquarter.id,
     )
     careRecents.value = await getCareAndAppointmentsForEmployee(entityIdGet)
     appointments.value = await getCaresForEmployee(entityIdGet)
     statsRecords.value = await getStatsByVeterinarian(entityIdGet)
     recentsPacients.value = await getRecentPatientsByEmployee(entityIdGet)
+    recentRecords.value = await getRecentRecordsByEmployee(entityIdGet)
   }
 }
 
@@ -149,7 +151,7 @@ const news: { title: string; icon: string; content: string; plus?: string }[] = 
   },
 ]
 
-const recentPets = ref<RecentMedicalRecord[]>([])
+const recentRecords = ref<RecentMedicalRecord[]>([])
 
 const newsStadistics: { title: string; icon: string; content: string; plus?: string }[] = [
   {
@@ -207,10 +209,10 @@ const redirect = (url: string) => {
         <!-- news -->
         <div class="w-full grid grid-cols-2 gap-y-4 lg:grid-cols-4 gap-x-6 lg:gap-x-12 mt-4">
           <CardNewsPrimary
-            v-if="paymentStats"
+            v-if="appointmentStats"
             title="Citas hoy"
             icon="pi-calendar"
-            :content="paymentStats.totalAppointments.toString()"
+            :content="appointmentStats.totalAppointments.toString()"
           >
           </CardNewsPrimary>
 
@@ -458,7 +460,7 @@ const redirect = (url: string) => {
                 <ScrollPanel class="h-[30rem] mt-2 w-full">
                   <CardVeterinaryRecord
                     class="mb-2"
-                    v-for="record in recentPets"
+                    v-for="record in recentRecords"
                     :key="record.id"
                     :record-id="record.id"
                     :date="record.recordMedicalDate"
@@ -500,9 +502,18 @@ const redirect = (url: string) => {
             </template>
             <template #content>
               <div class="w-full flex flex-col gap-1.5 items-end">
-                <CardPetTerciary v-for="pet of recentsPacients" :key="pet.petId" :pet-id="pet.petId"
-                :pet-name="pet.petName" :pet-breed="pet.breedName" :pet-image="''"  :pet-weight="pet.petWeight"
-                :pet-gender="pet.petSex" :pet-birtdate="pet.petBirthdate" :owner-name="pet.clientFullName" :last-appoinment-date="pet.lastVisitDate"
+                <CardPetTerciary
+                  v-for="pet of recentsPacients"
+                  :key="pet.petId"
+                  :pet-id="pet.petId"
+                  :pet-name="pet.petName"
+                  :pet-breed="pet.breedName"
+                  :pet-image="''"
+                  :pet-weight="pet.petWeight"
+                  :pet-gender="pet.petSex"
+                  :pet-birtdate="pet.petBirthdate"
+                  :owner-name="pet.clientFullName"
+                  :last-appoinment-date="pet.lastVisitDate"
                 />
               </div>
               <Button
