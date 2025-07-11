@@ -270,7 +270,7 @@ const redirect = (url: string) => {
       </template>
       <template #content>
         <!-- news -->
-        <div class="w-full grid grid-cols-4 gap-x-12 mt-4">
+        <div class="w-full grid grid-cols-2 gap-y-4 lg:grid-cols-4 gap-x-6 lg:gap-x-12 mt-4">
           <CardNewsPrimary
             v-if="todayAppoinmentStats"
             title="Citas hoy"
@@ -306,7 +306,7 @@ const redirect = (url: string) => {
           </CardNewsPrimary>
         </div>
         <!-- section 2 -->
-        <div class="grid grid-cols-2 gap-x-12 mt-4">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-6 gap-y-4 lg:gap-x-12 mt-4">
           <Card class="card-primary min-h-24">
             <template #title>
               <div class="w-full flex justify-between items-baseline">
@@ -341,7 +341,7 @@ const redirect = (url: string) => {
               </div>
             </template>
           </Card>
-          <div class="grid grid-cols-2 gap-x-12">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 gap-y-4 gap-x-6 lg:gap-x-12">
             <!-- servicios mas pedidos -->
             <Card class="card-primary min-h-24 max-h-full">
               <template #title>
@@ -398,7 +398,7 @@ const redirect = (url: string) => {
           </div>
         </div>
         <!-- seccion 3 -->
-        <div class="grid grid-cols-2 gap-x-12 mt-4">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-6 gap-y-4 lg:gap-x-12 mt-4">
           <Card class="card-primary">
             <template #title>
               <p>Ingresos de la última semana</p>

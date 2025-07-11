@@ -6,6 +6,7 @@
 @theme {
   --font-inter: 'Inter', sans-serif;
   --breakpoint-xs: 30rem;
+  --breakpoint-3xl: 112rem;
 }
 
 body {

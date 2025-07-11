@@ -86,7 +86,7 @@ const confirmLogout = async () => {
             variant="text"
             rounded
             aria-label="Calendario"
-            class="block sm:hidden"
+            class="block md:hidden"
             @click="emitShowMenu()"
           />
           <RouterLink v-if="!showMenu" v-ripple :to="routeMap[role] ?? '/'">

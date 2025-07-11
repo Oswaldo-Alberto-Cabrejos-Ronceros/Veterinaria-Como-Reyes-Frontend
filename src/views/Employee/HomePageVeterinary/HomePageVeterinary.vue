@@ -357,7 +357,7 @@ const redirect = (url: string) => {
       </template>
       <template #content>
         <!-- news -->
-        <div class="w-full grid grid-cols-4 gap-x-12 mt-4">
+        <div class="w-full grid grid-cols-2 gap-y-4 lg:grid-cols-4 gap-x-6 lg:gap-x-12 mt-4">
           <CardNewsPrimary
             v-if="paymentStats"
             title="Citas hoy"
@@ -386,7 +386,7 @@ const redirect = (url: string) => {
           </template>
           <template #subtitle>
             <p>Funciones más utilizadas</p>
-            <div class="grid grid-cols-4 gap-x-12 mt-2">
+            <div class="grid grid-cols-1 xs:grid-cols-2 gap-y-4 lg:grid-cols-4 gap-x-6 lg:gap-x-12 mt-2">
               <Button
                 label="Atender cita"
                 iconPos="top"
@@ -417,7 +417,7 @@ const redirect = (url: string) => {
             </div>
           </template>
         </Card>
-        <div class="grid grid-cols-2 gap-x-12 mt-4">
+        <div class="grid grid-cols-1 2xl:grid-cols-2 gap-y-4 gap-x-6 lg:gap-x-12 mt-4">
           <Card class="card-primary min-h-24">
             <template #title>
               <div class="w-full flex justify-between items-baseline">
@@ -449,7 +449,7 @@ const redirect = (url: string) => {
                 <!-- abstract  -->
 
                 <div
-                  class="p-4 shadow-none border-1 rounded-sm border-blue-500 bg-blue-50 dark:bg-transparent w-full flex justify-between items-center"
+                  class="p-4 shadow-none border-1 rounded-sm border-blue-500 bg-blue-50 dark:bg-transparent w-full flex flex-col gap-2 xl:flex-row justify-between items-center"
                 >
                   <div class="flex gap-4">
                     <div
@@ -465,12 +465,12 @@ const redirect = (url: string) => {
                       </p>
                     </div>
                   </div>
-                  <Button label="Ver agenda completa" variant="outlined" severity="secondary" />
+                  <Button label="Ver agenda completa" class="w-full xl:w-auto" variant="outlined" severity="secondary" />
                 </div>
               </div>
             </template>
           </Card>
-          <div class="grid grid-cols-2 gap-x-12">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-6 lg:gap-x-12">
             <!-- waiting room -->
             <Card class="card-primary min-h-24 max-h-full">
               <template #title>
@@ -519,7 +519,7 @@ const redirect = (url: string) => {
                     <h2 class="h3 font-semibold">Del mes</h2>
                   </div>
                   <!-- card news -->
-                  <div class="w-full grid grid-cols-2 gap-y-3 gap-x-6">
+                  <div class="w-full grid grid-cols-1 3xl:grid-cols-2 gap-y-3 gap-x-6">
                     <CardNewsPrimary
                       v-for="(noticia, index) in newsStadistics"
                       :key="index"
@@ -545,9 +545,9 @@ const redirect = (url: string) => {
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-x-12 mt-4">
+        <div class="grid grid-cols-1 2xl:grid-cols-2 gap-y-4 gap-x-6 lg:gap-x-12 mt-4">
           <!-- last diagnosis  -->
-          <Card class="card-primary min-h-24" hidden>
+          <Card class="card-primary min-h-24">
             <template #title>
               <div class="w-full flex justify-between items-baseline">
                 <div class="flex gap-2 items-center">
@@ -563,7 +563,7 @@ const redirect = (url: string) => {
             <template #content>
               <div class="w-full flex flex-col gap-1.5 items-end">
                 <!-- abstract -->
-                <div class="w-full grid grid-cols-4 gap-y-3 gap-x-6">
+                <div class="w-full grid grid-cols-2 3xl:grid-cols-4 gap-y-3 gap-x-6">
                   <CardNewsPrimary
                     v-for="(noticia, index) in newsDiagnosis"
                     :key="index"
@@ -594,7 +594,7 @@ const redirect = (url: string) => {
             </template>
           </Card>
           <!-- pet recent -->
-          <Card class="card-primary min-h-24" hidden>
+          <Card class="card-primary min-h-24">
             <template #title>
               <div class="w-full flex justify-between items-baseline">
                 <div class="flex gap-2 items-center">

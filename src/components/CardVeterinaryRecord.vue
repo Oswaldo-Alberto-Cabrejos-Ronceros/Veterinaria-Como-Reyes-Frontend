@@ -21,7 +21,7 @@ defineProps<{
   <div class="card-primary flex w-full p-4 gap-3">
     <Avatar class="size-10" shape="circle" :label="petName.slice(0, 2)"> </Avatar>
     <div class="flex-1 flex flex-col gap-1 justify-center items-start">
-      <div class="w-full flex justify-between">
+      <div class="w-full flex flex-col gap-2 sm:flex-row justify-between">
         <!-- petName and serviceName -->
         <div class="flex gap-1 items-center">
           <p>{{ petName }}</p>

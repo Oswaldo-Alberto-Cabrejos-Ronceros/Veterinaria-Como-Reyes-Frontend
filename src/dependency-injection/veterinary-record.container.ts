@@ -26,7 +26,7 @@ export const veterinaryRecordUsesCases = {
   setVeterinaryRecordCompletado: new VeterinaryRecordSetCompletado(veterinaryRecordService),
   setVeterinaryRecordEnCurso: new VeterinaryRecordSetEnCurso(veterinaryRecordService),
   setVeterinaryRecordObservacion: new VeterinaryRecordSetObservacion(veterinaryRecordService),
-getRecentRecordsByEmployee: new GetRecentRecordsByEmployee(veterinaryRecordService),
- getStatsByVeterinarian: new GetVeterinaryRecordStatsByVeterinarian(veterinaryRecordService),
- getRecordsByAnimalId: new GetRecordsByAnimalId(veterinaryRecordService),
+  getRecentRecordsByEmployee: new GetRecentRecordsByEmployee(veterinaryRecordService),
+  getStatsByVeterinarian: new GetVeterinaryRecordStatsByVeterinarian(veterinaryRecordService),
+  getRecordsByAnimalId: new GetRecordsByAnimalId(veterinaryRecordService),
 }

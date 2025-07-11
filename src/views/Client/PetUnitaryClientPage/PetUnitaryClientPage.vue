@@ -8,14 +8,19 @@ import Message from 'primevue/message'
 import { usePet } from '@/composables/usePet'
 import { useVeterinaryRecord } from '@/composables/useVeterinaryRecord'
 import type { VeterinaryRecordInfoTable } from '@/models/VeterinaryRecordInfoTable'
-import DataTable from 'primevue/datatable'
+import DataTable, { type DataTablePageEvent } from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from 'primevue/button'
+import { useAuthentication } from '@/composables/useAuthentication'
 const props = defineProps<{
   petId: string
 }>()
 
 const { loading: petLoading, error: petError, getPetById } = usePet()
+
+const roleMain = ref<string>('')
+
+const { getMainRole } = useAuthentication()
 
 const {
   loading: veterinaryRecordLoading,
@@ -27,130 +32,29 @@ const petData = ref<Pet | null>(null)
 //for record
 const veterinaryRecords = ref<VeterinaryRecordInfoTable[]>([])
 
+const totalRecords = ref<number>(0)
+
+const rows = ref<number>(1)
+
+const first = ref<number>(0)
+
 //for loadVeterinaryRecords
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const loadVeterinaryRecords = async (petId: number) => {
-  veterinaryRecords.value = await getAllInfoVeterinaryRecordsByPet(petId)
+const loadVeterinaryRecords = async (event?: DataTablePageEvent) => {
+  const page = event ? event.first / event.rows : 0
+  const size = event ? event.rows : rows.value
+  rows.value = size
+  const pageResponse = await getAllInfoVeterinaryRecordsByPet(Number(props.petId), page, size)
+  veterinaryRecords.value = pageResponse.content
+  totalRecords.value = pageResponse.totalElements
 }
 
 onMounted(async () => {
-  console.log(props.petId)
-  console.log(Number(props.petId))
   petData.value = await getPetById(Number(props.petId))
-  console.log(props.petId)
-  // loadVeterinaryRecords(Number(props.petId))
-  veterinaryRecords.value=[
-  {
-    id: 1,
-    date: "2025-06-15",
-    nameHeadquarter: "Veterinaria Central",
-    nameEmployee: "Dra. Carmen Ríos",
-    diagnosis: "Infección urinaria",
-    treatment: "Antibióticos por 7 días",
-    observation: "Revisar en una semana",
-    resultUrl: "/resultados/1.pdf",
-    status: "FINALIZADO"
-  },
-  {
-    id: 2,
-    date: "2025-06-16",
-    nameHeadquarter: "Clínica Los Andes",
-    nameEmployee: "Dr. Luis Torres",
-    diagnosis: "Parvovirus",
-    treatment: "Hospitalización y sueros",
-    observation: "En observación",
-    resultUrl: "/resultados/2.pdf",
-    status: "EN_CURSO"
-  },
-  {
-    id: 3,
-    date: "2025-06-17",
-    nameHeadquarter: "Vet Pet Center",
-    nameEmployee: "Dra. Ana Mendoza",
-    diagnosis: "Otitis canina",
-    treatment: "Limpieza y gotas otológicas",
-    observation: "Control en 5 días",
-    resultUrl: "/resultados/3.pdf",
-    status: "FINALIZADO"
-  },
-  {
-    id: 4,
-    date: "2025-06-18",
-    nameHeadquarter: "Veterinaria El Buen Amigo",
-    nameEmployee: "Dr. Pedro Alvarado",
-    diagnosis: "Alergia alimentaria",
-    treatment: "Cambio de dieta",
-    observation: "Control mensual",
-    resultUrl: "/resultados/4.pdf",
-    status: "EN_CURSO"
-  },
-  {
-    id: 5,
-    date: "2025-06-19",
-    nameHeadquarter: "Clínica Animal Vida",
-    nameEmployee: "Dra. Karla Ruiz",
-    diagnosis: "Dermatitis",
-    treatment: "Corticoides tópicos",
-    observation: "Mejoría parcial",
-    resultUrl: "/resultados/5.pdf",
-    status: "FINALIZADO"
-  },
-  {
-    id: 6,
-    date: "2025-06-20",
-    nameHeadquarter: "VetSalud Surco",
-    nameEmployee: "Dr. Andrés Salazar",
-    diagnosis: "Gastritis",
-    treatment: "Dieta blanda y antiácidos",
-    observation: "Evaluar vómitos persistentes",
-    resultUrl: "/resultados/6.pdf",
-    status: "FINALIZADO"
-  },
-  {
-    id: 7,
-    date: "2025-06-21",
-    nameHeadquarter: "Veterinaria Santa Rosa",
-    nameEmployee: "Dra. Lucía Fernández",
-    diagnosis: "Anemia",
-    treatment: "Suplementos y transfusión",
-    observation: "Requiere seguimiento",
-    resultUrl: "/resultados/7.pdf",
-    status: "EN_CURSO"
-  },
-  {
-    id: 8,
-    date: "2025-06-22",
-    nameHeadquarter: "Centro Vet Pachacamac",
-    nameEmployee: "Dr. Henry Poma",
-    diagnosis: "Fractura en extremidad",
-    treatment: "Inmovilización con férula",
-    observation: "Evaluar cirugía ortopédica",
-    resultUrl: "/resultados/8.pdf",
-    status: "EN_CURSO"
-  },
-  {
-    id: 9,
-    date: "2025-06-23",
-    nameHeadquarter: "Animal Care Express",
-    nameEmployee: "Dra. Evelyn Díaz",
-    diagnosis: "Infección ocular",
-    treatment: "Gotas oftálmicas cada 8 horas",
-    observation: "Revisar en 3 días",
-    resultUrl: "/resultados/9.pdf",
-    status: "FINALIZADO"
-  },
-  {
-    id: 10,
-    date: "2025-06-24",
-    nameHeadquarter: "Veterinaria San Miguel",
-    nameEmployee: "Dr. Óscar Rojas",
-    diagnosis: "Pulgas y garrapatas",
-    treatment: "Baño medicado y pipeta",
-    observation: "Aplicar nuevamente en 1 mes",
-    resultUrl: "/resultados/10.pdf",
-    status: "FINALIZADO"
+  const role = getMainRole()
+  if (role) {
+    roleMain.value = role
   }
-]
+  loadVeterinaryRecords()
 })
 
 //for export
@@ -238,18 +142,17 @@ const exportCSV = () => {
             v-if="veterinaryRecords"
             :value="veterinaryRecords"
             paginator
-            :rows="10"
-            :rows-per-page-options="[10, 15, 20, 25, 30]"
+            :rows="rows"
+            :totalRecords="totalRecords"
+            :lazy="true"
+            :first="first"
+            :loading="veterinaryRecordLoading.getAllInfoVeterinaryRecordsByPet"
+            @page="loadVeterinaryRecords"
+            :rows-per-page-options="[4, 8, 12]"
             ref="dt"
           >
             <template #header>
-              <div class="w-full flex flex-col xs:flex-row justify-between gap-2 pb-4">
-                <Button
-                  icon="pi pi-plus-circle"
-                  iconPos="right"
-                  severity="success"
-                  label="Agregar ficha clínica"
-                />
+              <div class="w-full flex flex-col xs:flex-row justify-end gap-2 pb-4">
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
             </template>
@@ -296,30 +199,31 @@ const exportCSV = () => {
               sortable
               style="width: 12%"
             ></Column>
-            <Column>
+            <Column header="Acciones" v-if="roleMain !== 'Cliente'">
               <template #body>
-                <div
-                  class="flex justify-between items-center flex-col sm:flex-row lg:flex-row gap-1"
-                >
+                <div class="flex items-center flex-col sm:flex-row lg:flex-row gap-1">
                   <Button
                     icon="pi pi-eye"
                     severity="info"
-                    variant="outlined"
-                    aria-label="Filter"
+                    variant="text"
+                    size="small"
+                    aria-label="Ver"
                     rounded
                   ></Button>
                   <Button
                     icon="pi pi-pencil"
                     severity="warn"
-                    variant="outlined"
-                    aria-label="Filter"
+                    variant="text"
+                    size="small"
+                    aria-label="Editar"
                     rounded
                   ></Button>
                   <Button
                     icon="pi pi-file"
                     severity="success"
-                    variant="outlined"
-                    aria-label="Filter"
+                    variant="text"
+                    size="small"
+                    aria-label="Descargar archivo"
                     rounded
                   ></Button>
                 </div>

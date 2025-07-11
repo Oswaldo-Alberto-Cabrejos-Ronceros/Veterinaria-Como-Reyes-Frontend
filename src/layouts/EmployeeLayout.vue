@@ -242,7 +242,7 @@ const toggleMenu = () => {
 <template>
   <div class="w-full min-h-screen flex">
     <MenuNav :role="mainRole" :items="itemsRole" :show-menu="showMenu" @update:show-menu="toggleMenu()" />
-    <main :class="['w-full flex-1 flex flex-col transition-all duration-200 ease-out' ,showMenu?'ml-64':'ml-0 sm:ml-20']">
+    <main :class="['w-full flex-1 flex flex-col transition-all duration-200 ease-out' ,showMenu?'md:ml-64':'ml-0 md:ml-20']">
       <TheHeader @show-menu="toggleMenu()" :show-menu="showMenu" :role="mainRole" />
       <section class="flex-1 h-auto py-1 px-0.5 xs:px-4 transition-all duration-200 ease-out">
         <router-view />
