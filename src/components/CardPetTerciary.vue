@@ -20,13 +20,13 @@ defineProps<{
     <div class="flex-1 flex flex-col gap-2 2xl:gap-1 justify-center items-start">
       <p>{{ petName }}</p>
       <p class="text-neutral-500 text-sm">{{ petBreed }} - {{ ownerName }}</p>
-      <div class="flex flex-col md:flex-row gap-1 md:items-center">
+      <div class="flex gap-1 md:items-center">
         <i class="pi pi-clock"></i>
         <p>Ultima visita: {{ lastAppoinmentDate }}</p>
         <i class="pi pi-calendar"></i>
         <p>Próxima: {{ nextAppontmentDate }}</p>
       </div>
-      <div class="grid grid-cols-2 md:grid-cols-3 gap-1">
+      <div class="flex gap-1">
         <p class="font-semibold">Peso:</p>
         <p>{{ petWeight }} Kg</p>
 

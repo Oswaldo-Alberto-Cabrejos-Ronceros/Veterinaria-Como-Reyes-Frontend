@@ -234,7 +234,7 @@ const redirect = (name: string) => {
       </template>
       <template #content>
         <!-- news -->
-        <div class="w-full grid grid-cols-4 gap-x-12 mt-4">
+        <div class="w-full grid grid-cols-2 gap-y-4 lg:grid-cols-4 gap-x-6 lg:gap-x-12 mt-4">
           <CardNewsPrimary
             v-if="appointmentsTotayStats"
             title="Citas hoy"
@@ -273,7 +273,7 @@ const redirect = (name: string) => {
           </template>
           <template #subtitle>
             <p>Funciones utilizadas frecuentemente</p>
-            <div class="grid grid-cols-4 gap-x-12 mt-2">
+            <div class="grid grid-cols-1 xs:grid-cols-2 gap-y-4 lg:grid-cols-4 gap-x-6 lg:gap-x-12 mt-2">
               <Button
                 label="Nueva cita"
                 iconPos="top"
@@ -308,7 +308,7 @@ const redirect = (name: string) => {
           </template>
         </Card>
         <!-- section 2 -->
-        <div class="grid grid-cols-2 gap-x-12 mt-4">
+        <div class="grid grid-cols-1 2xl:grid-cols-2 gap-y-4 gap-x-6 lg:gap-x-12 mt-4">
           <Card class="card-primary min-h-24">
             <template #title>
               <div class="w-full flex justify-between items-baseline">
@@ -344,7 +344,7 @@ const redirect = (name: string) => {
               </div>
             </template>
           </Card>
-          <div class="grid grid-cols-2 gap-x-12">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-6 lg:gap-x-12">
             <!-- waiting room -->
             <Card class="card-primary min-h-24 max-h-full">
               <template #title>
@@ -409,20 +409,20 @@ const redirect = (name: string) => {
           </template>
           <template #content>
             <div class="flex flex-col w-full">
-              <div class="flex w-full justify-end gap-2">
+              <div class="flex flex-col sm:flex-row w-full justify-end gap-2">
                 <InputGroup>
                   <InputGroupAddon>
                     <i class="pi pi-search"></i>
                   </InputGroupAddon>
                   <InputText placeholder="Busque un servicio ..." />
                 </InputGroup>
-                <div class="flex gap-2 text-sm">
+                <div class="grid grid-cols-2 gap-2 min-w-2xs text-sm">
                   <Select placeholder="Categoria"></Select>
                   <Select placeholder="Especie"></Select>
                 </div>
               </div>
               <!-- services cards -->
-              <div class="w-full grid grid-cols-4 gap-x-12 gap-y-6 mt-4">
+              <div class="w-full grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 3xl:grid-cols-4 gap-x-12 gap-y-6 mt-4">
                 <CardServiceTerciary
                   v-for="service of services"
                   :key="service.serviceId"
