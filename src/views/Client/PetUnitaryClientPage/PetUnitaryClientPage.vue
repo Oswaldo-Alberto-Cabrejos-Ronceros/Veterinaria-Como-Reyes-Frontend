@@ -3,7 +3,6 @@ import type { Pet } from '@/models/Pet'
 import Card from 'primevue/card'
 import { onMounted, ref } from 'vue'
 import Image from 'primevue/image'
-import DatePicker from 'primevue/datepicker'
 import Message from 'primevue/message'
 import { usePet } from '@/composables/usePet'
 import { useVeterinaryRecord } from '@/composables/useVeterinaryRecord'
@@ -12,15 +11,20 @@ import DataTable, { type DataTablePageEvent } from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from 'primevue/button'
 import { useAuthentication } from '@/composables/useAuthentication'
+import { useClient } from '@/composables/useClient'
+import type { MyInfoClient } from '@/models/MyInfoClient'
+import CardOwnerPrimary from '@/components/CardOwnerPrimary.vue'
 const props = defineProps<{
   petId: string
 }>()
+
+const ownerInfo = ref<MyInfoClient | null>(null)
 
 const { loading: petLoading, error: petError, getPetById } = usePet()
 
 const roleMain = ref<string>('')
 
-const { getMainRole } = useAuthentication()
+const { getEntityId, getMainRole } = useAuthentication()
 
 const {
   loading: veterinaryRecordLoading,
@@ -38,6 +42,8 @@ const rows = ref<number>(1)
 
 const first = ref<number>(0)
 
+const { myInfoAsClient } = useClient()
+
 //for loadVeterinaryRecords
 const loadVeterinaryRecords = async (event?: DataTablePageEvent) => {
   const page = event ? event.first / event.rows : 0
@@ -53,6 +59,12 @@ onMounted(async () => {
   const role = getMainRole()
   if (role) {
     roleMain.value = role
+    if (role != 'Cliente') {
+      const clientId = getEntityId()
+      if (clientId) {
+        ownerInfo.value = await myInfoAsClient(clientId)
+      }
+    }
   }
   loadVeterinaryRecords()
 })
@@ -75,27 +87,25 @@ const exportCSV = () => {
         <Message v-if="petError.getPetById" severity="error" size="small" variant="simple">
           Error al cargar la información de la mascota
         </Message>
-        <div class="textLg flex gap-2">
-          <h3 class="h3">{{ petData?.name }}</h3>
-          <p>{{ petData?.specie.name }}</p>
-          <p>{{ petData?.breed.name }}</p>
-        </div>
+        <div class="textLg flex gap-2"></div>
       </template>
       <template #content>
         <div class="w-full flex flex-col gap-2">
+             <CardOwnerPrimary v-if="ownerInfo" :names="ownerInfo.names" :lastnames="ownerInfo.lastnames" :phone="ownerInfo.phone" :address="ownerInfo.address" ></CardOwnerPrimary>
+          <!-- section appointements -->
           <!-- section 1 pet information -->
-          <div class="flex gap-3 flex-col sm:flex-row">
+          <div class="card-primary p-4 dark:bg-surface-900 flex flex-col-reverse sm:flex-row gap-3">
             <!-- image -->
             <Image
               :src="petData?.urlImage"
               :alt="petData?.name"
-              image-class=" sm:size-56 md:size-64 lg:size-72 xl:size-80 object-cover rounded"
+              image-class=" sm:size-40 object-cover rounded"
               preview
             />
             <!-- content -->
-            <div class="flex-1 flex sie flex-col gap-1 textLg">
-              <div class="flex sie items-center justify-between">
-                <p>Nacimiento: {{ petData?.birthdate }}</p>
+            <div class="flex-1 flex flex-col gap-1 textLg">
+              <div class="flex items-center justify-between">
+                <h3 class="h3 font-semibold">{{ petData?.name }}</h3>
                 <i
                   :class="
                     petData?.gender === 'H'
@@ -104,21 +114,33 @@ const exportCSV = () => {
                   "
                 ></i>
               </div>
-
-              <p>Peso: {{ petData?.weight }} Kg</p>
-              <p>Comentario:</p>
-              <p class="textBase">{{ petData?.comment }}</p>
+              <div class="flex flex-col md:flex-row md:items-center textBase gap-2">
+                <div class="flex items-center gap-1">
+                  <i class="pi pi-heart"></i>
+                  <p>{{ petData?.specie.name }}</p>
+                </div>
+                <div class="flex items-center gap-1">
+                  <i class="fa-solid fa-paw"></i>
+                  <p>{{ petData?.breed.name }}</p>
+                </div>
+                <div class="flex items-center gap-1">
+                  <i class="fa-solid fa-weight-hanging"></i>
+                  <p>{{ petData?.weight }} Kg</p>
+                </div>
+                <div class="flex items-center gap-1">
+                  <i class="fa-solid fa-cake-candles"></i>
+                  <p>{{ petData?.birthdate }}</p>
+                </div>
+              </div>
+              <p v-if="petData?.comment">Comentario:</p>
+              <p v-if="petData?.comment" class="textBase">{{ petData?.comment }}</p>
             </div>
           </div>
-          <!-- section appointements -->
+
           <!-- title and select -->
-          <div class="w-full flex justify-between items-center">
-            <h3 class="h3">Mis historial clínico</h3>
-            <div>
-              <!-- for month -->
-              <DatePicker view="month" date-format="mm-yy"></DatePicker>
-              <!-- for yerar -->
-            </div>
+          <div class="w-full flex justify-between items-center mt-2">
+            <h3 class="h3">Mi historial clínico</h3>
+            <div></div>
           </div>
           <Message
             v-if="veterinaryRecordLoading.getPetById"

@@ -27,6 +27,7 @@ import { usePayment } from '@/composables/usePayment'
 import type { CareAndAppointmentPanelEmployee } from '@/models/CareAndAppointmentPanelEmployee'
 import type { RecentPayment } from '@/models/RecientPayment'
 import { useRouter } from 'vue-router'
+import Paginator from 'primevue/paginator'
 
 const { getEntityId } = useAuthentication()
 const { getEmployeeMyInfo } = useEmployee()
@@ -218,6 +219,10 @@ const router = useRouter()
 const redirect = (name: string) => {
   router.push({ name: name })
 }
+
+const totalRecords = ref<number>(0)
+const rows = ref<number>(10)
+const first = ref<number>(0)
 </script>
 
 <template>
@@ -273,7 +278,9 @@ const redirect = (name: string) => {
           </template>
           <template #subtitle>
             <p>Funciones utilizadas frecuentemente</p>
-            <div class="grid grid-cols-1 xs:grid-cols-2 gap-y-4 lg:grid-cols-4 gap-x-6 lg:gap-x-12 mt-2">
+            <div
+              class="grid grid-cols-1 xs:grid-cols-2 gap-y-4 lg:grid-cols-4 gap-x-6 lg:gap-x-12 mt-2"
+            >
               <Button
                 label="Nueva cita"
                 iconPos="top"
@@ -321,26 +328,28 @@ const redirect = (name: string) => {
             </template>
             <template #content>
               <div class="w-full flex flex-col gap-1.5">
-                <CardAppointmentQuaternary
-                  v-for="(appointment, index) of todayAppointments"
-                  :key="index"
-                  :pet-name="appointment.pet.name"
-                  :service-name="appointment.serviceName"
-                  :owner-name="appointment.clientName"
-                  :time="appointment.hour"
-                  :status="appointment.status"
-                  :employee-name="''"
-                  :pet-breed="''"
-                >
-                </CardAppointmentQuaternary>
-                <Button
-                  label="Ver todas las citas"
-                  variant="text"
-                  icon="pi pi-eye"
-                  size="small"
-                  class="mt-2"
-                >
-                </Button>
+                <ScrollPanel class="w-56">
+                  <CardAppointmentQuaternary
+                    v-for="(appointment, index) of todayAppointments"
+                    :key="index"
+                    :pet-name="appointment.pet.name"
+                    :service-name="appointment.serviceName"
+                    :owner-name="appointment.clientName"
+                    :time="appointment.hour"
+                    :status="appointment.status"
+                    :employee-name="''"
+                    :pet-breed="''"
+                  >
+                  </CardAppointmentQuaternary>
+                  <Button
+                    label="Ver todas las citas"
+                    variant="text"
+                    icon="pi pi-eye"
+                    size="small"
+                    class="mt-2"
+                  >
+                  </Button>
+                </ScrollPanel>
               </div>
             </template>
           </Card>
@@ -357,15 +366,16 @@ const redirect = (name: string) => {
                 <p>Clientes en espera</p>
               </template>
               <template #content>
-                <div class="w-full flex flex-col gap-1">
-                  <CardClientWaiting
-                    v-for="(client, index) of carePending"
-                    :key="index"
-                    :clientName="client.clientName"
-                    :petName="client.pet.name"
-                    :serviceName="client.serviceName"
-                  ></CardClientWaiting>
-                </div>
+                <ScrollPanel class="h-56">
+                  <div class="w-full flex flex-col gap-1">
+                    <CardClientWaiting
+                      v-for="(client, index) of carePending"
+                      :key="index"
+                      :clientName="client.clientName"
+                      :petName="client.pet.name"
+                      :serviceName="client.serviceName"
+                    ></CardClientWaiting></div
+                ></ScrollPanel>
               </template>
             </Card>
             <!-- payments -->
@@ -379,18 +389,20 @@ const redirect = (name: string) => {
               </template>
               <template #content>
                 <div class="w-full flex flex-col gap-1">
-                  <CardPaymentPrimary
-                    v-for="(payment, index) in paymentsRecent"
-                    :key="index"
-                    :clientName="payment.clientFullName"
-                    :petName="payment.petName"
-                    :serviceName="payment.serviceName"
-                    clientDni="''"
-                    :date="payment.paymentDate"
-                    :time="payment.paymentTime"
-                    :amount="payment.amount"
-                    :status="payment.paymentStatus"
-                  />
+                  <ScrollPanel class="h-56">
+                    <CardPaymentPrimary
+                      v-for="(payment, index) in paymentsRecent"
+                      :key="index"
+                      :clientName="payment.clientFullName"
+                      :petName="payment.petName"
+                      :serviceName="payment.serviceName"
+                      clientDni="''"
+                      :date="payment.paymentDate"
+                      :time="payment.paymentTime"
+                      :amount="payment.amount"
+                      :status="payment.paymentStatus"
+                    />
+                  </ScrollPanel>
                 </div>
               </template>
             </Card>
@@ -422,7 +434,9 @@ const redirect = (name: string) => {
                 </div>
               </div>
               <!-- services cards -->
-              <div class="w-full grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 3xl:grid-cols-4 gap-x-12 gap-y-6 mt-4">
+              <div
+                class="w-full grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 3xl:grid-cols-4 gap-x-12 gap-y-6 mt-4"
+              >
                 <CardServiceTerciary
                   v-for="service of services"
                   :key="service.serviceId"
@@ -435,6 +449,13 @@ const redirect = (name: string) => {
                   :price="service.price"
                 >
                 </CardServiceTerciary>
+                <Paginator
+                  lazy
+                  :rows="rows"
+                  :first="first"
+                  :totalRecords="totalRecords"
+                  :rows-per-page-options="[2, 4, 6, 8, 10]"
+                />
               </div>
             </div>
           </template>

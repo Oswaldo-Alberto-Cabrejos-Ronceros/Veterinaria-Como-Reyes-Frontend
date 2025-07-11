@@ -24,6 +24,7 @@ import { useVeterinaryService } from '@/composables/useVeterinaryService'
 import { useRouter } from 'vue-router'
 import { useSpecie } from '@/composables/useSpecie'
 import type { TopSpeciesByAppointments } from '@/services/Specie/domain/models/Specie'
+import ScrollPanel from 'primevue/scrollpanel'
 
 const { getMainRole, getEntityId } = useAuthentication()
 const { getEmployeeMyInfo } = useEmployee()
@@ -319,6 +320,9 @@ const redirect = (url: string) => {
             </template>
             <template #content>
               <div class="w-full flex flex-col gap-1.5">
+                       <div class="flex flex-col gap-2">
+                <ScrollPanel class="h-122">
+
                 <CardAppintmentTerciary
                   v-for="(appointment, index) of appointmentsToday"
                   :key="index"
@@ -329,15 +333,18 @@ const redirect = (url: string) => {
                   :status="appointment.status"
                 >
                 </CardAppintmentTerciary>
+                </ScrollPanel>
+
                 <Button
                   label="Ver todas las citas"
                   variant="text"
                   icon="pi pi-eye"
                   size="small"
-                  class="mt-2"
                   @click="redirect('appoinment-management')"
                 >
                 </Button>
+                  </div>
+
               </div>
             </template>
           </Card>
@@ -348,6 +355,8 @@ const redirect = (url: string) => {
                 <p>Servicios más perdidos</p>
               </template>
               <template #content>
+<ScrollPanel class="h-56">
+
                 <ServiceRankingItem
                   v-for="(service, index) of servicesTop"
                   :key="index"
@@ -357,6 +366,8 @@ const redirect = (url: string) => {
                   :value="service.totalCares"
                 >
                 </ServiceRankingItem>
+</ScrollPanel>
+
               </template>
             </Card>
             <!-- clientes recientes -->

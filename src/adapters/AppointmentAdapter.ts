@@ -71,7 +71,7 @@ export class AppointmentAdapter {
       categoryService: {
         name: infoBasicAppointment.categoryServiceName,
       },
-      status: infoBasicAppointment.status,
+      status: FormatAdapter.toCaptalizeCaseWithout_(infoBasicAppointment.status),
       duration: infoBasicAppointment.duration,
     }
   }
@@ -157,7 +157,7 @@ export class AppointmentAdapter {
       serviceName: infoAppointment.serviceName,
       clientName: infoAppointment.clientName,
       hour: infoAppointment.hour,
-      status: infoAppointment.status,
+      status: FormatAdapter.toCaptalizeCaseWithout_(infoAppointment.status),
     }
   }
 
