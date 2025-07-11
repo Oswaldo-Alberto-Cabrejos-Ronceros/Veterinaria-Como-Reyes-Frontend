@@ -19,13 +19,23 @@ import type { AppointmentStatsToday } from '@/services/Appointment/domain/models
 import type { CareAndAppointmentPanelEmployee } from '@/models/CareAndAppointmentPanelEmployee'
 import { useRouter } from 'vue-router'
 import { useCare } from '@/composables/useCare'
+import type { VeterinaryRecordStats } from '@/services/VeterinaryRecord/domain/models/VeterinaryRecord'
+import { useVeterinaryRecord } from '@/composables/useVeterinaryRecord'
+import type { RecentMedicalRecord } from '@/models/RecentMedicalRecord'
+import type { RecentPatient } from '@/models/RecentPatient'
 const { getEntityId } = useAuthentication()
 const { getEmployeeMyInfo } = useEmployee()
 
 const { getCareAndAppointmentsForEmployee } = useAppointment()
 const appointments = ref<CareAndAppointmentPanelEmployee[]>([])
 
-const { getCaresForEmployee } = useCare()
+const statsRecords = ref<VeterinaryRecordStats | null>(null)
+
+const { getRecentPatientsByEmployee, getCaresForEmployee } = useCare()
+
+const recentsPacients = ref<RecentPatient[]>([])
+
+const { getStatsByVeterinarian } = useVeterinaryRecord()
 
 const careRecents = ref<CareAndAppointmentPanelEmployee[]>([])
 
@@ -113,6 +123,8 @@ const loadMyInfo = async () => {
     )
     careRecents.value = await getCareAndAppointmentsForEmployee(entityIdGet)
     appointments.value = await getCaresForEmployee(entityIdGet)
+    statsRecords.value = await getStatsByVeterinarian(entityIdGet)
+    recentsPacients.value = await getRecentPatientsByEmployee(entityIdGet)
   }
 }
 
@@ -137,6 +149,7 @@ const news: { title: string; icon: string; content: string; plus?: string }[] = 
   },
 ]
 
+const recentPets = ref<RecentMedicalRecord[]>([])
 
 const newsStadistics: { title: string; icon: string; content: string; plus?: string }[] = [
   {
@@ -153,171 +166,6 @@ const newsStadistics: { title: string; icon: string; content: string; plus?: str
     title: 'Horas acumuladas',
     icon: 'pi-clock',
     content: '5',
-  },
-]
-
-const newsDiagnosis: { title: string; icon: string; content: string }[] = [
-  {
-    title: 'En curso',
-    icon: 'pi-clock',
-    content: '20',
-  },
-  {
-    title: 'Completado',
-    icon: 'pi-check-circle',
-    content: '10',
-  },
-  {
-    title: 'Observación',
-    icon: 'pi-info-circle',
-    content: '5',
-  },
-  {
-    title: 'Total',
-    icon: 'pi-file',
-    content: '25',
-  },
-]
-
-const veterinaryRecords: {
-  recordId: number
-  date: string
-  petName: string
-  breedName: string
-  status: string
-  serviceName: string
-  clientName: string
-  clientLastname: string
-  diagnosisContent: string
-  treatment: string
-  observations: string
-}[] = [
-  {
-    recordId: 1,
-    date: '2025-07-03',
-    petName: 'Luna',
-    breedName: 'Labrador Retriever',
-    status: 'Completado',
-    serviceName: 'Consulta General',
-    clientName: 'María',
-    clientLastname: 'García',
-    diagnosisContent: 'Leve infección en oído izquierdo',
-    treatment: 'Gotas antibióticas por 7 días',
-    observations: 'Volver en una semana para control',
-  },
-  {
-    recordId: 2,
-    date: '2025-07-02',
-    petName: 'Max',
-    breedName: 'Pug',
-    status: 'Completado',
-    serviceName: 'Vacunación',
-    clientName: 'Javier',
-    clientLastname: 'Paredes',
-    diagnosisContent: 'Paciente en buen estado',
-    treatment: 'Aplicación de vacuna séxtuple',
-    observations: 'Siguiente dosis en 21 días',
-  },
-  {
-    recordId: 3,
-    date: '2025-07-01',
-    petName: 'Mishi',
-    breedName: 'Persa',
-    status: 'Completado',
-    serviceName: 'Consulta General',
-    clientName: 'Alejandra',
-    clientLastname: 'Reyes',
-    diagnosisContent: 'Problemas digestivos leves',
-    treatment: 'Cambio de dieta y probióticos',
-    observations: 'Monitorear deposiciones por 5 días',
-  },
-  {
-    recordId: 4,
-    date: '2025-06-30',
-    petName: 'Rocky',
-    breedName: 'Bulldog Francés',
-    status: 'Completado',
-    serviceName: 'Desparasitación',
-    clientName: 'Luis',
-    clientLastname: 'Ramírez',
-    diagnosisContent: 'Presencia de parásitos intestinales',
-    treatment: 'Antiparasitario oral, dosis única',
-    observations: 'Repetir examen en 15 días',
-  },
-  {
-    recordId: 5,
-    date: '2025-06-29',
-    petName: 'Kira',
-    breedName: 'Golden Retriever',
-    status: 'Completado',
-    serviceName: 'Chequeo Postoperatorio',
-    clientName: 'Fernanda',
-    clientLastname: 'Torres',
-    diagnosisContent: 'Buena recuperación post cirugía',
-    treatment: 'Mantener reposo y analgésico 3 días',
-    observations: 'Retirar puntos en 5 días',
-  },
-]
-
-const petRecents: {
-  petId: number
-  petName: string
-  petBreed: string
-  petImage: string
-  petWeight: number
-  petGender: string
-  petBirtdate: string
-  ownerName: string
-  lastAppoinmentDate: string
-  nextAppontmentDate: string
-}[] = [
-  {
-    petId: 1,
-    petName: 'Luna',
-    petBreed: 'Labrador Retriever',
-    petImage: 'https://example.com/images/luna.jpg',
-    petWeight: 28.5,
-    petGender: 'Hembra',
-    petBirtdate: '2020-04-15',
-    ownerName: 'María García',
-    lastAppoinmentDate: '2025-06-15',
-    nextAppontmentDate: '2025-08-01',
-  },
-  {
-    petId: 2,
-    petName: 'Rocky',
-    petBreed: 'Bulldog Francés',
-    petImage: 'https://example.com/images/rocky.jpg',
-    petWeight: 13.2,
-    petGender: 'Macho',
-    petBirtdate: '2019-11-02',
-    ownerName: 'Luis Ramírez',
-    lastAppoinmentDate: '2025-06-20',
-    nextAppontmentDate: '2025-07-20',
-  },
-  {
-    petId: 3,
-    petName: 'Mishi',
-    petBreed: 'Persa',
-    petImage: 'https://example.com/images/mishi.jpg',
-    petWeight: 4.8,
-    petGender: 'Hembra',
-    petBirtdate: '2021-01-10',
-    ownerName: 'Alejandra Reyes',
-    lastAppoinmentDate: '2025-05-30',
-    nextAppontmentDate: '2025-07-10',
-  },
-  {
-    petId: 4,
-    petName: 'Toby',
-    petBreed: 'Beagle',
-    petImage: 'https://example.com/images/toby.jpg',
-    petWeight: 11.6,
-    petGender: 'Macho',
-    petBirtdate: '2020-07-25',
-    ownerName: 'Carlos Mendoza',
-    lastAppoinmentDate: '2025-06-28',
-    nextAppontmentDate: '2025-08-05',
   },
 ]
 
@@ -386,7 +234,9 @@ const redirect = (url: string) => {
           </template>
           <template #subtitle>
             <p>Funciones más utilizadas</p>
-            <div class="grid grid-cols-1 xs:grid-cols-2 gap-y-4 lg:grid-cols-4 gap-x-6 lg:gap-x-12 mt-2">
+            <div
+              class="grid grid-cols-1 xs:grid-cols-2 gap-y-4 lg:grid-cols-4 gap-x-6 lg:gap-x-12 mt-2"
+            >
               <Button
                 label="Atender cita"
                 iconPos="top"
@@ -449,6 +299,7 @@ const redirect = (url: string) => {
                 <!-- abstract  -->
 
                 <div
+                  v-if="statsRecords"
                   class="p-4 shadow-none border-1 rounded-sm border-blue-500 bg-blue-50 dark:bg-transparent w-full flex flex-col gap-2 xl:flex-row justify-between items-center"
                 >
                   <div class="flex gap-4">
@@ -465,7 +316,12 @@ const redirect = (url: string) => {
                       </p>
                     </div>
                   </div>
-                  <Button label="Ver agenda completa" class="w-full xl:w-auto" variant="outlined" severity="secondary" />
+                  <Button
+                    label="Ver agenda completa"
+                    class="w-full xl:w-auto"
+                    variant="outlined"
+                    severity="secondary"
+                  />
                 </div>
               </div>
             </template>
@@ -487,7 +343,14 @@ const redirect = (url: string) => {
               </template>
               <template #content>
                 <div class="w-full flex flex-col gap-1">
-                  <CardPetWaiting v-for="(care, index) of careRecents" :key="index" :client-name="care.clientName" :pet-name="care.pet.name" :service-name="care.serviceName" breed-name="" />
+                  <CardPetWaiting
+                    v-for="(care, index) of careRecents"
+                    :key="index"
+                    :client-name="care.clientName"
+                    :pet-name="care.pet.name"
+                    :service-name="care.serviceName"
+                    breed-name=""
+                  />
                 </div>
               </template>
             </Card>
@@ -561,24 +424,52 @@ const redirect = (url: string) => {
               <p>Historial de diagnostico recientes</p>
             </template>
             <template #content>
-              <div class="w-full flex flex-col gap-1.5 items-end">
+              <div class="w-full flex flex-col gap-1.5 items-end" v-if="statsRecords">
                 <!-- abstract -->
                 <div class="w-full grid grid-cols-2 3xl:grid-cols-4 gap-y-3 gap-x-6">
                   <CardNewsPrimary
-                    v-for="(noticia, index) in newsDiagnosis"
-                    :key="index"
-                    :title="noticia.title"
-                    :icon="noticia.icon"
-                    :content="noticia.content"
+                    title="En curso"
+                    icon="pi-clock"
+                    :content="statsRecords.enCurso.toString()"
+                  >
+                  </CardNewsPrimary>
+
+                  <CardNewsPrimary
+                    title="Completado"
+                    icon="pi-check-circle"
+                    :content="statsRecords.completado.toString()"
+                  >
+                  </CardNewsPrimary>
+
+                  <CardNewsPrimary
+                    title="Observación"
+                    icon="pi-info-circle"
+                    :content="statsRecords.observacion.toString()"
+                  >
+                  </CardNewsPrimary>
+
+                  <CardNewsPrimary
+                    title="Total"
+                    icon="pi-file"
+                    :content="statsRecords.total.toString()"
                   >
                   </CardNewsPrimary>
                 </div>
                 <ScrollPanel class="h-[30rem] mt-2 w-full">
                   <CardVeterinaryRecord
                     class="mb-2"
-                    v-for="record in veterinaryRecords"
-                    :key="record.recordId"
-                    v-bind="record"
+                    v-for="record in recentPets"
+                    :key="record.id"
+                    :record-id="record.id"
+                    :date="record.recordMedicalDate"
+                    :pet-name="record.petName"
+                    :breed-name="record.breedName"
+                    :status="record.status"
+                    :service-name="record.serviceName"
+                    :client-name="record.clientFullName"
+                    :diagnosis-content="record.diagnosis"
+                    :treatment="record.treatment"
+                    :observations="record.observations"
                   ></CardVeterinaryRecord
                 ></ScrollPanel>
 
@@ -609,7 +500,10 @@ const redirect = (url: string) => {
             </template>
             <template #content>
               <div class="w-full flex flex-col gap-1.5 items-end">
-                <CardPetTerciary v-for="pet of petRecents" :key="pet.petId" v-bind="pet" />
+                <CardPetTerciary v-for="pet of recentsPacients" :key="pet.petId" :pet-id="pet.petId"
+                :pet-name="pet.petName" :pet-breed="pet.breedName" :pet-image="''"  :pet-weight="pet.petWeight"
+                :pet-gender="pet.petSex" :pet-birtdate="pet.petBirthdate" :owner-name="pet.clientFullName" :last-appoinment-date="pet.lastVisitDate"
+                />
               </div>
               <Button
                 class="mt-2 w-full"

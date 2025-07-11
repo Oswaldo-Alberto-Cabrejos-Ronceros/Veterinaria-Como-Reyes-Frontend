@@ -10,8 +10,8 @@ defineProps<{
   petGender: string
   petBirtdate: string
   ownerName: string
-  lastAppoinmentDate: string
-  nextAppontmentDate: string
+  lastAppoinmentDate?: string
+  nextAppontmentDate?: string
 }>()
 </script>
 <template>
@@ -22,9 +22,9 @@ defineProps<{
       <p class="text-neutral-500 text-sm">{{ petBreed }} - {{ ownerName }}</p>
       <div class="flex gap-1 md:items-center">
         <i class="pi pi-clock"></i>
-        <p>Ultima visita: {{ lastAppoinmentDate }}</p>
+        <p>Ultima visita: {{ lastAppoinmentDate||'No tiene' }}</p>
         <i class="pi pi-calendar"></i>
-        <p>Próxima: {{ nextAppontmentDate }}</p>
+        <p>Próxima: {{ nextAppontmentDate||'No tiene' }}</p>
       </div>
       <div class="flex gap-1">
         <p class="font-semibold">Peso:</p>

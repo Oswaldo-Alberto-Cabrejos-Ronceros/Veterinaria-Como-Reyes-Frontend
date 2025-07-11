@@ -39,7 +39,7 @@ const items = ref<MenuItem[][]>([
     },
     {
       label: 'Empleados',
-      icon: 'pi pi-users',
+      icon: 'fa-solid fa-users-line',
       to: '/employee/administrator/employee-management',
     },
     {
@@ -49,7 +49,7 @@ const items = ref<MenuItem[][]>([
     },
     {
       label: 'Mascotas',
-      icon: 'pi pi-github',
+      icon: 'fa-solid fa-paw',
       to: '/employee/administrator/pets-management',
     },
     {
@@ -74,12 +74,12 @@ const items = ref<MenuItem[][]>([
     },
     {
       label: 'Especies',
-      icon: 'pi pi-github',
+      icon: 'fa-solid fa-shield-dog',
       to: '/employee/administrator/species-management',
     },
     {
       label: 'Razas',
-      icon: 'pi pi-github',
+      icon: 'fa-solid fa-shield-dog',
       to: '/employee/administrator/breeds-management',
     },
     {
@@ -111,7 +111,7 @@ const items = ref<MenuItem[][]>([
     },
     {
       label: 'Empleados',
-      icon: 'pi pi-users',
+      icon: 'fa-solid fa-users-line',
       to: '/employee/manager/employee-management',
     },
     {
@@ -121,7 +121,7 @@ const items = ref<MenuItem[][]>([
     },
     {
       label: 'Mascotas',
-      icon: 'pi pi-github',
+      icon: 'fa-solid fa-paw',
       to: '/employee/manager/pets-management',
     },
       {
@@ -142,12 +142,12 @@ const items = ref<MenuItem[][]>([
 
     {
       label: 'Especies',
-      icon: 'pi pi-github',
+      icon: 'fa-solid fa-shield-dog',
       to: '/employee/manager/species-management',
     },
     {
       label: 'Razas',
-      icon: 'pi pi-github',
+      icon: 'fa-solid fa-shield-dog',
       to: '/employee/manager/breeds-management',
     },
 
@@ -185,7 +185,7 @@ const items = ref<MenuItem[][]>([
     },
     {
       label: 'Mascotas',
-      icon: 'pi pi-github',
+      icon: 'fa-solid fa-paw',
       to: '/employee/veterinary/pets-management',
     },
 
@@ -203,7 +203,7 @@ const items = ref<MenuItem[][]>([
     },
     {
       label: 'Mascotas',
-      icon: 'pi pi-github',
+      icon: 'fa-solid fa-paw',
       to: '/employee/receptionist/pets-management',
     },
     {

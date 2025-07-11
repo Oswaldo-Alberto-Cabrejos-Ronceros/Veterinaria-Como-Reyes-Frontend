@@ -99,7 +99,7 @@ async getCaresByHeadquarterId(headquarterId: number): Promise<CareAndAppointment
 
   async getRecentPatientsByEmployee(employeeId: number): Promise<RecentPatient[]> {
   const response = await this.httpClient.get<RecentPatient[]>(
-    `/care/recent-patients/${employeeId}`,
+    `panel/veterinarians/care/recent-patients/${employeeId}`,
   )
   return response.data
 }

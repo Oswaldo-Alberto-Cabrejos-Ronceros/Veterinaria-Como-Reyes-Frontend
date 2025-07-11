@@ -10,7 +10,6 @@ defineProps<{
   status: string
   serviceName: string
   clientName: string
-  clientLastname: string
   diagnosisContent: string
   treatment: string
   observations: string
@@ -36,7 +35,8 @@ defineProps<{
       </div>
 
       <p class="text-neutral-500 text-sm">
-        {{ breedName }} - {{ clientName }} {{ clientLastname }}
+        {{ breedName }} - {{ clientName }}
+        :
       </p>
 
       <p class="font-semibold">Diagnóstico</p>

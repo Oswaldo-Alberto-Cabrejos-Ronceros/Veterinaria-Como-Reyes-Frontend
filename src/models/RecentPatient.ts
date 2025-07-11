@@ -4,7 +4,7 @@ export interface RecentPatient {
   petName: string;
   breedName: string;
   clientFullName: string;
-  lastVisitDate: string;
+  lastVisitDate?: string;
   petWeight: number;
   petSex: string;
   petBirthdate: string;

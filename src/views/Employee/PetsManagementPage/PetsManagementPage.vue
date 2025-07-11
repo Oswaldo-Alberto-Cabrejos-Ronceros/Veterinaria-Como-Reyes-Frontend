@@ -475,6 +475,7 @@ watch(
             @page="loadPets"
             :rows-per-page-options="[1, 2, 3, 4]"
             ref="dt"
+
           >
             <template #header>
               <div class="w-full flex flex-col xs:flex-row justify-between gap-2 pb-4">
@@ -484,6 +485,7 @@ watch(
                   severity="success"
                   label="Agregar Mascota"
                   @click="addPet"
+                    v-if="mainRole === 'Administrador' || mainRole === 'Encargado'"
                 />
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>

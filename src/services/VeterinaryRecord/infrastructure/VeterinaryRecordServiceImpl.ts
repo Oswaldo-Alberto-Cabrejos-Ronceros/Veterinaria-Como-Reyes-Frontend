@@ -69,7 +69,7 @@ export class VeterinaryRecordServiceImpl implements VeterinaryRecordService {
   }
     async getStatsByVeterinarian(employeeId: number): Promise<VeterinaryRecordStats> {
     const response = await this.httpClient.get<VeterinaryRecordStats>(
-      `/panel/veterinarians/statistics/${employeeId}`
+      `/panel/veterinarians/medical-records/statistics/${employeeId}`
     )
     return response.data
   }

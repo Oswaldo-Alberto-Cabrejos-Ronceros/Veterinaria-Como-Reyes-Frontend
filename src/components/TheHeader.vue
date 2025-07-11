@@ -105,20 +105,6 @@ const confirmLogout = async () => {
             @click="themeStore.toggleTheme"
           />
           <Button
-            icon="pi pi-calendar"
-            severity="contrast"
-            variant="text"
-            rounded
-            aria-label="Calendario"
-          />
-          <Button
-            icon="pi pi-bell"
-            severity="contrast"
-            variant="text"
-            rounded
-            aria-label="Notificaciones"
-          />
-          <Button
             icon="pi pi-user"
             severity="contrast"
             variant="text"

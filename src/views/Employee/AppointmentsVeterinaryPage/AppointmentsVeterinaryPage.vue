@@ -58,6 +58,7 @@ onMounted(async () => {
             :status="appoinment.status"
             :type="appoinment.type"
           />
+          <p v-if="appointments.length===0">No hay citas registradas</p>
         </div>
       </template>
     </Card>

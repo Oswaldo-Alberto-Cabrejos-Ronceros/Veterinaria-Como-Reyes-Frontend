@@ -59,7 +59,7 @@ export interface RecentPatient {
   animalName: string;
   breedName: string;
   clientFullName: string;
-  lastVisitDate: string;
+  lastVisitDate?: string;
   animalWeight: number;
   animalSex: string;
   animalBirthDate: string;
