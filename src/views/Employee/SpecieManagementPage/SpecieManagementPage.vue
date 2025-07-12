@@ -274,8 +274,6 @@ const statusOptions: OptionSelect[] = [
 
             <Column field="name" sortable style="width: 80%"></Column>
 
-            <Column>
-
             <Column field="status" header="Estado" style="width: 20%">
               <template #body="{ data }">
                 <Tag
