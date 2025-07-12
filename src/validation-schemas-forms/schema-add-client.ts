@@ -30,7 +30,6 @@ export const schema = yup.object({
   email: yup
     .string()
     .email('Email invalido')
-    .required('El email es obligatorio')
     .when('withUser', {
       is: true,
       then: (schema) => schema.required('El email es obligatorio'),
