@@ -356,7 +356,7 @@ const attendAppointment = (appointmentId: number) => {
               </Message>
             </div>
             <!-- headquarter -->
-            <div v-if="roleMain==='Administrador'">
+            <div v-if="roleMain === 'Administrador'">
               <label class="block mb-2">Sede</label>
               <Select
                 class="w-full"
@@ -483,12 +483,25 @@ const attendAppointment = (appointmentId: number) => {
               <template #body="{ data }">
                 <div class="flex items-center flex-row lg:flex-col xl:flex-row gap-1">
                   <Button
+                    icon="pi pi-eye"
+                    v-tooltip="'Ver todos datos'"
+                    severity="info"
+                    size="small"
+                    variant="text"
+                    aria-label="Ver todos datos"
+                    v-if="data.appointmentStatus === 'Completada'"
+                    @click="attendAppointment(data.id)"
+                    rounded
+                  />
+
+                  <Button
                     icon="pi pi-calendar-clock"
                     v-tooltip="'Ver todos datos'"
                     severity="warn"
                     size="small"
                     variant="text"
                     aria-label="Ver todos datos"
+                    v-if="data.appointmentStatus !== 'Completada'"
                     @click="attendAppointment(data.id)"
                     rounded
                   />

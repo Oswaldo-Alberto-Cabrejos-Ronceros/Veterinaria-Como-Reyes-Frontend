@@ -23,6 +23,14 @@ export class HeadquarterVetServiceServiceImpl implements HeadquarterVetServiceSe
     )
     return response.data
   }
+
+    async getAllHeadquarterVetServiceByHeadquarter(headquarterId: number): Promise<HeadquarterVetService[]> {
+    const response = await this.httpClient.get<HeadquarterVetService[]>(
+      `${this.urlBase}/headquarter/${headquarterId}/all`,
+    )
+    return response.data
+  }
+
   async create(request: HeadquarterVetServiceRequest): Promise<HeadquarterVetService> {
     const response = await this.httpClient.post<HeadquarterVetService>(this.urlBase, request)
     return response.data

@@ -6,6 +6,7 @@ export interface HeadquarterVetServiceService {
   getAll(): Promise<HeadquarterVetService[]>
   getById(id: number): Promise<HeadquarterVetService>
   getByHeadquarter(headquarterId: number): Promise<HeadquarterVetService[]>
+    getAllHeadquarterVetServiceByHeadquarter(headquarterId: number): Promise<HeadquarterVetService[]>
   create(request: HeadquarterVetServiceRequest): Promise<HeadquarterVetService>
   update(id: number, request: HeadquarterVetServiceRequest): Promise<HeadquarterVetService>
   delete(id: number): Promise<void>

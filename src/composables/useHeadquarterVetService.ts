@@ -42,6 +42,15 @@ export function useHeadquarterVetService() {
     return services.map(HeadquarterVetServiceAdapter.toHeadquarterVetServiceView)
   }
 
+const getAllHeadquarterVetServiceByHeadquarter = async (
+  headquarterId: number,
+): Promise<HeadquarterVetServiceView[]> => {
+  const services = await runUseCase('getAllHeadquarterVetServiceByHeadquarter', () =>
+    headquarterVetServiceUsesCases.getAllHeadquarterVetServiceByHeadquarter.execute(headquarterId),
+  )
+  return services.map(HeadquarterVetServiceAdapter.toHeadquarterVetServiceView)
+}
+
   const getHeadquarterVetServiceById = async (id: number): Promise<HeadquarterVetServiceView> => {
     const service = await runUseCase('getHeadquarterVetServiceById', () =>
       headquarterVetServiceUsesCases.getHeadquarterVetServiceById.execute(id),
@@ -84,5 +93,6 @@ export function useHeadquarterVetService() {
     listVeterinariansByHeadVetService,
     enableHeadquarterVetService,
     updateSimultaneousCapacity,
+    getAllHeadquarterVetServiceByHeadquarter
   }
 }

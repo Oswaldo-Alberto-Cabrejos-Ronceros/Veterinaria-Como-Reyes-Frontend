@@ -69,7 +69,7 @@ const {
   deleteHeadquarterVetService,
   updateSimultaneousCapacity,
   createHeadquarterVetService,
-  getHeadquarterVetServiceByHeadquarter,
+  getAllHeadquarterVetServiceByHeadquarter,
 } = useHeadquarterVetService()
 
 //services
@@ -146,7 +146,8 @@ const loadHeadquarterServices = async () => {
   headquarterServices.value = []
 
   for (const item of headquarters.value) {
-    const service = await getHeadquarterVetServiceByHeadquarter(item.id)
+    const service = await getAllHeadquarterVetServiceByHeadquarter(item.id)
+    console.log(service)
     console.log(item.id, service)
     headquarterServices.value.push(service)
   }
@@ -281,7 +282,7 @@ const editHeadquarterService = async (headquarterService: HeadquarterVetService 
 
           if (changeStatus) {
             if (data.status) {
-              await enableHeadquarterVetService(headquarterService.headquarterId)
+              await enableHeadquarterVetService(headquarterService.id)
               showToast('Habilitado con exito')
             } else {
               await deleteHeadquarterVetService(headquarterService.id)
@@ -465,7 +466,8 @@ const inanctivedHeadquarterService = ref<boolean>(false)
                     <div class="w-full flex items-center gap-2 justify-center">
                       <ToggleSwitch v-if="headquarterServiceAux.status" readonly v-model="activedHeadquarterService" />
                         <ToggleSwitch v-else readonly v-model="inanctivedHeadquarterService" />
-                      <i class="pi pi-check text-green-500 dark:text-green-400"></i>
+                      <i v-if="headquarterServiceAux.status" class="pi pi-check text-green-500 dark:text-green-400"></i>
+                      <i v-else class="pi pi-times text-red-500 dark:text-red-400"></i>
                     </div>
                     <Button
                       icon="pi pi-pen-to-square"

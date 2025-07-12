@@ -2,6 +2,7 @@ import { CreateHeadquarterVetService } from '@/services/HeadquarterVetService/ap
 import { DeleteHeadquarterVetService } from '@/services/HeadquarterVetService/application/DeleteHeadquarterVetService'
 import { EnableHeadquarterVetService } from '@/services/HeadquarterVetService/application/EnableHeadquarterVetService'
 import { GetAllHeadquarterVetService } from '@/services/HeadquarterVetService/application/GetAllHeadquarterVetService'
+import { GetAllHeadquarterVetServiceByHeadquarter } from '@/services/HeadquarterVetService/application/GetAllHeadquarterVetServiceByHeadquarter'
 import { GetHeadquarterVetServiceByHeadquarter } from '@/services/HeadquarterVetService/application/GetHeadquarterVetServiceByHeadquarter'
 import { GetHeadquarterVetServiceById } from '@/services/HeadquarterVetService/application/GetHeadquarterVetServiceById'
 import { ListVeterinariansByHeadVetService } from '@/services/HeadquarterVetService/application/ListVeterinariansByHeadVetService'
@@ -25,9 +26,12 @@ export const headquarterVetServiceUsesCases = {
   getHeadquarterVetServiceByHeadquarter: new GetHeadquarterVetServiceByHeadquarter(
     headquarterVetService,
   ),
+  getAllHeadquarterVetServiceByHeadquarter: new GetAllHeadquarterVetServiceByHeadquarter(
+    headquarterVetService,
+  ),
   getHeadquarterVetServiceById: new GetHeadquarterVetServiceById(headquarterVetService),
   listVeterinariansByHeadVetService: new ListVeterinariansByHeadVetService(headquarterVetService),
   updateHeadquarterVetService: new UpdateHeadquarterVetService(headquarterVetService),
   enableHeadquarterVetService: new EnableHeadquarterVetService(headquarterVetService),
-  updateSimultaneousCapacity: new UpdateSimultaneousCapacity(headquarterVetService), 
+  updateSimultaneousCapacity: new UpdateSimultaneousCapacity(headquarterVetService),
 }
