@@ -409,9 +409,9 @@ const exportCSV = () => {
             ></Column>
             <Column field="category" sortable header="Categoria" style="width: 18%"></Column>
             <Column
-              field="description"
+              field="duration"
               class="hidden lg:table-cell"
-              header="Descripción"
+              header="Duración"
               sortable
               style="width: 15%"
             ></Column>

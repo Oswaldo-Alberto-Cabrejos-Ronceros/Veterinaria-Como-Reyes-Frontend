@@ -55,6 +55,8 @@ export class VeterinaryServiceAdapter {
       name: service.name,
       specie: service.specie,
       category: service.category,
+        price:service.price,
+  duration:service.duration,
       status:service.status
     }
   }

@@ -325,7 +325,7 @@ const first = ref<number>(0)
             <template #title>
               <div class="w-full flex justify-between items-baseline">
                 <h2 class="h3 font-semibold">Citas de Hoy</h2>
-                <Tag value="8 programadas" severity="secondary" class="self-start"></Tag>
+                <Tag :value="`${todayAppointments.length} citas`" severity="secondary" class="self-start"></Tag>
               </div>
             </template>
             <template #subtitle>
@@ -333,7 +333,7 @@ const first = ref<number>(0)
             </template>
             <template #content>
               <div class="w-full flex flex-col gap-1.5">
-                <ScrollPanel v-if="todayAppointments.length > 0" class="min-h-44 max-h-56">
+                <ScrollPanel v-if="todayAppointments.length > 0" class="h-56">
                   <CardAppointmentQuaternary
                     v-for="(appointment, index) of todayAppointments"
                     :key="index"
@@ -347,7 +347,7 @@ const first = ref<number>(0)
                   >
                   </CardAppointmentQuaternary>
                 </ScrollPanel>
-                           <div
+                <div
                   class="flex min-h-44 max-h-56 items-center justify-center"
                   v-if="todayAppointments.length === 0"
                 >
@@ -362,6 +362,7 @@ const first = ref<number>(0)
                 icon="pi pi-eye"
                 size="small"
                 class="mt-2 w-full"
+                @click="redirect('receptionist-appointment-management')"
               >
               </Button>
             </template>
@@ -372,14 +373,14 @@ const first = ref<number>(0)
               <template #title>
                 <div class="w-full flex justify-between items-baseline">
                   <h2 class="h3 font-semibold">Sala de espera</h2>
-                  <Tag value="3 esperando" severity="secondary" class="self-start"></Tag>
+                  <Tag :value="`${carePending.length} esperando`" severity="secondary" class="self-start"></Tag>
                 </div>
               </template>
               <template #subtitle>
                 <p>Clientes en espera</p>
               </template>
               <template #content>
-                <ScrollPanel v-if="carePending.length > 0" class="min-h-44 max-h-56">
+                <ScrollPanel v-if="carePending.length > 0" class="h-56">
                   <div class="w-full flex flex-col gap-1">
                     <CardClientWaiting
                       v-for="(client, index) of carePending"
@@ -389,7 +390,7 @@ const first = ref<number>(0)
                       :serviceName="client.serviceName"
                     ></CardClientWaiting></div
                 ></ScrollPanel>
-                                <div
+                <div
                   class="flex min-h-44 max-h-56 items-center justify-center"
                   v-if="carePending.length === 0"
                 >
@@ -403,33 +404,34 @@ const first = ref<number>(0)
               <template #title>
                 <div class="w-full flex justify-between items-baseline">
                   <h2 class="h3 font-semibold">Ultimos pagos</h2>
-                  <Tag value="2 pendientes" severity="secondary" class="self-start"></Tag>
+                  <Tag :value="`${paymentsRecent.length} pendientes`" severity="secondary" class="self-start"></Tag>
                 </div>
               </template>
               <template #content>
                 <div class="w-full flex flex-col gap-1">
-                  <ScrollPanel v-if="paymentsRecent.length > 0" class="h-64"><!-- key -->
-                  <div class="w-full flex flex-col gap-1">
-                    <CardPaymentPrimary
-                      v-for="(payment, index) in paymentsRecent"
-                      :key="index"
-                      :clientName="payment.clientFullName"
-                      :petName="payment.petName"
-                      :serviceName="payment.serviceName"
-                      clientDni=""
-                      :date="payment.paymentDate||''"
-                      :time="payment.paymentTime||''"
-                      :amount="payment.amount"
-                      :status="payment.paymentStatus"
-                    />
+                  <ScrollPanel v-if="paymentsRecent.length > 0" class="h-64"
+                    ><!-- key -->
+                    <div class="w-full flex flex-col gap-1">
+                      <CardPaymentPrimary
+                        v-for="(payment, index) in paymentsRecent"
+                        :key="index"
+                        :clientName="payment.clientFullName"
+                        :petName="payment.petName"
+                        :serviceName="payment.serviceName"
+                        clientDni=""
+                        :date="payment.paymentDate || ''"
+                        :time="payment.paymentTime || ''"
+                        :amount="payment.amount"
+                        :status="payment.paymentStatus"
+                      />
                     </div>
                   </ScrollPanel>
-                             <div
-                  class="flex min-h-44 max-h-56 items-center justify-center"
-                  v-if="paymentsRecent.length === 0"
-                >
-                  <p>No pagos que mostrar</p>
-                </div>
+                  <div
+                    class="flex min-h-44 max-h-56 items-center justify-center"
+                    v-if="paymentsRecent.length === 0"
+                  >
+                    <p>No pagos que mostrar</p>
+                  </div>
                 </div>
               </template>
             </Card>
@@ -476,15 +478,14 @@ const first = ref<number>(0)
                   :price="service.price"
                 >
                 </CardServiceTerciary>
-
               </div>
-                              <Paginator
-                  lazy
-                  :rows="rows"
-                  :first="first"
-                  :totalRecords="totalRecords"
-                  :rows-per-page-options="[2, 4, 6, 8, 10]"
-                />
+              <Paginator
+                lazy
+                :rows="rows"
+                :first="first"
+                :totalRecords="totalRecords"
+                :rows-per-page-options="[2, 4, 6, 8, 10]"
+              />
             </div>
           </template>
         </Card>

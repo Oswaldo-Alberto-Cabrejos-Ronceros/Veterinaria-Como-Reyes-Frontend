@@ -15,7 +15,8 @@ const emit = defineEmits(['set-weight'])
 
 
 defineProps<{
-  loading:boolean
+  loading:boolean,
+  desactive:boolean
 }>()
 
 //form
@@ -77,6 +78,7 @@ const onSubmit = handleSubmit((values) => {
               severity="secondary"
               variant="text" type="submit"
               :loading="loading"
+              :disabled="desactive"
             />
           </InputGroupAddon>
           </InputGroup>

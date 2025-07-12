@@ -21,12 +21,11 @@ export class CategoryAdapter {
     }
   }
 
-  static fromCategoryListToCategoryListView(
-    category: CategoryListDTO
-  ): CategoryListView {
+  static fromCategoryListToCategoryListView(category: CategoryListDTO): CategoryListView {
     return {
       categoryId: category.categoryId,
       name: category.name,
+      description: category.description,
       status: category.status,
     }
   }

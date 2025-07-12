@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import Avatar from 'primevue/avatar'
 import Button from 'primevue/button'
-defineProps<{
+const props = defineProps<{
   petId: number
   petName: string
   petBreed: string
@@ -13,6 +13,11 @@ defineProps<{
   lastAppoinmentDate?: string
   nextAppontmentDate?: string
 }>()
+const emit = defineEmits(['view-pet'])
+
+const emitView = () => {
+  emit('view-pet', props.petId)
+}
 </script>
 <template>
   <div class="card-primary flex w-full p-4 gap-3">
@@ -22,9 +27,9 @@ defineProps<{
       <p class="text-neutral-500 text-sm">{{ petBreed }} - {{ ownerName }}</p>
       <div class="flex gap-1 md:items-center">
         <i class="pi pi-clock"></i>
-        <p>Ultima visita: {{ lastAppoinmentDate||'No tiene' }}</p>
+        <p>Ultima visita: {{ lastAppoinmentDate || 'No tiene' }}</p>
         <i class="pi pi-calendar"></i>
-        <p>Próxima: {{ nextAppontmentDate||'No tiene' }}</p>
+        <p>Próxima: {{ nextAppontmentDate || 'No tiene' }}</p>
       </div>
       <div class="flex gap-1">
         <p class="font-semibold">Peso:</p>
@@ -36,12 +41,14 @@ defineProps<{
         <p>{{ petBirtdate }}</p>
       </div>
       <div class="w-full flex justify-end">
-                <Button class="py-1.5"
+        <Button
+          class="py-1.5"
           label="Ver completo"
           severity="info"
           size="small"
           icon-pos="left"
           icon="pi pi-eye"
+          @click="emitView"
         />
       </div>
     </div>

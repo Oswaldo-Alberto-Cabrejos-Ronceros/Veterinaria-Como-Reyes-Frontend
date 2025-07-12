@@ -4,6 +4,7 @@ import Avatar from 'primevue/avatar'
 import Button from 'primevue/button'
 import { useRoute, useRouter } from 'vue-router';
 const props = defineProps<{
+  petId: number
   appointementId: number
   petName: string
   petBreed: string
@@ -19,6 +20,12 @@ const router = useRouter()
 const route = useRoute()
 const redirect= ()=>{
  router.push(`${route.fullPath}/attend/${props.appointementId}`)
+}
+
+const emit = defineEmits(['view-pet'])
+
+const emitView = () => {
+  emit('view-pet', props.petId)
 }
 
 </script>
@@ -52,6 +59,7 @@ const redirect= ()=>{
           icon-pos="left"
           icon="pi pi-eye"
           class="py-1.5"
+          @click="emitView"
         >
         </Button>
         <Button

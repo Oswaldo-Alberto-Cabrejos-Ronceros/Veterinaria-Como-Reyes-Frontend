@@ -104,54 +104,6 @@ if(response){
     loadInfo()
 }
 }
-
-const records = [
-  {
-    recordId: 1,
-    description: 'Control general de salud',
-    serviceName: 'Consulta veterinaria',
-    status: 'Finalizado',
-    date: '2025-07-05',
-    time: '10:00',
-    employeeName: 'Sandra Muñoz',
-  },
-  {
-    recordId: 2,
-    description: 'Aplicación de vacunas',
-    serviceName: 'Vacunación',
-    status: 'En curso',
-    date: '2025-07-05',
-    time: '11:30',
-    employeeName: 'Carlos Ramírez',
-  },
-  {
-    recordId: 3,
-    description: 'Baño y corte de pelo',
-    serviceName: 'Estética canina',
-    status: 'Pendiente',
-    date: '2025-07-06',
-    time: '09:00',
-    employeeName: 'Karen Ruiz',
-  },
-  {
-    recordId: 4,
-    description: 'Cirugía menor programada',
-    serviceName: 'Cirugía veterinaria',
-    status: 'Finalizado',
-    date: '2025-07-04',
-    time: '15:00',
-    employeeName: 'Javier Torres',
-  },
-  {
-    recordId: 5,
-    description: 'Evaluación de comportamiento',
-    serviceName: 'Etología',
-    status: 'Cancelado',
-    date: '2025-07-03',
-    time: '16:30',
-    employeeName: 'Adriana Vega',
-  },
-]
 </script>
 
 <template>
@@ -176,7 +128,7 @@ const records = [
       :veterinaryName="`${employee?.names} ${employee?.lastnames}`"
       :status="care?.statusCare"
     />
-    <div class="w-full grid grid-cols-2 gap-4">
+    <div class="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
       <CardPetInfo
         v-if="pet"
         :name="pet.name"
@@ -208,14 +160,15 @@ const records = [
           <TabPanels>
             <TabPanel value="0"
               ><CardVitalSigns
+              :desactive="care.statusCare==='En espera'||care.statusCare==='Completado'"
                 @set-weight="handleEditWeight($event)"
                 :loading="loading.updatePetWeight"
               ></CardVitalSigns
             ></TabPanel>
             <TabPanel value="1">
-              <CardHistoryVeterinaryRecord :veterinaryRecords="records" />
+              <CardHistoryVeterinaryRecord v-if="pet" :pet-id="pet?.id"/>
             </TabPanel>
-            <TabPanel value="2"><CardAddVeterinaryRecord v-if="employee" :careId="Number(appointmentId)" :employeeId="employee.employeeId"  /></TabPanel>
+            <TabPanel value="2"><CardAddVeterinaryRecord :disabled="care.statusCare==='En espera'||care.statusCare==='Completado'" v-if="employee" :careId="Number(appointmentId)" :employeeId="employee.employeeId"  /></TabPanel>
           </TabPanels>
         </Tabs>
         <Divider />

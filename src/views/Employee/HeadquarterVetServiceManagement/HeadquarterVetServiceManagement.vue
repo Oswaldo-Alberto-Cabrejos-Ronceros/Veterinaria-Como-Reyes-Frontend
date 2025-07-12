@@ -314,7 +314,7 @@ const editHeadquarterService = async (headquarterService: HeadquarterVetService 
 let headquarterServiceAux: HeadquarterVetService | undefined
 //ref when active headquarterservice
 const activedHeadquarterService = ref<boolean>(true)
-//const inanctivedHeadquarterService = ref<boolean>(false)
+const inanctivedHeadquarterService = ref<boolean>(false)
 </script>
 
 <template>
@@ -463,7 +463,8 @@ const activedHeadquarterService = ref<boolean>(true)
                 >
                   <div class="flex items-center flex-col justify-center gap-4">
                     <div class="w-full flex items-center gap-2 justify-center">
-                      <ToggleSwitch readonly v-model="activedHeadquarterService" />
+                      <ToggleSwitch v-if="headquarterServiceAux.status" readonly v-model="activedHeadquarterService" />
+                        <ToggleSwitch v-else readonly v-model="inanctivedHeadquarterService" />
                       <i class="pi pi-check text-green-500 dark:text-green-400"></i>
                     </div>
                     <Button

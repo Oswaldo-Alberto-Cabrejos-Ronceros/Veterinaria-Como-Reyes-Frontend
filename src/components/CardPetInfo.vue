@@ -53,7 +53,7 @@ const infoBasic = computed(() => [
         <div class="flex-1">
           <h3 class="h3 font-bold block">{{ name }}</h3>
           <div class="w-full grid grid-cols-1 gap-2">
-            <div class="grid grid-cols-3 gap-2">
+            <div class="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-3 2xl:gap-2">
               <div v-for="(item, index) of infoBasic" :key="index" class="flex items-center gap-1.5 text-neutral-500 dark:text-neutral-300">
                 <i :class="`${item.icon}`"></i>
                 <p class=" font-semibold ">{{ item.title }}:</p>

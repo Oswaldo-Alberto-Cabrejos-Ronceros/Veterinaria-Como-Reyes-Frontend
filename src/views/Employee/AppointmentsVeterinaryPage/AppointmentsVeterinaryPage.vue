@@ -5,6 +5,7 @@ import { onMounted, ref } from 'vue'
 import type { CareAndAppointmentPanelEmployee } from '@/models/CareAndAppointmentPanelEmployee'
 import { useAuthentication } from '@/composables/useAuthentication'
 import { useCare } from '@/composables/useCare'
+import { useRouter } from 'vue-router'
 const appointments = ref<CareAndAppointmentPanelEmployee[]>([])
 const { getEntityId } = useAuthentication()
 const { loading, error,getCaresForEmployee } = useCare()
@@ -13,6 +14,17 @@ onMounted(async () => {
   const employeeId = getEntityId()
   if (employeeId) appointments.value = await getCaresForEmployee(employeeId)
 })
+
+
+const router = useRouter()
+
+const redirect = (url: string) => {
+  router.push(url)
+}
+
+const handleRedirectPet = (petId:number)=>{
+  redirect(`pets-management/pet/${petId}`)
+}
 </script>
 
 <template>
@@ -57,6 +69,8 @@ onMounted(async () => {
             :time="appoinment.hour"
             :status="appoinment.status"
             :type="appoinment.type"
+            :pet-id="appoinment.pet.id"
+            @view-pet="handleRedirectPet($event)"
           />
           <p v-if="appointments.length===0">No hay citas registradas</p>
         </div>

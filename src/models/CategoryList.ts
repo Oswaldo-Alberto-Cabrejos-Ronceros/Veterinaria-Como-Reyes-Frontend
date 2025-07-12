@@ -1,5 +1,7 @@
 export interface CategoryList {
   categoryId: number
-  name: string
-  status: string
+  name: string,
+  description:string
+  status: string,
+
 }

@@ -13,6 +13,7 @@ import { useToast } from 'primevue/usetoast'
 const props = defineProps<{
   careId:number,
   employeeId:number,
+  disabled:boolean
 }>()
 
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
@@ -75,6 +76,7 @@ const onSubmit = handleSubmit(async (values) => {
           placeholder="Describa el diagnóstico"
           v-model="diagnosis"
           v-bind="diagnosisAttrs"
+          :disabled="disabled"
         />
         <Message v-if="errors.diagnosis" severity="error" size="small" variant="simple">
           {{ errors.diagnosis }}
@@ -88,6 +90,7 @@ const onSubmit = handleSubmit(async (values) => {
           placeholder="Describa el tratamiento"
           v-model="treatment"
           v-bind="treatmentAttrs"
+          :disabled="disabled"
         />
         <Message v-if="errors.treatment" severity="error" size="small" variant="simple">
           {{ errors.treatment }}
@@ -101,6 +104,7 @@ const onSubmit = handleSubmit(async (values) => {
           placeholder="Observaciones adicionales"
           v-model="observation"
           v-bind="observationAttrs"
+          :disabled="disabled"
         />
         <Message v-if="errors.observation" severity="error" size="small" variant="simple">
           {{ errors.observation }}
@@ -114,6 +118,7 @@ const onSubmit = handleSubmit(async (values) => {
           placeholder="Enlace al resultado"
           v-model="resultUrl"
           v-bind="resultUrlAttrs"
+          :disabled="disabled"
         />
         <Message v-if="errors.resultUrl" severity="error" size="small" variant="simple">
           {{ errors.resultUrl }}
@@ -127,6 +132,7 @@ const onSubmit = handleSubmit(async (values) => {
           class="w-full mt-4"
           icon-pos="left"
           icon="pi pi-save"
+          :disabled="disabled"
         />
       </form>
     </template>

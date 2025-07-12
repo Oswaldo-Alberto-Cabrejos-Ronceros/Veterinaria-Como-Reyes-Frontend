@@ -42,6 +42,7 @@ export class CareAdapter {
       headquarterVetServiceId: schema.headquarterVetServiceId,
       animalId: schema.petId,
       employeeId: schema.employeeId,
+      paymentMethodId:schema.paymentMethodId
     }
   }
 

@@ -356,7 +356,7 @@ const attendAppointment = (appointmentId: number) => {
               </Message>
             </div>
             <!-- headquarter -->
-            <div>
+            <div v-if="roleMain==='Administrador'">
               <label class="block mb-2">Sede</label>
               <Select
                 class="w-full"

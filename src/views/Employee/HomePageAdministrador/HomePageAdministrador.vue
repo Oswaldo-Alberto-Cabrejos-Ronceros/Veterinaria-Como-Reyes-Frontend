@@ -364,7 +364,7 @@ const redirect = (url: string) => {
                 <p>Servicios más perdidos</p>
               </template>
               <template #content>
-                <ScrollPanel v-if="servicesTop.length > 0" class="min-h-44 max-h-56">
+                <ScrollPanel v-if="servicesTop.length > 0" class="56">
                   <ServiceRankingItem
                     v-for="(service, index) of servicesTop"
                     :key="index"
@@ -376,7 +376,7 @@ const redirect = (url: string) => {
                   </ServiceRankingItem>
                 </ScrollPanel>
                 <div
-                  class="flex min-h-44 max-h-56 items-center justify-center"
+                  class="flex h-56 items-center justify-center"
                   v-if="servicesTop.length === 0"
                 >
                   <p>No servicios que mostrar</p>

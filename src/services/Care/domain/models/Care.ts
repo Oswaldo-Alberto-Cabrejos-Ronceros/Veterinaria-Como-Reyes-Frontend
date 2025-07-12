@@ -25,7 +25,8 @@ export interface CreateCareFromAppointmentRequest{
 export interface CareRequestCreate {
   headquarterVetServiceId:number,
   animalId:number,
-  employeeId:number
+  employeeId:number,
+  paymentMethodId:number
 }
 
 export interface  CareStatsToday {

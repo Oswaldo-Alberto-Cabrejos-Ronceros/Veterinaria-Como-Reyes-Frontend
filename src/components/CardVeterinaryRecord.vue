@@ -2,11 +2,12 @@
 import Avatar from 'primevue/avatar'
 import Tag from 'primevue/tag'
 import { Button } from 'primevue'
-defineProps<{
+const props = defineProps<{
   recordId: number
   date: string
   petName: string
   breedName: string
+  petId?: number
   status: string
   serviceName: string
   clientName: string
@@ -14,6 +15,11 @@ defineProps<{
   treatment: string
   observations: string
 }>()
+
+const emit = defineEmits(['view-history'])
+const emitView = () => {
+  emit('view-history', props.petId)
+}
 </script>
 
 <template>
@@ -54,11 +60,13 @@ defineProps<{
       </p>
       <div class="flex justify-end w-full">
         <Button
+          hidden
           class="py-1.5"
           label="Ver historial"
           size="small"
           icon-pos="left"
           icon="pi pi-eye"
+          @click="emitView"
         />
       </div>
     </div>

@@ -63,7 +63,7 @@ onMounted(() => {
       :veterinaryName="`${employee?.names} ${employee?.lastnames}`"
       :status="care?.statusCare"
     />
-    <div class="w-full grid grid-cols-2 gap-4">
+    <div class="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
       <CardPetInfo
         v-if="pet"
         :name="pet.name"

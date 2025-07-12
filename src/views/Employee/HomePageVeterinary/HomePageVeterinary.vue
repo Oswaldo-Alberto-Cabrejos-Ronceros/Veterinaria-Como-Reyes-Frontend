@@ -191,6 +191,14 @@ const router = useRouter()
 const redirect = (url: string) => {
   router.push(url)
 }
+
+const handleRedirectAppointment = (appointmentId: number) => {
+  redirect(`appointments/attend/${appointmentId}`)
+}
+
+const handleRedirectPet = (petId: number) => {
+  redirect(`pets-management/pet/${petId}`)
+}
 </script>
 
 <template>
@@ -278,7 +286,7 @@ const redirect = (url: string) => {
                   <h2 class="h3 font-semibold">Citas de Hoy</h2>
                 </div>
 
-                <Tag value="8 programadas" severity="secondary" class="self-start"></Tag>
+                <Tag :value="`${appointments.length} citas`" severity="secondary" class="self-start"></Tag>
               </div>
             </template>
             <template #subtitle>
@@ -286,18 +294,29 @@ const redirect = (url: string) => {
             </template>
             <template #content>
               <div class="w-full flex flex-col gap-1.5">
-                <CardAppointmentQuintary
-                  v-for="appoinment of appointments"
-                  :appointement-id="appoinment.id"
-                  :key="appoinment.id"
-                  :pet-name="appoinment.pet.name"
-                  :pet-breed="''"
-                  :service-name="appoinment.serviceName"
-                  :service-duration="''"
-                  :owner-name="appoinment.clientName"
-                  :time="appoinment.hour"
-                  :status="appoinment.status"
-                ></CardAppointmentQuintary>
+                <ScrollPanel v-if="appointments.length > 0" class="h-122">
+                  <CardAppointmentQuintary
+                    v-for="appoinment of appointments"
+                    :appointement-id="appoinment.id"
+                    :key="appoinment.id"
+                    :pet-name="appoinment.pet.name"
+                    :pet-id="appoinment.pet.id"
+                    :pet-breed="''"
+                    :service-name="appoinment.serviceName"
+                    :service-duration="''"
+                    :owner-name="appoinment.clientName"
+                    :time="appoinment.hour"
+                    :status="appoinment.status"
+                    @view-pet="handleRedirectPet($event)"
+                    @redirect-appointment="handleRedirectAppointment($event)"
+                  ></CardAppointmentQuintary>
+                </ScrollPanel>
+                <div
+                  class="flex min-h-120 max-h-122 items-center justify-center"
+                  v-if="appointments.length === 0"
+                >
+                  <p>No servicios que mostrar</p>
+                </div>
                 <!-- abstract  -->
 
                 <div
@@ -323,6 +342,7 @@ const redirect = (url: string) => {
                     class="w-full xl:w-auto"
                     variant="outlined"
                     severity="secondary"
+                    @click="redirect('appointments')"
                   />
                 </div>
               </div>
@@ -337,22 +357,30 @@ const redirect = (url: string) => {
                     <i class="pi pi-users"></i>
                     <h2 class="h3 font-semibold">Sala de espera</h2>
                   </div>
-                  <Tag value="3 esperando" severity="secondary" class="self-start"></Tag>
+                  <Tag :value="`${careRecents.length} esperando`" severity="secondary" class="self-start"></Tag>
                 </div>
               </template>
               <template #subtitle>
                 <p>Clientes en espera</p>
               </template>
               <template #content>
-                <div class="w-full flex flex-col gap-1">
-                  <CardPetWaiting
-                    v-for="(care, index) of careRecents"
-                    :key="index"
-                    :client-name="care.clientName"
-                    :pet-name="care.pet.name"
-                    :service-name="care.serviceName"
-                    breed-name=""
-                  />
+                <ScrollPanel v-if="careRecents.length > 0" class="h-122">
+                  <div class="w-full flex flex-col gap-1">
+                    <CardPetWaiting
+                      v-for="(care, index) of careRecents"
+                      :key="index"
+                      :client-name="care.clientName"
+                      :pet-name="care.pet.name"
+                      :service-name="care.serviceName"
+                      breed-name=""
+                    />
+                  </div>
+                </ScrollPanel>
+                <div
+                  class="flex min-h-120 max-h-122 items-center justify-center"
+                  v-if="careRecents.length === 0"
+                >
+                  <p>No servicios que mostrar</p>
                 </div>
               </template>
             </Card>
@@ -371,6 +399,7 @@ const redirect = (url: string) => {
                     icon=" pi pi-download"
                     size="small"
                     class="py-1.5"
+                    hidden
                   />
                 </div>
               </template>
@@ -419,7 +448,7 @@ const redirect = (url: string) => {
                   <i class="pi pi-file"></i>
                   <h2 class="h3 font-semibold">Ultimos diagnosticos</h2>
                 </div>
-                <Tag value="5 registros" severity="secondary" class="self-start"></Tag>
+                <Tag :value="`${recentRecords.length} registros`" severity="secondary" class="self-start"></Tag>
               </div>
             </template>
             <template #subtitle>
@@ -457,7 +486,7 @@ const redirect = (url: string) => {
                   >
                   </CardNewsPrimary>
                 </div>
-                <ScrollPanel class="h-[30rem] mt-2 w-full">
+                <ScrollPanel class="h-122 mt-2 w-full">
                   <CardVeterinaryRecord
                     class="mb-2"
                     v-for="record in recentRecords"
@@ -482,6 +511,7 @@ const redirect = (url: string) => {
                   label="Ver historial completo"
                   variant="text"
                   severity="info"
+                  hidden
                 />
               </div>
             </template>
@@ -494,27 +524,35 @@ const redirect = (url: string) => {
                   <i class="pi pi-heart"></i>
                   <h2 class="h3 font-semibold">Pacientes Recientes</h2>
                 </div>
-                <Tag value="5 pacientes" severity="secondary" class="self-start"></Tag>
+                <Tag :value="`${recentsPacients.length} pacientes`" severity="secondary" class="self-start"></Tag>
               </div>
             </template>
             <template #subtitle>
               <p>Historial de pacientes atendidos recientemente</p>
             </template>
             <template #content>
-              <div class="w-full flex flex-col gap-1.5 items-end">
-                <CardPetTerciary
-                  v-for="pet of recentsPacients"
-                  :key="pet.petId"
-                  :pet-id="pet.petId"
-                  :pet-name="pet.petName"
-                  :pet-breed="pet.breedName"
-                  :pet-image="''"
-                  :pet-weight="pet.petWeight"
-                  :pet-gender="pet.petSex"
-                  :pet-birtdate="pet.petBirthdate"
-                  :owner-name="pet.clientFullName"
-                  :last-appoinment-date="pet.lastVisitDate"
-                />
+              <ScrollPanel class="h-156 mt-2 w-full">
+                <div class="w-full flex flex-col gap-1.5 items-end">
+                  <CardPetTerciary
+                    v-for="pet of recentsPacients"
+                    :key="pet.petId"
+                    :pet-id="pet.petId"
+                    :pet-name="pet.petName"
+                    :pet-breed="pet.breedName"
+                    :pet-image="''"
+                    :pet-weight="pet.petWeight"
+                    :pet-gender="pet.petSex"
+                    :pet-birtdate="pet.petBirthdate"
+                    :owner-name="pet.clientFullName"
+                    :last-appoinment-date="pet.lastVisitDate"
+                    @view-pet="handleRedirectPet($event)"
+                  /></div
+              ></ScrollPanel>
+              <div
+                class="flex min-h-120 max-h-122 items-center justify-center"
+                v-if="recentsPacients.length === 0"
+              >
+                <p>No servicios que mostrar</p>
               </div>
               <Button
                 class="mt-2 w-full"
@@ -522,6 +560,7 @@ const redirect = (url: string) => {
                 icon="pi pi-arrow-right"
                 label="Ver historial completo"
                 variant="text"
+                @click="redirect('/employee/veterinary/pets-management')"
               />
             </template>
           </Card>

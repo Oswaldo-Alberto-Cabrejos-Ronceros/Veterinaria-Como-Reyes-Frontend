@@ -44,7 +44,7 @@ onMounted(() => {
       </div>
     </template>
     <template #content>
-      <div class="w-full grid grid-cols-3 gap-4">
+      <div class="w-full grid grid-cols-2 sm:grid-cols-3 gap-4">
         <div v-for="(item, index) in itemsInfo" :key="index" class="w-full flex gap-4">
           <i :class="`${item.icon} self-center`"></i>
           <div class="flex-1">

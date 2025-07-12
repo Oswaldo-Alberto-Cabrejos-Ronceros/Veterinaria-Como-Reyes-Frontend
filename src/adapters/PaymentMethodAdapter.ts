@@ -25,6 +25,7 @@ export class PaymentMethodAdapter {
     return {
       id: method.paymentMethodId,
       name: method.name,
+      description:method.description
     }
   }
 }

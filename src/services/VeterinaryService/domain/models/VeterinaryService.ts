@@ -31,6 +31,8 @@ export interface VeterinaryServiceList {
   name: string
   specie: string
   category: string
+  price:number,
+  duration:number,
   status: string
 }
 

@@ -14,6 +14,7 @@ import { useAuthentication } from '@/composables/useAuthentication'
 import { useClient } from '@/composables/useClient'
 import type { MyInfoClient } from '@/models/MyInfoClient'
 import CardOwnerPrimary from '@/components/CardOwnerPrimary.vue'
+import Tag from 'primevue/tag'
 const props = defineProps<{
   petId: string
 }>()
@@ -208,12 +209,15 @@ const exportCSV = () => {
               style="width: 10%"
             ></Column>
             <Column
-              field="observation"
               class="table-cell sm:hidden lg:table-cell"
               header="Observación"
               sortable
               style="width: 10%"
-            ></Column>
+            >
+          <template #body="{data}">
+            {{ data.observation }}
+            <Tag v-if="!data.observation" severity="secondary" value="No contiene"></Tag>
+          </template></Column>
             <Column
               field="status"
               class="hidden md:table-cell"

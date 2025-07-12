@@ -15,6 +15,7 @@ import { inject, onMounted, ref } from 'vue'
 import Button from 'primevue/button'
 import { useReniec } from '@/composables/useReniec'
 import type { OptionSelect } from '@/models/OptionSelect'
+import ToggleSwitch from 'primevue/toggleswitch'
 
 //methods
 
@@ -31,6 +32,7 @@ const { handleSubmit, errors, defineField } = useForm<FormValues>({
     address: '',
     birthdate: undefined,
     headquarterId: undefined,
+    withUser:false,
     email: '',
     password: '',
     confirmPassword: '',
@@ -48,6 +50,7 @@ const fieldMap = {
 const [dni, dniAttrs] = defineField('dni')
 const [birthdate, birthdateAttrs] = defineField('birthdate')
 const [headquarterId, headquarterIdAttrs] = defineField('headquarterId')
+const [withUser, withUserAttrs] = defineField('withUser')
 const [email, emailAttrs] = defineField('email')
 const [password, passwordAttrs] = defineField('password')
 const [confirmPassword, confirmPasswordAttrs] = defineField('confirmPassword')
@@ -212,7 +215,10 @@ const searchInfoReniec = async () => {
         </Message>
       </div>
 
-      <div>
+
+
+
+      <div v-if="withUser">
         <label class="block mb-2">Email</label>
 
         <InputGroup>
@@ -233,7 +239,7 @@ const searchInfoReniec = async () => {
         </Message>
       </div>
 
-      <div>
+      <div v-if="withUser">
         <label class="block mb-2">Contraseña</label>
         <InputGroup>
           <InputGroupAddon class="text-neutral-400">
@@ -253,7 +259,7 @@ const searchInfoReniec = async () => {
         </Message>
       </div>
 
-      <div>
+      <div v-if="withUser">
         <label class="block mb-2">Confirmar contraseña</label>
 
         <InputGroup>
@@ -273,6 +279,19 @@ const searchInfoReniec = async () => {
           {{ errors.confirmPassword }}
         </Message>
       </div>
+
+                  <div>
+        <label class="block mb-2">Con usuario</label>
+        <ToggleSwitch
+          v-bind="withUserAttrs"
+          v-model="withUser"
+        />
+
+        <Message v-if="errors.withUser" severity="error" size="small" variant="simple">
+          {{ errors.withUser }}
+        </Message>
+      </div>
+
       <div class="button-form-container-grid-end">
         <Button
           class="w-full max-w-md"

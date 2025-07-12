@@ -35,7 +35,6 @@ import Tag from 'primevue/tag'
 import BlockCardPrimary from '@/components/BlockCardPrimary.vue'
 import type { FormValues as BlockSchema } from '@/validation-schemas-forms/schema-block-employee-client'
 import { useAuthentication } from '@/composables/useAuthentication'
-import Panel from 'primevue/panel'
 //toast
 const toast = useToast()
 
@@ -392,10 +391,8 @@ const exportCSV = () => {
         <h3 class="h3">Gestión de empleados</h3>
       </template>
       <template #content>
-
         <div class="flex flex-col gap-6">
-          <Panel   expandIcon="pi pi-chevron-down"
-  collapseIcon="pi pi-chevron-up" toggleable header="Buscar empleados">          <form class="form-search-grid-col-5">
+          <form class="form-search-grid-col-5">
             <div v-for="element in searchElementsEmployee" :key="element.key">
               <label class="block mb-2">{{ element.title }}</label>
               <InputGroup>
@@ -467,7 +464,8 @@ const exportCSV = () => {
                 {{ errors.status }}
               </Message>
             </div>
-          </form></Panel>
+          </form>
+
 
           <!-- imporve design responsive -->
           <!-- for messague loading  -->
@@ -479,6 +477,17 @@ const exportCSV = () => {
             Error al cargar los empleados
           </Message>
           <!-- table -->
+                         <div class="w-full flex flex-col xs:flex-row justify-between gap-2">
+                <Button
+                  icon="pi pi-user-plus"
+                  iconPos="right"
+                  severity="success"
+                  label="Agregar Empleado"
+                  @click="addEmployee"
+                  v-if="roleMain === 'Administrador'"
+                />
+                <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
+              </div>
           <DataTable
             v-if="employees"
             paginator
@@ -490,55 +499,20 @@ const exportCSV = () => {
             :first="first"
             @page="loadEmployees"
             scrollable
-            stripedRows
+            removableSort
             :rows-per-page-options="[1, 2, 3, 4]"
             ref="dt"
           >
-            <template #header>
-              <div class="w-full flex flex-col xs:flex-row justify-between gap-2 pb-4">
-                <Button
-                  icon="pi pi-user-plus"
-                  iconPos="right"
-                  severity="success"
-                  label="Agregar Empleado"
-                  @click="addEmployee"
-                  v-if="roleMain === 'Administrador'"
-                />
-                <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
-              </div>
-            </template>
-            <Column
-              field="names"
-              sortable
-              header="Nombres"
-              style="width: 18%"
-            ></Column>
+            <Column field="names" sortable header="Nombres" style="width: 18%"></Column>
             <Column field="lastnames" sortable header="Apellidos" style="width: 18%"></Column>
-            <Column
-              field="dni"
-              header="DNI"
-              sortable
-              style="width: 15%"
-            ></Column>
+            <Column field="dni" header="DNI" sortable style="width: 15%"></Column>
             <Column class="hidden lg:table-cell" header="CMVP" sortable style="width: 15%">
               <template #body="{ data }">
                 {{ data.cmvp ? data.cmvp : '' }}
                 <Tag v-if="!data.cmvp" value="No requerido" severity="secondary" /> </template
             ></Column>
-            <Column
-              field="rolName"
-              header="Rol"
-              sortable
-              style="width: 15%"
-            >
-            </Column>
-            <Column
-              field="nameHeadquarter"
-              header="Sede"
-              sortable
-              style="width: 15%"
-            >
-            </Column>
+            <Column field="rolName" header="Rol" sortable style="width: 15%"> </Column>
+            <Column field="nameHeadquarter" header="Sede" sortable style="width: 15%"> </Column>
             <Column header="Acciones">
               <template #body="{ data }">
                 <div

@@ -7,6 +7,7 @@ import type { FormValues } from '@/validation-schemas-forms/schema-add-edit-vete
 import { DateAdapter } from './DateAdapter'
 import type { RecentMedicalRecord as RecentMedicalRecordView  } from '@/models/RecentMedicalRecord'
 import type { RecentMedicalRecord } from '@/services/VeterinaryRecord/domain/models/VeterinaryRecord'
+import { FormatAdapter } from './FormatAdapter'
 
 export class VeterinaryRecordAdapter {
   static toVeterinaryRecordView(veterinaryRecord: VeterinaryRecord): VeterinaryRecordView {
@@ -34,7 +35,7 @@ export class VeterinaryRecordAdapter {
       treatment: veterinaryRecordInfo.treatment,
       observation: veterinaryRecordInfo.observation,
       resultUrl: veterinaryRecordInfo.resultUrl,
-      status: veterinaryRecordInfo.status,
+      status: FormatAdapter.toCaptalizeCaseWithout_(veterinaryRecordInfo.status),
     }
   }
 
@@ -64,7 +65,7 @@ export class VeterinaryRecordAdapter {
       diagnosis: record.diagnosis,
       treatment: record.treatment,
       observations: record.observations,
-      status: record.status,
+      status: FormatAdapter.toCaptalizeCaseWithout_(record.status),
     }
   }
 

@@ -24,6 +24,10 @@ import { useRoute, useRouter } from 'vue-router'
 import type { DataTablePageEvent } from 'primevue/datatable'
 import { debounce } from 'lodash'
 import type { CareList } from '@/models/CareList'
+import type { PaymentMethod } from '@/models/PaymentMethod'
+import { usePaymentMethod } from '@/composables/usePaymentMethod'
+import { useAuthentication } from '@/composables/useAuthentication'
+import { useEmployee } from '@/composables/useEmployee'
 
 onMounted(async () => {
   headquartersOptions.value = headquartersServicesToOptionsSelect(await getAllHeadquarters())
@@ -34,6 +38,10 @@ onMounted(async () => {
 //methods for care
 const { loading, error, searchCares, completeCare, createCareFromRequest } = useCare()
 
+const { getMainRole, getEntityId } = useAuthentication()
+const { getEmployeeMyInfo } = useEmployee()
+
+const roleMain = ref<string>('')
 //for cares
 
 const cares = ref<CareList[]>([])
@@ -44,6 +52,21 @@ const first = ref(0)
 
 //for loads care
 const loadCares = async (event?: DataTablePageEvent) => {
+
+  const role = getMainRole()
+  if (role) {
+    roleMain.value = role
+    if (role === 'Administrador') {
+      headquartersOptions.value = headquartersServicesToOptionsSelect(await getAllHeadquarters())
+    } else {
+      const id = getEntityId()
+      if (id) {
+        const info = await getEmployeeMyInfo(id)
+        headquarterId.value = info.headquarter.id
+      }
+    }
+  }
+
   const page = event ? event.first / event.rows : 0
   const size = event ? event.rows : rows.value
   rows.value = size
@@ -51,10 +74,10 @@ const loadCares = async (event?: DataTablePageEvent) => {
   const formattedDate = date.value ? date.value.toISOString().split('T')[0] : undefined
 
   const result = await searchCares(
-    status.value??undefined,
+    status.value ?? undefined,
     formattedDate,
-    headquarterId.value??undefined,
-    headquarterServiceId.value??undefined,
+    headquarterId.value ?? undefined,
+    headquarterServiceId.value ?? undefined,
     page,
     size,
   )
@@ -71,6 +94,7 @@ const searchCaresDebounced = debounce(() => {
 const onCompleteCare = async (careId: number) => {
   try {
     await completeCare(careId)
+    showToast('Completada correctamente')
     await loadCares()
   } catch (err) {
     console.error('Error al completar atención', err)
@@ -98,6 +122,8 @@ const onSubmit = handleSubmit(async () => {
   await loadCares()
 })
 
+const { getAllPaymentMethods } = usePaymentMethod()
+
 //for get headquarters and services
 const { getAllHeadquarters } = useHeadquarter()
 const { getAllVeterinaryServices } = useVeterinaryService()
@@ -105,7 +131,9 @@ const headquartersOptions = ref<OptionSelect[]>([])
 const servicesOptions = ref<OptionSelect[]>([])
 //for get options from headquarters
 
-const headquartersServicesToOptionsSelect = (items: Headquarter[] | Service[]): OptionSelect[] => {
+const headquartersServicesToOptionsSelect = (
+  items: Headquarter[] | Service[] | PaymentMethod[],
+): OptionSelect[] => {
   return items.map((item) => ({
     value: item.id,
     name: item.name,
@@ -154,6 +182,9 @@ const addCare = async () => {
       modal: true,
       header: 'Crear atención',
     },
+    data: {
+      paymentMethodsOptions: headquartersServicesToOptionsSelect(await getAllPaymentMethods()),
+    },
     onClose: async (options) => {
       const data = options?.data as AddCareFromRequestSchema
       console.log(data)
@@ -201,7 +232,7 @@ const viewCare = (careId: number) => {
               </Message>
             </div>
             <!-- headquarter -->
-            <div>
+            <div v-if="roleMain==='Administrador'">
               <label class="block mb-2">Sede</label>
               <Select
                 class="w-full"
@@ -267,7 +298,6 @@ const viewCare = (careId: number) => {
                 {{ errors.status }}
               </Message>
             </div>
-
           </form>
 
           <!-- for messague loading  -->
@@ -317,37 +347,19 @@ const viewCare = (careId: number) => {
               class="hidden lg:table-cell"
               style="width: 18%"
             ></Column>
-            <Column
-
-              sortable
-              header="Mascota"
-              class="hidden lg:table-cell"
-              style="width: 16%"
-            >
+            <Column sortable header="Mascota" class="hidden lg:table-cell" style="width: 16%">
               <template #body="{ data }">
                 {{ data.pet.name }}
               </template>
             </Column>
 
-            <Column
-
-              sortable
-              header="Empleado"
-              class="hidden lg:table-cell"
-              style="width: 20%"
-            >
+            <Column sortable header="Empleado" class="hidden lg:table-cell" style="width: 20%">
               <template #body="{ data }">
-                {{ data.employee.fullName?data.employee.fullName:'' }}
+                {{ data.employee.fullName ? data.employee.fullName : '' }}
               </template>
             </Column>
 
-                        <Column
-
-              sortable
-              header="Sede"
-              class="hidden lg:table-cell"
-              style="width: 20%"
-            >
+            <Column sortable header="Sede" class="hidden lg:table-cell" style="width: 20%">
               <template #body="{ data }">
                 {{ data.headquarter.name }}
               </template>
@@ -357,20 +369,23 @@ const viewCare = (careId: number) => {
               <template #body="slotProps">
                 <div class="flex items-center flex-row lg:flex-col xl:flex-row gap-1">
                   <Button
+                    v-if="slotProps.data.status === 'Completado'"
                     icon="pi pi-eye"
                     severity="info"
                     variant="text"
                     size="small"
                     aria-label="Ver"
                     rounded
+                    @click="viewCare(slotProps.data.id)"
                   ></Button>
                   <Button
                     icon="pi pi-calendar-clock"
                     severity="warn"
-                      variant="text"
+                    variant="text"
                     size="small"
                     aria-label="Atender"
                     rounded
+                    v-if="slotProps.data.status !== 'Completado'"
                     @click="viewCare(slotProps.data.id)"
                   ></Button>
 

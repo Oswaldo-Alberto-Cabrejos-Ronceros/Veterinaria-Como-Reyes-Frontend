@@ -117,7 +117,7 @@ const showToast = (message: string) => {
       :comentario="appointmentInfo.comment"
       :status="appointmentBasicInfo?.statusAppointment"
     />
-    <div class="w-full grid grid-cols-2 gap-4">
+    <div class="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
       <CardPetInfo v-if="petInfo" :name="petInfo.name"
       :specieName="petInfo.speciesName"
       :breedName="petInfo.breedName"

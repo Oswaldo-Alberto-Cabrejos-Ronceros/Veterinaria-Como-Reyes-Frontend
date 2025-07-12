@@ -485,7 +485,6 @@ watch(
                   severity="success"
                   label="Agregar Mascota"
                   @click="addPet"
-                    v-if="mainRole === 'Administrador' || mainRole === 'Encargado'"
                 />
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
@@ -541,10 +540,9 @@ watch(
                     aria-label="Editar"
                     rounded
                     @click="editPet(data)"
-                    v-if="mainRole === 'Administrador' || mainRole === 'Encargado'"
                   ></Button>
                   <Button
-          v-if="data.status === 'Activo' && (mainRole === 'Administrador' || mainRole === 'Encargado')"
+          v-if="data.status === 'Activo'"
 
                     icon="pi pi-ban"
                     severity="danger"
@@ -555,7 +553,7 @@ watch(
                     @click="confirmDeletePet($event, data)"
                   ></Button>
                   <Button
-   v-if="data.status === 'Inactivado' && (mainRole === 'Administrador' || mainRole === 'Encargado')"
+   v-if="data.status === 'Inactivado'"
                     icon="pi pi-refresh"
                     severity="warn"
                     variant="text"
