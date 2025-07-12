@@ -31,8 +31,8 @@ export interface ClientRequest {
     headquarterId: number
   }
   user?: {
-    email: string
-    password: string
+    email?: string
+    password?: string
   }
 }
 
