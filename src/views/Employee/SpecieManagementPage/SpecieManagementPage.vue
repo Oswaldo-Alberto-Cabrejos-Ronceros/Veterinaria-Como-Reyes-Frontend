@@ -43,7 +43,16 @@ const { getMainRole } = useAuthentication()
 
 //for get species
 
-const { loading, error, getSpecieById,createSpecie, updateSpecie, activateSpecie, searchSpecies } = useSpecie()
+const {
+  loading,
+  error,
+  deleteSpecie,
+  getSpecieById,
+  createSpecie,
+  updateSpecie,
+  activateSpecie,
+  searchSpecies,
+} = useSpecie()
 
 const species = ref<SpecieList[]>([])
 
@@ -60,7 +69,7 @@ const loadSpecies = async (event?: DataTablePageEvent) => {
   const page = event ? event.first / event.rows : 0
   const size = event ? event.rows : rows.value
   rows.value = size
-  const response = await searchSpecies(page, size, name.value,status.value)
+  const response = await searchSpecies(page, size, name.value, status.value)
   species.value = response.content
   totalRecords.value = response.totalElements
   const role = getMainRole()
@@ -146,11 +155,14 @@ const editSpecie = async (specieData: SpecieList) => {
 //for confirm
 const confirm = useConfirm()
 
-const deleteSpecie = (event: MouseEvent | KeyboardEvent, specieData: SpecieList) => {
+const handleDeleteReactiveSpecie = (event: MouseEvent | KeyboardEvent, specieData: SpecieList) => {
+  const isActive = specieData.status
   confirm.require({
     group: 'confirmPopupGeneral',
     target: event.currentTarget as HTMLElement,
-    message: '¿Seguro que quiere eliminar esta especie?',
+    message: isActive
+      ? '¿Seguro que quiere eliminar esta especie?'
+      : '¿Seguro que quiere reactivar esta especie?',
     icon: 'pi pi-exclamation-triangle',
     rejectProps: {
       label: 'Cancelar',
@@ -158,12 +170,19 @@ const deleteSpecie = (event: MouseEvent | KeyboardEvent, specieData: SpecieList)
       outlined: true,
     },
     acceptProps: {
-      label: 'Eliminar',
-      severity: 'danger',
+      label: isActive ? 'Desactivar' : 'Activar',
+      severity: isActive ? 'danger' : 'success',
     },
     accept: async () => {
-      await activateSpecie(specieData.id)
-      showToast('Especie eliminada exitosamente: ' + specieData.name)
+      if (isActive) {
+        await deleteSpecie(specieData.id)
+
+        showToast('Especie eliminada exitosamente: ' + specieData.name)
+      } else {
+        await activateSpecie(specieData.id)
+        showToast('Especie reactivado exitosamente: ' + specieData.name)
+      }
+
       loadSpecies()
     },
     reject: () => {
@@ -272,18 +291,17 @@ const statusOptions: OptionSelect[] = [
               </div>
             </template>
 
-            <Column field="name" sortable style="width: 80%"></Column>
+            <Column field="name" header="Nombre" sortable style="width: 80%"></Column>
 
             <Column field="status" header="Estado" style="width: 20%">
               <template #body="{ data }">
                 <Tag
-                  :value="data.status ? 'Activo' : 'Inactivo'"
-                  :severity="data.status ? 'success' : 'danger'"
+                  :value="data.status === 'Activo' ? 'Activo' : 'Inactivo'"
+                  :severity="data.status === 'Activo' ? 'success' : 'danger'"
                 />
               </template>
             </Column>
             <Column header="Acciones" v-if="roleMain === 'Administrador'">
-
               <template #body="{ data }">
                 <div class="flex items-center flex-col sm:flex-row gap-1">
                   <Button
@@ -303,9 +321,20 @@ const statusOptions: OptionSelect[] = [
                     size="small"
                     aria-label="Bloquear"
                     rounded
-                    v-if="roleMain === 'Administrador'"
-                    @click="deleteSpecie($event, data)"
+                    v-if="data.status === 'Activo' && roleMain === 'Administrador'"
+                    @click="handleDeleteReactiveSpecie($event, data)"
                   />
+
+                  <Button
+                    v-if="data.status === 'Inactivo' && roleMain === 'Administrador'"
+                    icon="pi pi-refresh"
+                    severity="warn"
+                    variant="text"
+                    aria-label="Desbloquear"
+                    rounded
+                    size="small"
+                    @click="handleDeleteReactiveSpecie($event, data)"
+                  ></Button>
                 </div>
               </template>
             </Column>

@@ -169,6 +169,8 @@ const exportCSV = () => {
             :totalRecords="totalRecords"
             :lazy="true"
             :first="first"
+                        scrollable
+            removableSort
             :loading="veterinaryRecordLoading.getAllInfoVeterinaryRecordsByPet"
             @page="loadVeterinaryRecords"
             :rows-per-page-options="[4, 8, 12]"
@@ -184,32 +186,27 @@ const exportCSV = () => {
               field="nameHeadquarter"
               sortable
               header="Sede"
-              class="hidden lg:table-cell"
               style="width: 12%"
             ></Column>
             <Column
               field="nameEmployee"
-              class="hidden xl:table-cell"
               header="Empleado"
               sortable
               style="width: 15%"
             ></Column>
             <Column
               field="diagnosis"
-              class="hidden xs:table-cell sm:hidden lg:table-cell"
               header="Diagnostico"
               sortable
               style="width: 10%"
             ></Column>
             <Column
               field="treatment"
-              class="hidden xl:table-cell"
               header="Tratamiento"
               sortable
               style="width: 10%"
             ></Column>
             <Column
-              class="table-cell sm:hidden lg:table-cell"
               header="Observación"
               sortable
               style="width: 10%"
@@ -220,7 +217,6 @@ const exportCSV = () => {
           </template></Column>
             <Column
               field="status"
-              class="hidden md:table-cell"
               header="Estado"
               sortable
               style="width: 12%"

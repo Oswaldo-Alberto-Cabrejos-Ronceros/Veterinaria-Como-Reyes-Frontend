@@ -43,8 +43,16 @@ const { getMainRole } = useAuthentication()
 
 //methods
 
-const { loading, error, getCategoryById,createCategory, updateCategory, activateCategory, searchCategories } =
-  useCategory()
+const {
+  loading,
+  error,
+  getCategoryById,
+  createCategory,
+  updateCategory,
+  activateCategory,
+  deleteCategory,
+  searchCategories,
+} = useCategory()
 
 //categories
 
@@ -156,7 +164,7 @@ const editCategory = async (categoryData: CategoryList) => {
 //for view
 
 const viewCategory = async (categoryData: CategoryList) => {
-const category = await getCategoryById(categoryData.categoryId)
+  const category = await getCategoryById(categoryData.categoryId)
   dialog.open(ViewCategoryCard, {
     props: {
       modal: true,
@@ -171,13 +179,18 @@ const category = await getCategoryById(categoryData.categoryId)
 //for confirm
 const confirm = useConfirm()
 
-const deleteCategory = (event: MouseEvent | KeyboardEvent, categoryData: CategoryList) => {
+const handleDeleteReactiveCategory = (
+  event: MouseEvent | KeyboardEvent,
+  categoryData: CategoryList,
+) => {
   const isActive = categoryData.status
 
   confirm.require({
     group: 'confirmPopupGeneral',
     target: event.currentTarget as HTMLElement,
-    message: '¿Seguro que quiere eliminar esta categoría?',
+    message: isActive
+      ? '¿Seguro que quiere eliminar esta categoría?'
+      : 'Seguro que quiere reactivar esta categoria',
     icon: 'pi pi-exclamation-triangle',
     rejectProps: {
       label: 'Cancelar',
@@ -189,8 +202,14 @@ const deleteCategory = (event: MouseEvent | KeyboardEvent, categoryData: Categor
       severity: isActive ? 'danger' : 'success',
     },
     accept: async () => {
-      await activateCategory(categoryData.categoryId)
-      showToast('Categoría eliminado exitosamente: ' + categoryData.name)
+      if (isActive) {
+        await deleteCategory(categoryData.categoryId)
+        showToast('Categoría eliminado exitosamente: ' + categoryData.name)
+      } else {
+        await activateCategory(categoryData.categoryId)
+        showToast('Categoría reactivada exitosamente: ' + categoryData.name)
+      }
+
       loadCategories()
     },
     reject: () => {
@@ -293,12 +312,7 @@ const exportCSV = () => {
             </template>
 
             <Column field="name" header="Nombre" sortable style="width: 20%"></Column>
-            <Column
-              field="description"
-              sortable
-              header="Descripción"
-              style="width: 60%"
-            ></Column>
+            <Column field="description" sortable header="Descripción" style="width: 60%"></Column>
             <Column header="Acciones">
               <template #body="{ data }">
                 <div class="flex items-center flex-col sm:flex-row gap-1">
@@ -328,9 +342,19 @@ const exportCSV = () => {
                     aria-label="Eliminar"
                     rounded
                     size="small"
-                    v-if="roleMain === 'Administrador'"
-                    @click="deleteCategory($event, data)"
+                    v-if="data.status === 'Activo' && roleMain === 'Administrador'"
+                    @click="handleDeleteReactiveCategory($event, data)"
                   />
+                  <Button
+                    v-if="data.status === 'Inactivo' && roleMain === 'Administrador'"
+                    icon="pi pi-refresh"
+                    severity="warn"
+                    variant="text"
+                    aria-label="Desbloquear"
+                    rounded
+                    size="small"
+                    @click="handleDeleteReactiveCategory($event, data)"
+                  ></Button>
                 </div>
               </template>
             </Column>

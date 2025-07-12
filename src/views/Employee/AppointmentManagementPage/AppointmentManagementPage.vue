@@ -453,24 +453,40 @@ const attendAppointment = (appointmentId: number) => {
               </div>
             </template>
             <Column
+            header="Fecha"
               field="date"
               sortable
-              style="width: 18%"
+              style="width: 16%"
+            ></Column>
+                        <Column
+              field="petName"
+              header="Masctota"
+              sortable
+              style="width: 13%"
+            ></Column>
+                        <Column
+              field="petOwner"
+              header="Dueño"
+              sortable
+              style="width: 20%"
             ></Column>
             <Column
               field="headquarter"
+              header="Sede"
               sortable
-              style="width: 15%"
+              style="width: 14%"
             ></Column>
             <Column
               field="categoryService"
+              header="Categoria"
               sortable
               style="width: 15%"
             ></Column>
             <Column
               field="appointmentStatus"
+              header="Estado"
               sortable
-              style="width: 15%"
+              style="width: 12%"
             >
             </Column>
             <Column header="Acciones">

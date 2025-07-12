@@ -43,7 +43,7 @@ const showToast = (message: string) => {
 }
 
 //methods
-const { loading, error, createClient, updateClient, blockClient, searchClient, getClientById } =
+const { loading, error,createClient, updateClient, blockClient, searchClient, getClientById } =
   useClient()
 
 const { getAllHeadquarters } = useHeadquarter()
@@ -243,6 +243,8 @@ const restoreClientAction = (event: MouseEvent | KeyboardEvent, client: ClientLi
     },
     accept: async () => {
       console.log('Restaurando cliente ', client.id)
+
+
       loadClients()
       showToast('Cliente restaurado exitosamente: ' + client.names)
     },

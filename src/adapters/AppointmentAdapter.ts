@@ -81,6 +81,8 @@ export class AppointmentAdapter {
   ): AppointmentListView {
     return {
       id: appointmentList.appointmentId,
+        petName:appointmentList.petName,
+  petOwner:appointmentList.petOwner,
       date: appointmentList.day,
       headquarter: appointmentList.headquarter,
       categoryService: appointmentList.categoryService,

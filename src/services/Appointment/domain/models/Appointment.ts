@@ -57,6 +57,8 @@ export interface InfoBasicAppointment {
 
 export interface AppointmentList {
   appointmentId: number
+  petName:string,
+  petOwner:string
   day: string
   headquarter: string
   categoryService: string

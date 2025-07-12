@@ -390,36 +390,42 @@ const exportCSV = () => {
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
             </template>
-            <Column field="clientDni" sortable style="width: 10%"></Column>
+            <Column field="clientDni" header="DNI" sortable style="width: 10%"></Column>
             <Column
               field="headquarterName"
               sortable
               style="width: 12%"
+              header="Sede"
             ></Column>
             <Column
               field="serviceName"
               sortable
               style="width: 15%"
+              header="Servicio"
             ></Column>
             <Column
               field="amount"
               sortable
               style="width: 10%"
+              header="Monto"
             ></Column>
             <Column
               field="paymentMethod"
               sortable
               style="width: 10%"
+              header="Método"
             ></Column>
             <Column
               field="paymentDate"
               sortable
               style="width: 10%"
+              header="Fecha"
             ></Column>
             <Column
               field="status"
               sortable
               style="width: 12%"
+              header="Estado"
             ></Column>
             <Column header="Acciones">
               <template #body="{data}">

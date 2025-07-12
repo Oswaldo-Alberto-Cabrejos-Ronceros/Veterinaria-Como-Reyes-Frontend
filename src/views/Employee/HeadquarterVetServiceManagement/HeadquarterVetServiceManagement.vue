@@ -446,6 +446,7 @@ const inanctivedHeadquarterService = ref<boolean>(false)
             <Column
               field="name"
               sortable
+              header="Servicio"
               style="width: 18%"
             ></Column>
             <Column v-for="(headquarter, index) in headquarters" :key="headquarter.id">

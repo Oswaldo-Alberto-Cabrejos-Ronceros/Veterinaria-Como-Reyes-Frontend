@@ -143,7 +143,12 @@ const headquartersServicesToOptionsSelect = (
 //for status
 
 const statusOptions: OptionSelect[] = [
-  {
+
+{
+    value: 'EN_ESPERA',
+    name: 'En espera',
+  },
+{
     value: 'EN_CURSO',
     name: 'En Curso',
   },
@@ -339,7 +344,7 @@ const viewCare = (careId: number) => {
               field="careDateTime"
               sortable
 
-              style="width: 30%"
+              style="width: 16%"
 
               header="Dia programado"
               class="hidden lg:table-cell"
@@ -348,25 +353,25 @@ const viewCare = (careId: number) => {
             <Column
               field="status"
               sortable
-              style="width: 30%"
+              style="width: 20%"
 
               header="Estado"
               class="hidden lg:table-cell"
 
             ></Column>
-            <Column sortable header="Mascota" class="hidden lg:table-cell" style="width: 16%">
+            <Column sortable header="Mascota" class="hidden lg:table-cell" style="width: 20%">
               <template #body="{ data }">
                 {{ data.pet.name }}
               </template>
             </Column>
 
-            <Column sortable header="Empleado" class="hidden lg:table-cell" style="width: 20%">
+            <Column sortable header="Empleado" class="hidden lg:table-cell" style="width: 30%">
               <template #body="{ data }">
                 {{ data.employee.fullName ? data.employee.fullName : '' }}
               </template>
             </Column>
 
-            <Column sortable header="Sede" class="hidden lg:table-cell" style="width: 20%">
+            <Column sortable header="Sede" class="hidden lg:table-cell" style="width: 30%">
               <template #body="{ data }">
                 {{ data.headquarter.name }}
               </template>

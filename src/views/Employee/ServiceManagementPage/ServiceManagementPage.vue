@@ -47,9 +47,10 @@ const {
   error,
   createVeterinaryService,
   updateVeterinaryService,
+  deleteVeterinaryService,
   activateVeterinaryService,
   searchVeterinaryServices,
-  getVeterinaryServiceById
+  getVeterinaryServiceById,
 } = useVeterinaryService()
 
 const { getAllSpecies } = useSpecie()
@@ -230,13 +231,15 @@ const editService = async (serviceData: ServiceList) => {
 //for confirm
 const confirm = useConfirm()
 
-const deleteService = (event: MouseEvent | KeyboardEvent, serviceData: ServiceList) => {
+const deleteReactiveService = (event: MouseEvent | KeyboardEvent, serviceData: ServiceList) => {
   const isActive = serviceData.status
 
   confirm.require({
     group: 'confirmPopupGeneral',
     target: event.currentTarget as HTMLElement,
-    message: '¿Seguro que quiere eliminar este servicio?',
+    message: isActive
+      ? '¿Seguro que quiere eliminar este servicio?'
+      : '¿Seguro que quiere reactivar este servicio?',
     icon: 'pi pi-exclamation-triangle',
     rejectProps: {
       label: 'Cancelar',
@@ -248,8 +251,14 @@ const deleteService = (event: MouseEvent | KeyboardEvent, serviceData: ServiceLi
       severity: isActive ? 'danger' : 'success',
     },
     accept: async () => {
-      await activateVeterinaryService(serviceData.serviceId)
-      showToast('Servicio eliminado exitosamente: ' + serviceData.name)
+      if (isActive) {
+        await deleteVeterinaryService(serviceData.serviceId)
+        showToast('Servicio eliminado exitosamente: ' + serviceData.name)
+      } else {
+        await activateVeterinaryService(serviceData.serviceId)
+        showToast('Servicio reactivado exitosamente: ' + serviceData.name)
+      }
+
       loadServices()
     },
     reject: () => {
@@ -402,32 +411,11 @@ const exportCSV = () => {
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
             </template>
-            <Column
-              field="name"
-              sortable
-              header="Nombre"
-              style="width: 18%"
-            ></Column>
+            <Column field="name" sortable header="Nombre" style="width: 18%"></Column>
             <Column field="category" sortable header="Categoria" style="width: 18%"></Column>
-            <Column
-
-              field="duration"
-              header="Duración"
-              sortable
-              style="width: 15%"
-            ></Column>
-            <Column
-              field="price"
-              header="Precio"
-              sortable
-              style="width: 15%"
-            ></Column>
-            <Column
-              field="specie"
-              sortable
-              header="Especie"
-              style="width: 15%"
-            ></Column>
+            <Column field="duration" header="Duración" sortable style="width: 15%"></Column>
+            <Column field="price" header="Precio" sortable style="width: 15%"></Column>
+            <Column field="specie" sortable header="Especie" style="width: 15%"></Column>
             <Column header="Acciones">
               <template #body="{ data }">
                 <div class="flex items-center flex-row lg:flex-col xl:flex-row gap-1">
@@ -457,9 +445,19 @@ const exportCSV = () => {
                     aria-label="Eliminar"
                     rounded
                     size="small"
-                    v-if="roleMain === 'Administrador'"
-                    @click="deleteService($event, data)"
+                    v-if="data.status === 'Activo' && roleMain === 'Administrador'"
+                    @click="deleteReactiveService($event, data)"
                   />
+                  <Button
+                    v-if="data.status === 'Inactivo' && roleMain === 'Administrador'"
+                    icon="pi pi-refresh"
+                    severity="warn"
+                    variant="text"
+                    aria-label="Desbloquear"
+                    rounded
+                    size="small"
+                    @click="deleteReactiveService($event, data)"
+                  ></Button>
                 </div>
               </template>
             </Column>
