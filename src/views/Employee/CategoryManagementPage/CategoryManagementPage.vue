@@ -274,6 +274,8 @@ const exportCSV = () => {
             :loading="loading.searchCategories"
             :rows-per-page-options="[5, 10, 15, 20]"
             @page="loadCategories"
+            scrollable
+            removableSort
             ref="dt"
           >
             <template #header>
@@ -290,11 +292,9 @@ const exportCSV = () => {
               </div>
             </template>
 
-            <Column field="name" sortable header="Nombre" style="width: 20%"></Column>
+            <Column field="name" sortable style="width: 20%"></Column>
             <Column
               field="description"
-              class="hidden md:table-cell"
-              header="Descripción"
               sortable
               style="width: 60%"
             ></Column>

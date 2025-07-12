@@ -435,6 +435,8 @@ const attendAppointment = (appointmentId: number) => {
             :first="first"
             :loading="loading.searchAppointments"
             @page="loadAppoinments"
+            scrollable
+            removableSort
             :rows-per-page-options="[1, 2, 3, 4]"
             ref="dt"
           >
@@ -453,28 +455,20 @@ const attendAppointment = (appointmentId: number) => {
             <Column
               field="date"
               sortable
-              header="Dia programado"
-              class="hidden lg:table-cell"
               style="width: 18%"
             ></Column>
             <Column
               field="headquarter"
-              class="hidden lg:table-cell"
-              header="Sede"
               sortable
               style="width: 15%"
             ></Column>
             <Column
               field="categoryService"
-              class="hidden lg:table-cell"
-              header="Categoria"
               sortable
               style="width: 15%"
             ></Column>
             <Column
-              class="hidden md:table-cell"
               field="appointmentStatus"
-              header="Estado"
               sortable
               style="width: 15%"
             >

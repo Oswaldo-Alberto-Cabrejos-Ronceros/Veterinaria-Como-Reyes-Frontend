@@ -383,7 +383,9 @@ const headquartersToOptionsSelect = (headquarters: Headquarter[]): OptionSelect[
             :first="first"
             :loading="loading.searchClient"
             @page="loadClients"
-            :rows-per-page-options="[4,8,12]"
+            scrollable
+            removableSort
+            :rows-per-page-options="[1, 2, 3, 4]"
             ref="dt"
           >
             <template #header>
@@ -401,21 +403,15 @@ const headquartersToOptionsSelect = (headquarters: Headquarter[]): OptionSelect[
             <Column
               field="dni"
               sortable
-              header="DNI"
-              class="hidden lg:table-cell"
               style="width: 18%"
             ></Column>
-            <Column field="names" sortable header="Nombres" style="width: 18%"></Column>
+            <Column field="names" sortable style="width: 18%"></Column>
             <Column
               field="lastnames"
-              class="hidden md:table-cell"
-              header="Apellidos"
               sortable
               style="width: 15%"
             ></Column>
             <Column
-              class="hidden lg:table-cell"
-              header="Sede"
               field="headquarterName"
               sortable
               style="width: 15%"

@@ -252,6 +252,8 @@ const statusOptions: OptionSelect[] = [
             :first="first"
             :loading="loading.searchSpecies"
             :totalRecords="totalRecords"
+            scrollable
+            removableSort
             :rows-per-page-options="[5, 10, 20]"
             ref="dt"
             @page="loadSpecies"
@@ -269,7 +271,11 @@ const statusOptions: OptionSelect[] = [
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
             </template>
-            <Column field="name" sortable header="Nombre" style="width: 60%" />
+
+            <Column field="name" sortable style="width: 80%"></Column>
+
+            <Column>
+
             <Column field="status" header="Estado" style="width: 20%">
               <template #body="{ data }">
                 <Tag
@@ -279,6 +285,7 @@ const statusOptions: OptionSelect[] = [
               </template>
             </Column>
             <Column header="Acciones" v-if="roleMain === 'Administrador'">
+
               <template #body="{ data }">
                 <div class="flex items-center flex-col sm:flex-row gap-1">
                   <Button
