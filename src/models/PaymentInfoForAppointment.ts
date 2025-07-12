@@ -5,6 +5,7 @@ export interface PaymentInfoForAppointment {
   paymentMethod: {
     id: number
     name: string
-    status: string
+
   }
+      status: string
 }

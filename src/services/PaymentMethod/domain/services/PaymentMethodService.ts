@@ -1,4 +1,4 @@
-import type { PaymentMethod, PaymentMethodRequest } from '../models/PaymentMethod';
+import type { PaymentMethod, PaymentMethodRequest, PaymentMethodList } from '../models/PaymentMethod';
 import type { PageResponse } from '@/services/models/PageResponse'
 
 export interface PaymentMethodService {
@@ -13,5 +13,5 @@ export interface PaymentMethodService {
     size: number,
     name?: string,
     status?: boolean,
-  ): Promise<PageResponse<PaymentMethod>>
+  ): Promise<PageResponse<PaymentMethodList>>
 }

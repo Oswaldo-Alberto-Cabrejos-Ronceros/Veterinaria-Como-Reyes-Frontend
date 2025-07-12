@@ -15,7 +15,7 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import AddEditBreedCard from './components/AddEditBreedCard.vue'
 import { useDialog, useToast } from 'primevue'
-import type { Breed as BreedView } from '@/models/Breed'
+import type { BreedList } from '@/models/BreedList'
 import type { FormValues as AddEditBreedSchema } from '@/validation-schemas-forms/schema-add-edit-breed'
 import { useConfirm } from 'primevue'
 import { useBreed } from '@/composables/useBreed'
@@ -39,11 +39,11 @@ const showToast = (message: string) => {
 
 //get from compose
 
-const { loading, error, createBreed, updateBreed, activateBreed, searchBreeds } = useBreed()
+const { loading, error, getBreedByUd,createBreed, updateBreed, activateBreed, searchBreeds } = useBreed()
 
 const { getAllSpecies } = useSpecie()
 
-const breeds = ref<BreedView[]>([])
+const breeds = ref<BreedList[]>([])
 
 const speciesOptions = ref<OptionSelect[]>([])
 
@@ -71,6 +71,7 @@ const loadBreeds = async (event?: DataTablePageEvent) => {
     size,
     name: name.value,
     specieName,
+    status: status.value,
   })
 
   breeds.value = response.content
@@ -92,11 +93,13 @@ const { handleSubmit, errors, defineField } = useForm<SearchBreedSchema>({
   initialValues: {
     name: '',
     specieId: undefined,
+    status: true,
   },
 })
 
 const [name, nameAttrs] = defineField('name')
 const [specieId, specieIdAttrs] = defineField('specieId')
+const [status, statusAttrs] = defineField('status')
 
 const onSubmit = handleSubmit((values) => {
   console.log(values)
@@ -109,7 +112,7 @@ const addBreed = () => {
   dialog.open(AddEditBreedCard, {
     props: {
       modal: true,
-      header:'Agregar raza'
+      header: 'Agregar raza',
     },
     data: {
       speciesOptions: speciesOptions,
@@ -126,16 +129,17 @@ const addBreed = () => {
   })
 }
 
-const editBreed = (breedData: BreedView) => {
+const editBreed = async (breedData: BreedList) => {
+  const breed= await getBreedByUd(breedData.id)
   dialog.open(AddEditBreedCard, {
     props: {
       modal: true,
-      header:`${breedData.name}`
+      header: `${breedData.name}`,
     },
     data: {
       breedData: {
-        name: breedData.name,
-        specieId: breedData.specie.id,
+        name: breed.name,
+        specieId:breed.specie.id
       } as AddEditBreedSchema,
       speciesOptions: speciesOptions,
     },
@@ -154,7 +158,7 @@ const editBreed = (breedData: BreedView) => {
 //for confirm
 const confirm = useConfirm()
 
-const deleteBreed = (event: MouseEvent | KeyboardEvent, breedData: BreedView) => {
+const deleteBreed = (event: MouseEvent | KeyboardEvent, breedData: BreedList) => {
   const isActive = breedData.status
 
   confirm.require({
@@ -188,6 +192,17 @@ const dt = ref()
 const exportCSV = () => {
   dt.value.exportCSV()
 }
+
+const statusOptions: OptionSelect[] = [
+  {
+    value: true,
+    name: 'Activo',
+  },
+  {
+    value: false,
+    name: 'Desactivado',
+  },
+]
 </script>
 
 <template>
@@ -231,23 +246,32 @@ const exportCSV = () => {
                 optionLabel="name"
                 optionValue="value"
                 placeholder="Selecciona Especie"
+                showClear
               />
 
               <Message v-if="errors.specieId" severity="error" size="small" variant="simple">
                 {{ errors.specieId }}
               </Message>
             </div>
-            <div class="form-button-search-container-grid-col-5">
-              <!-- button -->
 
-              <Button
-                label="Buscar"
-                type="submit"
-                severity="info"
-                icon="pi pi-search"
-                iconPos="right"
+            <!-- status -->
+
+            <div>
+              <label class="block mb-2">Estado</label>
+              <Select
                 class="w-full"
+                v-bind="statusAttrs"
+                v-model="status"
+                :options="statusOptions"
+                optionLabel="name"
+                optionValue="value"
+                placeholder="Selecciona Estado"
+                @update:model-value="searchBreedsDebounced"
               />
+
+              <Message v-if="errors.status" severity="error" size="small" variant="simple">
+                {{ errors.status }}
+              </Message>
             </div>
           </form>
 
@@ -286,36 +310,32 @@ const exportCSV = () => {
               </div>
             </template>
             <Column field="name" sortable header="Nombre" style="width: 40%"></Column>
-            <Column sortable header="Especie" style="width: 30%" class="hidden xs:table-cell">
-              <template #body="{ data }">
-                {{ data.specie.name }}
-              </template>
+            <Column
+              sortable
+              header="Especie"
+              field="specieName"
+              style="width: 30%"
+              class="hidden xs:table-cell"
+            >
             </Column>
-            <Column>
+            <Column header="Acciones">
               <template #body="{ data }">
-                <div
-                  class="flex justify-between items-center flex-row xs:flex-col lg:flex-row gap-1"
-                >
-                  <Button
-                    icon="pi pi-eye"
-                    severity="info"
-                    variant="outlined"
-                    aria-label="Filter"
-                    rounded
-                  ></Button>
+                <div class="flex items-center flex-row xs:flex-col lg:flex-row gap-1">
                   <Button
                     icon="pi pi-pencil"
                     severity="warn"
-                    variant="outlined"
-                    aria-label="Filter"
+                    variant="text"
+                    size="small"
+                    aria-label="Editar"
                     rounded
                     @click="editBreed(data)"
                   ></Button>
                   <Button
-                    icon="pi pi-trash"
+                    icon="pi pi-ban"
                     severity="danger"
-                    variant="outlined"
-                    aria-label="Eliminar"
+                    variant="text"
+                    size="small"
+                    aria-label="Bloquear"
                     rounded
                     @click="deleteBreed($event, data)"
                   />

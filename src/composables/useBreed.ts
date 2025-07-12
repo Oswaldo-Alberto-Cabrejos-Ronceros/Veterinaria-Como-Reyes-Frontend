@@ -6,6 +6,7 @@ import { BreedAdapter } from '@/adapters/BreedAdapter'
 import type { FormValues as BreedAddEditSchema } from '@/validation-schemas-forms/schema-add-edit-breed'
 import type { SearchBreedParams } from '@/services/Breed/domain/models/SearchBreedParams'
 import type { PageResponse } from '@/services/models/PageResponse'
+import type { BreedList as BreedListView } from '@/models/BreedList'
 
 export function useBreed() {
   //get from useAsyncHandle
@@ -65,13 +66,15 @@ export function useBreed() {
 
   const searchBreeds = async (
     params: SearchBreedParams,
-  ): Promise<PageResponse<BreedView>> => {
+  ): Promise<PageResponse<BreedListView>> => {
     const page = await runUseCase('searchBreeds', () =>
       breedUsesCases.searchBreeds.execute(params),
     )
     return {
       ...page,
-      content: page.content.map((breed) => BreedAdapter.toBreedView(breed)),
+      content: page.content.map((breed) =>
+        BreedAdapter.fromBreedListToBreedListView(breed),
+      ),
     }
   }
 

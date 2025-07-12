@@ -29,7 +29,7 @@ import CascadeSelect from 'primevue/cascadeselect'
 
 const { getEntityId } = useAuthentication()
 
-const { getClientByDni } = useClient()
+const { loading,getClientByDni } = useClient()
 
 const { getAllHeadquarters } = useHeadquarter()
 
@@ -209,6 +209,7 @@ onMounted(() => {
                 severity="secondary"
                 variant="text"
                 @click="searchClient()"
+                :loading="loading.getClientByDni"
               />
             </InputGroupAddon>
           </InputGroup>

@@ -11,13 +11,15 @@ import Message from 'primevue/message'
 import Select from 'primevue/select'
 import DatePicker from 'primevue/datepicker'
 import type { Ref } from 'vue'
-import { inject } from 'vue'
+import { inject, onMounted, ref } from 'vue'
 import Button from 'primevue/button'
 import { useReniec } from '@/composables/useReniec'
+import type { OptionSelect } from '@/models/OptionSelect'
+import ToggleSwitch from 'primevue/toggleswitch'
 
 //methods
 
-const { getInfoSimpleByReniec } = useReniec()
+const { loading,getInfoSimpleByReniec } = useReniec()
 
 //form
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
@@ -30,6 +32,7 @@ const { handleSubmit, errors, defineField } = useForm<FormValues>({
     address: '',
     birthdate: undefined,
     headquarterId: undefined,
+    withUser:false,
     email: '',
     password: '',
     confirmPassword: '',
@@ -47,6 +50,7 @@ const fieldMap = {
 const [dni, dniAttrs] = defineField('dni')
 const [birthdate, birthdateAttrs] = defineField('birthdate')
 const [headquarterId, headquarterIdAttrs] = defineField('headquarterId')
+const [withUser, withUserAttrs] = defineField('withUser')
 const [email, emailAttrs] = defineField('email')
 const [password, passwordAttrs] = defineField('password')
 const [confirmPassword, confirmPasswordAttrs] = defineField('confirmPassword')
@@ -92,17 +96,23 @@ const onSubmit = handleSubmit((values) => {
 
 //for dynamicDialog
 const dialogRef = inject('dialogRef') as Ref<{
-  close: (data?: FormValues) => void
+  close: (data?: FormValues) => void,
+  data:{
+    headquartersOptions?: OptionSelect[]
+  }
 }>
 
-//headquarterIds
-const headquarkers = [
-  { name: 'Ica', value: 1 },
-  { name: 'Parcona', value: 2 },
-  { name: 'Tinguiña', value: 3 },
-]
-
+const headquartersOptions = ref<OptionSelect[]>([])
 //for search
+
+onMounted(()=>{
+  if (dialogRef.value.data) {
+const headquartersOptionsGet = dialogRef.value.data.headquartersOptions
+    if (headquartersOptionsGet) {
+      headquartersOptions.value = headquartersOptionsGet
+    }
+  }
+})
 
 const searchInfoReniec = async () => {
   if (dni.value?.length === 8) {
@@ -146,6 +156,7 @@ const searchInfoReniec = async () => {
               severity="secondary"
               variant="text"
               @click="searchInfoReniec()"
+              :loading="loading.getInfoSimpleByReniec"
             />
           </InputGroupAddon>
         </InputGroup>
@@ -193,7 +204,7 @@ const searchInfoReniec = async () => {
           class="w-full"
           v-bind="headquarterIdAttrs"
           v-model="headquarterId"
-          :options="headquarkers"
+          :options="headquartersOptions"
           optionLabel="name"
           optionValue="value"
           placeholder="Selecciona Sede"
@@ -204,7 +215,10 @@ const searchInfoReniec = async () => {
         </Message>
       </div>
 
-      <div>
+
+
+
+      <div v-if="withUser">
         <label class="block mb-2">Email</label>
 
         <InputGroup>
@@ -225,7 +239,7 @@ const searchInfoReniec = async () => {
         </Message>
       </div>
 
-      <div>
+      <div v-if="withUser">
         <label class="block mb-2">Contraseña</label>
         <InputGroup>
           <InputGroupAddon class="text-neutral-400">
@@ -245,7 +259,7 @@ const searchInfoReniec = async () => {
         </Message>
       </div>
 
-      <div>
+      <div v-if="withUser">
         <label class="block mb-2">Confirmar contraseña</label>
 
         <InputGroup>
@@ -265,6 +279,19 @@ const searchInfoReniec = async () => {
           {{ errors.confirmPassword }}
         </Message>
       </div>
+
+                  <div>
+        <label class="block mb-2">Con usuario</label>
+        <ToggleSwitch
+          v-bind="withUserAttrs"
+          v-model="withUser"
+        />
+
+        <Message v-if="errors.withUser" severity="error" size="small" variant="simple">
+          {{ errors.withUser }}
+        </Message>
+      </div>
+
       <div class="button-form-container-grid-end">
         <Button
           class="w-full max-w-md"

@@ -14,8 +14,35 @@ import Chart from 'primevue/chart'
 import CardVeterinaryRecord from '@/components/CardVeterinaryRecord.vue'
 import ScrollPanel from 'primevue/scrollpanel'
 import CardPetTerciary from '@/components/CardPetTerciary.vue'
+import { useAppointment } from '@/composables/useAppointment'
+import type { AppointmentStatsToday } from '@/services/Appointment/domain/models/Appointment'
+import type { CareAndAppointmentPanelEmployee } from '@/models/CareAndAppointmentPanelEmployee'
+import { useRouter } from 'vue-router'
+import { useCare } from '@/composables/useCare'
+import type { VeterinaryRecordStats } from '@/services/VeterinaryRecord/domain/models/VeterinaryRecord'
+import { useVeterinaryRecord } from '@/composables/useVeterinaryRecord'
+import type { RecentMedicalRecord } from '@/models/RecentMedicalRecord'
+import type { RecentPatient } from '@/models/RecentPatient'
+
 const { getEntityId } = useAuthentication()
 const { getEmployeeMyInfo } = useEmployee()
+
+const { getCareAndAppointmentsForEmployee } = useAppointment()
+const appointments = ref<CareAndAppointmentPanelEmployee[]>([])
+
+const statsRecords = ref<VeterinaryRecordStats | null>(null)
+
+const { getRecentPatientsByEmployee, getCaresForEmployee } = useCare()
+
+const recentsPacients = ref<RecentPatient[]>([])
+
+const { getRecentRecordsByEmployee, getStatsByVeterinarian } = useVeterinaryRecord()
+
+const careRecents = ref<CareAndAppointmentPanelEmployee[]>([])
+
+const { getTodayAppointmentStatsByHeadquarter } = useAppointment()
+
+const appointmentStats = ref<AppointmentStatsToday | null>(null)
 
 const myInfoEmployee = ref<MyInfoEmployee | null>(null)
 
@@ -23,7 +50,7 @@ const entityId = ref<number | null>(null)
 
 const today = DateAdapter.toFormatView(new Date())
 
-onMounted(() => {
+onMounted(async () => {
   loadMyInfo()
   chartData.value = setChartData()
   chartOptions.value = setChartOptions()
@@ -40,7 +67,7 @@ const setChartData = () => {
     labels: ['02/06', '09/06', '16/06', '23/06', '30/06'],
     datasets: [
       {
-        label: 'Ingresos',
+        label: 'Atenciones',
         data: [65, 59, 80, 81, 50],
         fill: false,
         borderColor: documentStyle.getPropertyValue('--p-pink-500'),
@@ -92,16 +119,18 @@ const loadMyInfo = async () => {
   entityId.value = entityIdGet
   if (entityIdGet) {
     myInfoEmployee.value = await getEmployeeMyInfo(entityIdGet)
+    appointmentStats.value = await getTodayAppointmentStatsByHeadquarter(
+      myInfoEmployee.value.headquarter.id,
+    )
+    careRecents.value = await getCareAndAppointmentsForEmployee(entityIdGet)
+    appointments.value = await getCaresForEmployee(entityIdGet)
+    statsRecords.value = await getStatsByVeterinarian(entityIdGet)
+    recentsPacients.value = await getRecentPatientsByEmployee(entityIdGet)
+    recentRecords.value = await getRecentRecordsByEmployee(entityIdGet)
   }
 }
 
 const news: { title: string; icon: string; content: string; plus?: string }[] = [
-  {
-    title: 'Citas hoy',
-    icon: 'pi-calendar',
-    content: '15',
-    plus: '3 confirmadas, 2 pendientes',
-  },
   {
     title: 'Atenciones registradas hoy',
     icon: 'pi-clipboard',
@@ -122,111 +151,7 @@ const news: { title: string; icon: string; content: string; plus?: string }[] = 
   },
 ]
 
-const vetAppointments: {
-  appointementId: number
-  petName: string
-  petBreed: string
-  serviceName: string
-  serviceDuration: string
-  ownerName: string
-  time: string
-  status: string
-}[] = [
-  {
-    appointementId: 5,
-    petName: 'Luna',
-    petBreed: 'Golden Retriever',
-    serviceName: 'Consulta General',
-    serviceDuration: '30 minutos',
-    ownerName: 'Carlos Rojas',
-    time: '08:30',
-    status: 'Confirmada',
-  },
-  {
-    appointementId: 7,
-    petName: 'Milo',
-    petBreed: 'Persa',
-    serviceName: 'Vacunación',
-    serviceDuration: '15 minutos',
-    ownerName: 'Ana Torres',
-    time: '09:00',
-    status: 'En curso',
-  },
-  {
-    appointementId: 8,
-    petName: 'Rocky',
-    petBreed: 'Bulldog Inglés',
-    serviceName: 'Desparasitación',
-    serviceDuration: '20 minutos',
-    ownerName: 'Luis Fernández',
-    time: '10:15',
-    status: 'Completada',
-  },
-  {
-    appointementId: 9,
-    petName: 'Nina',
-    petBreed: 'Labrador',
-    serviceName: 'Control postoperatorio',
-    serviceDuration: '25 minutos',
-    ownerName: 'Sandra Díaz',
-    time: '11:00',
-    status: 'Confirmada',
-  },
-  {
-    appointementId: 10,
-    petName: 'Max',
-    petBreed: 'Shih Tzu',
-    serviceName: 'Consulta General',
-    serviceDuration: '30 minutos',
-    ownerName: 'Diego Herrera',
-    time: '11:45',
-    status: 'En curso',
-  },
-]
-
-const petsWaitings: {
-  clientName: string
-  clientLastname: string
-  petName: string
-  serviceName: string
-  breedName: string
-}[] = [
-  {
-    clientName: 'Lucía',
-    clientLastname: 'González',
-    petName: 'Toby',
-    serviceName: 'Consulta General',
-    breedName: 'Labrador Retriever',
-  },
-  {
-    clientName: 'Diego',
-    clientLastname: 'Salas',
-    petName: 'Mish',
-    serviceName: 'Vacunación',
-    breedName: 'Maine Coon',
-  },
-  {
-    clientName: 'Andrea',
-    clientLastname: 'Cáceres',
-    petName: 'Luna',
-    serviceName: 'Desparasitación',
-    breedName: 'Shih Tzu',
-  },
-  {
-    clientName: 'Jorge',
-    clientLastname: 'Ruiz',
-    petName: 'Max',
-    serviceName: 'Baño y Corte',
-    breedName: 'Poodle Toy',
-  },
-  {
-    clientName: 'Camila',
-    clientLastname: 'Fernández',
-    petName: 'Coco',
-    serviceName: 'Chequeo Postoperatorio',
-    breedName: 'Bulldog Francés',
-  },
-]
+const recentRecords = ref<RecentMedicalRecord[]>([])
 
 const newsStadistics: { title: string; icon: string; content: string; plus?: string }[] = [
   {
@@ -246,171 +171,6 @@ const newsStadistics: { title: string; icon: string; content: string; plus?: str
   },
 ]
 
-const newsDiagnosis: { title: string; icon: string; content: string }[] = [
-  {
-    title: 'En curso',
-    icon: 'pi-clock',
-    content: '20',
-  },
-  {
-    title: 'Completado',
-    icon: 'pi-check-circle',
-    content: '10',
-  },
-  {
-    title: 'Observación',
-    icon: 'pi-info-circle',
-    content: '5',
-  },
-  {
-    title: 'Total',
-    icon: 'pi-file',
-    content: '25',
-  },
-]
-
-const veterinaryRecords: {
-  recordId: number
-  date: string
-  petName: string
-  breedName: string
-  status: string
-  serviceName: string
-  clientName: string
-  clientLastname: string
-  diagnosisContent: string
-  treatment: string
-  observations: string
-}[] = [
-  {
-    recordId: 1,
-    date: '2025-07-03',
-    petName: 'Luna',
-    breedName: 'Labrador Retriever',
-    status: 'Completado',
-    serviceName: 'Consulta General',
-    clientName: 'María',
-    clientLastname: 'García',
-    diagnosisContent: 'Leve infección en oído izquierdo',
-    treatment: 'Gotas antibióticas por 7 días',
-    observations: 'Volver en una semana para control',
-  },
-  {
-    recordId: 2,
-    date: '2025-07-02',
-    petName: 'Max',
-    breedName: 'Pug',
-    status: 'Completado',
-    serviceName: 'Vacunación',
-    clientName: 'Javier',
-    clientLastname: 'Paredes',
-    diagnosisContent: 'Paciente en buen estado',
-    treatment: 'Aplicación de vacuna séxtuple',
-    observations: 'Siguiente dosis en 21 días',
-  },
-  {
-    recordId: 3,
-    date: '2025-07-01',
-    petName: 'Mishi',
-    breedName: 'Persa',
-    status: 'Completado',
-    serviceName: 'Consulta General',
-    clientName: 'Alejandra',
-    clientLastname: 'Reyes',
-    diagnosisContent: 'Problemas digestivos leves',
-    treatment: 'Cambio de dieta y probióticos',
-    observations: 'Monitorear deposiciones por 5 días',
-  },
-  {
-    recordId: 4,
-    date: '2025-06-30',
-    petName: 'Rocky',
-    breedName: 'Bulldog Francés',
-    status: 'Completado',
-    serviceName: 'Desparasitación',
-    clientName: 'Luis',
-    clientLastname: 'Ramírez',
-    diagnosisContent: 'Presencia de parásitos intestinales',
-    treatment: 'Antiparasitario oral, dosis única',
-    observations: 'Repetir examen en 15 días',
-  },
-  {
-    recordId: 5,
-    date: '2025-06-29',
-    petName: 'Kira',
-    breedName: 'Golden Retriever',
-    status: 'Completado',
-    serviceName: 'Chequeo Postoperatorio',
-    clientName: 'Fernanda',
-    clientLastname: 'Torres',
-    diagnosisContent: 'Buena recuperación post cirugía',
-    treatment: 'Mantener reposo y analgésico 3 días',
-    observations: 'Retirar puntos en 5 días',
-  },
-]
-
-const petRecents: {
-  petId: number
-  petName: string
-  petBreed: string
-  petImage: string
-  petWeight: number
-  petGender: string
-  petBirtdate: string
-  ownerName: string
-  lastAppoinmentDate: string
-  nextAppontmentDate: string
-}[] = [
-  {
-    petId: 1,
-    petName: 'Luna',
-    petBreed: 'Labrador Retriever',
-    petImage: 'https://example.com/images/luna.jpg',
-    petWeight: 28.5,
-    petGender: 'Hembra',
-    petBirtdate: '2020-04-15',
-    ownerName: 'María García',
-    lastAppoinmentDate: '2025-06-15',
-    nextAppontmentDate: '2025-08-01',
-  },
-  {
-    petId: 2,
-    petName: 'Rocky',
-    petBreed: 'Bulldog Francés',
-    petImage: 'https://example.com/images/rocky.jpg',
-    petWeight: 13.2,
-    petGender: 'Macho',
-    petBirtdate: '2019-11-02',
-    ownerName: 'Luis Ramírez',
-    lastAppoinmentDate: '2025-06-20',
-    nextAppontmentDate: '2025-07-20',
-  },
-  {
-    petId: 3,
-    petName: 'Mishi',
-    petBreed: 'Persa',
-    petImage: 'https://example.com/images/mishi.jpg',
-    petWeight: 4.8,
-    petGender: 'Hembra',
-    petBirtdate: '2021-01-10',
-    ownerName: 'Alejandra Reyes',
-    lastAppoinmentDate: '2025-05-30',
-    nextAppontmentDate: '2025-07-10',
-  },
-  {
-    petId: 4,
-    petName: 'Toby',
-    petBreed: 'Beagle',
-    petImage: 'https://example.com/images/toby.jpg',
-    petWeight: 11.6,
-    petGender: 'Macho',
-    petBirtdate: '2020-07-25',
-    ownerName: 'Carlos Mendoza',
-    lastAppoinmentDate: '2025-06-28',
-    nextAppontmentDate: '2025-08-05',
-  },
-]
-
 const appoinmentsAbstract: { title: string; value: number }[] = [
   {
     title: 'Completadas',
@@ -425,6 +185,20 @@ const appoinmentsAbstract: { title: string; value: number }[] = [
     value: 5,
   },
 ]
+
+const router = useRouter()
+
+const redirect = (url: string) => {
+  router.push(url)
+}
+
+const handleRedirectAppointment = (appointmentId: number) => {
+  redirect(`appointments/attend/${appointmentId}`)
+}
+
+const handleRedirectPet = (petId: number) => {
+  redirect(`pets-management/pet/${petId}`)
+}
 </script>
 
 <template>
@@ -441,7 +215,15 @@ const appoinmentsAbstract: { title: string; value: number }[] = [
       </template>
       <template #content>
         <!-- news -->
-        <div class="w-full grid grid-cols-4 gap-x-12 mt-4">
+        <div class="w-full grid grid-cols-2 gap-y-4 lg:grid-cols-4 gap-x-6 lg:gap-x-12 mt-4">
+          <CardNewsPrimary
+            v-if="appointmentStats"
+            title="Citas hoy"
+            icon="pi-calendar"
+            :content="appointmentStats.totalAppointments.toString()"
+          >
+          </CardNewsPrimary>
+
           <CardNewsPrimary
             v-for="(noticia, index) in news"
             :key="index"
@@ -462,24 +244,29 @@ const appoinmentsAbstract: { title: string; value: number }[] = [
           </template>
           <template #subtitle>
             <p>Funciones más utilizadas</p>
-            <div class="grid grid-cols-4 gap-x-12 mt-2">
+            <div
+              class="grid grid-cols-1 xs:grid-cols-2 gap-y-4 lg:grid-cols-4 gap-x-6 lg:gap-x-12 mt-2"
+            >
               <Button
                 label="Atender cita"
                 iconPos="top"
                 icon="pi pi-clipboard"
                 severity="success"
+                @click="redirect('/employee/veterinary/appointments')"
               ></Button>
               <Button
                 label="Buscar paciente"
                 iconPos="top"
                 icon="pi pi-search"
                 severity="info"
+                @click="redirect('/employee/veterinary/pets-management')"
               ></Button>
               <Button
                 label="Registrar informe médico"
                 severity="warn"
                 iconPos="top"
                 icon="pi pi-pen-to-square"
+                @click="redirect('/employee/veterinary/pets-management')"
               ></Button>
               <Button
                 label="Solicitar cita"
@@ -490,7 +277,7 @@ const appoinmentsAbstract: { title: string; value: number }[] = [
             </div>
           </template>
         </Card>
-        <div class="grid grid-cols-2 gap-x-12 mt-4">
+        <div class="grid grid-cols-1 2xl:grid-cols-2 gap-y-4 gap-x-6 lg:gap-x-12 mt-4">
           <Card class="card-primary min-h-24">
             <template #title>
               <div class="w-full flex justify-between items-baseline">
@@ -499,7 +286,7 @@ const appoinmentsAbstract: { title: string; value: number }[] = [
                   <h2 class="h3 font-semibold">Citas de Hoy</h2>
                 </div>
 
-                <Tag value="8 programadas" severity="secondary" class="self-start"></Tag>
+                <Tag :value="`${appointments.length} citas`" severity="secondary" class="self-start"></Tag>
               </div>
             </template>
             <template #subtitle>
@@ -507,15 +294,34 @@ const appoinmentsAbstract: { title: string; value: number }[] = [
             </template>
             <template #content>
               <div class="w-full flex flex-col gap-1.5">
-                <CardAppointmentQuintary
-                  v-for="appoinment of vetAppointments"
-                  :key="appoinment.appointementId"
-                  v-bind="appoinment"
-                ></CardAppointmentQuintary>
+                <ScrollPanel v-if="appointments.length > 0" class="h-122">
+                  <CardAppointmentQuintary
+                    v-for="appoinment of appointments"
+                    :appointement-id="appoinment.id"
+                    :key="appoinment.id"
+                    :pet-name="appoinment.pet.name"
+                    :pet-id="appoinment.pet.id"
+                    :pet-breed="''"
+                    :service-name="appoinment.serviceName"
+                    :service-duration="''"
+                    :owner-name="appoinment.clientName"
+                    :time="appoinment.hour"
+                    :status="appoinment.status"
+                    @view-pet="handleRedirectPet($event)"
+                    @redirect-appointment="handleRedirectAppointment($event)"
+                  ></CardAppointmentQuintary>
+                </ScrollPanel>
+                <div
+                  class="flex min-h-120 max-h-122 items-center justify-center"
+                  v-if="appointments.length === 0"
+                >
+                  <p>No servicios que mostrar</p>
+                </div>
                 <!-- abstract  -->
 
                 <div
-                  class="p-4 shadow-none border-1 rounded-sm border-blue-500 bg-blue-50 dark:bg-transparent w-full flex justify-between items-center"
+                  v-if="statsRecords"
+                  class="p-4 shadow-none border-1 rounded-sm border-blue-500 bg-blue-50 dark:bg-transparent w-full flex flex-col gap-2 xl:flex-row justify-between items-center"
                 >
                   <div class="flex gap-4">
                     <div
@@ -531,12 +337,18 @@ const appoinmentsAbstract: { title: string; value: number }[] = [
                       </p>
                     </div>
                   </div>
-                  <Button label="Ver agenda completa" variant="outlined" severity="secondary" />
+                  <Button
+                    label="Ver agenda completa"
+                    class="w-full xl:w-auto"
+                    variant="outlined"
+                    severity="secondary"
+                    @click="redirect('appointments')"
+                  />
                 </div>
               </div>
             </template>
           </Card>
-          <div class="grid grid-cols-2 gap-x-12">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-6 lg:gap-x-12">
             <!-- waiting room -->
             <Card class="card-primary min-h-24 max-h-full">
               <template #title>
@@ -545,15 +357,30 @@ const appoinmentsAbstract: { title: string; value: number }[] = [
                     <i class="pi pi-users"></i>
                     <h2 class="h3 font-semibold">Sala de espera</h2>
                   </div>
-                  <Tag value="3 esperando" severity="secondary" class="self-start"></Tag>
+                  <Tag :value="`${careRecents.length} esperando`" severity="secondary" class="self-start"></Tag>
                 </div>
               </template>
               <template #subtitle>
                 <p>Clientes en espera</p>
               </template>
               <template #content>
-                <div class="w-full flex flex-col gap-1">
-                  <CardPetWaiting v-for="(pet, index) of petsWaitings" :key="index" v-bind="pet" />
+                <ScrollPanel v-if="careRecents.length > 0" class="h-122">
+                  <div class="w-full flex flex-col gap-1">
+                    <CardPetWaiting
+                      v-for="(care, index) of careRecents"
+                      :key="index"
+                      :client-name="care.clientName"
+                      :pet-name="care.pet.name"
+                      :service-name="care.serviceName"
+                      breed-name=""
+                    />
+                  </div>
+                </ScrollPanel>
+                <div
+                  class="flex min-h-120 max-h-122 items-center justify-center"
+                  v-if="careRecents.length === 0"
+                >
+                  <p>No servicios que mostrar</p>
                 </div>
               </template>
             </Card>
@@ -572,6 +399,7 @@ const appoinmentsAbstract: { title: string; value: number }[] = [
                     icon=" pi pi-download"
                     size="small"
                     class="py-1.5"
+                    hidden
                   />
                 </div>
               </template>
@@ -585,7 +413,7 @@ const appoinmentsAbstract: { title: string; value: number }[] = [
                     <h2 class="h3 font-semibold">Del mes</h2>
                   </div>
                   <!-- card news -->
-                  <div class="w-full grid grid-cols-2 gap-y-3 gap-x-6">
+                  <div class="w-full grid grid-cols-1 3xl:grid-cols-2 gap-y-3 gap-x-6">
                     <CardNewsPrimary
                       v-for="(noticia, index) in newsStadistics"
                       :key="index"
@@ -611,7 +439,7 @@ const appoinmentsAbstract: { title: string; value: number }[] = [
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-x-12 mt-4">
+        <div class="grid grid-cols-1 2xl:grid-cols-2 gap-y-4 gap-x-6 lg:gap-x-12 mt-4">
           <!-- last diagnosis  -->
           <Card class="card-primary min-h-24">
             <template #title>
@@ -620,31 +448,59 @@ const appoinmentsAbstract: { title: string; value: number }[] = [
                   <i class="pi pi-file"></i>
                   <h2 class="h3 font-semibold">Ultimos diagnosticos</h2>
                 </div>
-                <Tag value="5 registros" severity="secondary" class="self-start"></Tag>
+                <Tag :value="`${recentRecords.length} registros`" severity="secondary" class="self-start"></Tag>
               </div>
             </template>
             <template #subtitle>
               <p>Historial de diagnostico recientes</p>
             </template>
             <template #content>
-              <div class="w-full flex flex-col gap-1.5 items-end">
+              <div class="w-full flex flex-col gap-1.5 items-end" v-if="statsRecords">
                 <!-- abstract -->
-                <div class="w-full grid grid-cols-4 gap-y-3 gap-x-6">
+                <div class="w-full grid grid-cols-2 3xl:grid-cols-4 gap-y-3 gap-x-6">
                   <CardNewsPrimary
-                    v-for="(noticia, index) in newsDiagnosis"
-                    :key="index"
-                    :title="noticia.title"
-                    :icon="noticia.icon"
-                    :content="noticia.content"
+                    title="En curso"
+                    icon="pi-clock"
+                    :content="statsRecords.enCurso.toString()"
+                  >
+                  </CardNewsPrimary>
+
+                  <CardNewsPrimary
+                    title="Completado"
+                    icon="pi-check-circle"
+                    :content="statsRecords.completado.toString()"
+                  >
+                  </CardNewsPrimary>
+
+                  <CardNewsPrimary
+                    title="Observación"
+                    icon="pi-info-circle"
+                    :content="statsRecords.observacion.toString()"
+                  >
+                  </CardNewsPrimary>
+
+                  <CardNewsPrimary
+                    title="Total"
+                    icon="pi-file"
+                    :content="statsRecords.total.toString()"
                   >
                   </CardNewsPrimary>
                 </div>
-                <ScrollPanel class="h-[30rem] mt-2 w-full">
+                <ScrollPanel class="h-122 mt-2 w-full">
                   <CardVeterinaryRecord
                     class="mb-2"
-                    v-for="record in veterinaryRecords"
-                    :key="record.recordId"
-                    v-bind="record"
+                    v-for="record in recentRecords"
+                    :key="record.id"
+                    :record-id="record.id"
+                    :date="record.recordMedicalDate"
+                    :pet-name="record.petName"
+                    :breed-name="record.breedName"
+                    :status="record.status"
+                    :service-name="record.serviceName"
+                    :client-name="record.clientFullName"
+                    :diagnosis-content="record.diagnosis"
+                    :treatment="record.treatment"
+                    :observations="record.observations"
                   ></CardVeterinaryRecord
                 ></ScrollPanel>
 
@@ -655,6 +511,7 @@ const appoinmentsAbstract: { title: string; value: number }[] = [
                   label="Ver historial completo"
                   variant="text"
                   severity="info"
+                  hidden
                 />
               </div>
             </template>
@@ -667,15 +524,35 @@ const appoinmentsAbstract: { title: string; value: number }[] = [
                   <i class="pi pi-heart"></i>
                   <h2 class="h3 font-semibold">Pacientes Recientes</h2>
                 </div>
-                <Tag value="5 pacientes" severity="secondary" class="self-start"></Tag>
+                <Tag :value="`${recentsPacients.length} pacientes`" severity="secondary" class="self-start"></Tag>
               </div>
             </template>
             <template #subtitle>
               <p>Historial de pacientes atendidos recientemente</p>
             </template>
             <template #content>
-              <div class="w-full flex flex-col gap-1.5 items-end">
-                <CardPetTerciary v-for="pet of petRecents" :key="pet.petId" v-bind="pet" />
+              <ScrollPanel class="h-156 mt-2 w-full">
+                <div class="w-full flex flex-col gap-1.5 items-end">
+                  <CardPetTerciary
+                    v-for="pet of recentsPacients"
+                    :key="pet.petId"
+                    :pet-id="pet.petId"
+                    :pet-name="pet.petName"
+                    :pet-breed="pet.breedName"
+                    :pet-image="''"
+                    :pet-weight="pet.petWeight"
+                    :pet-gender="pet.petSex"
+                    :pet-birtdate="pet.petBirthdate"
+                    :owner-name="pet.clientFullName"
+                    :last-appoinment-date="pet.lastVisitDate"
+                    @view-pet="handleRedirectPet($event)"
+                  /></div
+              ></ScrollPanel>
+              <div
+                class="flex min-h-120 max-h-122 items-center justify-center"
+                v-if="recentsPacients.length === 0"
+              >
+                <p>No servicios que mostrar</p>
               </div>
               <Button
                 class="mt-2 w-full"
@@ -683,6 +560,7 @@ const appoinmentsAbstract: { title: string; value: number }[] = [
                 icon="pi pi-arrow-right"
                 label="Ver historial completo"
                 variant="text"
+                @click="redirect('/employee/veterinary/pets-management')"
               />
             </template>
           </Card>

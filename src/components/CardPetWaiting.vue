@@ -2,7 +2,6 @@
 import Avatar from 'primevue/avatar'
 defineProps<{
   clientName: string
-  clientLastname: string
   petName: string
   serviceName: string
   breedName: string
@@ -15,7 +14,7 @@ defineProps<{
     <div class="flex-1 flex flex-col justify-center items-start">
       <p>{{ petName }}</p>
       <p class="text-neutral-500 text-sm">
-        {{ breedName }} - {{ clientName }} {{ clientLastname }}
+        {{ breedName }} - {{ clientName }}
       </p>
       <p>{{ serviceName }}</p>
     </div>

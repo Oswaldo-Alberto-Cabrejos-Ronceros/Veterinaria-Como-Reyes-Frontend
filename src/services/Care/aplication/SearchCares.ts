@@ -1,6 +1,6 @@
 
 import type { PageResponse } from '@/services/models/PageResponse'
-import type { Care } from '../domain/models/Care'
+import type {  CareList } from '../domain/models/Care'
 import type { CareService } from '../domain/services/CareService'
 
 export class SearchCares {
@@ -13,7 +13,7 @@ export class SearchCares {
     idService?: number,
     page?: number,
     size?: number
-  ): Promise<PageResponse<Care>> {
+  ): Promise<PageResponse<CareList>> {
     return await this.careService.searchCares(
       status,
       fecha,

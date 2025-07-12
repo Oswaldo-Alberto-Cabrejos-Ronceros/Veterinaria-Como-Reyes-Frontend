@@ -18,8 +18,8 @@ defineProps<{
     <div class="flex-1 flex items-center justify-between">
       <div class="flex flex-col gap-2 items-start justify-center">
         <p>{{ serviceName }}</p>
-        <p class="text-neutral-500">{{ description }}</p>
-        <p class="text-neutral-500 text-sm">{{ date }} - {{ time }} Dr.{{ employeeName }}</p>
+        <p class="text-neutral-600 dark:text-neutral-400">{{ description }}</p>
+        <p class="text-neutral-600 dark:text-neutral-400 text-sm">{{ date }} - {{ time }} Dr.{{ employeeName }}</p>
       </div>
       <div class="flex self-start gap-2 items-start justify-center">
         <Tag :value="status" severity="secondary" class=" self-center"> </Tag>

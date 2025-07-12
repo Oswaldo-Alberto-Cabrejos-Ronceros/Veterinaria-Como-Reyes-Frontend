@@ -15,7 +15,6 @@ import { onMounted, ref } from 'vue'
 import type { Headquarter } from '@/models/Headquarter'
 import type { Service } from '@/models/Service'
 import { useCare } from '@/composables/useCare'
-import type { Care } from '@/models/Care'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import { useDialog, useToast } from 'primevue'
@@ -24,6 +23,11 @@ import type { FormValues as AddCareFromRequestSchema } from '@/validation-schema
 import { useRoute, useRouter } from 'vue-router'
 import type { DataTablePageEvent } from 'primevue/datatable'
 import { debounce } from 'lodash'
+import type { CareList } from '@/models/CareList'
+import type { PaymentMethod } from '@/models/PaymentMethod'
+import { usePaymentMethod } from '@/composables/usePaymentMethod'
+import { useAuthentication } from '@/composables/useAuthentication'
+import { useEmployee } from '@/composables/useEmployee'
 
 onMounted(async () => {
   headquartersOptions.value = headquartersServicesToOptionsSelect(await getAllHeadquarters())
@@ -34,9 +38,13 @@ onMounted(async () => {
 //methods for care
 const { loading, error, searchCares, completeCare, createCareFromRequest } = useCare()
 
+const { getMainRole, getEntityId } = useAuthentication()
+const { getEmployeeMyInfo } = useEmployee()
+
+const roleMain = ref<string>('')
 //for cares
 
-const cares = ref<Care[]>([])
+const cares = ref<CareList[]>([])
 
 const totalRecords = ref(0)
 const rows = ref(10)
@@ -44,6 +52,21 @@ const first = ref(0)
 
 //for loads care
 const loadCares = async (event?: DataTablePageEvent) => {
+
+  const role = getMainRole()
+  if (role) {
+    roleMain.value = role
+    if (role === 'Administrador') {
+      headquartersOptions.value = headquartersServicesToOptionsSelect(await getAllHeadquarters())
+    } else {
+      const id = getEntityId()
+      if (id) {
+        const info = await getEmployeeMyInfo(id)
+        headquarterId.value = info.headquarter.id
+      }
+    }
+  }
+
   const page = event ? event.first / event.rows : 0
   const size = event ? event.rows : rows.value
   rows.value = size
@@ -51,26 +74,27 @@ const loadCares = async (event?: DataTablePageEvent) => {
   const formattedDate = date.value ? date.value.toISOString().split('T')[0] : undefined
 
   const result = await searchCares(
-    status.value,
+    status.value ?? undefined,
     formattedDate,
-    headquarterId.value,
-    headquarterServiceId.value,
+    headquarterId.value ?? undefined,
+    headquarterServiceId.value ?? undefined,
     page,
-    size
+    size,
   )
 
   cares.value = result.content
   totalRecords.value = result.totalElements
+  console.log(cares.value)
 }
 
 const searchCaresDebounced = debounce(() => {
   loadCares()
 }, 400)
 
-
 const onCompleteCare = async (careId: number) => {
   try {
     await completeCare(careId)
+    showToast('Completada correctamente')
     await loadCares()
   } catch (err) {
     console.error('Error al completar atención', err)
@@ -98,6 +122,8 @@ const onSubmit = handleSubmit(async () => {
   await loadCares()
 })
 
+const { getAllPaymentMethods } = usePaymentMethod()
+
 //for get headquarters and services
 const { getAllHeadquarters } = useHeadquarter()
 const { getAllVeterinaryServices } = useVeterinaryService()
@@ -105,7 +131,9 @@ const headquartersOptions = ref<OptionSelect[]>([])
 const servicesOptions = ref<OptionSelect[]>([])
 //for get options from headquarters
 
-const headquartersServicesToOptionsSelect = (items: Headquarter[] | Service[]): OptionSelect[] => {
+const headquartersServicesToOptionsSelect = (
+  items: Headquarter[] | Service[] | PaymentMethod[],
+): OptionSelect[] => {
   return items.map((item) => ({
     value: item.id,
     name: item.name,
@@ -154,6 +182,9 @@ const addCare = async () => {
       modal: true,
       header: 'Crear atención',
     },
+    data: {
+      paymentMethodsOptions: headquartersServicesToOptionsSelect(await getAllPaymentMethods()),
+    },
     onClose: async (options) => {
       const data = options?.data as AddCareFromRequestSchema
       console.log(data)
@@ -190,6 +221,7 @@ const viewCare = (careId: number) => {
                 class="w-full"
                 v-bind="dateAttrs"
                 v-model="date"
+                showButtonBar
                 :invalid="Boolean(errors.date)"
                 @update:model-value="searchCaresDebounced"
                 placeholder="Selecciona Fecha"
@@ -200,7 +232,7 @@ const viewCare = (careId: number) => {
               </Message>
             </div>
             <!-- headquarter -->
-            <div>
+            <div v-if="roleMain==='Administrador'">
               <label class="block mb-2">Sede</label>
               <Select
                 class="w-full"
@@ -211,6 +243,7 @@ const viewCare = (careId: number) => {
                 :invalid="Boolean(errors.headquarterId)"
                 optionLabel="name"
                 optionValue="value"
+                showClear
                 placeholder="Selecciona Sede"
               />
 
@@ -232,10 +265,16 @@ const viewCare = (careId: number) => {
                 :invalid="Boolean(errors.headquarterServiceId)"
                 optionLabel="name"
                 optionValue="value"
+                showClear
                 placeholder="Selecciona Servicio"
               />
 
-              <Message v-if="errors.headquarterServiceId" severity="error" size="small" variant="simple">
+              <Message
+                v-if="errors.headquarterServiceId"
+                severity="error"
+                size="small"
+                variant="simple"
+              >
                 {{ errors.headquarterServiceId }}
               </Message>
             </div>
@@ -251,24 +290,13 @@ const viewCare = (careId: number) => {
                 :invalid="Boolean(errors.status)"
                 optionLabel="name"
                 optionValue="value"
+                showClear
                 placeholder="Selecciona Estado"
               />
 
               <Message v-if="errors.status" severity="error" size="small" variant="simple">
                 {{ errors.status }}
               </Message>
-            </div>
-            <div class="form-button-search-container-grid-col-5">
-              <!-- button -->
-
-              <Button
-                label="Buscar"
-                type="submit"
-                severity="info"
-                icon="pi pi-search"
-                iconPos="right"
-                class="w-full"
-              />
             </div>
           </form>
 
@@ -306,52 +334,68 @@ const viewCare = (careId: number) => {
               </div>
             </template>
             <Column
-              field="dateTime"
+              field="careDateTime"
               sortable
               header="Dia programado"
               class="hidden lg:table-cell"
-              style="width: 30%"
+              style="width: 18%"
             ></Column>
             <Column
-              field="statusCare"
+              field="status"
               sortable
               header="Estado"
               class="hidden lg:table-cell"
-              style="width: 30%"
+              style="width: 18%"
             ></Column>
-            <Column>
+            <Column sortable header="Mascota" class="hidden lg:table-cell" style="width: 16%">
+              <template #body="{ data }">
+                {{ data.pet.name }}
+              </template>
+            </Column>
+
+            <Column sortable header="Empleado" class="hidden lg:table-cell" style="width: 20%">
+              <template #body="{ data }">
+                {{ data.employee.fullName ? data.employee.fullName : '' }}
+              </template>
+            </Column>
+
+            <Column sortable header="Sede" class="hidden lg:table-cell" style="width: 20%">
+              <template #body="{ data }">
+                {{ data.headquarter.name }}
+              </template>
+            </Column>
+
+            <Column header="Acciones">
               <template #body="slotProps">
-                <div
-                  class="flex justify-between items-center flex-row lg:flex-col xl:flex-row gap-1"
-                >
+                <div class="flex items-center flex-row lg:flex-col xl:flex-row gap-1">
                   <Button
+                    v-if="slotProps.data.status === 'Completado'"
                     icon="pi pi-eye"
                     severity="info"
-                    variant="outlined"
-                    aria-label="Filter"
-                    rounded
-                  ></Button>
-                  <Button
-                    icon="pi pi-calendar-clock"
-                    severity="warn"
-                    variant="outlined"
-                    aria-label="Filter"
+                    variant="text"
+                    size="small"
+                    aria-label="Ver"
                     rounded
                     @click="viewCare(slotProps.data.id)"
                   ></Button>
                   <Button
-                    icon="pi pi-trash"
-                    severity="danger"
-                    variant="outlined"
-                    aria-label="Eliminar"
+                    icon="pi pi-calendar-clock"
+                    severity="warn"
+                    variant="text"
+                    size="small"
+                    aria-label="Atender"
                     rounded
+                    v-if="slotProps.data.status !== 'Completado'"
+                    @click="viewCare(slotProps.data.id)"
                   ></Button>
+
                   <!-- completar si esta en curso -->
                   <Button
-                    v-if="slotProps.data.statusCare === 'EN_CURSO'"
+                    v-if="slotProps.data.status === 'En curso'"
                     icon="pi pi-check-circle"
                     severity="success"
-                    variant="outlined"
+                    variant="text"
+                    size="small"
                     aria-label="Completar"
                     rounded
                     @click="onCompleteCare(slotProps.data.id)"

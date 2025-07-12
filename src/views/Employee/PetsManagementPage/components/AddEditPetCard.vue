@@ -19,7 +19,7 @@ import { useClient } from '@/composables/useClient'
 import type { Breed } from '@/models/Breed'
 import { useBreed } from '@/composables/useBreed'
 
-const { getClientByDni } = useClient()
+const { loading, getClientByDni } = useClient()
 const { getBreedsBySpecie } = useBreed()
 
 //form
@@ -129,8 +129,8 @@ onMounted(() => {
       breedId.value = params.breedId
       urlImage.value = params.urlImage
       ownerDni.value = params.ownerDni
-      ownerId.value=params.ownerId
-      ownerFullName.value=params.ownerFullName
+      ownerId.value = params.ownerId
+      ownerFullName.value = params.ownerFullName
     }
     if (speciesOptionsGet) speciesOptions.value = speciesOptionsGet
     loadsBreed()
@@ -161,6 +161,7 @@ onMounted(() => {
               severity="secondary"
               variant="text"
               @click="searchClient()"
+              :loading="loading.getClientByDni"
             />
           </InputGroupAddon>
         </InputGroup>
@@ -243,6 +244,8 @@ onMounted(() => {
             fluid
             class="w-full"
             placeholder="Peso"
+            :minFractionDigits="0" :maxFractionDigits="2"
+            suffix=" Kg"
           />
         </InputGroup>
         <Message v-if="errors.weight" severity="error" size="small" variant="simple">

@@ -13,7 +13,8 @@ import CardPetInfo from '@/components/CardPetInfo.vue'
 import CardOwnerInfo from '@/components/CardOwnerInfo.vue'
 import { useClient } from '@/composables/useClient'
 import type { Client } from '@/models/Client'
-import CardBilling from '@/components/CardBilling.vue'
+//import CardBilling from '@/components/CardBilling.vue'
+//import type { InfoAppointmentForPanel } from '@/models/InfoAppointmentForPanel'
 
 const props = defineProps<{
   careId: number
@@ -32,6 +33,7 @@ const headquarterVetService = ref<HeadquarterVetService | null>(null)
 const pet = ref<Pet | null>(null)
 const employee = ref<Employee | null>(null)
 const client = ref<Client | null>(null)
+//const appointmentInfo = ref<InfoAppointmentForPanel|null>(null)
 
 const loadInfo = async () => {
   care.value = await getCareById(props.careId)
@@ -61,7 +63,7 @@ onMounted(() => {
       :veterinaryName="`${employee?.names} ${employee?.lastnames}`"
       :status="care?.statusCare"
     />
-    <div class="w-full grid grid-cols-2 gap-4">
+    <div class="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
       <CardPetInfo
         v-if="pet"
         :name="pet.name"
@@ -75,13 +77,12 @@ onMounted(() => {
       />
       <CardOwnerInfo
         v-if="client"
-        :name="client.names"
-        :lastname="client.lastnames"
+        :fullName="`${client.names} ${client.lastnames}`"
         :phone="client.phone"
         :address="client.address"
         :headquarter-name="client.headquarter.name"
       />
-    </div>
-    <CardBilling serviceName="Consulta General" :price="80" />
+    </div><!--  <CardBilling serviceName="Consulta General" :price="80" /> -->
+
   </div>
 </template>

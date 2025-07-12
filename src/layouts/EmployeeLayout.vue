@@ -39,7 +39,7 @@ const items = ref<MenuItem[][]>([
     },
     {
       label: 'Empleados',
-      icon: 'pi pi-users',
+      icon: 'fa-solid fa-users-line',
       to: '/employee/administrator/employee-management',
     },
     {
@@ -49,7 +49,7 @@ const items = ref<MenuItem[][]>([
     },
     {
       label: 'Mascotas',
-      icon: 'pi pi-github',
+      icon: 'fa-solid fa-paw',
       to: '/employee/administrator/pets-management',
     },
     {
@@ -73,18 +73,13 @@ const items = ref<MenuItem[][]>([
       to: '/employee/administrator/headquarter-management',
     },
     {
-      label: 'Roles y Permisos',
-      icon: 'pi pi-user-plus',
-      to: '/employee/administrator/roles-permission',
-    },
-    {
       label: 'Especies',
-      icon: 'pi pi-github',
+      icon: 'fa-solid fa-shield-dog',
       to: '/employee/administrator/species-management',
     },
     {
       label: 'Razas',
-      icon: 'pi pi-github',
+      icon: 'fa-solid fa-shield-dog',
       to: '/employee/administrator/breeds-management',
     },
     {
@@ -116,7 +111,7 @@ const items = ref<MenuItem[][]>([
     },
     {
       label: 'Empleados',
-      icon: 'pi pi-users',
+      icon: 'fa-solid fa-users-line',
       to: '/employee/manager/employee-management',
     },
     {
@@ -126,8 +121,45 @@ const items = ref<MenuItem[][]>([
     },
     {
       label: 'Mascotas',
-      icon: 'pi pi-github',
+      icon: 'fa-solid fa-paw',
       to: '/employee/manager/pets-management',
+    },
+      {
+      label: 'Categorias',
+      icon: 'pi pi-sort-amount-up-alt',
+      to: '/employee/manager/category-management',
+    },
+    {
+      label: 'Servicios',
+      icon: 'pi pi-calendar-plus',
+      to: '/employee/manager/services-management',
+    },
+    {
+      label: 'Métodos de Pago',
+      icon: 'pi pi-wallet',
+      to: '/employee/manager/payment-method-management',
+    },
+
+    {
+      label: 'Especies',
+      icon: 'fa-solid fa-shield-dog',
+      to: '/employee/manager/species-management',
+    },
+    {
+      label: 'Razas',
+      icon: 'fa-solid fa-shield-dog',
+      to: '/employee/manager/breeds-management',
+    },
+
+        {
+      label: 'Servicios por Sede',
+      icon: 'pi pi-arrow-right-arrow-left',
+      to: '/employee/manager/services-headquarters-management',
+    },
+        {
+      label: 'Pagos',
+      icon: 'pi pi-receipt',
+      to: '/employee/manager/payment-management',
     },
     {
       label: 'Citas',
@@ -149,13 +181,14 @@ const items = ref<MenuItem[][]>([
     {
       label: 'Citas',
       icon: 'pi pi-clipboard',
-      to: '/',
+      to: '/employee/veterinary/appointments',
     },
     {
       label: 'Mascotas',
-      icon: 'pi pi-github',
+      icon: 'fa-solid fa-paw',
       to: '/employee/veterinary/pets-management',
     },
+
   ],
   [
     {
@@ -163,14 +196,14 @@ const items = ref<MenuItem[][]>([
       icon: 'pi pi-home',
       to: '/employee/receptionist/home',
     },
-    {
-      label: 'Citas',
-      icon: 'pi pi-clipboard',
-      to: '/',
+        {
+      label: 'Clientes',
+      icon: 'pi pi-users',
+      to: '/employee/receptionist/client-management',
     },
     {
       label: 'Mascotas',
-      icon: 'pi pi-github',
+      icon: 'fa-solid fa-paw',
       to: '/employee/receptionist/pets-management',
     },
     {
@@ -209,7 +242,7 @@ const toggleMenu = () => {
 <template>
   <div class="w-full min-h-screen flex">
     <MenuNav :role="mainRole" :items="itemsRole" :show-menu="showMenu" @update:show-menu="toggleMenu()" />
-    <main :class="['w-full flex-1 flex flex-col transition-all duration-200 ease-out' ,showMenu?'ml-64':'ml-0 sm:ml-20']">
+    <main :class="['w-full flex-1 flex flex-col transition-all duration-200 ease-out' ,showMenu?'md:ml-64':'ml-0 md:ml-20']">
       <TheHeader @show-menu="toggleMenu()" :show-menu="showMenu" :role="mainRole" />
       <section class="flex-1 h-auto py-1 px-0.5 xs:px-4 transition-all duration-200 ease-out">
         <router-view />

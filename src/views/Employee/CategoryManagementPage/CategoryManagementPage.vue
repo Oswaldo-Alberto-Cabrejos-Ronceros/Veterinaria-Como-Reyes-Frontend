@@ -14,13 +14,16 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import AddEditCategoryCard from './components/AddEditCategoryCard.vue'
 import { useDialog, useToast } from 'primevue'
-import type { Category as CategoryView } from '@/models/Category'
 import type { FormValues as AddEditCategorySchema } from '@/validation-schemas-forms/schema-add-edit-category'
 import ViewCategoryCard from './components/ViewCategoryCard.vue'
 import { useConfirm } from 'primevue'
 import { useCategory } from '@/composables/useCategory'
 import type { DataTablePageEvent } from 'primevue/datatable'
 import { debounce } from 'lodash'
+import { useAuthentication } from '@/composables/useAuthentication'
+import type { CategoryList } from '@/models/CategoryList'
+import type { OptionSelect } from '@/models/OptionSelect'
+import Select from 'primevue/select'
 
 //for toast
 const toast = useToast()
@@ -34,14 +37,18 @@ const showToast = (message: string) => {
   })
 }
 
+const roleMain = ref<string>('')
+
+const { getMainRole } = useAuthentication()
+
 //methods
 
-const { loading, error, createCategory, updateCategory, activateCategory, searchCategories } =
+const { loading, error, getCategoryById,createCategory, updateCategory, activateCategory, searchCategories } =
   useCategory()
 
 //categories
 
-const categories = ref<CategoryView[]>([])
+const categories = ref<CategoryList[]>([])
 
 const totalRecords = ref<number>(0)
 const rows = ref<number>(10)
@@ -63,10 +70,15 @@ const loadCategories = async (event?: DataTablePageEvent) => {
     page,
     size,
     name: name.value,
+    status: status.value,
   })
 
   categories.value = response.content
   totalRecords.value = response.totalElements
+  const role = getMainRole()
+  if (role) {
+    roleMain.value = role
+  }
 }
 
 //form
@@ -74,14 +86,27 @@ const { handleSubmit, errors, defineField } = useForm<SearchCategorySchema>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
     name: '',
+    status: true,
   },
 })
 
 const [name, nameAttrs] = defineField('name')
+const [status, statusAttrs] = defineField('status')
 
 const onSubmit = handleSubmit((values) => {
   console.log(values)
 })
+
+const statusOptions: OptionSelect[] = [
+  {
+    value: true,
+    name: 'Activo',
+  },
+  {
+    value: false,
+    name: 'Desactivado',
+  },
+]
 
 //for add
 
@@ -92,7 +117,7 @@ const addCategory = () => {
   dialog.open(AddEditCategoryCard, {
     props: {
       modal: true,
-      header: 'Agregar categoria'
+      header: 'Agregar categoria',
     },
     onClose: async (options) => {
       const data = options?.data as AddEditCategorySchema
@@ -108,18 +133,19 @@ const addCategory = () => {
 
 //edit
 
-const editCategory = (categoryData: CategoryView) => {
+const editCategory = async (categoryData: CategoryList) => {
+  const category = await getCategoryById(categoryData.categoryId)
   dialog.open(AddEditCategoryCard, {
     props: {
       modal: true,
-      header:`${categoryData.name}`
+      header: `${categoryData.name}`,
     },
     data: {
-      categoryData: categoryData as AddEditCategorySchema,
+      categoryData: category as AddEditCategorySchema,
     },
     onClose: async (options) => {
       const data = options?.data as AddEditCategorySchema
-      const category = await updateCategory(categoryData.id, data)
+      const category = await updateCategory(categoryData.categoryId, data)
       console.log('Datos recibidos', category)
       loadCategories()
       showToast('Categoria editada exitosamente: ' + category.name)
@@ -129,14 +155,15 @@ const editCategory = (categoryData: CategoryView) => {
 
 //for view
 
-const viewCategory = (categoryData: CategoryView) => {
+const viewCategory = async (categoryData: CategoryList) => {
+const category = await getCategoryById(categoryData.categoryId)
   dialog.open(ViewCategoryCard, {
     props: {
       modal: true,
-      header:`${categoryData.name}`
+      header: `${categoryData.name}`,
     },
     data: {
-      categoryData: categoryData,
+      categoryData: category,
     },
   })
 }
@@ -144,7 +171,7 @@ const viewCategory = (categoryData: CategoryView) => {
 //for confirm
 const confirm = useConfirm()
 
-const deleteCategory = (event: MouseEvent | KeyboardEvent, categoryData: CategoryView) => {
+const deleteCategory = (event: MouseEvent | KeyboardEvent, categoryData: CategoryList) => {
   const isActive = categoryData.status
 
   confirm.require({
@@ -162,7 +189,7 @@ const deleteCategory = (event: MouseEvent | KeyboardEvent, categoryData: Categor
       severity: isActive ? 'danger' : 'success',
     },
     accept: async () => {
-      await activateCategory(categoryData.id)
+      await activateCategory(categoryData.categoryId)
       showToast('Categoría eliminado exitosamente: ' + categoryData.name)
       loadCategories()
     },
@@ -208,16 +235,24 @@ const exportCSV = () => {
                 {{ errors.name }}
               </Message>
             </div>
-            <div class="form-button-search-container-grid-col-5">
-              <!-- button -->
-              <Button
-                label="Buscar"
-                type="submit"
-                severity="info"
-                icon="pi pi-search"
-                iconPos="right"
+            <!-- status -->
+
+            <div>
+              <label class="block mb-2">Estado</label>
+              <Select
                 class="w-full"
+                v-bind="statusAttrs"
+                v-model="status"
+                :options="statusOptions"
+                optionLabel="name"
+                optionValue="value"
+                placeholder="Selecciona Estado"
+                @update:model-value="searchCategoriesDebounced"
               />
+
+              <Message v-if="errors.status" severity="error" size="small" variant="simple">
+                {{ errors.status }}
+              </Message>
             </div>
           </form>
           <!-- for messague loading  -->
@@ -249,6 +284,7 @@ const exportCSV = () => {
                   severity="success"
                   label="Agregar Categoria"
                   @click="addCategory"
+                  v-if="roleMain === 'Administrador'"
                 />
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
@@ -262,31 +298,36 @@ const exportCSV = () => {
               sortable
               style="width: 60%"
             ></Column>
-            <Column>
+            <Column header="Acciones">
               <template #body="{ data }">
-                <div class="flex justify-between items-center flex-col sm:flex-row gap-1">
+                <div class="flex items-center flex-col sm:flex-row gap-1">
                   <Button
                     icon="pi pi-eye"
                     severity="info"
-                    variant="outlined"
+                    variant="text"
                     aria-label="Filter"
+                    size="small"
                     rounded
                     @click="viewCategory(data)"
                   ></Button>
                   <Button
                     icon="pi pi-pencil"
                     severity="warn"
-                    variant="outlined"
+                    variant="text"
                     aria-label="Filter"
+                    size="small"
                     rounded
+                    v-if="roleMain === 'Administrador'"
                     @click="editCategory(data)"
                   ></Button>
                   <Button
-                    icon="pi pi-trash"
+                    icon="pi pi-ban"
                     severity="danger"
-                    variant="outlined"
+                    variant="text"
                     aria-label="Eliminar"
                     rounded
+                    size="small"
+                    v-if="roleMain === 'Administrador'"
                     @click="deleteCategory($event, data)"
                   />
                 </div>

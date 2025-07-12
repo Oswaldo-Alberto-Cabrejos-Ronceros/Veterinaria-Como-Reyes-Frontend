@@ -1,5 +1,5 @@
 import type { HttpClient } from '@/services/Http/model/HttpClient'
-import type { VeterinaryRecordRequest, VeterinaryRecord, VeterinaryRecordInfoTable } from '../domain/models/VeterinaryRecord'
+import type { VeterinaryRecordRequest, VeterinaryRecord, VeterinaryRecordInfoTable, RecentMedicalRecord, VeterinaryRecordStats } from '../domain/models/VeterinaryRecord'
 import type { VeterinaryRecordService } from '../domain/services/VeterinaryRecordService'
 import type { PageResponse } from '@/services/models/PageResponse'
 
@@ -61,4 +61,23 @@ export class VeterinaryRecordServiceImpl implements VeterinaryRecordService {
     )
     return response.data
   }
+    async getRecentRecordsByEmployee(employeeId: number): Promise<RecentMedicalRecord[]> {
+    const response = await this.httpClient.get<RecentMedicalRecord[]>(
+      `/panel/veterinarians/recent-medical-records/${employeeId}`,
+    )
+    return response.data
+  }
+    async getStatsByVeterinarian(employeeId: number): Promise<VeterinaryRecordStats> {
+    const response = await this.httpClient.get<VeterinaryRecordStats>(
+      `/panel/veterinarians/medical-records/statistics/${employeeId}`
+    )
+    return response.data
+  }
+
+  async getRecordsByAnimalId(animalId: number): Promise<VeterinaryRecordInfoTable[]> {
+  const response = await this.httpClient.get<VeterinaryRecordInfoTable[]>(
+    `${this.url}/animal/${animalId}`
+  )
+  return response.data
+}
 }

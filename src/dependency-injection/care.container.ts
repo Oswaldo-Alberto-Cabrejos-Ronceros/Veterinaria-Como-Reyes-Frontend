@@ -9,6 +9,11 @@ import { CreateCareFromRequest } from '@/services/Care/aplication/CreateCareFrom
 import { SearchCares } from '@/services/Care/aplication/SearchCares'
 import { CareServiceImpl } from '@/services/Care/infrastructure/CardServiceImpl'
 import { AxiosHttpClient } from '@/services/Http/infrastructure/AxiosHttpClient'
+import { GetCaresForEmployee } from '@/services/Care/aplication/GetCaresForEmployee'
+import { GetCareStatsToday } from '@/services/Care/aplication/GetCareStatsToday'
+import { GetCaresByHeadquarterId } from '@/services/Care/aplication/GetCaresByHeadquarterId'
+import { SetOnGoingCare } from '@/services/Care/aplication/SetOnGoingCare'
+import { GetRecentPatientsByEmployee } from '@/services/Care/aplication/GetRecentPatientsByEmployee'
 
 // Instancia del cliente HTTP
 const axiosHttpClient = new AxiosHttpClient()
@@ -27,4 +32,9 @@ export const careUsesCases = {
   createCareFromAppointment: new CreateCareFromAppointment(careService),
   createCareFromRequest: new CreateCareFromRequest(careService),
   searchCares: new SearchCares(careService),
+    getCaresForEmployee: new GetCaresForEmployee(careService),
+  getCareStatsToday: new GetCareStatsToday(careService),
+  getCaresByHeadquarterId: new GetCaresByHeadquarterId(careService),
+  setOnGoingCare: new SetOnGoingCare(careService),
+  getRecentPatientsByEmployee: new GetRecentPatientsByEmployee(careService),
 }

@@ -34,13 +34,14 @@ import { debounce } from 'lodash'
 import Tag from 'primevue/tag'
 import BlockCardPrimary from '@/components/BlockCardPrimary.vue'
 import type { FormValues as BlockSchema } from '@/validation-schemas-forms/schema-block-employee-client'
+import { useAuthentication } from '@/composables/useAuthentication'
 //toast
 const toast = useToast()
 
-const showToast = (message: string) => {
+const showToast = (message: string, severity: string, sumary: string) => {
   toast.add({
-    severity: 'success',
-    summary: 'Éxito',
+    severity: severity,
+    summary: sumary,
     detail: message,
     life: 3000,
   })
@@ -57,11 +58,15 @@ const {
   blockEmployee,
   searchEmployees,
   restoreEmployee,
+  getEmployeeMyInfo,
 } = useEmployee()
 
 const { getAllRoles } = useRole()
 
 const { getAllHeadquarters } = useHeadquarter()
+const { getMainRole, getEntityId } = useAuthentication()
+
+const roleMain = ref<string>('')
 
 //employees
 
@@ -97,6 +102,21 @@ const searchEmployeeDebounce = debounce(() => {
 })
 
 const loadEmployees = async (event?: DataTablePageEvent) => {
+  const role = getMainRole()
+  if (role) {
+    roleMain.value = role
+    if (role === 'Administrador') {
+      headquartersOptions.value = headquartersNameToOptionsSelect(await getAllHeadquarters())
+    } else {
+      const id = getEntityId()
+      if (id) {
+        const info = await getEmployeeMyInfo(id)
+        headquarter.value = info.headquarter.name
+      }
+    }
+  }
+
+  rolesOptions.value = rolesToOptionsNameSelect(await getAllRoles())
   const page = event ? event.first / event.rows : 0
   const size = event ? event.rows : rows.value
   rows.value = size
@@ -113,9 +133,6 @@ const loadEmployees = async (event?: DataTablePageEvent) => {
   )
   employees.value = pageResponse.content
   totalRecords.value = pageResponse.totalElements
-
-  rolesOptions.value = rolesToOptionsNameSelect(await getAllRoles())
-  headquartersOptions.value = headquartersNameToOptionsSelect(await getAllHeadquarters())
 }
 
 //for get options from roles
@@ -219,7 +236,7 @@ const addEmployee = async () => {
         const employee = await createEmployee(data)
         console.log('Datos recibidos:', employee)
         loadEmployees()
-        showToast('Empleado agregado exitosamente: ' + employee.names)
+        showToast('Empleado agregado exitosamente: ' + employee.names, 'success', 'Exito')
       }
     },
   })
@@ -266,10 +283,15 @@ const editEmployee = async (employeeData: EmployeeList) => {
     onClose: async (options) => {
       const data = options?.data as EditEmployeeSchema
       if (data) {
-        const employee = await updateEmployee(employeeData.id, data)
-        console.log('Datos recibidos:', employee)
-        loadEmployees()
-        showToast('Empleado editado exitosamente: ' + employee.names)
+        try {
+          const employee = await updateEmployee(employeeData.id, data)
+          console.log('Datos recibidos:', employee)
+          loadEmployees()
+          showToast('Empleado editado exitosamente: ' + employee.names, 'success', 'Exito')
+        } catch (error) {
+          console.error(error)
+          showToast('Error al editar al empleado: ' + employee.names, 'warn', 'Error')
+        }
       }
     },
   })
@@ -289,7 +311,7 @@ const openModalBlock = async (employee: EmployeeList) => {
       if (data) {
         await blockEmployee(employee.id, data.blockNote)
         loadEmployees()
-        showToast('Empleado eliminado exitosamente: ' + employee.names)
+        showToast('Empleado eliminado exitosamente: ' + employee.names, 'success', 'Exito')
       }
     },
   })
@@ -343,7 +365,7 @@ const restoreEmployeeConfirm = (event: MouseEvent | KeyboardEvent, employee: Emp
     },
     accept: async () => {
       await restoreEmployee(employee.id)
-      showToast('Empleado restaurado exitosamente: ' + employee.names)
+      showToast('Empleado restaurado exitosamente: ' + employee.names, 'success', 'Exito')
       loadEmployees()
     },
     reject: () => {
@@ -407,7 +429,7 @@ const exportCSV = () => {
               />
             </div>
             <!-- headquarter -->
-            <div>
+            <div v-if="roleMain === 'Administrador'">
               <label class="block mb-2">Sede</label>
               <Select
                 class="w-full"
@@ -443,6 +465,8 @@ const exportCSV = () => {
               </Message>
             </div>
           </form>
+
+
           <!-- imporve design responsive -->
           <!-- for messague loading  -->
           <Message v-if="loading.getAllEmployees" severity="warn" size="small" variant="simple">
@@ -453,6 +477,17 @@ const exportCSV = () => {
             Error al cargar los empleados
           </Message>
           <!-- table -->
+                         <div class="w-full flex flex-col xs:flex-row justify-between gap-2">
+                <Button
+                  icon="pi pi-user-plus"
+                  iconPos="right"
+                  severity="success"
+                  label="Agregar Empleado"
+                  @click="addEmployee"
+                  v-if="roleMain === 'Administrador'"
+                />
+                <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
+              </div>
           <DataTable
             v-if="employees"
             paginator
@@ -463,57 +498,21 @@ const exportCSV = () => {
             :loading="loading.searchEmployees"
             :first="first"
             @page="loadEmployees"
+            scrollable
+            removableSort
             :rows-per-page-options="[1, 2, 3, 4]"
             ref="dt"
           >
-            <template #header>
-              <div class="w-full flex flex-col xs:flex-row justify-between gap-2 pb-4">
-                <Button
-                  icon="pi pi-user-plus"
-                  iconPos="right"
-                  severity="success"
-                  label="Agregar Empleado"
-                  @click="addEmployee"
-                />
-                <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
-              </div>
-            </template>
-            <Column
-              field="names"
-              sortable
-              header="Nombres"
-              class="hidden lg:table-cell"
-              style="width: 18%"
-            ></Column>
+            <Column field="names" sortable header="Nombres" style="width: 18%"></Column>
             <Column field="lastnames" sortable header="Apellidos" style="width: 18%"></Column>
-            <Column
-              field="dni"
-              class="hidden lg:table-cell"
-              header="DNI"
-              sortable
-              style="width: 15%"
-            ></Column>
+            <Column field="dni" header="DNI" sortable style="width: 15%"></Column>
             <Column class="hidden lg:table-cell" header="CMVP" sortable style="width: 15%">
               <template #body="{ data }">
                 {{ data.cmvp ? data.cmvp : '' }}
                 <Tag v-if="!data.cmvp" value="No requerido" severity="secondary" /> </template
             ></Column>
-            <Column
-              class="hidden md:table-cell"
-              field="rolName"
-              header="Rol"
-              sortable
-              style="width: 15%"
-            >
-            </Column>
-            <Column
-              class="hidden md:table-cell"
-              field="nameHeadquarter"
-              header="Sede"
-              sortable
-              style="width: 15%"
-            >
-            </Column>
+            <Column field="rolName" header="Rol" sortable style="width: 15%"> </Column>
+            <Column field="nameHeadquarter" header="Sede" sortable style="width: 15%"> </Column>
             <Column header="Acciones">
               <template #body="{ data }">
                 <div
@@ -535,10 +534,11 @@ const exportCSV = () => {
                     aria-label="Editar"
                     rounded
                     size="small"
+                    v-if="roleMain === 'Administrador'"
                     @click="editEmployee(data)"
                   ></Button>
                   <Button
-                    v-if="data.status === 'Activo'"
+                    v-if="data.status === 'Activo' && roleMain === 'Administrador'"
                     icon="pi pi-ban"
                     severity="danger"
                     variant="text"
@@ -548,7 +548,7 @@ const exportCSV = () => {
                     @click="deleteEmployee($event, data)"
                   ></Button>
                   <Button
-                    v-else
+                    v-if="data.status === 'Inactivo' && roleMain === 'Administrador'"
                     icon="pi pi-refresh"
                     severity="warn"
                     variant="text"

@@ -1,4 +1,4 @@
-import type { Breed } from '../models/Breed'
+import type { Breed, BreedList } from '../models/Breed'
 import type { BreedRequest } from '../models/Breed'
 import type { PageResponse } from '@/services/models/PageResponse'
 import type { SearchBreedParams } from '../models/SearchBreedParams'
@@ -11,6 +11,6 @@ export interface BreedService {
   updateBreed(breedId: number, breedRequest: BreedRequest): Promise<Breed>
   deleteBreed(breedId: number): Promise<void>
   activateBreed(breedId: number): Promise<void>
-  searchBreeds(params: SearchBreedParams): Promise<PageResponse<Breed>>
+  searchBreeds(params: SearchBreedParams): Promise<PageResponse<BreedList>>
 }
 

@@ -24,3 +24,24 @@ export interface VeterinaryServiceRequest {
     categoryId: number
   }
 }
+
+
+export interface VeterinaryServiceList {
+  serviceId: number
+  name: string
+  specie: string
+  category: string
+  price:number,
+  duration:number,
+  status: string
+}
+
+
+
+export interface ServicesInfoTopPanelAdmin {
+  serviceId: number
+  serviceName: string
+  categoryName: string
+  imageServiceUrl: string
+  totalCares: number
+}

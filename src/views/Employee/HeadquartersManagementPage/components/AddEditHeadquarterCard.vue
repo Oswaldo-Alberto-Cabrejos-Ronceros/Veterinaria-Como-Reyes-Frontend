@@ -11,7 +11,7 @@ import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/yup'
 import { ref } from 'vue'
 import Message from 'primevue/message'
-
+import DatePicker from 'primevue/datepicker'
 //form
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
   validationSchema: toTypedSchema(schema),
@@ -23,6 +23,8 @@ const { handleSubmit, errors, defineField } = useForm<FormValues>({
     district: '',
     province: '',
     departament: '',
+    startTime: undefined,
+    endTime: undefined,
   },
 })
 
@@ -40,15 +42,23 @@ const fieldMap = {
 const [province, provinceAttrs] = defineField('province')
 const [district, districtAttrs] = defineField('district')
 const [departament, departamentAttrs] = defineField('departament')
+const [startTime, startTimeAttrs] = defineField('startTime')
+const [endTime, endTimeAttrs] = defineField('endTime')
 
 //textfields
-const textFields: { title: string; key: keyof typeof fieldMap; type: string; icon: string, placeholder:string }[] = [
+const textFields: {
+  title: string
+  key: keyof typeof fieldMap
+  type: string
+  icon: string
+  placeholder: string
+}[] = [
   {
     title: 'Nombre',
     key: 'name',
     type: 'text',
     icon: 'pi-user',
-    placeholder: 'Nombre de la sede'
+    placeholder: 'Nombre de la sede',
   },
 
   {
@@ -56,21 +66,21 @@ const textFields: { title: string; key: keyof typeof fieldMap; type: string; ico
     key: 'phone',
     type: 'tel',
     icon: 'pi-mobile',
-    placeholder: 'Ej: 984156123'
+    placeholder: 'Ej: 984156123',
   },
   {
     title: 'Dirección',
     key: 'address',
     type: 'text',
     icon: 'pi-map-marker',
-    placeholder: 'Avenida, calle, número'
+    placeholder: 'Avenida, calle, número',
   },
   {
     title: 'Email',
     key: 'email',
     type: 'email',
     icon: 'pi-envelope',
-    placeholder: 'example@gmail.com'
+    placeholder: 'example@gmail.com',
   },
 ]
 
@@ -123,6 +133,10 @@ onMounted(() => {
         value.value = String(params[key as keyof typeof params])
       })
       district.value = params.district
+      province.value = params.province
+      departament.value = params.departament
+      startTime.value = params.startTime
+      endTime.value = params.endTime
       title.value = 'Editar'
     }
   }
@@ -151,10 +165,28 @@ onMounted(() => {
           {{ errors[element.key] }}
         </Message>
       </div>
+      <!-- departament -->
+      <div>
+        <label class="block mb-2">Departamento</label>
+        <Select
+          class="w-full"
+          v-bind="departamentAttrs"
+          v-model="departament"
+          :invalid="Boolean(errors.departament)"
+          :options="departaments"
+          optionLabel="name"
+          optionValue="value"
+          placeholder="Selecciona Departamento"
+        />
+
+        <Message v-if="errors.departament" severity="error" size="small" variant="simple">
+          {{ errors.departament }}
+        </Message>
+      </div>
 
       <!-- province -->
       <div>
-        <label class="block mb-2">Province</label>
+        <label class="block mb-2">Provincia</label>
         <Select
           class="w-full"
           v-bind="provinceAttrs"
@@ -190,24 +222,53 @@ onMounted(() => {
         </Message>
       </div>
 
-      <!-- departament -->
+      <!-- start -->
       <div>
-        <label class="block mb-2">Departamento</label>
-        <Select
+        <label class="block mb-2">Hora de apertura</label>
+        <DatePicker
           class="w-full"
-          v-bind="departamentAttrs"
-          v-model="departament"
-          :invalid="Boolean(errors.departament)"
-          :options="departaments"
-          optionLabel="name"
-          optionValue="value"
-          placeholder="Selecciona Departamento"
-        />
+          v-bind="startTimeAttrs"
+          v-model="startTime"
+          :invalid="Boolean(errors.startTime)"
+          showIcon
+          fluid
+          iconDisplay="input"
+          timeOnly
+        >
+          <template #inputicon="slotProps">
+            <i class="pi pi-clock" @click="slotProps.clickCallback" />
+          </template>
+        </DatePicker>
 
-        <Message v-if="errors.departament" severity="error" size="small" variant="simple">
-          {{ errors.departament }}
+        <Message v-if="errors.startTime" severity="error" size="small" variant="simple">
+          {{ errors.startTime }}
         </Message>
       </div>
+
+      <!-- end -->
+
+      <div>
+        <label class="block mb-2">Hora de cierre</label>
+        <DatePicker
+          class="w-full"
+          v-bind="endTimeAttrs"
+          v-model="endTime"
+          :invalid="Boolean(errors.endTime)"
+          showIcon
+          fluid
+          iconDisplay="input"
+          timeOnly
+        >
+          <template #inputicon="slotProps">
+            <i class="pi pi-clock" @click="slotProps.clickCallback" />
+          </template>
+        </DatePicker>
+
+        <Message v-if="errors.endTime" severity="error" size="small" variant="simple">
+          {{ errors.endTime }}
+        </Message>
+      </div>
+
       <div class="button-form-container-grid-end">
         <Button
           class="w-full max-w-md"

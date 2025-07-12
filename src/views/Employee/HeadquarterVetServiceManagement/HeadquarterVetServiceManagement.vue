@@ -12,7 +12,6 @@ import Select from 'primevue/select'
 import Button from 'primevue/button'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import type { Service } from '@/models/Service'
 import { onMounted, ref } from 'vue'
 import { useVeterinaryService } from '@/composables/useVeterinaryService'
 import type { Specie } from '@/models/Specie'
@@ -26,9 +25,27 @@ import { useHeadquarter } from '@/composables/useHeadquarter'
 import type { Headquarter } from '@/models/Headquarter'
 import { useHeadquarterVetService } from '@/composables/useHeadquarterVetService'
 import type { HeadquarterVetService } from '@/models/HeadquarterVetService'
-import { ToggleSwitch } from 'primevue'
-
+import { ToggleSwitch, useDialog, useToast } from 'primevue'
+import AddHeadquarterVetServiceCard from './components/AddHeadquarterVetServiceCard.vue'
+import EditHeadquarterVetServiceCard from './components/EditHeadquarterVetServiceCard.vue'
+import type { FormValues as AddHeadquarterVetServiceSchema } from '@/validation-schemas-forms/schema-add-headquarter-vet-service'
+import type { FormValues as EditHeadquarterVetServiceSchema } from '@/validation-schemas-forms/schema-edit-headquarter-vet-service'
+import { useAuthentication } from '@/composables/useAuthentication'
+import { useEmployee } from '@/composables/useEmployee'
+import type { ServiceList } from '@/models/ServiceList'
 //methods
+
+//toast
+const toast = useToast()
+
+const showToast = (message: string) => {
+  toast.add({
+    severity: 'success',
+    summary: 'Éxito',
+    detail: message,
+    life: 3000,
+  })
+}
 
 const {
   loading,
@@ -41,16 +58,30 @@ const { getAllSpecies } = useSpecie()
 
 const { getAllCategories } = useCategory()
 
-const { getAllHeadquarters } = useHeadquarter()
+const { getHeadquarterById, getAllHeadquarters } = useHeadquarter()
 
-const { getHeadquarterVetServiceByHeadquarter } = useHeadquarterVetService()
+const { getEmployeeMyInfo } = useEmployee()
+
+const { getMainRole, getEntityId } = useAuthentication()
+
+const {
+  enableHeadquarterVetService,
+  deleteHeadquarterVetService,
+  updateSimultaneousCapacity,
+  createHeadquarterVetService,
+  getAllHeadquarterVetServiceByHeadquarter,
+} = useHeadquarterVetService()
 
 //services
 const headquartersOptions = ref<OptionSelect[]>([])
 
 const headquarters = ref<Headquarter[]>([])
 
-const services = ref<Service[]>([])
+const services = ref<ServiceList[]>([])
+
+const roleMain = ref<string>('')
+
+const headquarterIdSelected = ref<number | null>(null)
 
 const totalRecords = ref<number>(0)
 const rows = ref<number>(10)
@@ -62,15 +93,52 @@ const categoriesOptions = ref<OptionSelect[]>([])
 
 const headquarterServices = ref<HeadquarterVetService[][]>([])
 
+function findHeadquarterVetService(
+  headquarterId: number,
+  serviceId: number,
+): HeadquarterVetService | undefined {
+  const list = headquarterServices.value.find(
+    (subList) => subList.length > 0 && subList[0].headquarterId === headquarterId,
+  )
+  return list?.find((item) => item.service.id === serviceId)
+}
+
 onMounted(async () => {
+  loadData()
+})
+
+const loadData = async () => {
   loadServices()
   speciesOptions.value = speciesToOptionsSelect(await getAllSpecies())
   categoriesOptions.value = categoriesToOptionsSelect(await getAllCategories())
-  headquarters.value = await getAllHeadquarters()
-  headquartersOptions.value = headquartersToOptionsSelect(headquarters.value)
+  //obtenemos el rol
+
+  const role = getMainRole()
+
+  if (role) {
+    roleMain.value = role
+    if (role === 'Administrador') {
+      if (headquarterIdSelected.value === null) {
+        headquarters.value = await getAllHeadquarters()
+      } else {
+        headquarters.value = []
+        headquarters.value.push(await getHeadquarterById(headquarterIdSelected.value))
+        loadHeadquarterServices()
+        return
+      }
+    } else {
+      const id = getEntityId()
+      if (id) {
+        const info = await getEmployeeMyInfo(id)
+        headquarters.value = []
+        headquarters.value.push(await getHeadquarterById(info.headquarter.id))
+      }
+    }
+    headquartersOptions.value = headquartersToOptionsSelect(headquarters.value)
+  }
+
   loadHeadquarterServices()
-  console.log(headquarterServices)
-})
+}
 
 //function for load headquarters service
 
@@ -78,7 +146,8 @@ const loadHeadquarterServices = async () => {
   headquarterServices.value = []
 
   for (const item of headquarters.value) {
-    const service = await getHeadquarterVetServiceByHeadquarter(item.id)
+    const service = await getAllHeadquarterVetServiceByHeadquarter(item.id)
+    console.log(service)
     console.log(item.id, service)
     headquarterServices.value.push(service)
   }
@@ -89,11 +158,13 @@ const loadServices = async (event?: DataTablePageEvent) => {
   const size = event ? event.rows : rows.value
   rows.value = size
 
-  const response = await searchVeterinaryServices(page, size, {
-    name: name.value,
-    specie: specieId.value?.toString(),
-    category: categoryId.value?.toString(),
-  })
+  const response = await searchVeterinaryServices(
+    page,
+    size,
+    name.value,
+    specieId.value?.toString(),
+    categoryId.value?.toString(),
+  )
 
   services.value = response.content
   totalRecords.value = response.totalElements
@@ -154,10 +225,97 @@ const exportCSV = () => {
   dt.value.exportCSV()
 }
 
+const dialog = useDialog()
+
+const addHeadquarterService = (headquarter: Headquarter, service: ServiceList) => {
+  dialog.open(AddHeadquarterVetServiceCard, {
+    props: {
+      modal: true,
+      header: 'Agregar servicio por sede',
+    },
+    data: {
+      headquarterId: headquarter.id,
+      serviceId: service.serviceId,
+    },
+    onClose: async (options) => {
+      const data = options?.data as AddHeadquarterVetServiceSchema
+      if (data) {
+        console.log('data retornada', data)
+
+        try {
+          await createHeadquarterVetService(data)
+          showToast(
+            'Servicio por sede creado exitosamente' + ` ${headquarter.name} - ${service.name}`,
+          )
+          loadData()
+        } catch (error) {
+          console.error(error, 'Error al crear el servicio por sede')
+        }
+      }
+    },
+  })
+}
+
+const editHeadquarterService = async (headquarterService: HeadquarterVetService | undefined) => {
+  if (headquarterService) {
+    console.log(headquarterService)
+    dialog.open(EditHeadquarterVetServiceCard, {
+      props: {
+        modal: true,
+        header: 'Editar servicio por sede',
+      },
+      data: {
+        simultaneousCapacity: headquarterService.simultaneousCapacity,
+        status: headquarterService.status,
+      },
+      onClose: async (options) => {
+        const data = options?.data as EditHeadquarterVetServiceSchema
+        if (data) {
+          console.log('data retornada', data)
+          const changeStatus = data.status !== headquarterService.status
+          const changeCapacity =
+            data.simultaneousCapacity !== headquarterService.simultaneousCapacity
+
+          if (!changeStatus && !changeCapacity) {
+            return
+          }
+
+          if (changeStatus) {
+            if (data.status) {
+              await enableHeadquarterVetService(headquarterService.id)
+              showToast('Habilitado con exito')
+            } else {
+              await deleteHeadquarterVetService(headquarterService.id)
+              showToast('Desabilitado con exito con exito')
+            }
+            loadData()
+          }
+          if (changeCapacity) {
+            try {
+              console.log('intentando actualizar capacidad...')
+              const response = await updateSimultaneousCapacity(
+                headquarterService.id,
+                data.simultaneousCapacity,
+              )
+              console.log('respuesta de actualización', response)
+              showToast('Servicio por sede actualizado correctamente')
+              loadData()
+              loadData()
+            } catch (error) {
+              console.error(error, 'Error al crear el servicio por sede')
+            }
+          }
+        }
+      },
+    })
+  }
+}
+
 //
 let headquarterServiceAux: HeadquarterVetService | undefined
 //ref when active headquarterservice
 const activedHeadquarterService = ref<boolean>(true)
+const inanctivedHeadquarterService = ref<boolean>(false)
 </script>
 
 <template>
@@ -204,6 +362,7 @@ const activedHeadquarterService = ref<boolean>(true)
                 optionValue="value"
                 placeholder="Selecciona Especie"
                 @update:model-value="searchServicesDebounced"
+                showClear
               />
 
               <Message v-if="errors.specieId" severity="error" size="small" variant="simple">
@@ -223,13 +382,14 @@ const activedHeadquarterService = ref<boolean>(true)
                 optionValue="value"
                 placeholder="Selecciona Categoria"
                 @update:model-value="searchServicesDebounced"
+                showClear
               />
               <Message v-if="errors.specieId" severity="error" size="small" variant="simple">
                 {{ errors.specieId }}
               </Message>
             </div>
             <!-- headquarter -->
-            <div>
+            <div v-if="roleMain === 'Administrador'">
               <label class="block mb-2">Sede</label>
               <Select
                 class="w-full"
@@ -238,6 +398,8 @@ const activedHeadquarterService = ref<boolean>(true)
                 optionValue="value"
                 placeholder="Selecciona Sede"
                 showClear
+                v-model="headquarterIdSelected"
+                @update:model-value="loadData"
               />
             </div>
           </form>
@@ -288,7 +450,7 @@ const activedHeadquarterService = ref<boolean>(true)
             ></Column>
             <Column v-for="(headquarter, index) in headquarters" :key="headquarter.id">
               <template #header>
-                <div class=" p-datatable-column-title w-full text-center">
+                <div class="p-datatable-column-title w-full text-center">
                   {{ `Sede ${headquarter.name}` }}
                 </div>
               </template>
@@ -296,14 +458,16 @@ const activedHeadquarterService = ref<boolean>(true)
                 <template
                   v-if="
                     headquarterServiceAux = headquarterServices[index]?.find(
-                      (s) => s.service.id === data.id,
+                      (s) => s.service.id === data.serviceId,
                     )
                   "
                 >
                   <div class="flex items-center flex-col justify-center gap-4">
                     <div class="w-full flex items-center gap-2 justify-center">
- <ToggleSwitch readonly v-model="activedHeadquarterService" />
- <i class="pi pi-check text-green-500 dark:text-green-400"></i>
+                      <ToggleSwitch v-if="headquarterServiceAux.status" readonly v-model="activedHeadquarterService" />
+                        <ToggleSwitch v-else readonly v-model="inanctivedHeadquarterService" />
+                      <i v-if="headquarterServiceAux.status" class="pi pi-check text-green-500 dark:text-green-400"></i>
+                      <i v-else class="pi pi-times text-red-500 dark:text-red-400"></i>
                     </div>
                     <Button
                       icon="pi pi-pen-to-square"
@@ -312,6 +476,11 @@ const activedHeadquarterService = ref<boolean>(true)
                       class="p-1.5"
                       aria-label="Editar"
                       size="small"
+                      @click="
+                        editHeadquarterService(
+                          findHeadquarterVetService(headquarter.id, data.serviceId),
+                        )
+                      "
                     ></Button>
                   </div>
                 </template>
@@ -325,6 +494,7 @@ const activedHeadquarterService = ref<boolean>(true)
                       class="p-1.5"
                       aria-label="Editar"
                       size="small"
+                      @click="addHeadquarterService(headquarter, data)"
                     ></Button>
                   </div>
                 </template>

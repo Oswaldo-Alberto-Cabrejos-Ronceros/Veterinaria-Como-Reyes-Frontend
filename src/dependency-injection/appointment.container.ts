@@ -13,9 +13,16 @@ import { GetAppointmentPanelInfo } from '@/services/Appointment/aplication/GetAp
 import { GetAnimalInfoForAppointment } from '@/services/Appointment/aplication/GetAnimalInfoForAppointment'
 import { GetClientInfoForAppointment } from '@/services/Appointment/aplication/GetClientInfoForAppointment'
 import { GetPaymentInfoForAppointment } from '@/services/Appointment/aplication/GetPaymentInfoForAppointment'
+import { GetTodayAppointmentStats } from '@/services/Appointment/aplication/GetTodayAppointmentStats'
 
 import { AppointmentServiceImpl } from '@/services/Appointment/infrastructure/AppointmentServiceImpl'
 import { AxiosHttpClient } from '@/services/Http/infrastructure/AxiosHttpClient'
+import { GetAppointmentsByDateForPanelAdmin } from '@/services/Appointment/aplication/GetAppointmentsByDateForPanelAdmin'
+import { GetAppointmentsByDateForPanelManager } from '@/services/Appointment/aplication/GetAppointmentsByDateForPanelManager'
+import { GetTodayAppointmentStatsByHeadquarter } from '@/services/Appointment/aplication/GetTodayAppointmentStatsByHeadquarter'
+import { GetCareAndAppointmentsForEmployee } from '@/services/Appointment/aplication/GetCareAndAppointmentsForEmployee'
+import { GetStatsForReceptionistUseCase } from '@/services/Appointment/aplication/GetStatsForReceptionist'
+import { GetAppointmentsByHeadquarterIdUseCase } from '@/services/Appointment/aplication/GetAppointmentsByHeadquarterId'
 
 // Instancia de cliente HTTP
 const axiosHttpClient = new AxiosHttpClient()
@@ -40,4 +47,19 @@ export const appointmentUsesCases = {
   getAnimalInfoForAppointment: new GetAnimalInfoForAppointment(appointmentService),
   getClientInfoForAppointment: new GetClientInfoForAppointment(appointmentService),
   getPaymentInfoForAppointment: new GetPaymentInfoForAppointment(appointmentService),
+  getTodayAppointmentStats: new GetTodayAppointmentStats(appointmentService),
+
+  getAppointmentsByDateForPanelAdmin: new GetAppointmentsByDateForPanelAdmin(appointmentService),
+  getAppointmentsByDateForPanelManager: new GetAppointmentsByDateForPanelManager(
+    appointmentService,
+  ),
+  getTodayAppointmentStatsByHeadquarter: new GetTodayAppointmentStatsByHeadquarter(
+    appointmentService,
+  ),
+  getCareAndAppointmentsForEmployeeUseCase: new GetCareAndAppointmentsForEmployee(
+    appointmentService,
+  ),
+
+  getStatsForReceptionist: new GetStatsForReceptionistUseCase(appointmentService),
+  getAppointmentsByHeadquarterId: new GetAppointmentsByHeadquarterIdUseCase(appointmentService),
 }
