@@ -1,4 +1,4 @@
-import type { Client, ClientRequest, MyInfoClient } from '@/services/Client/domain/models/Client'
+import type { Client, ClientInfoPanelAdmin, ClientRequest, MyInfoClient } from '@/services/Client/domain/models/Client'
 import type { Client as ClientView } from '@/models/Client'
 import type { FormValues as ClientAddSchema } from '@/validation-schemas-forms/schema-add-client'
 import type { FormValues as ClientEditSchema } from '@/validation-schemas-forms/schema-edit-client'
@@ -7,8 +7,11 @@ import type { FormValues as SchemaEditSelfClient } from '@/validation-schemas-fo
 import type { ClientUpdateAsClient } from '@/services/Client/domain/models/Client'
 import type { ClientBasicInfoByDni } from '@/services/Client/domain/models/Client'
 import type { ClientBasicInfoByDni as ClientBasicInfoByDniView } from '@/models/ClientBasicInfoByDni'
+import type { ClientList as ClientListView } from '@/models/ClientList'
+import type { ClientList } from '@/services/Client/domain/models/Client'
 
 import { DateAdapter } from './DateAdapter'
+import type { ClientInfoPanel } from '@/models/ClientInfoPanel'
 
 export class ClientAdapter {
   static toClientView(client: Client): ClientView {
@@ -102,4 +105,24 @@ export class ClientAdapter {
       fullName: clientBasicInfoByDni.fullName,
     }
   }
+
+  //for adapt clientList
+  static fromClientListToClientListView(clientList: ClientList): ClientListView {
+    return {
+      id: clientList.clientId,
+      dni: clientList.dni,
+      names: clientList.name,
+      lastnames: clientList.lastName,
+      headquarterName: clientList.headquarterName,
+      status: clientList.status,
+    }
+  }
+  static fromClientInfoPanelAdminToView(client: ClientInfoPanelAdmin): ClientInfoPanel {
+  return {
+    id: client.clientId,
+    fullName: client.fullName,
+    initials: client.initials,
+    phone: client.phone,
+  }
+}
 }

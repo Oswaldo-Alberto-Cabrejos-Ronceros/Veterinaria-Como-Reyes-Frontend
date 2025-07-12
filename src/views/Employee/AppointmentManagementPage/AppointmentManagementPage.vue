@@ -16,8 +16,7 @@ import type { Headquarter } from '@/models/Headquarter'
 import type { Category } from '@/models/Category'
 import { useCategory } from '@/composables/useCategory'
 import { useAppointment } from '@/composables/useAppointment'
-import type { Appointment } from '@/models/Appointment'
-import DataTable from 'primevue/datatable'
+import DataTable, { type DataTablePageEvent } from 'primevue/datatable'
 import Column from 'primevue/column'
 import { useDialog } from 'primevue/usedialog'
 import AddEditAppointementCard from './components/AddEditAppointementCard.vue'
@@ -27,6 +26,12 @@ import { usePaymentMethod } from '@/composables/usePaymentMethod'
 import type { AppointmentRequest } from '@/models/AppointmentRequest'
 import { useToast } from 'primevue/usetoast'
 import { useRoute, useRouter } from 'vue-router'
+import { DateAdapter } from '@/adapters/DateAdapter'
+import { debounce } from 'lodash'
+import type { AppointmentList } from '@/models/AppointmentList'
+import { useConfirm } from 'primevue/useconfirm'
+import { useAuthentication } from '@/composables/useAuthentication'
+import { useEmployee } from '@/composables/useEmployee'
 
 onMounted(async () => {
   loadAppoinments()
@@ -34,20 +39,70 @@ onMounted(async () => {
 
 //methods for appointments
 
-const { loading, error, getAllAppointments,createAppointment, confirmAppointment, completeAppointment } = useAppointment()
+const {
+  loading,
+  error,
+  searchAppointments,
+  createAppointment,
+  confirmAppointment,
+  completeAppointment,
+  deleteAppointment,
+} = useAppointment()
 
-const {getAllPaymentMethods}=usePaymentMethod()
+const { getAllPaymentMethods } = usePaymentMethod()
 
+const { getMainRole, getEntityId } = useAuthentication()
+
+const { getEmployeeMyInfo } = useEmployee()
+
+const roleMain = ref<string>('')
 
 //for appoinments
 
-const appointments = ref<Appointment[]>([])
+const appointments = ref<AppointmentList[]>([])
+const totalRecords = ref<number>(0)
+
+const rows = ref<number>(1)
+
+const first = ref<number>(0)
+
+//for search appointments
+
+const searchAppointmentsDebounce = debounce(() => {
+  loadAppoinments()
+})
 
 //for load appoinments
 
-const loadAppoinments = async () => {
-  appointments.value = await getAllAppointments()
-  headquartersOptions.value = headquartersCategoriesToOptionsSelect(await getAllHeadquarters())
+const loadAppoinments = async (event?: DataTablePageEvent) => {
+  const role = getMainRole()
+  if (role) {
+    roleMain.value = role
+    if (role === 'Administrador') {
+      headquartersOptions.value = headquartersCategoriesToOptionsSelect(await getAllHeadquarters())
+    } else {
+      const id = getEntityId()
+      if (id) {
+        const info = await getEmployeeMyInfo(id)
+        headquarter.value = info.headquarter.name
+      }
+    }
+  }
+
+  const page = event ? event.first / event.rows : 0
+  const size = event ? event.rows : rows.value
+  rows.value = size
+  const pageResponse = await searchAppointments({
+    day: date.value ? DateAdapter.toDateYYYYmmDD(date.value) : undefined,
+    headquarter: headquarter.value ?? undefined,
+    categoryService: category.value ?? undefined,
+    appointmentStatus: status.value ?? undefined,
+    page: page,
+    size: size,
+  })
+
+  appointments.value = pageResponse.content
+  totalRecords.value = pageResponse.totalElements
   categoriesOptions.value = headquartersCategoriesToOptionsSelect(await getAllCategories())
 }
 
@@ -55,8 +110,13 @@ const handleChangeStatus = async (appointmentId: number, status: string) => {
   try {
     if (status === 'CONFIRMADA') {
       await confirmAppointment(appointmentId)
+      showToast('Cita confirmada exitodamente')
     } else if (status === 'COMPLETADA') {
       await completeAppointment(appointmentId)
+      showToast('Cita completada exitodamente')
+    } else if (status == 'CANCELADA') {
+      await deleteAppointment(appointmentId)
+      showToast('Cita cancelada exitodamente')
     }
     await loadAppoinments()
   } catch (err) {
@@ -65,24 +125,20 @@ const handleChangeStatus = async (appointmentId: number, status: string) => {
 }
 
 //form
-const { handleSubmit, errors, defineField } = useForm<SearchAppointmentSchema>({
+const { errors, defineField } = useForm<SearchAppointmentSchema>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
-    headquarterId: undefined,
-    categoryId: undefined,
+    headquarter: undefined,
+    category: undefined,
     date: undefined,
     status: undefined,
   },
 })
 
-const [headquarterId, headquarterIdAttrs] = defineField('headquarterId')
-const [categoryId, categoryIdAttrs] = defineField('categoryId')
+const [headquarter, headquarterAttrs] = defineField('headquarter')
+const [category, categoryAttrs] = defineField('category')
 const [date, dateAttrs] = defineField('date')
 const [status, statusAttrs] = defineField('status')
-//for submit
-const onSubmit = handleSubmit((values) => {
-  console.log(values)
-})
 
 //for get headquarters and categories
 const { getAllHeadquarters } = useHeadquarter()
@@ -92,11 +148,20 @@ const categoriesOptions = ref<OptionSelect[]>([])
 
 //for get options from headquarters
 
-const headquartersCategoriesToOptionsSelect = (
-  items: Headquarter[] | Category[]|PaymentMethod[],
+const headquartersCategoriesIdsToOptionsSelect = (
+  items: Headquarter[] | Category[] | PaymentMethod[],
 ): OptionSelect[] => {
   return items.map((item) => ({
     value: item.id,
+    name: item.name,
+  }))
+}
+
+const headquartersCategoriesToOptionsSelect = (
+  items: Headquarter[] | Category[] | PaymentMethod[],
+): OptionSelect[] => {
+  return items.map((item) => ({
+    value: item.name,
     name: item.name,
   }))
 }
@@ -151,7 +216,7 @@ const sendConfirm = async (
   time: string,
   date: Date,
   paymentMethodId: number,
-  comment?:string
+  comment?: string,
 ) => {
   console.log(petId, headquarterServiceId, time, date, paymentMethodId)
   const appointmentRequest: AppointmentRequest = {
@@ -160,7 +225,7 @@ const sendConfirm = async (
     headquarterVetServiceId: headquarterServiceId,
     petId: petId,
     paymentMethodId: paymentMethodId,
-    comment:comment
+    comment: comment,
   }
   console.log(appointmentRequest)
   const appointment = await createAppointment(appointmentRequest)
@@ -175,17 +240,79 @@ const addAppointment = async () => {
   dialog.open(AddEditAppointementCard, {
     props: {
       modal: true,
-      header:'Agendar cita'
+      header: 'Agendar cita',
     },
     data: {
-      paymentMethodsOptions:headquartersCategoriesToOptionsSelect(await getAllPaymentMethods()),
+      paymentMethodsOptions: headquartersCategoriesIdsToOptionsSelect(await getAllPaymentMethods()),
     },
     onClose: async (options) => {
       const data = options?.data as AddEditPaymentSchema
       if (data) {
-          console.log(data)
-          sendConfirm(data.petId,data.headquarterVetServiceId,data.scheduleDateTime,data.date,data.paymentMethodId,data.comment)
+        console.log(data)
+        sendConfirm(
+          data.petId,
+          data.headquarterVetServiceId,
+          data.scheduleDateTime,
+          data.date,
+          data.paymentMethodId,
+          data.comment,
+        )
       }
+    },
+  })
+}
+
+//for confirm
+const confirm = useConfirm()
+
+//for complete confirm
+
+const confirmAppoinmentConfirm = (event: MouseEvent | KeyboardEvent, appointmentId: number) => {
+  confirm.require({
+    group: 'confirmPopupGeneral',
+    target: event.currentTarget as HTMLElement,
+    message: '¿Seguro que quiere confirmar esta cita?',
+    icon: 'pi pi-exclamation-triangle',
+    rejectProps: {
+      label: 'Cancelar',
+      severity: 'secondary',
+      outlined: true,
+    },
+    acceptProps: {
+      label: 'Confirmar',
+      severity: 'success',
+    },
+    accept: async () => {
+      console.log('Confirmando cita ', appointmentId)
+      handleChangeStatus(appointmentId, 'CONFIRMADA')
+    },
+    reject: () => {
+      console.log('Cancelando')
+    },
+  })
+}
+
+const cancelAppoinmentConfirm = (event: MouseEvent | KeyboardEvent, appointmentId: number) => {
+  confirm.require({
+    group: 'confirmPopupGeneral',
+    target: event.currentTarget as HTMLElement,
+    message: '¿Seguro que quiere cancelar esta cita?',
+    icon: 'pi pi-exclamation-triangle',
+    rejectProps: {
+      label: 'Abortar',
+      severity: 'secondary',
+      outlined: true,
+    },
+    acceptProps: {
+      label: 'Cancelar',
+      severity: 'danger',
+    },
+    accept: async () => {
+      console.log('Cancelando cita ', appointmentId)
+      handleChangeStatus(appointmentId, 'CANCELADA')
+    },
+    reject: () => {
+      console.log('Cancelando')
     },
   })
 }
@@ -194,10 +321,9 @@ const router = useRouter()
 const route = useRoute()
 
 //for attend
-const attendAppointment = (appointmentId:number)=>{
+const attendAppointment = (appointmentId: number) => {
   router.push(`${route.fullPath}/attend/${appointmentId}`)
 }
-
 </script>
 
 <template>
@@ -208,7 +334,7 @@ const attendAppointment = (appointmentId:number)=>{
       </template>
       <template #content>
         <div class="flex flex-col gap-6">
-          <form @submit.prevent="onSubmit" class="form-search-grid-col-5">
+          <form class="form-search-grid-col-5">
             <!-- date -->
             <div>
               <label class="block mb-2">Fecha</label>
@@ -219,28 +345,34 @@ const attendAppointment = (appointmentId:number)=>{
                 class="w-full"
                 v-bind="dateAttrs"
                 v-model="date"
+                :invalid="Boolean(errors.date)"
                 placeholder="Selecciona Fecha"
+                showButtonBar
+                @update:model-value="searchAppointmentsDebounce()"
               />
 
-              <Message v-if="errors.headquarterId" severity="error" size="small" variant="simple">
-                {{ errors.headquarterId }}
+              <Message v-if="errors.date" severity="error" size="small" variant="simple">
+                {{ errors.date }}
               </Message>
             </div>
             <!-- headquarter -->
-            <div>
+            <div v-if="roleMain === 'Administrador'">
               <label class="block mb-2">Sede</label>
               <Select
                 class="w-full"
-                v-bind="headquarterIdAttrs"
-                v-model="headquarterId"
+                v-bind="headquarterAttrs"
+                v-model="headquarter"
+                :invalid="Boolean(errors.headquarter)"
                 :options="headquartersOptions"
                 optionLabel="name"
                 optionValue="value"
                 placeholder="Selecciona Sede"
+                showClear
+                @update:model-value="searchAppointmentsDebounce()"
               />
 
-              <Message v-if="errors.headquarterId" severity="error" size="small" variant="simple">
-                {{ errors.headquarterId }}
+              <Message v-if="errors.headquarter" severity="error" size="small" variant="simple">
+                {{ errors.headquarter }}
               </Message>
             </div>
             <!-- category -->
@@ -248,16 +380,19 @@ const attendAppointment = (appointmentId:number)=>{
               <label class="block mb-2">Categoria</label>
               <Select
                 class="w-full"
-                v-bind="categoryIdAttrs"
-                v-model="categoryId"
+                v-bind="categoryAttrs"
+                v-model="category"
+                :invalid="Boolean(errors.category)"
                 :options="categoriesOptions"
                 optionLabel="name"
                 optionValue="value"
                 placeholder="Selecciona Categoria"
+                showClear
+                @update:model-value="searchAppointmentsDebounce()"
               />
 
-              <Message v-if="errors.categoryId" severity="error" size="small" variant="simple">
-                {{ errors.categoryId }}
+              <Message v-if="errors.category" severity="error" size="small" variant="simple">
+                {{ errors.category }}
               </Message>
             </div>
             <!-- status -->
@@ -267,27 +402,18 @@ const attendAppointment = (appointmentId:number)=>{
                 class="w-full"
                 v-bind="statusAttrs"
                 v-model="status"
+                :invalid="Boolean(errors.status)"
                 :options="statusOptions"
                 optionLabel="name"
                 optionValue="value"
                 placeholder="Selecciona Estado"
+                showClear
+                @update:model-value="searchAppointmentsDebounce()"
               />
 
-              <Message v-if="errors.headquarterId" severity="error" size="small" variant="simple">
-                {{ errors.headquarterId }}
+              <Message v-if="errors.status" severity="error" size="small" variant="simple">
+                {{ errors.status }}
               </Message>
-            </div>
-            <div class="form-button-search-container-grid-col-5">
-              <!-- button -->
-
-              <Button
-                label="Buscar"
-                type="submit"
-                severity="info"
-                icon="pi pi-search"
-                iconPos="right"
-                class="w-full"
-              />
             </div>
           </form>
           <!-- for messague loading  -->
@@ -303,8 +429,13 @@ const attendAppointment = (appointmentId:number)=>{
             v-if="appointments"
             :value="appointments"
             paginator
-            :rows="10"
-            :rows-per-page-options="[10, 15, 20, 25, 30]"
+            :rows="rows"
+            :totalRecords="totalRecords"
+            :lazy="true"
+            :first="first"
+            :loading="loading.searchAppointments"
+            @page="loadAppoinments"
+            :rows-per-page-options="[1, 2, 3, 4]"
             ref="dt"
           >
             <template #header>
@@ -320,71 +451,96 @@ const attendAppointment = (appointmentId:number)=>{
               </div>
             </template>
             <Column
-              field="scheduleDateTime"
+              field="date"
               sortable
               header="Dia programado"
               class="hidden lg:table-cell"
               style="width: 18%"
             ></Column>
             <Column
-              field="creationDate"
+              field="headquarter"
               class="hidden lg:table-cell"
-              header="Dia creado"
+              header="Sede"
               sortable
               style="width: 15%"
             ></Column>
             <Column
-              field="statusAppointment"
+              field="categoryService"
               class="hidden lg:table-cell"
-              header="Estado"
+              header="Categoria"
               sortable
               style="width: 15%"
             ></Column>
-            <Column class="hidden md:table-cell" header="Mascota" sortable style="width: 15%">
-              <template #body="{ data }">
-                {{ data.pet.name }}
-              </template></Column
+            <Column
+              class="hidden md:table-cell"
+              field="appointmentStatus"
+              header="Estado"
+              sortable
+              style="width: 15%"
             >
-            <Column>
+            </Column>
+            <Column header="Acciones">
               <template #body="{ data }">
-                <div class="flex justify-between items-center flex-row lg:flex-col xl:flex-row gap-1">
+                <div class="flex items-center flex-row lg:flex-col xl:flex-row gap-1">
                   <Button
                     icon="pi pi-eye"
+                    v-tooltip="'Ver todos datos'"
                     severity="info"
-                    variant="outlined"
-                    aria-label="Ver"
-                    rounded
-                  />
-                  <Button
-                    icon="pi pi-calendar-clock"
-                    severity="warn"
-                    variant="outlined"
-                    aria-label="Atender"
+                    size="small"
+                    variant="text"
+                    aria-label="Ver todos datos"
+                    v-if="data.appointmentStatus === 'Completada'"
                     @click="attendAppointment(data.id)"
                     rounded
                   />
+
                   <Button
-                    icon="pi pi-trash"
-                    severity="danger"
-                    variant="outlined"
-                    aria-label="Eliminar"
+                    icon="pi pi-calendar-clock"
+                    v-tooltip="'Ver todos datos'"
+                    severity="warn"
+                    size="small"
+                    variant="text"
+                    aria-label="Ver todos datos"
+                    v-if="data.appointmentStatus !== 'Completada'"
+                    @click="attendAppointment(data.id)"
                     rounded
                   />
+
                   <Button
                     icon="pi pi-check"
                     severity="success"
-                    variant="outlined"
+                    size="small"
+                    variant="text"
                     aria-label="Confirmar"
                     rounded
-                    @click="handleChangeStatus(data.id, 'CONFIRMADA')"
+                    v-tooltip="'Confirmar'"
+                    v-if="data.appointmentStatus === 'Programada'"
+                    @click="confirmAppoinmentConfirm($event, data.id)"
                   />
-                  <Button
+                  <!--                   <Button
                     icon="pi pi-calendar-check"
                     severity="help"
-                    variant="outlined"
+                    size="small"
+                    variant="text"
                     aria-label="Completar"
+                    v-tooltip="'Completar'"
                     rounded
                     @click="handleChangeStatus(data.id, 'COMPLETADA')"
+                  /> -->
+
+                  <Button
+                    icon="pi pi-times-circle"
+                    severity="danger"
+                    size="small"
+                    v-tooltip="'Cancelar'"
+                    variant="text"
+                    aria-label="Cancelar"
+                    rounded
+                    v-if="
+                      data.appointmentStatus !== 'Completada' &&
+                      data.appointmentStatus !== 'Cancelada'
+                    "
+                    @click="cancelAppoinmentConfirm($event, data.id)"
                   />
                 </div>
               </template>

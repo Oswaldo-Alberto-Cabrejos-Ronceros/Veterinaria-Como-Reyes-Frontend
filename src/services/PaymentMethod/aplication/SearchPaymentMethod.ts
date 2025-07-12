@@ -1,6 +1,6 @@
 import type { PaymentMethodService } from '../domain/services/PaymentMethodService'
 import type { PageResponse } from '@/services/models/PageResponse'
-import type { PaymentMethod } from '../domain/models/PaymentMethod'
+import type { PaymentMethodList } from '../domain/models/PaymentMethod'
 
 export class SearchPaymentMethod {
   constructor(private readonly service: PaymentMethodService) {}
@@ -10,7 +10,7 @@ export class SearchPaymentMethod {
     size: number,
     name?: string,
     status?: boolean,
-  ): Promise<PageResponse<PaymentMethod>> {
+  ): Promise<PageResponse<PaymentMethodList>> {
     return this.service.searchPaymentMethods(page, size, name, status)
   }
 }

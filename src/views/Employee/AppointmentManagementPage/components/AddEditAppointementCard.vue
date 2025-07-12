@@ -29,7 +29,7 @@ import CascadeSelect from 'primevue/cascadeselect'
 
 const { getEntityId } = useAuthentication()
 
-const { getClientByDni } = useClient()
+const { loading,getClientByDni } = useClient()
 
 const { getAllHeadquarters } = useHeadquarter()
 
@@ -199,6 +199,7 @@ onMounted(() => {
             <InputText
               v-model="ownerDni"
               v-bind="ownerDniAttrs"
+              :invalid="Boolean(errors.ownerDni)"
               class="w-full"
               placeholder="Busque dueño por DNI"
             />
@@ -208,6 +209,7 @@ onMounted(() => {
                 severity="secondary"
                 variant="text"
                 @click="searchClient()"
+                :loading="loading.getClientByDni"
               />
             </InputGroupAddon>
           </InputGroup>
@@ -226,6 +228,7 @@ onMounted(() => {
             <InputText
               v-model="ownerName"
               v-bind="ownerNameAttrs"
+              :invalid="Boolean(errors.ownerName)"
               class="w-full"
               placeholder="Nombre del dueño"
               disabled
@@ -244,6 +247,7 @@ onMounted(() => {
             class="w-full"
             v-bind="petIdAttrs"
             v-model="petId"
+            :invalid="Boolean(errors.petId)"
             :options="petsOptions"
             optionLabel="name"
             optionValue="value"
@@ -262,6 +266,7 @@ onMounted(() => {
             class="w-full"
             v-bind="headquarterVetServiceIdAttrs"
             v-model="headquarterVetServiceId"
+            :invalid="Boolean(errors.headquarterVetServiceId)"
             :options="serviceHeadquarterOptions"
             optionLabel="name"
             optionValue="value"
@@ -284,6 +289,7 @@ onMounted(() => {
           <DatePicker
             v-bind="dateAttrs"
             v-model="date"
+            :invalid="Boolean(errors.date)"
             showIcon
             fluid
             iconDisplay="input"
@@ -301,6 +307,7 @@ onMounted(() => {
             class="w-full"
             v-bind="scheduleDateTimeAttrs"
             v-model="scheduleDateTime"
+            :invalid="Boolean(errors.scheduleDateTime)"
             :options="timesForTurn"
             optionLabel="time"
             optionGroupLabel="turn"
@@ -321,6 +328,7 @@ onMounted(() => {
             class="w-full"
             v-bind="paymentMethodIdAttrs"
             v-model="paymentMethodId"
+            :invalid="Boolean(errors.paymentMethodId)"
             :options="paymentMethodsOptions"
             optionLabel="name"
             optionValue="value"
@@ -340,6 +348,7 @@ onMounted(() => {
               id="description"
               v-model="comment"
               v-bind="commentAttrs"
+              :invalid="Boolean(errors.comment)"
               rows="5"
               class="resize-none w-full"
             />

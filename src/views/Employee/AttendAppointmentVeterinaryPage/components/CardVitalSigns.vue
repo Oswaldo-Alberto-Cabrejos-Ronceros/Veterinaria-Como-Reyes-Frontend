@@ -10,6 +10,15 @@ import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/yup'
 import Button from 'primevue/button'
 
+
+const emit = defineEmits(['set-weight'])
+
+
+defineProps<{
+  loading:boolean,
+  desactive:boolean
+}>()
+
 //form
 const { handleSubmit, errors, defineField } = useForm<FormValues>({
   validationSchema: toTypedSchema(schema),
@@ -18,10 +27,12 @@ const { handleSubmit, errors, defineField } = useForm<FormValues>({
   },
 })
 
+
+
 const [weight, weightAttrs] = defineField('weight')
 
 const onSubmit = handleSubmit((values) => {
-  console.log(values)
+  emit('set-weight',values)
 })
 </script>
 
@@ -54,12 +65,20 @@ const onSubmit = handleSubmit((values) => {
             <InputGroupAddon class="text-neutral-400">
               <i class="pi pi-info"></i>
             </InputGroupAddon>
-            <InputNumber v-model="weight" v-bind="weightAttrs" class="w-full" placeholder="40" />
+              <InputNumber
+                v-model="weight"
+                v-bind="weightAttrs"
+                :invalid="Boolean(errors.weight)"
+                class="w-full"
+                placeholder="40"
+              />
                    <InputGroupAddon>
             <Button
               icon="pi pi-save"
               severity="secondary"
               variant="text" type="submit"
+              :loading="loading"
+              :disabled="desactive"
             />
           </InputGroupAddon>
           </InputGroup>

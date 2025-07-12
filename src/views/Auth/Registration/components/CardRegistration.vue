@@ -99,7 +99,7 @@ const imageLogo = computed(() => (storeTheme.isDark ? LogoWhite : LogoRose))
           <InputGroupAddon class="text-neutral-400">
             <i class="pi pi-id-card"></i>
           </InputGroupAddon>
-          <InputText v-bind="dniAttrs" v-model="dni" type="text" placeholder="Ej: 74512351" />
+          <InputText v-bind="dniAttrs" v-model="dni" :invalid="Boolean(errors.dni)" type="text" placeholder="Ej: 74512351" />
         </InputGroup>
 
         <Message v-if="errors.dni" severity="error" size="small" variant="simple">
@@ -117,6 +117,7 @@ const imageLogo = computed(() => (storeTheme.isDark ? LogoWhite : LogoRose))
               <InputText
                 v-bind="namesAttrs"
                 v-model="names"
+                :invalid="Boolean(errors.names)"
                 type="text"
                 placeholder="Escribe tus nombres"
               />
@@ -138,6 +139,7 @@ const imageLogo = computed(() => (storeTheme.isDark ? LogoWhite : LogoRose))
               <InputText
                 v-bind="lastnamesAttrs"
                 v-model="lastnames"
+                :invalid="Boolean(errors.lastnames)"
                 type="text"
                 placeholder="Escribe tus apellidos"
               />
@@ -159,6 +161,7 @@ const imageLogo = computed(() => (storeTheme.isDark ? LogoWhite : LogoRose))
           <InputText
             v-bind="emailAttrs"
             v-model="email"
+            :invalid="Boolean(errors.email)"
             type="text"
             placeholder="Ej: example@gmail.com"
           />
@@ -180,6 +183,7 @@ const imageLogo = computed(() => (storeTheme.isDark ? LogoWhite : LogoRose))
               <InputText
                 v-bind="phoneAttrs"
                 v-model="phone"
+                :invalid="Boolean(errors.phone)"
                 type="tel"
                 placeholder="Ej: 945215562"
               />
@@ -198,6 +202,7 @@ const imageLogo = computed(() => (storeTheme.isDark ? LogoWhite : LogoRose))
               class="my-1"
               v-bind="birthdateAttrs"
               v-model="birthdate"
+              :invalid="Boolean(errors.birthdate)"
               showIcon
               fluid
               iconDisplay="input"
@@ -217,6 +222,7 @@ const imageLogo = computed(() => (storeTheme.isDark ? LogoWhite : LogoRose))
           <InputText
             v-bind="addressAttrs"
             v-model="address"
+            :invalid="Boolean(errors.address)"
             type="text"
             placeholder="Ej: Av. Ejemplo N°"
           />
@@ -232,6 +238,7 @@ const imageLogo = computed(() => (storeTheme.isDark ? LogoWhite : LogoRose))
           v-bind="headquarterAttrs"
           v-model="headquarter"
           :options="headquartersOptions"
+          :invalid="Boolean(errors.headquarter)"
           optionLabel="name"
           optionValue="value"
           placeholder="Selecciona sede"
@@ -252,6 +259,7 @@ const imageLogo = computed(() => (storeTheme.isDark ? LogoWhite : LogoRose))
               <Password
                 v-bind="passwordAttrs"
                 v-model="password"
+                :invalid="Boolean(errors.password)"
                 toggleMask
                 placeholder="Mínimo 6 caracteres"
               />
@@ -271,6 +279,7 @@ const imageLogo = computed(() => (storeTheme.isDark ? LogoWhite : LogoRose))
               <Password
                 v-bind="confirmPasswordAttrs"
                 v-model="confirmPassword"
+                :invalid="Boolean(errors.confirmPassword)"
                 :feedback="false"
                 toggleMask
                 placeholder="Repite tu contraseña"
@@ -285,7 +294,7 @@ const imageLogo = computed(() => (storeTheme.isDark ? LogoWhite : LogoRose))
 
         <!-- terms -->
         <div class="col-span-2 flex items-center gap-2">
-          <Checkbox v-bind="termAttrs" v-model="term" binary inputId="term" />
+          <Checkbox v-bind="termAttrs" v-model="term" :invalid="Boolean(errors.term)" binary inputId="term" />
           <label for="term">Acepto los términos y condiciones</label>
         </div>
         <Message v-if="errors.term" severity="error" size="small" variant="simple">

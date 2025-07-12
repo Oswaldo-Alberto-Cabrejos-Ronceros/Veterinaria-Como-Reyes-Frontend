@@ -13,6 +13,8 @@ import type { PageResponse } from '@/services/models/PageResponse'
 import type { MyInfoClient as MyInfoClientView } from '@/models/MyInfoClient'
 import type { FormValues as SchemaEditSelfClient } from '@/validation-schemas-forms/schema-edit-self-client'
 import type { ClientBasicInfoByDni as ClientBasicInfoByDniView } from '@/models/ClientBasicInfoByDni'
+import type { ClientList as ClientListView } from '@/models/ClientList'
+import type { ClientInfoPanel } from '@/models/ClientInfoPanel'
 
 export function useClient() {
   //from useAsyncHandle
@@ -67,11 +69,13 @@ export function useClient() {
     headquarterId?: number,
     page?: number,
     size?: number,
-  ): Promise<PageResponse<ClientView>> => {
+  ): Promise<PageResponse<ClientListView>> => {
     const pageClient = await runUseCase('searchClient', () =>
       clientUsesCases.searchClient.execute(dni, name, lastName, status, headquarterId, page, size),
     )
-    const clientsView = pageClient.content.map((client) => ClientAdapter.toClientView(client))
+    const clientsView = pageClient.content.map((client) =>
+      ClientAdapter.fromClientListToClientListView(client),
+    )
     return {
       ...pageClient,
       content: clientsView,
@@ -113,6 +117,39 @@ export function useClient() {
     )
     return ClientAdapter.fromClientBasicInfoByDniToClientBasicInfoByDniView(clientBasicInfoByDni)
   }
+
+const getClientInfoPanelAdmin = async ():Promise<ClientInfoPanel[]> => {
+  const clients =  await runUseCase('getClientInfoPanelAdmin', () =>
+    clientUsesCases.getClientInfoPanelAdmin.execute()
+  )
+  return clients.map((client)=>ClientAdapter.fromClientInfoPanelAdminToView(client))
+}
+
+const getClientStatsPanel = async () => {
+  return await runUseCase('getClientStatsPanel', () =>
+    clientUsesCases.getClientStatsPanel.execute()
+  )
+}
+
+const getClientInfoPanelByHeadquarter = async (headquarterId: number):Promise<ClientInfoPanel[]> => {
+   const clients =  await runUseCase('getClientInfoPanelByHeadquarter', () =>
+    clientUsesCases.getClientInfoPanelByHeadquarter.execute(headquarterId)
+
+  )
+   return clients.map((client)=>ClientAdapter.fromClientInfoPanelAdminToView(client))
+}
+
+const getClientStatsByHeadquarter = async (headquarterId: number) => {
+  return await runUseCase('getClientStatsByHeadquarter', () =>
+    clientUsesCases.getClientStatsByHeadquarter.execute(headquarterId)
+  )
+}
+
+const getClientStatsToday = async () => {
+  return await runUseCase('getClientStatsToday', () =>
+    clientUsesCases.getClientStatsToday.execute(),
+  )
+} //for recepcionist
   return {
     loading,
     error,
@@ -127,5 +164,10 @@ export function useClient() {
     updateClient,
     updateClientAsClient,
     getClientByDni,
+    getClientInfoPanelAdmin,
+    getClientStatsPanel,
+    getClientInfoPanelByHeadquarter,
+    getClientStatsByHeadquarter,
+    getClientStatsToday
   }
 }

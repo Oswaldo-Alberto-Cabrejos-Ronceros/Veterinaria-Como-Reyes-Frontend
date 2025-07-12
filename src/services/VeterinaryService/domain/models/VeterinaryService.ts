@@ -5,6 +5,7 @@ export interface VeterinaryService {
   serviceId: number
   name: string
   description: string
+  status: boolean
   price: number
   duration: number
   specie: Specie
@@ -22,4 +23,25 @@ export interface VeterinaryServiceRequest {
   category: {
     categoryId: number
   }
+}
+
+
+export interface VeterinaryServiceList {
+  serviceId: number
+  name: string
+  specie: string
+  category: string
+  price:number,
+  duration:number,
+  status: string
+}
+
+
+
+export interface ServicesInfoTopPanelAdmin {
+  serviceId: number
+  serviceName: string
+  categoryName: string
+  imageServiceUrl: string
+  totalCares: number
 }

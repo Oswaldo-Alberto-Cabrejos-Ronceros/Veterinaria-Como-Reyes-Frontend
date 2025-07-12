@@ -1,6 +1,6 @@
 import type { SpecieService } from '../domain/services/SpecieService'
 import type { PageResponse } from '@/services/models/PageResponse'
-import type { Specie } from '../domain/models/Specie'
+import type { SpecieList } from '../domain/models/Specie'
 
 export class SearchSpecies {
   constructor(private readonly service: SpecieService) {}
@@ -10,7 +10,7 @@ export class SearchSpecies {
     size: number,
     name?: string,
     status?: boolean
-  ): Promise<PageResponse<Specie>> {
+  ): Promise<PageResponse<SpecieList>> {
     return this.service.searchSpecies(page, size, name, status)
   }
 }

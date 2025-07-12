@@ -44,6 +44,7 @@ const { handleSubmit, errors, defineField, resetForm } = useForm<FormValues>({
     ownerName: '',
     petId: undefined,
     employeeId: undefined,
+    paymentMethodId: undefined,
   },
 })
 
@@ -56,10 +57,14 @@ const [ownerId, ownerIdAttrs] = defineField('ownerId')
 const [ownerName, ownerNameAttrs] = defineField('ownerName')
 const [petId, petIdAttrs] = defineField('petId')
 const [employeeId, employeeIdAttrs] = defineField('employeeId')
+const [paymentMethodId, paymentMethodIdAttrs] = defineField('paymentMethodId')
 
 //for dynamicDialog
 const dialogRef = inject('dialogRef') as Ref<{
   close: (data?: FormValues) => void
+  data: {
+    paymentMethodsOptions?: OptionSelect[]
+  }
 }>
 
 const onSubmit = handleSubmit((values) => {
@@ -68,6 +73,7 @@ const onSubmit = handleSubmit((values) => {
 })
 
 //refs
+const paymentMethodsOptions = ref<OptionSelect[]>([])
 const petsOptions = ref<OptionSelect[]>([])
 const petsClient = ref<PetByClient[]>([])
 const serviceHeadquarterOptions = ref<OptionSelect[]>([])
@@ -99,7 +105,7 @@ const searchClient = async () => {
       petsOptions.value = []
       petsClient.value = []
     }
-    serviceHeadquarterOptions.value=[]
+    serviceHeadquarterOptions.value = []
     employeesOptions.value = []
   }
 }
@@ -138,7 +144,6 @@ const loadHeadquartersService = async () => {
         await getServicesByHeadquarterAndSpecies(headquarterId.value, petClient.specieId),
       )
     }
-
   }
 }
 //for obtain options from pet
@@ -167,23 +172,27 @@ const employeeToOptionsSelect = (items: EmployeeBasicInfo[]): OptionSelect[] => 
 
 //for change pet
 
-const changePet=()=>{
+const changePet = () => {
   loadHeadquartersService()
-  headquarterVetServiceId.value=0
+  headquarterVetServiceId.value = 0
   loadAvaiblesEmployees()
-  employeeId.value=0
-  employeesOptions.value=[]
+  employeeId.value = 0
+  employeesOptions.value = []
 }
 
-const changeSevice=()=>{
+const changeSevice = () => {
   loadAvaiblesEmployees()
-  employeeId.value=0
+  employeeId.value = 0
 }
 
 onMounted(async () => {
   const employeeId = getEntityId()
   if (employeeId) {
     headquarterId.value = (await getEmployeeById(employeeId)).headquarter.headquarterId
+  }
+  if (dialogRef.value.data) {
+    const paymentMethodsOptionsGet = dialogRef.value.data.paymentMethodsOptions
+    if (paymentMethodsOptionsGet) paymentMethodsOptions.value = paymentMethodsOptionsGet
   }
 })
 </script>
@@ -201,6 +210,7 @@ onMounted(async () => {
           <InputText
             v-model="ownerDni"
             v-bind="ownerDniAttrs"
+            :invalid="Boolean(errors.ownerDni)"
             class="w-full"
             placeholder="Busque dueño por DNI"
           />
@@ -228,6 +238,7 @@ onMounted(async () => {
           <InputText
             v-model="ownerName"
             v-bind="ownerNameAttrs"
+            :invalid="Boolean(errors.ownerName)"
             class="w-full"
             placeholder="Nombre del dueño"
             disabled
@@ -253,6 +264,7 @@ onMounted(async () => {
           v-bind="petIdAttrs"
           v-model="petId"
           :options="petsOptions"
+          :invalid="Boolean(errors.petId)"
           optionLabel="name"
           optionValue="value"
           placeholder="Selecciona Mascota"
@@ -271,6 +283,7 @@ onMounted(async () => {
           v-bind="headquarterVetServiceIdAttrs"
           v-model="headquarterVetServiceId"
           :options="serviceHeadquarterOptions"
+          :invalid="Boolean(errors.headquarterVetServiceId)"
           optionLabel="name"
           optionValue="value"
           placeholder="Selecciona Servicio"
@@ -293,6 +306,7 @@ onMounted(async () => {
           v-bind="employeeIdAttrs"
           v-model="employeeId"
           :options="employeesOptions"
+          :invalid="Boolean(errors.employeeId)"
           optionLabel="name"
           optionValue="value"
           placeholder="Selecciona Empleado"
@@ -302,6 +316,25 @@ onMounted(async () => {
           {{ errors.employeeId }}
         </Message>
       </div>
+
+      <div>
+        <label class="block mb-2">Método de pago</label>
+        <Select
+          class="w-full"
+          v-bind="paymentMethodIdAttrs"
+          v-model="paymentMethodId"
+          :invalid="Boolean(errors.paymentMethodId)"
+          :options="paymentMethodsOptions"
+          optionLabel="name"
+          optionValue="value"
+          placeholder="Selecciona Método"
+        />
+
+        <Message v-if="errors.paymentMethodId" severity="error" size="small" variant="simple">
+          {{ errors.paymentMethodId }}
+        </Message>
+      </div>
+
       <div class="button-form-container-grid-end">
         <Button
           class="w-full max-w-md"

@@ -16,7 +16,7 @@ import CategoryManagementPage from '@/views/Employee/CategoryManagementPage/Cate
 import RolePermissionManagementPage from '@/views/Employee/RolePermissionManagementPage/RolePermissionManagementPage.vue'
 import SpecieManagementPage from '@/views/Employee/SpecieManagementPage/SpecieManagementPage.vue'
 import BreedManagementPage from '@/views/Employee/BreedManagementPage/BreedManagementPage.vue'
-import ServicesHeadquarterManagementPage from '@/views/Employee/ServicesHeadquarterManagementPage/ServicesHeadquarterManagementPage.vue'
+//import ServicesHeadquarterManagementPage from '@/views/Employee/ServicesHeadquarterManagementPage/ServicesHeadquarterManagementPage.vue'
 import PaymentManagementPage from '@/views/Employee/PaymentManagementPage/PaymentManagementPage.vue'
 import AppointmentManagementPage from '@/views/Employee/AppointmentManagementPage/AppointmentManagementPage.vue'
 import CareManagementPage from '@/views/Employee/CareManagementPage/CareManagementPage.vue'
@@ -26,6 +26,8 @@ import HomePageVeterinary from '@/views/Employee/HomePageVeterinary/HomePageVete
 import AttendAppointmentPageRecepcionist from '@/views/Employee/AttendAppointmentPageRecepcionist/AttendAppointmentPageRecepcionist.vue'
 import AttendAppointmentVeterinaryPage from '@/views/Employee/AttendAppointmentVeterinaryPage/AttendAppointmentVeterinaryPage.vue'
 import CareUnitaryPage from '@/views/Employee/CareUnitaryPage/CareUnitaryPage.vue'
+import HeadquarterVetServiceManagement from '@/views/Employee/HeadquarterVetServiceManagement/HeadquarterVetServiceManagement.vue'
+import AppointmentsVeterinaryPage from '@/views/Employee/AppointmentsVeterinaryPage/AppointmentsVeterinaryPage.vue'
 //client
 import MyAppointmentsClientPage from '@/views/Client/MyAppointmentsClientPage/MyAppointmentsClientPage.vue'
 import MyPetsPage from '@/views/Client/MyPetsPage/MyPetsPage.vue'
@@ -201,9 +203,10 @@ const router = createRouter({
             {
               path: 'services-headquarters-management',
               name: 'administrator-services-headquarters-management',
-              component: ServicesHeadquarterManagementPage,
+              component: HeadquarterVetServiceManagement,
               meta: { requiresAuth: true, roles: ['Administrador'] },
             },
+
             {
               path: 'payment-management',
               name: 'administrator-payment-management',
@@ -279,6 +282,13 @@ const router = createRouter({
               component: AppointmentManagementPage,
               meta: { requiresAuth: true, roles: ['Encargado Sede'] },
             },
+                        {
+              path: 'pets-management/pet/:petId',
+              name: 'manager-pets-unitary-pet',
+              component: PetUnitaryClientPage,
+              props: true,
+              meta: { requiresAuth: true, roles: ['Encargado Sede'] },
+            },
             {
               path: 'appoinment-management/attend/:appointmentId',
               name: 'manager-appointment-management-attend',
@@ -297,6 +307,47 @@ const router = createRouter({
               name: 'manager-care-management-unitary',
               component: CareUnitaryPage,
               props: true,
+              meta: { requiresAuth: true, roles: ['Encargado Sede'] },
+            },
+            {
+              path: 'services-management',
+              name: 'manager-services-management',
+              component: ServiceManagementPage,
+              meta: { requiresAuth: true, roles: ['Encargado Sede'] },
+            },
+                        {
+              path: 'category-management',
+              name: 'manager-category-management',
+              component: CategoryManagementPage,
+              meta: { requiresAuth: true, roles: ['Encargado Sede'] },
+            },            {
+              path: 'services-headquarters-management',
+              name: 'manager-services-headquarters-management',
+              component: HeadquarterVetServiceManagement,
+              meta: { requiresAuth: true, roles: ['Encargado Sede'] },
+            },
+                        {
+              path: 'payment-method-management',
+              name: 'manager-payment-method-management',
+              component: PaymentMethodManagementPage,
+              meta: { requiresAuth: true, roles: ['Encargado Sede'] },
+            },
+                        {
+              path: 'species-management',
+              name: 'manager-species-management',
+              component: SpecieManagementPage,
+              meta: { requiresAuth: true, roles: ['Encargado Sede'] },
+            },
+            {
+              path: 'breeds-management',
+              name: 'manager-breeds-management',
+              component: BreedManagementPage,
+              meta: { requiresAuth: true, roles: ['Encargado Sede'] },
+            },
+                        {
+              path: 'payment-management',
+              name: 'manager-payment-management',
+              component: PaymentManagementPage,
               meta: { requiresAuth: true, roles: ['Encargado Sede'] },
             },
           ],
@@ -365,6 +416,12 @@ const router = createRouter({
               props: true,
               meta: { requiresAuth: true, roles: ['Recepcionista'] },
             },
+                        {
+              path: 'client-management',
+              name: 'receptionist-client-management',
+              component: ClientManagementPage,
+              meta: { requiresAuth: true, roles: ['Recepcionista'] },
+            },
           ],
         },
         {
@@ -390,9 +447,24 @@ const router = createRouter({
               component: PetsManagementPage,
               meta: { requiresAuth: true, roles: ['Veterinario'] },
             },
+                                    {
+              path: 'pets-management/pet/:petId',
+              name: 'veterinary-pets-unitary-pet',
+              component: PetUnitaryClientPage,
+              props: true,
+              meta: { requiresAuth: true, roles: ['Veterinario'] },
+            },
             {
-              path: 'appoinments/attend/:appointmentId',
+              path:'appointments',
+              name:'appointments',
+              component:AppointmentsVeterinaryPage,
+                            props: true,
+              meta: { requiresAuth: true, roles: ['Veterinario'] },
+            },
+            {
+              path: 'appointments/attend/:appointmentId',
               name: 'veterinary-appointments-attend',
+              props:true,
               component: AttendAppointmentVeterinaryPage,
               meta: { requiresAuth: true, roles: ['Veterinario'] },
             },

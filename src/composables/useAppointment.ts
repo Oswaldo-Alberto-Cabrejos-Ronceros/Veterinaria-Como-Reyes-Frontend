@@ -2,7 +2,7 @@ import { useAsyncHandler } from './useAsyncHandler'
 import type { Appointment as AppointmentView } from '@/models/Appointment'
 import { appointmentUsesCases } from '@/dependency-injection/appointment.container'
 import { AppointmentAdapter } from '@/adapters/AppointmentAdapter'
-import type { AppointmentRequest } from '@/services/Appointment/domain/models/Appointment'
+import type { AppointmentRequest, AppointmentStatsForReceptionist } from '@/services/Appointment/domain/models/Appointment'
 import type { TimesForTurn as TimesForTurnView } from '@/models/TimesForTurn'
 import { TimesForTurnAdapter } from '@/adapters/TimesForTurnAdapter'
 import type { BasicServiceForAppointment as BasicServiceForAppointmentView } from '@/models/BasicServiceForAppointment'
@@ -12,6 +12,13 @@ import type { AppointmentRequest as AppointmentRequestView } from '@/models/Appo
 import type { InfoBasicAppointmentClient } from '@/models/InfoBasicAppointmentClient'
 import type { PageResponse } from '@/services/models/PageResponse'
 import type { SearchAppointmentParams } from '@/services/Appointment/domain/models/SearchAppointmentParams'
+import type { AppointmentList as AppointmentListView } from '@/models/AppointmentList'
+import type { InfoAppointmentForPanel as InfoAppointmentForPanelView } from '@/models/InfoAppointmentForPanel'
+import type { PetInfoForAppointment as PetInfoForAppointmentView } from '@/models/PetInfoForAppointment'
+import type { ClientInfoForAppointment as ClientInfoForAppointmentView } from '@/models/ClientInfoForAppointment'
+import type { PaymentInfoForAppointment as PaymentInfoForAppointmentView } from '@/models/PaymentInfoForAppointment'
+import type { AppointmentInfoPanelAdmin as AppointmentInfoPanelAdminView } from '@/models/AppointmentInfoPanelAdmin'
+import type { CareAndAppointmentPanelEmployee as CareAndAppointmentPanelEmployeeView } from '@/models/CareAndAppointmentPanelEmployee'
 
 export function useAppointment() {
   //get from useAsyncHandle
@@ -105,14 +112,14 @@ export function useAppointment() {
   }
   const searchAppointments = async (
     params: SearchAppointmentParams,
-  ): Promise<PageResponse<AppointmentView>> => {
+  ): Promise<PageResponse<AppointmentListView>> => {
     const page = await runUseCase('searchAppointments', () =>
       appointmentUsesCases.searchAppointment.execute(params),
     )
     return {
       ...page,
       content: page.content.map((appointment) =>
-        AppointmentAdapter.toAppointmentView(appointment),
+        AppointmentAdapter.fromAppointementListToAppointmentListView(appointment),
       ),
     }
   }
@@ -123,6 +130,97 @@ export function useAppointment() {
     )
     return AppointmentAdapter.toAppointmentView(appointment)
   }
+
+  const getAppointmentPanelInfo = async (
+    appointmentId: number,
+  ): Promise<InfoAppointmentForPanelView> => {
+    const infoAppointment = await runUseCase('getAppointmentPanelInfo', () =>
+      appointmentUsesCases.getAppointmentPanelInfo.execute(appointmentId),
+    )
+    return AppointmentAdapter.toInfoAppointmentForPanel(infoAppointment)
+  }
+
+  const getPetInfoForAppointment = async (
+    appointmentId: number,
+  ): Promise<PetInfoForAppointmentView> => {
+    const petInfoAppointment = await runUseCase('getPetInfoForAppointment', () =>
+      appointmentUsesCases.getAnimalInfoForAppointment.execute(appointmentId),
+    )
+    return AppointmentAdapter.toPetInfoAppointmentView(petInfoAppointment)
+  }
+
+  const getClientInfoForAppointment = async (
+    appoinmentId: number,
+  ): Promise<ClientInfoForAppointmentView> => {
+    const clientInfoAppointment = await runUseCase('getClientInfoForAppointment', () =>
+      appointmentUsesCases.getClientInfoForAppointment.execute(appoinmentId),
+    )
+    return AppointmentAdapter.toClientInfoForAppointmentView(clientInfoAppointment)
+  }
+
+  const getPaymentInfoForAppointment = async (
+    appoinmentId: number,
+  ): Promise<PaymentInfoForAppointmentView> => {
+    const paymentInfoAppoinment = await runUseCase('getPaymentInfoForAppointment', () =>
+      appointmentUsesCases.getPaymentInfoForAppointment.execute(appoinmentId),
+    )
+    return AppointmentAdapter.toPaymentInfoForAppointmentView(paymentInfoAppoinment)
+  }
+
+  const getTodayAppointmentStats = async () => {
+    const todayStats = await runUseCase('getTodayAppointmentStats', () =>
+      appointmentUsesCases.getTodayAppointmentStats.execute(),
+    )
+    return todayStats
+  }
+
+  const getTodayAppointmentStatsByHeadquarter = async (headquarterId: number) => {
+    const stats = await runUseCase('getTodayAppointmentStatsByHeadquarter', () =>
+      appointmentUsesCases.getTodayAppointmentStatsByHeadquarter.execute(headquarterId),
+    )
+    return stats
+  }
+
+  const getAppointmentsByDateForPanelAdmin = async (): Promise<AppointmentInfoPanelAdminView[]> => {
+    const appointments = await runUseCase('getAppointmentsByDateForPanelAdmin', () =>
+      appointmentUsesCases.getAppointmentsByDateForPanelAdmin.execute(),
+    )
+    return appointments.map((ap) => AppointmentAdapter.toAppointmentInfoPanelAdminView(ap))
+  }
+
+  const getAppointmentsByDateForPanelManager = async (
+    headquarterId: number,
+  ): Promise<AppointmentInfoPanelAdminView[]> => {
+    const appointments = await runUseCase('getAppointmentsByDateForPanelManager', () =>
+      appointmentUsesCases.getAppointmentsByDateForPanelManager.execute(headquarterId),
+    )
+    return appointments.map((ap) => AppointmentAdapter.toAppointmentInfoPanelAdminView(ap))
+  }
+
+  const getCareAndAppointmentsForEmployee = async (
+    employeeId: number,
+  ): Promise<CareAndAppointmentPanelEmployeeView[]> => {
+    const appoinments = await runUseCase('getCareAndAppointmentsForEmployee', () =>
+      appointmentUsesCases.getCareAndAppointmentsForEmployeeUseCase.execute(employeeId),
+    )
+    return appoinments.map((ap) => AppointmentAdapter.toCareAndAppointmentPanelEmployeeView(ap))
+  }
+
+  const getStatsForReceptionist = async (headquarterId:number): Promise<AppointmentStatsForReceptionist> => {
+  return await runUseCase('getStatsForReceptionist', () =>
+    appointmentUsesCases.getStatsForReceptionist.execute(headquarterId),
+  )
+}
+
+const getAppointmentsByHeadquarterId = async (
+  headquarterId: number,
+): Promise<CareAndAppointmentPanelEmployeeView[]> => {
+  const appointments = await runUseCase('getAppointmentsByHeadquarterId', () =>
+    appointmentUsesCases.getAppointmentsByHeadquarterId.execute(headquarterId),
+  )
+  return appointments.map(ap => AppointmentAdapter.toCareAndAppointmentPanelEmployeeView(ap))
+}
+
   return {
     loading,
     error,
@@ -137,6 +235,16 @@ export function useAppointment() {
     getAppointmentsForClient,
     getAppointmentById,
     searchAppointments,
-
+    getAppointmentPanelInfo,
+    getPetInfoForAppointment,
+    getClientInfoForAppointment,
+    getPaymentInfoForAppointment,
+    getTodayAppointmentStats,
+    getTodayAppointmentStatsByHeadquarter,
+    getAppointmentsByDateForPanelManager,
+    getAppointmentsByDateForPanelAdmin,
+    getCareAndAppointmentsForEmployee,
+    getStatsForReceptionist,
+    getAppointmentsByHeadquarterId
   }
 }

@@ -16,5 +16,9 @@ export const schema = yup.object({
     .number()
     .required('El empleado es obligatorio')
     .moreThan(0, 'El empleado es obligatorio'),
+      paymentMethodId: yup
+    .number()
+    .required('El metodo de pago es obligatorio')
+    .moreThan(0, 'El metodo de pago es obligatorio'),
 })
 export type FormValues = yup.InferType<typeof schema>

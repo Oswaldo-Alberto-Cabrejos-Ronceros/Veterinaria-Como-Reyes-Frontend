@@ -6,6 +6,7 @@ import { UpdateHeadquarter } from '@/services/Headquarter/aplication/UpdateHeadq
 import { HeadquarterServiceImpl } from '@/services/Headquarter/infrastructure/HeadquarterServiceImpl'
 import { ActivateHeadquarter } from '@/services/Headquarter/aplication/ActivateHeadquarter'
 import { AxiosHttpClient } from '@/services/Http/infrastructure/AxiosHttpClient'
+import { SearchHeadquarters } from '@/services/Headquarter/aplication/SearchHeadquarters'
 
 //instantiete AxiosHttpCliente
 const axiosHttpClient = new AxiosHttpClient()
@@ -20,6 +21,7 @@ export const headquarterUsesCases = {
   deleteHeadquarter: new DeleteHeadquarter(headquarterService),
   getAllHeadquarters: new GetAllHeadquarters(headquarterService),
   getHeadquarterById: new GetHeadquarterById(headquarterService),
+  searchHeadquarters: new SearchHeadquarters(headquarterService),
   updateHeadquarter: new UpdateHeadquarter(headquarterService),
   activateHeadquarter: new ActivateHeadquarter(headquarterService),
 }

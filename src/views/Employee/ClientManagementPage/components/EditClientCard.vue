@@ -11,8 +11,9 @@ import Select from 'primevue/select'
 import Button from 'primevue/button'
 import DatePicker from 'primevue/datepicker'
 import type { Ref } from 'vue'
-import { inject, onMounted } from 'vue'
+import { inject, onMounted,ref } from 'vue'
 import { useReniec } from '@/composables/useReniec'
+import type { OptionSelect } from '@/models/OptionSelect'
 
 //methods
 
@@ -84,22 +85,18 @@ const textFields: {
 const dialogRef = inject('dialogRef') as Ref<{
   close: (data?: FormValues) => void
   data: {
-    clientData: FormValues
+    clientData: FormValues,
+    headquartersOptions?: OptionSelect[]
   }
 }>
+
+const headquartersOptions = ref<OptionSelect[]>([])
 
 //for submit
 const onSubmit = handleSubmit((values) => {
   console.log(values)
   dialogRef.value.close(values as FormValues)
 })
-
-//headquarterIds
-const headquarkers = [
-  { name: 'Ica', value: 1 },
-  { name: 'Parcona', value: 2 },
-  { name: 'Tinguiña', value: 3 },
-]
 
 //for dialog
 
@@ -111,6 +108,10 @@ onMounted(() => {
   headquarterId.value = params.clientData.headquarterId
   dni.value = params.clientData.dni
   if (params.clientData.birthdate instanceof Date) birthdate.value = params.clientData.birthdate
+const headquartersOptionsGet = dialogRef.value.data.headquartersOptions
+    if (headquartersOptionsGet) {
+      headquartersOptions.value = headquartersOptionsGet
+    }
 })
 
 //for search
@@ -142,7 +143,13 @@ const searchInfoReniec = async () => {
           <InputGroupAddon class="text-neutral-400">
             <i class="pi pi-id-card"></i>
           </InputGroupAddon>
-          <InputText v-bind="dniAttrs" v-model="dni" type="text" placeholder="Ej: 74512351" />
+          <InputText
+            v-bind="dniAttrs"
+            v-model="dni"
+            :invalid="Boolean(errors.dni)"
+            type="text"
+            placeholder="Ej: 74512351"
+          />
           <InputGroupAddon>
             <Button
               icon="pi pi-search"
@@ -166,6 +173,7 @@ const searchInfoReniec = async () => {
           <InputText
             v-model="fieldMap[element.key][0].value"
             v-bind="fieldMap[element.key][1]"
+            :invalid="Boolean(errors[element.key])"
             class="w-full"
             :placeholder="element.placeholder"
           />
@@ -179,6 +187,7 @@ const searchInfoReniec = async () => {
         <DatePicker
           v-bind="birthdateAttrs"
           v-model="birthdate"
+          :invalid="Boolean(errors.birthdate)"
           showIcon
           fluid
           iconDisplay="input"
@@ -194,7 +203,8 @@ const searchInfoReniec = async () => {
           class="w-full"
           v-bind="headquarterIdAttrs"
           v-model="headquarterId"
-          :options="headquarkers"
+          :options="headquartersOptions"
+          :invalid="Boolean(errors.headquarterId)"
           optionLabel="name"
           optionValue="value"
           placeholder="Selecciona Sede"

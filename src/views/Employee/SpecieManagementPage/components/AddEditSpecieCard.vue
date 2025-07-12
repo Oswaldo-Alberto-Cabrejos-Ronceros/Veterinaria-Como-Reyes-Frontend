@@ -67,7 +67,7 @@ onMounted(()=>{
             <InputGroupAddon class="text-neutral-400">
               <i class="pi pi-info"></i>
             </InputGroupAddon>
-            <InputText v-model="name" v-bind="nameAttrs" class="w-full" placeholder="Nombre de la especie" />
+            <InputText v-model="name" v-bind="nameAttrs" :invalid="Boolean(errors.name)" class="w-full" placeholder="Nombre de la especie" />
           </InputGroup>
           <Message v-if="errors.name" severity="error" size="small" variant="simple">
             {{ errors.name }}
@@ -81,7 +81,7 @@ onMounted(()=>{
             <InputGroupAddon class="text-neutral-400">
               <i class="pi pi-image"></i>
             </InputGroupAddon>
-            <InputText v-model="imagePath" v-bind="imagePathAttrs" class="w-full" placeholder="Imagen" />
+            <InputText v-model="imagePath" v-bind="imagePathAttrs" :invalid="Boolean(errors.imagePath)" class="w-full" placeholder="Imagen" />
           </InputGroup>
           <Message v-if="errors.imagePath" severity="error" size="small" variant="simple">
             {{ errors.imagePath }}

@@ -12,6 +12,11 @@ import { useDialog, useToast } from 'primevue'
 import AddCareFromAppointment from '@/components/AddCareFromAppointment.vue'
 import type { FormValues } from '@/validation-schemas-forms/schema-add-care-from-appointment'
 import CardBilling from '@/components/CardBilling.vue'
+import type { InfoAppointmentForPanel } from '@/models/InfoAppointmentForPanel'
+import type { PetInfoForAppointment } from '@/models/PetInfoForAppointment'
+import type { ClientInfoForAppointment } from '@/models/ClientInfoForAppointment'
+import type { PaymentInfoForAppointment } from '@/models/PaymentInfoForAppointment'
+import { usePayment } from '@/composables/usePayment'
 
 const props = defineProps<{
   appointmentId: string
@@ -19,19 +24,45 @@ const props = defineProps<{
 
 //methods
 
-const { getAppointmentById } = useAppointment()
+const { getAppointmentPanelInfo,getPetInfoForAppointment,getClientInfoForAppointment,getPaymentInfoForAppointment,getAppointmentById } = useAppointment()
 const { createCareFromAppointment } = useCare()
+
+const {setPaymentStatusComplete}=usePayment()
+
 
 //ref
 const appointmentBasicInfo = ref<Appointment | null>(null)
+
+const appointmentInfo = ref<InfoAppointmentForPanel|null>(null)
+const petInfo = ref<PetInfoForAppointment|null>(null)
+const ownerInfo = ref<ClientInfoForAppointment|null>(null)
+const paymentInfo = ref<PaymentInfoForAppointment|null>(null)
 
 onMounted(async () => {
   console.log(props.appointmentId)
   loadInfo()
 })
 
+
+const handleCompletePayment = async()=>{
+  if(paymentInfo.value){
+    await setPaymentStatusComplete(paymentInfo.value.paymentId)
+    showToast('Pago completado')
+    loadInfo()
+  }
+}
+
+
 const loadInfo = async () => {
   appointmentBasicInfo.value = await getAppointmentById(Number(props.appointmentId))
+  if(appointmentBasicInfo.value){
+    const appoinmentId = appointmentBasicInfo.value.id
+   //r const status = appointmentBasicInfo.value.statusAppointment
+    appointmentInfo.value=await getAppointmentPanelInfo(appoinmentId)
+  petInfo.value= await getPetInfoForAppointment(appoinmentId)
+  ownerInfo.value= await getClientInfoForAppointment(appoinmentId)
+  paymentInfo.value = await getPaymentInfoForAppointment(appoinmentId)
+  }
 }
 
 //for dialog
@@ -51,6 +82,7 @@ const openCreateCareConfirmArrive = () => {
     onClose: async (options) => {
       const data = options?.data as FormValues
       if (data) {
+        console.log(data)
         const care = await createCareFromAppointment(data)
         loadInfo()
         showToast(`Atención creada correctamente: ${care.dateTime}`)
@@ -59,55 +91,7 @@ const openCreateCareConfirmArrive = () => {
   })
 }
 
-const appointmentInfo: {
-  time: string
-  serviceDuration: number
-  serviceName: string
-  veterinaryName?: string
-  comentario?: string
-  status: string
-} = {
-  time: '9:30',
-  serviceDuration: 30,
-  serviceName: 'Consulta general',
-  veterinaryName: 'Paolo Cueva',
-  comentario: 'Consulta de rutina',
-  status: 'Programada',
-}
 
-const petInfo: {
-  name: string
-  specieName: string
-  breedName: string
-  weight: number
-  birthdate: string
-  gender: string
-  comment: string
-  urlImage: string
-} = {
-  name: 'Thor',
-  specieName: 'Perro',
-  breedName: 'Salchicha',
-  weight: 15,
-  birthdate: '05/12/2023',
-  gender: 'Macho',
-  comment: 'Perro juguetón, le encanta correr, celoso, no le gusta que se le acerquen al dueño',
-  urlImage: 'https://www.hola.com/horizon/43/d1eaad20c4c6-adobestock47432136.jpg',
-}
-
-const ownerInfo: {
-  name: string
-  lastname: string
-  phone: string
-    headquarterName: string
-  address: string
-} = {
-  name: 'Oswaldo Alberto',
-  lastname: 'Cabrejos Ronceros',
-  phone: '984156123',
-    headquarterName: 'Ica',
-  address: 'Av. Brasil',
-}
 //for toast
 //toast
 const toast = useToast()
@@ -125,17 +109,25 @@ const showToast = (message: string) => {
 <template>
   <div class="layout-principal-flex flex-col gap-2">
     <CardAppointmentInfo
-      v-if="appointmentBasicInfo"
-      :time="appointmentBasicInfo.scheduleDateTime"
-      :serviceDuration="appointmentInfo.serviceDuration"
-      :serviceName="appointmentInfo.serviceName"
-      :veterinaryName="appointmentBasicInfo.assignedEmployee?.names"
-      :comentario="appointmentInfo.comentario"
-      :status="appointmentBasicInfo.statusAppointment"
+      v-if="appointmentInfo"
+      :time="appointmentInfo.timeAppointment"
+      :serviceDuration="appointmentInfo.service.time"
+      :serviceName="appointmentInfo.service.name"
+      :veterinaryName="appointmentInfo.employee.name"
+      :comentario="appointmentInfo.comment"
+      :status="appointmentBasicInfo?.statusAppointment"
     />
-    <div class="w-full grid grid-cols-2 gap-4">
-      <CardPetInfo v-bind="petInfo"></CardPetInfo>
-      <CardOwnerInfo v-bind="ownerInfo" />
+    <div class="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <CardPetInfo v-if="petInfo" :name="petInfo.name"
+      :specieName="petInfo.speciesName"
+      :breedName="petInfo.breedName"
+      :weight="petInfo.weight"
+      :birthdate="petInfo.birthdate"
+      gender="M"
+:comment="petInfo.petComment"
+:urlImage="petInfo.urlImage"
+      ></CardPetInfo>
+      <CardOwnerInfo v-if="ownerInfo" :full-name="ownerInfo.fullName" :phone="ownerInfo.phone" headquarter-name="" :address="ownerInfo.address"/>
     </div>
     <!-- control -->
     <Card class="card-primary w-full">
@@ -159,7 +151,7 @@ const showToast = (message: string) => {
               <p class="textLg font-bold">{{ appointmentBasicInfo?.scheduleDateTime }}</p>
             </div>
             <Button
-              v-if="appointmentBasicInfo?.statusAppointment === 'Programada'"
+              v-if="appointmentBasicInfo?.statusAppointment === 'Confirmada'"
               size="small"
               icon="pi pi-check-circle"
               icon-pos="left"
@@ -170,7 +162,7 @@ const showToast = (message: string) => {
           </div>
           <!-- time -->
           <div
-            v-if="appointmentBasicInfo?.statusAppointment === 'Programada'"
+            v-if="appointmentBasicInfo?.statusAppointment === 'Confirmada'"
             class="p-4 shadow-none border-1 rounded-sm border-green-500 bg-green-50 dark:bg-transparent w-full flex justify-between items-center"
           >
             <div class="text-green-600 dark:text-green-400">
@@ -184,6 +176,6 @@ const showToast = (message: string) => {
 
     <!-- payment -->
 
-    <CardBilling serviceName="Consulta General" :price="80"/>
+    <CardBilling @complete-payment="handleCompletePayment" v-if="paymentInfo" :button-active="false" :payment-id="paymentInfo.paymentId" :status="paymentInfo.status" :payment-method-id="paymentInfo.paymentMethod.id" :serviceName="paymentInfo.serviceName" :price="paymentInfo.amount"/>
   </div>
 </template>

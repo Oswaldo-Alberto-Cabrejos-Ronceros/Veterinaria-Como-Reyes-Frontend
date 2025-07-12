@@ -23,6 +23,14 @@ export class HeadquarterVetServiceServiceImpl implements HeadquarterVetServiceSe
     )
     return response.data
   }
+
+    async getAllHeadquarterVetServiceByHeadquarter(headquarterId: number): Promise<HeadquarterVetService[]> {
+    const response = await this.httpClient.get<HeadquarterVetService[]>(
+      `${this.urlBase}/headquarter/${headquarterId}/all`,
+    )
+    return response.data
+  }
+
   async create(request: HeadquarterVetServiceRequest): Promise<HeadquarterVetService> {
     const response = await this.httpClient.post<HeadquarterVetService>(this.urlBase, request)
     return response.data
@@ -46,8 +54,18 @@ export class HeadquarterVetServiceServiceImpl implements HeadquarterVetServiceSe
       headquarterVetServiceId: headquarterVetServiceId,
     }
     const response = await this.httpClient.get<EmployeeBasicInfo[]>(
-      `${this.urlBase}/veterinarians`,params
+      `${this.urlBase}/veterinarians`,
+      params,
     )
     return response.data
+  }
+
+  async enableHeadquarterVetService(id: number): Promise<void> {
+    await this.httpClient.patch(`${this.urlBase}/${id}/activate`)
+  }
+
+  async updateSimultaneousCapacity(id: number, capacity: number): Promise<void> {
+    const body = { simultaneousCapacity: capacity }
+    await this.httpClient.patch(`${this.urlBase}/${id}/capacity`, body)
   }
 }

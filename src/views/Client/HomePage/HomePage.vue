@@ -10,7 +10,7 @@ import { usePet } from '@/composables/usePet'
 import type { PetByClient } from '@/models/PetByClient'
 import { onMounted, ref } from 'vue'
 import Message from 'primevue/message'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
 import { useClient } from '@/composables/useClient'
 import { useAppointment } from '@/composables/useAppointment'
 import type { BasicServiceForAppointment } from '@/models/BasicServiceForAppointment'
@@ -75,6 +75,12 @@ const loadAppointments = async () => {
     appointments.value = await getAppointmentsForClient(clientId)
   }
 }
+
+const router = useRouter()
+const redirect = (url: string) => {
+  router.push(url)
+}
+
 </script>
 
 <template>
@@ -96,7 +102,7 @@ const loadAppointments = async () => {
             <template #title>
               <div class="w-full flex justify-between items-baseline">
                 <h3>Citas Programadas</h3>
-                <Button label="Nueva Cita" icon="pi pi-plus" size="small"> </Button>
+                <Button label="Nueva Cita" @click="redirect('/client/my-appointments/schedule-appointment')" icon="pi pi-plus" size="small"> </Button>
               </div>
             </template>
             <template #subtitle>
@@ -141,11 +147,10 @@ const loadAppointments = async () => {
           <!-- pets -->
           <Card class="card-primary">
             <template #title>
-                            <div class="w-full flex justify-between items-baseline">
-                 <h3>Mis Mascotas</h3>
-                <Button label="Ver todas" variant="outlined" size="small"> </Button>
+              <div class="w-full flex justify-between items-baseline">
+                <h3>Mis Mascotas</h3>
+                <Button label="Ver todas" @click="redirect('/client/my-pets')" variant="outlined" size="small"> </Button>
               </div>
-
             </template>
             <template #subtitle>
               <p>Datos de tus engreidos</p>
@@ -232,7 +237,14 @@ const loadAppointments = async () => {
             </div>
           </template>
           <template #footer>
-            <Button class="w-full" size="small" iconPos="right" icon="pi pi-arrow-right" variant="text" label="Ver todos los servicios"/>
+            <Button
+              class="w-full"
+              size="small"
+              iconPos="right"
+              icon="pi pi-arrow-right"
+              variant="text"
+              label="Ver todos los servicios"
+            />
           </template>
         </Card>
       </template>

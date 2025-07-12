@@ -101,7 +101,7 @@ onMounted(() => {
             <InputGroupAddon class="text-neutral-400">
               <i class="pi pi-info"></i>
             </InputGroupAddon>
-            <InputText v-model="name" v-bind="nameAttrs" class="w-full" placeholder="Nombre" />
+            <InputText v-model="name" v-bind="nameAttrs" :invalid="Boolean(errors.name)" class="w-full" placeholder="Nombre" />
           </InputGroup>
           <Message v-if="errors.name" severity="error" size="small" variant="simple">
             {{ errors.name }}
@@ -114,6 +114,7 @@ onMounted(() => {
             class="w-full"
             v-bind="genderAttrs"
             v-model="gender"
+            :invalid="Boolean(errors.gender)"
             :options="genders"
             optionLabel="name"
             optionValue="value"
@@ -130,6 +131,7 @@ onMounted(() => {
           <DatePicker
             v-bind="birthdateAttrs"
             v-model="birthdate"
+            :invalid="Boolean(errors.birthdate)"
             showIcon
             fluid
             iconDisplay="input"
@@ -146,6 +148,7 @@ onMounted(() => {
             class="w-full"
             v-bind="specieIdAttrs"
             v-model="specieId"
+            :invalid="Boolean(errors.specieId)"
             :options="speciesOptions"
             optionLabel="name"
             optionValue="value"
@@ -164,6 +167,7 @@ onMounted(() => {
             class="w-full"
             v-bind="breedIdAttrs"
             v-model="breedId"
+            :invalid="Boolean(errors.breedId)"
             :options="breedsOptions"
             optionLabel="name"
             optionValue="value"

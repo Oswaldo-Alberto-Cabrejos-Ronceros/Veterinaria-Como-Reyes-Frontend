@@ -1,6 +1,7 @@
 export interface Breed {
   breedId: number
   name: string
+  status: boolean
   specie: {
     specieId: number,
     name:string,
@@ -13,4 +14,11 @@ export interface BreedRequest {
   specie:{
     specieId:number
   }
+}
+
+export interface BreedList{
+      breedId:number;
+    name:string;
+   specieName:string;
+   status:string;
 }

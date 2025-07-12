@@ -6,6 +6,8 @@ import type { MyInfoEmployee } from '@/services/Employee/domain/models/Employee'
 import type { MyInfoEmployee as MyInfoEmployeeView } from '@/models/MyInfoEmployee'
 import type { EmployeeBasicInfo } from '@/services/Employee/domain/models/Employee'
 import type { EmployeeBasicInfo as EmployeeBasicInfoView } from '@/models/EmployeeBasicInfo'
+import type { EmployeeList } from '@/services/Employee/domain/models/Employee'
+import type { EmployeeList as EmployeeListView } from '@/models/EmployeeList'
 
 import { DateAdapter } from './DateAdapter'
 
@@ -115,6 +117,21 @@ export class EmployeeAdapter {
     return {
       id: employeeBasic.id,
       fullName: employeeBasic.fullName,
+    }
+  }
+
+  //for adapt employeeAdapt
+
+  static fromEmployeeListToEmployeeListView(employeeList: EmployeeList): EmployeeListView {
+    return {
+      id: employeeList.employeeId,
+      dni: employeeList.dni,
+      cmvp: employeeList.cmvp,
+      names: employeeList.name,
+      lastnames: employeeList.lastName,
+      rolName: employeeList.rolName,
+      nameHeadquarter: employeeList.nameHeadquarter,
+      status: employeeList.status,
     }
   }
 }

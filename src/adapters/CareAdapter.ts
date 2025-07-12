@@ -5,6 +5,8 @@ import type { FormValues as AddCareFromRequestSchema } from '@/validation-schema
 import type { CreateCareFromAppointmentRequest } from '@/services/Care/domain/models/Care'
 import type { CareRequestCreate } from '@/services/Care/domain/models/Care'
 import { FormatAdapter } from './FormatAdapter'
+import type { CareList as CareListView } from '@/models/CareList'
+import type { CareList } from '@/services/Care/domain/models/Care'
 
 export class CareAdapter {
   static toView(care: Care): CareView {
@@ -40,6 +42,33 @@ export class CareAdapter {
       headquarterVetServiceId: schema.headquarterVetServiceId,
       animalId: schema.petId,
       employeeId: schema.employeeId,
+      paymentMethodId:schema.paymentMethodId
+    }
+  }
+
+  static fromCareListToCareListView(care: CareList): CareListView {
+    return {
+      id: care.careId,
+      careDateTime: care.careDateTime,
+      status: FormatAdapter.toCaptalizeCaseWithout_(care.statusCare),
+      pet: {
+        name: care.animalName,
+        specieName: care.animalSpecies,
+        breedName: care.animalBreed,
+      },
+      employee: {
+        fullName: care.employeeFullName,
+      },
+      service: {
+        name: care.serviceName,
+        price: care.servicePrice,
+      },
+      headquarter: {
+        name: care.headquarterName,
+      },
+      appointment: {
+        id: care.appointmentId,
+      },
     }
   }
 }

@@ -105,7 +105,7 @@ onMounted(() => {
             <InputGroupAddon class="text-neutral-400">
               <i class="pi pi-info"></i>
             </InputGroupAddon>
-            <InputText v-model="name" v-bind="nameAttrs" class="w-full" placeholder="Nombre del servicio" />
+            <InputText v-model="name" v-bind="nameAttrs" :invalid="Boolean(errors.name)" class="w-full" placeholder="Nombre del servicio" />
           </InputGroup>
           <Message v-if="errors.name" severity="error" size="small" variant="simple">
             {{ errors.name }}
@@ -122,9 +122,13 @@ onMounted(() => {
             <InputNumber
               v-model="price"
               v-bind="priceAttrs"
+              :invalid="Boolean(errors.price)"
               fluid
               class="w-full"
               placeholder="Precio del servicio"
+  :minFractionDigits="2"
+  :maxFractionDigits="2"
+  prefix="S/ "
             />
           </InputGroup>
           <Message v-if="errors.price" severity="error" size="small" variant="simple">
@@ -145,6 +149,7 @@ onMounted(() => {
               v-model="duration"
               inputId="integeronly"
               v-bind="durationAttrs"
+              :invalid="Boolean(errors.duration)"
               class="w-full"
               placeholder="Duración"
               show-buttons
@@ -166,6 +171,7 @@ onMounted(() => {
             <InputText
               v-model="dirImage"
               v-bind="dirImageAttrs"
+              :invalid="Boolean(errors.dirImage)"
               class="w-full"
               placeholder="Imagen"
             />
@@ -183,6 +189,7 @@ onMounted(() => {
             class="w-full"
             v-bind="specieIdAttrs"
             v-model="specieId"
+            :invalid="Boolean(errors.specieId)"
             :options="speciesOptions"
             optionLabel="name"
             optionValue="value"
@@ -202,6 +209,7 @@ onMounted(() => {
             class="w-full"
             v-bind="categoryIdAttrs"
             v-model="categoryId"
+            :invalid="Boolean(errors.categoryId)"
             :options="categoriesOptions"
             optionLabel="name"
             optionValue="value"
@@ -223,6 +231,7 @@ onMounted(() => {
               id="description"
               v-model="description"
               v-bind="descriptionAttrs"
+              :invalid="Boolean(errors.description)"
               rows="5"
               class="resize-none w-full"
             />

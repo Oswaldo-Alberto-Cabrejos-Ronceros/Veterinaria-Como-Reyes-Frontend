@@ -15,7 +15,7 @@ defineProps<{
 </script>
 
 <template>
-  <CardPrimary class="transition-opacity duration-300hover:opacity-80 group cursor-pointer">
+  <CardPrimary class="transition-opacity duration-300 hover:opacity-80 group cursor-pointer dark:bg-surface-900">
     <div class="w-full flex justify-end">
       <Image :src="imageUrl" image-class="size-40 object-cover transition-transform duration-300 group-hover:scale-105" :alt="name" />
       <div class="flex-1 flex flex-col gap-2 p-3">

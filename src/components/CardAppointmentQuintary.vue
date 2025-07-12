@@ -2,16 +2,27 @@
 import Tag from 'primevue/tag'
 import Avatar from 'primevue/avatar'
 import Button from 'primevue/button'
-defineProps<{
+const props = defineProps<{
   appointementId:number
   petName: string
   petBreed: string
+  petId:number
   serviceName: string
   serviceDuration: string
   ownerName: string
   time: string
   status: string
 }>()
+
+const emit = defineEmits(['redirect-appointment','view-pet'])
+
+const emitAppointment = ()=>{
+  emit('redirect-appointment',props.appointementId)
+}
+
+const emitView = ()=>{
+  emit('view-pet',props.petId)
+}
 </script>
 <template>
   <div class="card-primary flex items-center w-full p-4">
@@ -39,15 +50,17 @@ defineProps<{
           icon=" pi pi-check-circle"
           size="small"
            class="py-1.5"
+           @click="emitAppointment"
         />
         <Button
-          v-if="status === 'Confirmada'"
+          v-if="status === 'En espera'"
           label="Atender"
           severity="info"
           icon-pos="left"
           icon="pi pi-clipboard"
           size="small"
            class="py-1.5"
+            @click="emitAppointment"
         />
         <Button
           label="Ver historial"
@@ -57,6 +70,7 @@ defineProps<{
           icon="pi pi-eye"
           size="small"
            class="py-1.5"
+            @click="emitView"
         >
         </Button>
       </div>

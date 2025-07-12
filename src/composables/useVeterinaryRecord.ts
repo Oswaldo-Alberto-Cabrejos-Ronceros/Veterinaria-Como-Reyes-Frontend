@@ -1,14 +1,22 @@
-import type { VeterinaryRecordRequest } from '@/services/VeterinaryRecord/domain/models/VeterinaryRecord'
+import type {
+  VeterinaryRecordRequest,
+  VeterinaryRecordStats,
+} from '@/services/VeterinaryRecord/domain/models/VeterinaryRecord'
 import { useAsyncHandler } from './useAsyncHandler'
 import { veterinaryRecordUsesCases } from '@/dependency-injection/veterinary-record.container'
 import { VeterinaryRecordAdapter } from '@/adapters/VeterinaryRecordAdapter'
+import type { FormValues as SchemaAddEditVeterinaryRecord } from '@/validation-schemas-forms/schema-add-edit-veterinary-record'
+import type { RecentMedicalRecord as RecentMedicalRecordView } from '@/models/RecentMedicalRecord'
+import type { VeterinaryRecordInfoTable as VeterinaryRecordInfoTableView } from '@/models/VeterinaryRecordInfoTable'
 
 export function useVeterinaryRecord() {
   const { loading, error, runUseCase } = useAsyncHandler()
 
-  const createVeterinaryRecord = async (veterinaryRecordRequest: VeterinaryRecordRequest) => {
+  const createVeterinaryRecord = async (schemaVeterinaryRecord: SchemaAddEditVeterinaryRecord) => {
+    const request =
+      VeterinaryRecordAdapter.fromSchemaToVeterinaryRecordRequest(schemaVeterinaryRecord)
     const veterinaryRecord = await runUseCase('createVeterinaryRecord', () =>
-      veterinaryRecordUsesCases.createVeterinaryRecord.execute(veterinaryRecordRequest),
+      veterinaryRecordUsesCases.createVeterinaryRecord.execute(request),
     )
     return VeterinaryRecordAdapter.toVeterinaryRecordView(veterinaryRecord)
   }
@@ -29,14 +37,18 @@ export function useVeterinaryRecord() {
     return VeterinaryRecordAdapter.toVeterinaryRecordView(veterinaryRecord)
   }
 
-  const getAllInfoVeterinaryRecordsByPet = async (petId: number) => {
+  const getAllInfoVeterinaryRecordsByPet = async (petId: number,page?:number,size?:number) => {
     const pageVeterinaryRecords = await runUseCase('getAllInfoVeterinaryRecordsByPet', () =>
-      veterinaryRecordUsesCases.getAllInfoVeterinaryRecordsByAnimal.execute(petId),
+      veterinaryRecordUsesCases.getAllInfoVeterinaryRecordsByAnimal.execute(petId,page,size),
     )
-    const veterinaryRecords = pageVeterinaryRecords.content
-    return veterinaryRecords.map((veterinaryRecord) =>
+
+    const content = pageVeterinaryRecords.content.map((veterinaryRecord) =>
       VeterinaryRecordAdapter.fromVetRecordInfoTableToVetRecorIndoTableView(veterinaryRecord),
     )
+    return {
+      ...pageVeterinaryRecords,
+      content,
+    }
   }
 
   const updateVeterinaryRecord = async (
@@ -70,6 +82,33 @@ export function useVeterinaryRecord() {
     return VeterinaryRecordAdapter.toVeterinaryRecordView(veterinaryRecord)
   }
 
+  const getRecentRecordsByEmployee = async (
+    employeeId: number,
+  ): Promise<RecentMedicalRecordView[]> => {
+    const records = await runUseCase('getRecentRecordsByEmployee', () =>
+      veterinaryRecordUsesCases.getRecentRecordsByEmployee.execute(employeeId),
+    )
+    return records.map(VeterinaryRecordAdapter.toRecentMedicalRecordView)
+  }
+
+  const getStatsByVeterinarian = async (employeeId: number): Promise<VeterinaryRecordStats> => {
+    const stats = await runUseCase('getStatsByVeterinarian', () =>
+      veterinaryRecordUsesCases.getStatsByVeterinarian.execute(employeeId),
+    )
+    return stats
+  }
+
+  const getRecordsByAnimalId = async (
+    animalId: number,
+  ): Promise<VeterinaryRecordInfoTableView[]> => {
+    const records = await runUseCase('getRecordsByAnimalId', () =>
+      veterinaryRecordUsesCases.getRecordsByAnimalId.execute(animalId),
+    )
+    return records.map((v) =>
+      VeterinaryRecordAdapter.fromVetRecordInfoTableToVetRecorIndoTableView(v),
+    )
+  }
+
   return {
     loading,
     error,
@@ -81,5 +120,8 @@ export function useVeterinaryRecord() {
     setVeterinaryRecordCompletado,
     setVeterinaryRecordEnCurso,
     setVeterinaryRecordObservacion,
+    getRecentRecordsByEmployee,
+    getStatsByVeterinarian,
+    getRecordsByAnimalId,
   }
 }

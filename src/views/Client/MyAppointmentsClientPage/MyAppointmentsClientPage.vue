@@ -1,17 +1,17 @@
 <script lang="ts" setup>
 import Card from 'primevue/card'
-import CardAppointmentSecondary from '@/components/CardAppointmentSecondary.vue'
 import Button from 'primevue/button'
 import { useRouter } from 'vue-router'
 import { useAppointment } from '@/composables/useAppointment'
 import type { InfoBasicAppointmentClient } from '@/models/InfoBasicAppointmentClient'
 import { onMounted, ref } from 'vue'
 import { useAuthentication } from '@/composables/useAuthentication'
+import CardAppointmentClient from '@/components/CardAppointmentClient.vue'
 
 //methods
 const { getEntityId } = useAuthentication()
 
-const {error,loading,getAppointmentsForClient } = useAppointment()
+const { error, loading, getAppointmentsForClient } = useAppointment()
 
 //for get info
 const appointments = ref<InfoBasicAppointmentClient[]>([])
@@ -23,7 +23,7 @@ const loadAppointments = async () => {
   }
 }
 
-onMounted(()=>{
+onMounted(() => {
   loadAppointments()
 })
 //for router
@@ -51,35 +51,41 @@ const redirectToScheduleAppointment = () => {
       </template>
       <template #content>
         <div class="flex flex-col gap-6 mt-2">
-                                          <!-- for messague loading  -->
-                <Message
-                  v-if="loading.getAppointmentsForClient"
-                  severity="warn"
-                  size="small"
-                  variant="simple"
-                >
-                  Cargando ...
-                </Message>
-                <!-- for messague error -->
-                <Message
-                  v-if="error.getAppointmentsForClient"
-                  severity="error"
-                  size="small"
-                  variant="simple"
-                >
-                  Error al cargar tus citas
-                </Message>
-          <CardAppointmentSecondary
+          <!-- for messague loading  -->
+          <Message
+            v-if="loading.getAppointmentsForClient"
+            severity="warn"
+            size="small"
+            variant="simple"
+          >
+            Cargando ...
+          </Message>
+          <!-- for messague error -->
+          <Message
+            v-if="error.getAppointmentsForClient"
+            severity="error"
+            size="small"
+            variant="simple"
+          >
+            Error al cargar tus citas
+          </Message>
+          <CardAppointmentClient
             v-for="appointment in appointments"
             :key="appointment.id"
-            :appointment-id="appointment.id"
-            :appointment-status="appointment.status"
-            :date="`${appointment.date} ${appointment.time}`"
             :pet-name="appointment.pet.name"
-            :duration="appointment.duration"
+            :pet-breed="''"
             :service-name="appointment.service.name"
             :service-description="appointment.service.description"
-          ></CardAppointmentSecondary>
+            :service-duration="appointment.duration.toString()"
+            :service-image="appointment.service.image"
+            :time="appointment.time"
+            :status="appointment.status"
+            :service-price="'60'"
+            :appointment-status="appointment.status"
+            :date="appointment.date"
+            :headquarter-name="'Ica'"
+            :headquarter-address="'Av. Tupac Amaru'"
+          ></CardAppointmentClient>
         </div>
       </template>
     </Card>
