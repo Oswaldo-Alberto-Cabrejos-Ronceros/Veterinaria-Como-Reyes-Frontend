@@ -477,17 +477,6 @@ const exportCSV = () => {
             Error al cargar los empleados
           </Message>
           <!-- table -->
-                         <div class="w-full flex flex-col xs:flex-row justify-between gap-2">
-                <Button
-                  icon="pi pi-user-plus"
-                  iconPos="right"
-                  severity="success"
-                  label="Agregar Empleado"
-                  @click="addEmployee"
-                  v-if="roleMain === 'Administrador'"
-                />
-                <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
-              </div>
           <DataTable
             v-if="employees"
             paginator
