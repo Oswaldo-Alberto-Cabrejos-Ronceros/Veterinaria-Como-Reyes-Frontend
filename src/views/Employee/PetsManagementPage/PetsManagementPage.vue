@@ -495,10 +495,12 @@ watch(
               field="name"
               sortable
               style="width: 18%"
+              header="Nombre"
             ></Column>
             <Column field="owner" sortable header="Dueño" style="width: 18%"></Column>
             <Column
               field="specie"
+              header="Especie"
               sortable
               style="width: 15%"
             >
@@ -507,12 +509,14 @@ watch(
               field="breed"
               sortable
               style="width: 15%"
+              header="Raza"
             >
             </Column>
             <Column
               field="gender"
               sortable
               style="width: 15%"
+              header="Sexo"
             ></Column>
             <Column header="Acciones">
               <template #body="{ data }">

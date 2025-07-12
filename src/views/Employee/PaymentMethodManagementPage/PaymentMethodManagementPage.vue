@@ -305,11 +305,12 @@ const statusOptions: OptionSelect[] = [
               </div>
             </template>
 
-            <Column field="name" sortable style="width: 20%"></Column>
+            <Column field="name" header="Nombre" sortable style="width: 20%"></Column>
             <Column
               field="description"
               sortable
               style="width: 60%"
+              header="Descripción"
             ></Column>
             <Column header="Acciones">
               <template #body="{ data }">

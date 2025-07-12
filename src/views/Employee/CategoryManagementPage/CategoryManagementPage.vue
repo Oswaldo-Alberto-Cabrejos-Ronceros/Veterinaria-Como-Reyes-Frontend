@@ -292,10 +292,11 @@ const exportCSV = () => {
               </div>
             </template>
 
-            <Column field="name" sortable style="width: 20%"></Column>
+            <Column field="name" header="Nombre" sortable style="width: 20%"></Column>
             <Column
               field="description"
               sortable
+              header="Descripción"
               style="width: 60%"
             ></Column>
             <Column header="Acciones">

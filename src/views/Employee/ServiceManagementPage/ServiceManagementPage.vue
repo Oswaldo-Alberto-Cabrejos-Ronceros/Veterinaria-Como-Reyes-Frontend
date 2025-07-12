@@ -405,24 +405,27 @@ const exportCSV = () => {
             <Column
               field="name"
               sortable
+              header="Nombre"
               style="width: 18%"
             ></Column>
             <Column field="category" sortable header="Categoria" style="width: 18%"></Column>
             <Column
 
-              field="description"
-
+              field="duration"
+              header="Duración"
               sortable
               style="width: 15%"
             ></Column>
             <Column
               field="price"
+              header="Precio"
               sortable
               style="width: 15%"
             ></Column>
             <Column
               field="specie"
               sortable
+              header="Especie"
               style="width: 15%"
             ></Column>
             <Column header="Acciones">

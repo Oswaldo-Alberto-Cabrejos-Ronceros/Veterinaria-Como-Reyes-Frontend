@@ -507,6 +507,7 @@ const exportCSV = () => {
             </template>
             <Column
               field="names"
+              header="Nombres"
               sortable
               style="width: 18%"
             ></Column>
@@ -515,6 +516,7 @@ const exportCSV = () => {
               field="dni"
               sortable
               style="width: 15%"
+              header="DNI"
             ></Column>
 
 
@@ -528,6 +530,7 @@ const exportCSV = () => {
             <Column
               field="rolName"
               sortable
+              header="Rol"
               style="width: 15%"
             >
             </Column>
@@ -535,6 +538,7 @@ const exportCSV = () => {
               field="nameHeadquarter"
               sortable
               style="width: 15%"
+              header="Sede"
             >
             </Column>
 

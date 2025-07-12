@@ -404,17 +404,20 @@ const headquartersToOptionsSelect = (headquarters: Headquarter[]): OptionSelect[
               field="dni"
               sortable
               style="width: 18%"
+              header="DNI"
             ></Column>
-            <Column field="names" sortable style="width: 18%"></Column>
+            <Column header="Nombres" field="names" sortable style="width: 18%"></Column>
             <Column
               field="lastnames"
               sortable
               style="width: 15%"
+              header="Apellidos"
             ></Column>
             <Column
               field="headquarterName"
               sortable
               style="width: 15%"
+              header="Sede"
             >
             </Column>
             <Column header="Acciones">

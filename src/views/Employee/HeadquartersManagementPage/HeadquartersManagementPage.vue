@@ -434,15 +434,18 @@ const exportCSV = () => {
             <Column
               field="name"
               sortable
+              header="Nombre"
               style="width: 15%"
             ></Column>
-            <Column field="address" sortable style="width: 25%"></Column>
+            <Column field="address" header="Dirección" sortable style="width: 25%"></Column>
             <Column
               field="district"
+              header="Distrito"
               sortable
               style="width: 15%"
             ></Column>
             <Column
+            header="Télefono"
               field="phone"
               sortable
               style="width: 15%"
@@ -451,6 +454,7 @@ const exportCSV = () => {
               field="email"
               sortable
               style="width: 25%"
+              header="Correo"
             ></Column>
             <Column header="Acciones">
               <template #body="{ data }">
