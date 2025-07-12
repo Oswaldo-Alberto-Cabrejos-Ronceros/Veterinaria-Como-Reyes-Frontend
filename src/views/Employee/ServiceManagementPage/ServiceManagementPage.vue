@@ -344,6 +344,8 @@ const exportCSV = () => {
             :loading="loading.searchVeterinaryServices"
             :rows-per-page-options="[10, 15, 20, 25, 30]"
             @page="loadServices"
+            scrollable
+            removableSort
             ref="dt"
           >
             <template #header>
@@ -361,29 +363,21 @@ const exportCSV = () => {
             <Column
               field="name"
               sortable
-              header="Nombre"
-              class="hidden lg:table-cell"
               style="width: 18%"
             ></Column>
             <Column field="category" sortable header="Categoria" style="width: 18%"></Column>
             <Column
               field="description"
-              class="hidden lg:table-cell"
-              header="Descripción"
               sortable
               style="width: 15%"
             ></Column>
             <Column
               field="price"
-              class="hidden lg:table-cell"
-              header="Precio"
               sortable
               style="width: 15%"
             ></Column>
             <Column
               field="specie"
-              class="hidden md:table-cell"
-              header="Especie"
               sortable
               style="width: 15%"
             ></Column>

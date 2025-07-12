@@ -217,6 +217,8 @@ const deleteSpecie = (event: MouseEvent | KeyboardEvent, specieData: SpecieView)
             :first="first"
             :loading="loading.searchSpecies"
             :totalRecords="totalRecords"
+            scrollable
+            removableSort
             :rows-per-page-options="[5, 10, 20]"
             ref="dt"
             @page="loadSpecies"
@@ -233,7 +235,7 @@ const deleteSpecie = (event: MouseEvent | KeyboardEvent, specieData: SpecieView)
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
             </template>
-            <Column field="name" sortable header="Nombre" style="width: 80%"></Column>
+            <Column field="name" sortable style="width: 80%"></Column>
 
             <Column>
               <template #body="{ data }">

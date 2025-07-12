@@ -291,6 +291,8 @@ const viewCare = (careId: number) => {
             :loading="loading.searchCares"
             :rows-per-page-options="[10, 15, 20, 25, 30]"
             @page="loadCares"
+            scrollable
+            removableSort
             ref="dt"
           >
             <template #header>
@@ -308,15 +310,11 @@ const viewCare = (careId: number) => {
             <Column
               field="dateTime"
               sortable
-              header="Dia programado"
-              class="hidden lg:table-cell"
               style="width: 30%"
             ></Column>
             <Column
               field="statusCare"
               sortable
-              header="Estado"
-              class="hidden lg:table-cell"
               style="width: 30%"
             ></Column>
             <Column>

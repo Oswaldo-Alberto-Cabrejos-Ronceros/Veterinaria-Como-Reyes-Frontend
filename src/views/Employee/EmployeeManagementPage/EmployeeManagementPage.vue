@@ -463,6 +463,8 @@ const exportCSV = () => {
             :loading="loading.searchEmployees"
             :first="first"
             @page="loadEmployees"
+            scrollable
+            removableSort
             :rows-per-page-options="[1, 2, 3, 4]"
             ref="dt"
           >
@@ -481,35 +483,27 @@ const exportCSV = () => {
             <Column
               field="names"
               sortable
-              header="Nombres"
-              class="hidden lg:table-cell"
               style="width: 18%"
             ></Column>
             <Column field="lastnames" sortable header="Apellidos" style="width: 18%"></Column>
             <Column
               field="dni"
-              class="hidden lg:table-cell"
-              header="DNI"
               sortable
               style="width: 15%"
             ></Column>
-            <Column class="hidden lg:table-cell" header="CMVP" sortable style="width: 15%">
+            <Column class="hidden lg:table-cell" sortable style="width: 15%">
               <template #body="{ data }">
                 {{ data.cmvp ? data.cmvp : '' }}
                 <Tag v-if="!data.cmvp" value="No requerido" severity="secondary" /> </template
             ></Column>
             <Column
-              class="hidden md:table-cell"
               field="rolName"
-              header="Rol"
               sortable
               style="width: 15%"
             >
             </Column>
             <Column
-              class="hidden md:table-cell"
               field="nameHeadquarter"
-              header="Sede"
               sortable
               style="width: 15%"
             >
