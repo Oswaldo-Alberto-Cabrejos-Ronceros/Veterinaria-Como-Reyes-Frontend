@@ -3,5 +3,4 @@ export interface CategoryList {
   name: string,
   description:string
   status: string,
-
 }

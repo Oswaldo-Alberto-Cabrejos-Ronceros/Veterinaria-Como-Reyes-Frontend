@@ -287,6 +287,8 @@ const statusOptions: OptionSelect[] = [
             :loading="loading.searchPaymentMethods"
             :rows-per-page-options="[5, 10]"
             @page="loadPaymentMethods"
+            scrollable
+            removableSort
             ref="dt"
           >
             <template #header>
@@ -303,13 +305,12 @@ const statusOptions: OptionSelect[] = [
               </div>
             </template>
 
-            <Column field="name" sortable header="Nombre" style="width: 20%"></Column>
+            <Column field="name" header="Nombre" sortable style="width: 20%"></Column>
             <Column
               field="description"
-              class="hidden md:table-cell"
-              header="Descripción"
               sortable
               style="width: 60%"
+              header="Descripción"
             ></Column>
             <Column header="Acciones">
               <template #body="{ data }">

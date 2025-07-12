@@ -11,7 +11,6 @@ import type { ServiceList as VeterinaryServiceListView } from '@/models/ServiceL
 import type { ServicesInfoTopPanelAdmin as ServicesInfoTopPanelAdminView } from '@/models/ServicesInfoTopPanelAdmin'
 import type { ServicesInfoTopPanelAdmin } from '@/services/VeterinaryService/domain/models/VeterinaryService'
 
-
 export class VeterinaryServiceAdapter {
   static toView(service: VeterinaryService): VeterinaryServiceView {
     return {
@@ -25,7 +24,7 @@ export class VeterinaryServiceAdapter {
       specieId: service.specie.specieId,
       category: service.category.name,
       categoryId: service.category.categoryId,
-      status:service.status
+      status: service.status,
     }
   }
 
@@ -46,31 +45,29 @@ export class VeterinaryServiceAdapter {
     }
   }
 
-
   static fromVeterinaryServiceListToVeterinaryServiceListView(
-    service: VeterinaryServiceList
+    service: VeterinaryServiceList,
   ): VeterinaryServiceListView {
     return {
       serviceId: service.serviceId,
       name: service.name,
       specie: service.specie,
       category: service.category,
-        price:service.price,
-  duration:service.duration,
-      status:service.status
+      price: service.price,
+      duration: service.duration,
+      status: service.status,
     }
   }
 
-  static toServiceInfoTopPanelAdmin(service:ServicesInfoTopPanelAdmin):ServicesInfoTopPanelAdminView{
-    return{
-            id: service.serviceId,
+  static toServiceInfoTopPanelAdmin(
+    service: ServicesInfoTopPanelAdmin,
+  ): ServicesInfoTopPanelAdminView {
+    return {
+      id: service.serviceId,
       name: service.serviceName,
       categoryName: service.categoryName,
       imageServiceUrl: service.imageServiceUrl,
       totalCares: service.totalCares,
-
     }
   }
-
-
 }

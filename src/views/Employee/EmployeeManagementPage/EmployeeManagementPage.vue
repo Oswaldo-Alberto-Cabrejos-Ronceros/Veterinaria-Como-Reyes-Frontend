@@ -477,17 +477,6 @@ const exportCSV = () => {
             Error al cargar los empleados
           </Message>
           <!-- table -->
-                         <div class="w-full flex flex-col xs:flex-row justify-between gap-2">
-                <Button
-                  icon="pi pi-user-plus"
-                  iconPos="right"
-                  severity="success"
-                  label="Agregar Empleado"
-                  @click="addEmployee"
-                  v-if="roleMain === 'Administrador'"
-                />
-                <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
-              </div>
           <DataTable
             v-if="employees"
             paginator
@@ -503,16 +492,56 @@ const exportCSV = () => {
             :rows-per-page-options="[1, 2, 3, 4]"
             ref="dt"
           >
-            <Column field="names" sortable header="Nombres" style="width: 18%"></Column>
+
+            <template #header>
+              <div class="w-full flex flex-col xs:flex-row justify-between gap-2 pb-4">
+                <Button
+                  icon="pi pi-user-plus"
+                  iconPos="right"
+                  severity="success"
+                  label="Agregar Empleado"
+                  @click="addEmployee"
+                />
+                <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
+              </div>
+            </template>
+            <Column
+              field="names"
+              header="Nombres"
+              sortable
+              style="width: 18%"
+            ></Column>
             <Column field="lastnames" sortable header="Apellidos" style="width: 18%"></Column>
-            <Column field="dni" header="DNI" sortable style="width: 15%"></Column>
+            <Column
+              field="dni"
+              sortable
+              style="width: 15%"
+              header="DNI"
+            ></Column>
+
+
             <Column class="hidden lg:table-cell" header="CMVP" sortable style="width: 15%">
+
               <template #body="{ data }">
                 {{ data.cmvp ? data.cmvp : '' }}
                 <Tag v-if="!data.cmvp" value="No requerido" severity="secondary" /> </template
             ></Column>
-            <Column field="rolName" header="Rol" sortable style="width: 15%"> </Column>
-            <Column field="nameHeadquarter" header="Sede" sortable style="width: 15%"> </Column>
+
+            <Column
+              field="rolName"
+              sortable
+              header="Rol"
+              style="width: 15%"
+            >
+            </Column>
+            <Column
+              field="nameHeadquarter"
+              sortable
+              style="width: 15%"
+              header="Sede"
+            >
+            </Column>
+
             <Column header="Acciones">
               <template #body="{ data }">
                 <div

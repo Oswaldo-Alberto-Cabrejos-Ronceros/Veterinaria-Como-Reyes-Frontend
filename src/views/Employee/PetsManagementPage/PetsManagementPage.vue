@@ -473,6 +473,8 @@ watch(
             :first="first"
             :loading="loading.searchPets"
             @page="loadPets"
+            scrollable
+            removableSort
             :rows-per-page-options="[1, 2, 3, 4]"
             ref="dt"
 
@@ -492,33 +494,29 @@ watch(
             <Column
               field="name"
               sortable
-              header="Nombre"
-              class="hidden lg:table-cell"
               style="width: 18%"
+              header="Nombre"
             ></Column>
             <Column field="owner" sortable header="Dueño" style="width: 18%"></Column>
             <Column
-              class="hidden lg:table-cell"
-              header="Especie"
               field="specie"
+              header="Especie"
               sortable
               style="width: 15%"
             >
             </Column>
             <Column
-              class="hidden lg:table-cell"
-              header="Raza"
               field="breed"
               sortable
               style="width: 15%"
+              header="Raza"
             >
             </Column>
             <Column
               field="gender"
-              class="hidden md:table-cell"
-              header="Sexo"
               sortable
               style="width: 15%"
+              header="Sexo"
             ></Column>
             <Column header="Acciones">
               <template #body="{ data }">

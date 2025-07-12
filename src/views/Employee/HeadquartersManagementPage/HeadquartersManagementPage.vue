@@ -414,6 +414,8 @@ const exportCSV = () => {
             :first="first"
             :loading="loading.searchHeadquarters"
             @page="loadHeadquarters"
+            scrollable
+            removableSort
             :rows-per-page-options="[1, 2, 3, 4]"
             ref="dt"
           >
@@ -431,32 +433,28 @@ const exportCSV = () => {
             </template>
             <Column
               field="name"
-              class="hidden lg:table-cell"
               sortable
               header="Nombre"
               style="width: 15%"
             ></Column>
-            <Column field="address" sortable header="Dirección" style="width: 25%"></Column>
+            <Column field="address" header="Dirección" sortable style="width: 25%"></Column>
             <Column
               field="district"
-              class="hidden lg:table-cell"
-              sortable
               header="Distrito"
+              sortable
               style="width: 15%"
             ></Column>
             <Column
+            header="Télefono"
               field="phone"
-              class="hidden md:table-cell"
-              header="Teléfono"
               sortable
               style="width: 15%"
             ></Column>
             <Column
               field="email"
-              class="hidden lg:table-cell"
-              header="Email"
               sortable
               style="width: 25%"
+              header="Correo"
             ></Column>
             <Column header="Acciones">
               <template #body="{ data }">

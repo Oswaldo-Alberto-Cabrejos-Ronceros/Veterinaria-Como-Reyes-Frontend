@@ -434,6 +434,8 @@ const inanctivedHeadquarterService = ref<boolean>(false)
             :loading="loading.searchVeterinaryServices"
             :rows-per-page-options="[10, 15, 20, 25, 30]"
             @page="loadServices"
+            scrollable
+            removableSort
             ref="dt"
           >
             <template #header>
@@ -444,8 +446,6 @@ const inanctivedHeadquarterService = ref<boolean>(false)
             <Column
               field="name"
               sortable
-              header="Servicio"
-              class="hidden lg:table-cell"
               style="width: 18%"
             ></Column>
             <Column v-for="(headquarter, index) in headquarters" :key="headquarter.id">

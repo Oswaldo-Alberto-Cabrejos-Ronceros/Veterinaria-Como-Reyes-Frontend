@@ -97,12 +97,14 @@ const setOnGoingTo = async ()=>{
   }
 }
 
+
 const handleCompleteCare = async ()=>{
 const response = await completeCare(Number(props.appointmentId))
 if(response){
     showToast('Cambiado en curso exitosamente')
     loadInfo()
 }
+
 }
 </script>
 

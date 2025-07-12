@@ -380,6 +380,8 @@ const exportCSV = () => {
             :first="first"
             :loading="loading.searchPayments"
             @page="loadPayments"
+            scrollable
+            removableSort
             :rows-per-page-options="[1, 2, 3, 4]"
             ref="dt"
           >
@@ -388,46 +390,34 @@ const exportCSV = () => {
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
             </template>
-            <Column field="clientDni" sortable header="Cliente" style="width: 10%"></Column>
+            <Column field="clientDni" sortable style="width: 10%"></Column>
             <Column
               field="headquarterName"
               sortable
-              header="Sede"
-              class="hidden lg:table-cell"
               style="width: 12%"
             ></Column>
             <Column
               field="serviceName"
-              class="hidden xl:table-cell"
-              header="Servicio"
               sortable
               style="width: 15%"
             ></Column>
             <Column
               field="amount"
-              class="hidden xs:table-cell sm:hidden lg:table-cell"
-              header="Monto"
               sortable
               style="width: 10%"
             ></Column>
             <Column
               field="paymentMethod"
-              class="hidden xl:table-cell"
-              header="M.Pago"
               sortable
               style="width: 10%"
             ></Column>
             <Column
               field="paymentDate"
-              class="table-cell sm:hidden lg:table-cell"
-              header="Fecha"
               sortable
               style="width: 10%"
             ></Column>
             <Column
               field="status"
-              class="hidden md:table-cell"
-              header="Estado"
               sortable
               style="width: 12%"
             ></Column>
