@@ -12,7 +12,6 @@ import Select from 'primevue/select'
 import Button from 'primevue/button'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import type { Service as ServiceView } from '@/models/Service'
 import { useConfirm, useDialog, useToast } from 'primevue'
 import { onMounted, ref } from 'vue'
 import AddEditServiceCard from './components/AddEditServiceCard.vue'
@@ -26,6 +25,8 @@ import type { Category } from '@/models/Category'
 import { useCategory } from '@/composables/useCategory'
 import type { DataTablePageEvent } from 'primevue/datatable'
 import { debounce } from 'lodash'
+import type { ServiceList } from '@/models/ServiceList'
+import { useAuthentication } from '@/composables/useAuthentication'
 
 //toast
 const toast = useToast()
@@ -47,16 +48,32 @@ const {
   createVeterinaryService,
   updateVeterinaryService,
   activateVeterinaryService,
-  searchVeterinaryServices
+  searchVeterinaryServices,
+  getVeterinaryServiceById
 } = useVeterinaryService()
 
 const { getAllSpecies } = useSpecie()
 
 const { getAllCategories } = useCategory()
 
+const roleMain = ref<string>('')
+
+const { getMainRole } = useAuthentication()
+
+const statusOptions: OptionSelect[] = [
+  {
+    value: true,
+    name: 'Activo',
+  },
+  {
+    value: false,
+    name: 'Desactivado',
+  },
+]
+
 //services
 
-const services = ref<ServiceView[]>([])
+const services = ref<ServiceList[]>([])
 
 const totalRecords = ref<number>(0)
 const rows = ref<number>(10)
@@ -80,15 +97,17 @@ const loadServices = async (event?: DataTablePageEvent) => {
   const response = await searchVeterinaryServices(
     page,
     size,
-    {
-      name: name.value,
-      specie: specieId.value?.toString(),
-      category: categoryId.value?.toString(),
-    }
+    name.value,
+    specieId.value?.toString(),
+    categoryId.value?.toString(),
+    status.value,
   )
-
   services.value = response.content
   totalRecords.value = response.totalElements
+  const role = getMainRole()
+  if (role) {
+    roleMain.value = role
+  }
 }
 
 //form
@@ -98,6 +117,7 @@ const { handleSubmit, errors, defineField } = useForm<SearchServiceSchema>({
     name: '',
     specieId: undefined,
     categoryId: undefined,
+    status: true,
   },
 })
 
@@ -105,6 +125,7 @@ const { handleSubmit, errors, defineField } = useForm<SearchServiceSchema>({
 const [name, nameAttrs] = defineField('name')
 const [specieId, specieIdAttrs] = defineField('specieId')
 const [categoryId, categoryIdAttrs] = defineField('categoryId')
+const [status, statusAttrs] = defineField('status')
 
 //for submit
 
@@ -137,14 +158,15 @@ const dialog = useDialog()
 
 //for add
 
-const viewService = (serviceData: ServiceView) => {
+const viewService = async (serviceData: ServiceList) => {
+  const service = await getVeterinaryServiceById(serviceData.serviceId)
   dialog.open(ViewServiceCard, {
     props: {
       modal: true,
-            header:`${serviceData.name}`
+      header: `${serviceData.name}`,
     },
     data: {
-      serviceData: serviceData,
+      serviceData: service,
     },
   })
 }
@@ -153,7 +175,7 @@ const addService = async () => {
   dialog.open(AddEditServiceCard, {
     props: {
       modal: true,
-      header:'Agregar servicio'
+      header: 'Agregar servicio',
     },
     data: {
       speciesOptions: speciesToOptionsSelect(await getAllSpecies()),
@@ -173,21 +195,22 @@ const addService = async () => {
 
 //for edit
 
-const editService = async (serviceData: ServiceView) => {
+const editService = async (serviceData: ServiceList) => {
+  const service = await getVeterinaryServiceById(serviceData.serviceId)
   dialog.open(AddEditServiceCard, {
     props: {
       modal: true,
-      header:`${serviceData.name}`
+      header: `${serviceData.name}`,
     },
     data: {
       serviceData: {
-        name: serviceData.name,
-        description: serviceData.description,
-        price: serviceData.price,
-        duration: serviceData.duration,
-        dirImage: serviceData.dirImage,
-        specieId: serviceData.specieId,
-        categoryId: serviceData.categoryId,
+        name: service.name,
+        description: service.description,
+        price: service.price,
+        duration: service.duration,
+        dirImage: service.dirImage,
+        specieId: service.specieId,
+        categoryId: service.categoryId,
       } as AddEditServiceSchema,
       speciesOptions: speciesToOptionsSelect(await getAllSpecies()),
       categoriesOptions: categoriesToOptionsSelect(await getAllCategories()),
@@ -195,7 +218,7 @@ const editService = async (serviceData: ServiceView) => {
     onClose: async (options) => {
       const data = options?.data
       if (data) {
-        const service = await updateVeterinaryService(serviceData.id, data)
+        const service = await updateVeterinaryService(serviceData.serviceId, data)
         console.log('Datos recibidos', service)
         showToast('Servicio editado exitosamente: ' + data.name)
         loadServices()
@@ -207,7 +230,7 @@ const editService = async (serviceData: ServiceView) => {
 //for confirm
 const confirm = useConfirm()
 
-const deleteService = (event: MouseEvent | KeyboardEvent, serviceData: ServiceView) => {
+const deleteService = (event: MouseEvent | KeyboardEvent, serviceData: ServiceList) => {
   const isActive = serviceData.status
 
   confirm.require({
@@ -225,7 +248,7 @@ const deleteService = (event: MouseEvent | KeyboardEvent, serviceData: ServiceVi
       severity: isActive ? 'danger' : 'success',
     },
     accept: async () => {
-      await activateVeterinaryService(serviceData.id)
+      await activateVeterinaryService(serviceData.serviceId)
       showToast('Servicio eliminado exitosamente: ' + serviceData.name)
       loadServices()
     },
@@ -258,7 +281,14 @@ const exportCSV = () => {
                 <InputGroupAddon class="text-neutral-400">
                   <i class="pi pi-info"></i>
                 </InputGroupAddon>
-                <InputText v-model="name" v-bind="nameAttrs" :invalid="Boolean(errors.name)" class="w-full" placeholder="Nombre" @update:model-value="searchServicesDebounced" />
+                <InputText
+                  v-model="name"
+                  v-bind="nameAttrs"
+                  :invalid="Boolean(errors.name)"
+                  class="w-full"
+                  placeholder="Nombre"
+                  @update:model-value="searchServicesDebounced"
+                />
               </InputGroup>
               <Message v-if="errors.name" severity="error" size="small" variant="simple">
                 {{ errors.name }}
@@ -277,6 +307,7 @@ const exportCSV = () => {
                 optionValue="value"
                 placeholder="Selecciona Especie"
                 @update:model-value="searchServicesDebounced"
+                showClear
               />
 
               <Message v-if="errors.specieId" severity="error" size="small" variant="simple">
@@ -295,22 +326,32 @@ const exportCSV = () => {
                 optionLabel="name"
                 optionValue="value"
                 placeholder="Selecciona Categoria"
+                showClear
                 @update:model-value="searchServicesDebounced"
               />
               <Message v-if="errors.specieId" severity="error" size="small" variant="simple">
                 {{ errors.specieId }}
               </Message>
             </div>
-            <div class="form-button-search-container-grid-col-5">
-              <!-- button -->
-              <Button
-                label="Buscar"
-                type="submit"
-                severity="info"
-                icon="pi pi-search"
-                iconPos="right"
+
+            <!-- status -->
+
+            <div>
+              <label class="block mb-2">Estado</label>
+              <Select
                 class="w-full"
+                v-bind="statusAttrs"
+                v-model="status"
+                :options="statusOptions"
+                optionLabel="name"
+                optionValue="value"
+                placeholder="Selecciona Estado"
+                @update:model-value="searchServicesDebounced"
               />
+
+              <Message v-if="errors.status" severity="error" size="small" variant="simple">
+                {{ errors.status }}
+              </Message>
             </div>
           </form>
 
@@ -356,6 +397,7 @@ const exportCSV = () => {
                   severity="success"
                   label="Agregar Servicio"
                   @click="addService"
+                  v-if="roleMain === 'Administrador'"
                 />
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
@@ -367,7 +409,9 @@ const exportCSV = () => {
             ></Column>
             <Column field="category" sortable header="Categoria" style="width: 18%"></Column>
             <Column
+
               field="description"
+
               sortable
               style="width: 15%"
             ></Column>
@@ -381,33 +425,36 @@ const exportCSV = () => {
               sortable
               style="width: 15%"
             ></Column>
-            <Column>
+            <Column header="Acciones">
               <template #body="{ data }">
-                <div
-                  class="flex justify-between items-center flex-row lg:flex-col xl:flex-row gap-1"
-                >
+                <div class="flex items-center flex-row lg:flex-col xl:flex-row gap-1">
                   <Button
                     icon="pi pi-eye"
                     severity="info"
-                    variant="outlined"
+                    variant="text"
                     aria-label="Filter"
                     rounded
+                    size="small"
                     @click="viewService(data)"
                   ></Button>
                   <Button
                     icon="pi pi-pencil"
                     severity="warn"
-                    variant="outlined"
+                    variant="text"
                     aria-label="Filter"
                     rounded
                     @click="editService(data)"
+                    size="small"
+                    v-if="roleMain === 'Administrador'"
                   ></Button>
                   <Button
-                    icon="pi pi-trash"
+                    icon="pi pi-ban"
                     severity="danger"
-                    variant="outlined"
+                    variant="text"
                     aria-label="Eliminar"
                     rounded
+                    size="small"
+                    v-if="roleMain === 'Administrador'"
                     @click="deleteService($event, data)"
                   />
                 </div>

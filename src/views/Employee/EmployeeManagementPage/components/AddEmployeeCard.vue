@@ -18,7 +18,7 @@ import { useReniec } from '@/composables/useReniec'
 
 //methods
 
-const { getInfoSimpleByReniec } = useReniec()
+const { loading,getInfoSimpleByReniec } = useReniec()
 
 //form
 
@@ -188,6 +188,7 @@ const cmvpActive = (id:number):boolean=>{
               severity="secondary"
               variant="text"
               @click="searchInfoReniec()"
+              :loading="loading.getInfoSimpleByReniec"
             />
           </InputGroupAddon>
         </InputGroup>
@@ -217,7 +218,7 @@ const cmvpActive = (id:number):boolean=>{
         </Message>
       </div>
 
-      <div>
+      <div      v-if="!cmvpActive(roleId)">
         <label class="block mb-2">CMVP</label>
 
         <InputGroup>
@@ -231,6 +232,7 @@ const cmvpActive = (id:number):boolean=>{
             type="text"
             placeholder="Ej: 14125"
             :disabled="cmvpActive(roleId)"
+
           />
         </InputGroup>
 

@@ -18,6 +18,10 @@ import type { ClientInfoForAppointment as ClientInfoForAppointmentView } from '@
 import type { ClientInfoForAppointment } from '@/services/Appointment/domain/models/Appointment'
 import type { PaymentInfoForAppointment as PaymentInfoForAppointmentView } from '@/models/PaymentInfoForAppointment'
 import type { PaymentInfoForAppointment } from '@/services/Appointment/domain/models/Appointment'
+import type { AppointmentInfoPanelAdmin } from '@/services/Appointment/domain/models/Appointment'
+import type { AppointmentInfoPanelAdmin as AppointmentInfoPanelAdminView } from '@/models/AppointmentInfoPanelAdmin'
+import type { CareAndAppointmentPanelEmployee as CareAndAppointmentPanelEmployeeView } from '@/models/CareAndAppointmentPanelEmployee'
+import type { CareAndAppointmentPanelEmployee } from '@/services/Appointment/domain/models/Appointment'
 
 export class AppointmentAdapter {
   static toAppointmentView(appoinment: Appointment): AppointmentView {
@@ -67,7 +71,7 @@ export class AppointmentAdapter {
       categoryService: {
         name: infoBasicAppointment.categoryServiceName,
       },
-      status: infoBasicAppointment.status,
+      status: FormatAdapter.toCaptalizeCaseWithout_(infoBasicAppointment.status),
       duration: infoBasicAppointment.duration,
     }
   }
@@ -80,27 +84,29 @@ export class AppointmentAdapter {
       date: appointmentList.day,
       headquarter: appointmentList.headquarter,
       categoryService: appointmentList.categoryService,
-      appointmentStatus: FormatAdapter.toCaptalizeCaseWithout_ (appointmentList.appointmentStatus),
+      appointmentStatus: FormatAdapter.toCaptalizeCaseWithout_(appointmentList.appointmentStatus),
     }
   }
-  static toInfoAppointmentForPanel(appointment:InfoAppointmentForPanel):InfoAppointmentForPanelView{
-    return{
-        id: appointment.idAppointment ,
-  timeAppointment: appointment.timeAppointment,
-  comment: appointment.comment,
-  service: {
-    id: appointment.serviceId,
-    time: appointment.serviceTime,
-    name: appointment.serviceName,
-  },
-  employee: {
-    id: appointment.employeeId,
-    name: appointment.employeeName,
-    role: appointment.employeeRole
-  }
+  static toInfoAppointmentForPanel(
+    appointment: InfoAppointmentForPanel,
+  ): InfoAppointmentForPanelView {
+    return {
+      id: appointment.idAppointment,
+      timeAppointment: appointment.timeAppointment,
+      comment: appointment.comment,
+      service: {
+        id: appointment.serviceId,
+        time: appointment.serviceTime,
+        name: appointment.serviceName,
+      },
+      employee: {
+        id: appointment.employeeId,
+        name: appointment.employeeName,
+        role: appointment.employeeRole,
+      },
     }
   }
-    static toPetInfoAppointmentView(
+  static toPetInfoAppointmentView(
     animalInfoAppointment: AnimalInfoForAppointment,
   ): PetInfoForAppointment {
     return {
@@ -137,7 +143,44 @@ export class AppointmentAdapter {
       paymentMethod: {
         id: paymentInfo.paymentMethodId,
         name: paymentInfo.paymentMethod,
-        status: paymentInfo.paymentStatus,
+      },
+      status: FormatAdapter.toCaptalizeCaseWithout_(paymentInfo.paymentStatus),
+    }
+  }
+
+  static toAppointmentInfoPanelAdminView(
+    infoAppointment: AppointmentInfoPanelAdmin,
+  ): AppointmentInfoPanelAdminView {
+    return {
+      id: infoAppointment.appointmentId,
+      petName: infoAppointment.animalName,
+      serviceName: infoAppointment.serviceName,
+      clientName: infoAppointment.clientName,
+      hour: infoAppointment.hour,
+      status: FormatAdapter.toCaptalizeCaseWithout_(infoAppointment.status),
+    }
+  }
+
+  static toCareAndAppointmentPanelEmployeeView(
+    item: CareAndAppointmentPanelEmployee,
+  ): CareAndAppointmentPanelEmployeeView {
+    return {
+      id: item.id,
+      type: item.type,
+      pet: {
+        id: item.animalId,
+        name: item.animalName,
+        breedName: item.breedName,
+      },
+      serviceName: item.serviceName,
+      clientName: item.clientName,
+      date: item.date,
+      hour: item.hour,
+      status: FormatAdapter.toCaptalizeCaseWithout_(item.status),
+      commentAppointment: item.commentAppointment,
+      employee: {
+        id: item.employeeId,
+        name: item.employeeName,
       },
     }
   }

@@ -1,13 +1,16 @@
 <script lang="ts" setup>
 import Card from 'primevue/card'
-import { ref } from 'vue'
+import {  ref } from 'vue'
 import CardInfoPrimary from './CardInfoPrimary.vue';
+
 const props = defineProps<{
   fullName: string
   phone: string
   headquarterName: string
   address: string
 }>()
+
+
 
 const items = ref<{ icon: string; title: string; content: string }[]>([
   {

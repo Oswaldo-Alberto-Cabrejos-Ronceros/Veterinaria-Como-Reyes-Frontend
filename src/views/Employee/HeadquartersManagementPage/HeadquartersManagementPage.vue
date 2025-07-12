@@ -15,13 +15,13 @@ import DataTable, { type DataTablePageEvent } from 'primevue/datatable'
 import Column from 'primevue/column'
 import { useConfirm, useDialog, useToast } from 'primevue'
 import AddEditHeadquarterCard from './components/AddEditHeadquarterCard.vue'
-import type { FormValues as AddEditHeadquarterSchema } from '@/validation-schemas-forms/schema-add-edit-headquarter'
 import ViewHeadquaterCard from './components/ViewHeadquaterCard.vue'
 import { useHeadquarter } from '@/composables/useHeadquarter'
 import type { FormValues as HeadquarterAddEditSchema } from '@/validation-schemas-forms/schema-add-edit-headquarter'
 import type { HeadquarterList } from '@/models/HeadquarterList'
 import { debounce } from 'lodash'
 import type { OptionSelect } from '@/models/OptionSelect'
+import { DateAdapter } from '@/adapters/DateAdapter'
 
 //toast
 const toast = useToast()
@@ -214,7 +214,17 @@ const editHeadquarter = async (headquarterData: HeadquarterList) => {
       header: `${headquarterData.name}`,
     },
     data: {
-      headquarterData: headquarter as AddEditHeadquarterSchema,
+      headquarterData: {
+        name: headquarter.phone,
+        phone: headquarter.phone,
+        address: headquarter.address,
+        email: headquarter.email,
+        district: headquarter.district,
+        province: headquarter.province,
+        departament: headquarter.departament,
+        startTime: DateAdapter.fromHHmmSSToDate(headquarter.startTime),
+        endTime: DateAdapter.fromHHmmSSToDate(headquarter.endTime),
+      },
     },
     onClose: async (options) => {
       const data = options?.data as HeadquarterAddEditSchema
@@ -292,7 +302,6 @@ const activeHeadquarterAction = (
     },
   })
 }
-
 
 //for export
 
@@ -467,7 +476,7 @@ const exportCSV = () => {
                     @click="editHeadquarter(data)"
                   ></Button>
                   <Button
-                  v-if="data.status==='Activo'"
+                    v-if="data.status === 'Activo'"
                     icon="pi pi-ban"
                     severity="danger"
                     size="small"
@@ -477,14 +486,14 @@ const exportCSV = () => {
                     @click="deleteHeadquarterAction($event, data)"
                   ></Button>
                   <Button
-                  v-else
+                    v-else
                     icon="pi pi-check-circle"
                     severity="success"
                     size="small"
                     variant="text"
                     aria-label="Activar"
                     rounded
-                    @click="activeHeadquarterAction($event,data)"
+                    @click="activeHeadquarterAction($event, data)"
                   ></Button>
                 </div>
               </template>

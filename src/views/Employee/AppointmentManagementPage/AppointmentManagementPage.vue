@@ -30,6 +30,8 @@ import { DateAdapter } from '@/adapters/DateAdapter'
 import { debounce } from 'lodash'
 import type { AppointmentList } from '@/models/AppointmentList'
 import { useConfirm } from 'primevue/useconfirm'
+import { useAuthentication } from '@/composables/useAuthentication'
+import { useEmployee } from '@/composables/useEmployee'
 
 onMounted(async () => {
   loadAppoinments()
@@ -44,10 +46,16 @@ const {
   createAppointment,
   confirmAppointment,
   completeAppointment,
-  deleteAppointment
+  deleteAppointment,
 } = useAppointment()
 
 const { getAllPaymentMethods } = usePaymentMethod()
+
+const { getMainRole, getEntityId } = useAuthentication()
+
+const { getEmployeeMyInfo } = useEmployee()
+
+const roleMain = ref<string>('')
 
 //for appoinments
 
@@ -67,22 +75,34 @@ const searchAppointmentsDebounce = debounce(() => {
 //for load appoinments
 
 const loadAppoinments = async (event?: DataTablePageEvent) => {
+  const role = getMainRole()
+  if (role) {
+    roleMain.value = role
+    if (role === 'Administrador') {
+      headquartersOptions.value = headquartersCategoriesToOptionsSelect(await getAllHeadquarters())
+    } else {
+      const id = getEntityId()
+      if (id) {
+        const info = await getEmployeeMyInfo(id)
+        headquarter.value = info.headquarter.name
+      }
+    }
+  }
+
   const page = event ? event.first / event.rows : 0
   const size = event ? event.rows : rows.value
   rows.value = size
   const pageResponse = await searchAppointments({
     day: date.value ? DateAdapter.toDateYYYYmmDD(date.value) : undefined,
-    headquarter: headquarter.value,
-    categoryService: category.value,
-    appointmentStatus: status.value,
+    headquarter: headquarter.value ?? undefined,
+    categoryService: category.value ?? undefined,
+    appointmentStatus: status.value ?? undefined,
     page: page,
     size: size,
   })
 
   appointments.value = pageResponse.content
   totalRecords.value = pageResponse.totalElements
-
-  headquartersOptions.value = headquartersCategoriesToOptionsSelect(await getAllHeadquarters())
   categoriesOptions.value = headquartersCategoriesToOptionsSelect(await getAllCategories())
 }
 
@@ -94,7 +114,7 @@ const handleChangeStatus = async (appointmentId: number, status: string) => {
     } else if (status === 'COMPLETADA') {
       await completeAppointment(appointmentId)
       showToast('Cita completada exitodamente')
-    } else if(status=='CANCELADA'){
+    } else if (status == 'CANCELADA') {
       await deleteAppointment(appointmentId)
       showToast('Cita cancelada exitodamente')
     }
@@ -272,7 +292,6 @@ const confirmAppoinmentConfirm = (event: MouseEvent | KeyboardEvent, appointment
   })
 }
 
-
 const cancelAppoinmentConfirm = (event: MouseEvent | KeyboardEvent, appointmentId: number) => {
   confirm.require({
     group: 'confirmPopupGeneral',
@@ -328,6 +347,7 @@ const attendAppointment = (appointmentId: number) => {
                 v-model="date"
                 :invalid="Boolean(errors.date)"
                 placeholder="Selecciona Fecha"
+                showButtonBar
                 @update:model-value="searchAppointmentsDebounce()"
               />
 
@@ -336,7 +356,7 @@ const attendAppointment = (appointmentId: number) => {
               </Message>
             </div>
             <!-- headquarter -->
-            <div>
+            <div v-if="roleMain === 'Administrador'">
               <label class="block mb-2">Sede</label>
               <Select
                 class="w-full"
@@ -347,6 +367,7 @@ const attendAppointment = (appointmentId: number) => {
                 optionLabel="name"
                 optionValue="value"
                 placeholder="Selecciona Sede"
+                showClear
                 @update:model-value="searchAppointmentsDebounce()"
               />
 
@@ -366,6 +387,7 @@ const attendAppointment = (appointmentId: number) => {
                 optionLabel="name"
                 optionValue="value"
                 placeholder="Selecciona Categoria"
+                showClear
                 @update:model-value="searchAppointmentsDebounce()"
               />
 
@@ -385,6 +407,7 @@ const attendAppointment = (appointmentId: number) => {
                 optionLabel="name"
                 optionValue="value"
                 placeholder="Selecciona Estado"
+                showClear
                 @update:model-value="searchAppointmentsDebounce()"
               />
 
@@ -454,12 +477,25 @@ const attendAppointment = (appointmentId: number) => {
               <template #body="{ data }">
                 <div class="flex items-center flex-row lg:flex-col xl:flex-row gap-1">
                   <Button
+                    icon="pi pi-eye"
+                    v-tooltip="'Ver todos datos'"
+                    severity="info"
+                    size="small"
+                    variant="text"
+                    aria-label="Ver todos datos"
+                    v-if="data.appointmentStatus === 'Completada'"
+                    @click="attendAppointment(data.id)"
+                    rounded
+                  />
+
+                  <Button
                     icon="pi pi-calendar-clock"
                     v-tooltip="'Ver todos datos'"
                     severity="warn"
                     size="small"
                     variant="text"
                     aria-label="Ver todos datos"
+                    v-if="data.appointmentStatus !== 'Completada'"
                     @click="attendAppointment(data.id)"
                     rounded
                   />
@@ -494,8 +530,11 @@ const attendAppointment = (appointmentId: number) => {
                     variant="text"
                     aria-label="Cancelar"
                     rounded
-                    v-if="data.appointmentStatus !== 'Completada' && data.appointmentStatus !== 'Cancelada'"
-                    @click="cancelAppoinmentConfirm($event,data.id)"
+                    v-if="
+                      data.appointmentStatus !== 'Completada' &&
+                      data.appointmentStatus !== 'Cancelada'
+                    "
+                    @click="cancelAppoinmentConfirm($event, data.id)"
                   />
                 </div>
               </template>

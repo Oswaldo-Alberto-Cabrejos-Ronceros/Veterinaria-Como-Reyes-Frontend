@@ -11,8 +11,9 @@ import Select from 'primevue/select'
 import Button from 'primevue/button'
 import DatePicker from 'primevue/datepicker'
 import type { Ref } from 'vue'
-import { inject, onMounted } from 'vue'
+import { inject, onMounted,ref } from 'vue'
 import { useReniec } from '@/composables/useReniec'
+import type { OptionSelect } from '@/models/OptionSelect'
 
 //methods
 
@@ -84,22 +85,18 @@ const textFields: {
 const dialogRef = inject('dialogRef') as Ref<{
   close: (data?: FormValues) => void
   data: {
-    clientData: FormValues
+    clientData: FormValues,
+    headquartersOptions?: OptionSelect[]
   }
 }>
+
+const headquartersOptions = ref<OptionSelect[]>([])
 
 //for submit
 const onSubmit = handleSubmit((values) => {
   console.log(values)
   dialogRef.value.close(values as FormValues)
 })
-
-//headquarterIds
-const headquarkers = [
-  { name: 'Ica', value: 1 },
-  { name: 'Parcona', value: 2 },
-  { name: 'Tinguiña', value: 3 },
-]
 
 //for dialog
 
@@ -111,6 +108,10 @@ onMounted(() => {
   headquarterId.value = params.clientData.headquarterId
   dni.value = params.clientData.dni
   if (params.clientData.birthdate instanceof Date) birthdate.value = params.clientData.birthdate
+const headquartersOptionsGet = dialogRef.value.data.headquartersOptions
+    if (headquartersOptionsGet) {
+      headquartersOptions.value = headquartersOptionsGet
+    }
 })
 
 //for search
@@ -202,7 +203,7 @@ const searchInfoReniec = async () => {
           class="w-full"
           v-bind="headquarterIdAttrs"
           v-model="headquarterId"
-          :options="headquarkers"
+          :options="headquartersOptions"
           :invalid="Boolean(errors.headquarterId)"
           optionLabel="name"
           optionValue="value"

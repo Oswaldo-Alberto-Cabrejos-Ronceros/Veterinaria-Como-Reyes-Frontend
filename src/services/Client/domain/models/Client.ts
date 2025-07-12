@@ -31,8 +31,8 @@ export interface ClientRequest {
     headquarterId: number
   }
   user?: {
-    email: string
-    password: string
+    email?: string
+    password?: string
   }
 }
 
@@ -71,4 +71,23 @@ export interface ClientList {
   lastName: string
   headquarterName: string
   status: string
+}
+
+export interface ClientStatsPanel {
+  totalClients: number
+  currentMonth: number
+  previousMonth: number
+  difference: string
+}
+
+export interface ClientInfoPanelAdmin {
+  clientId: number
+  fullName: string
+  initials: string
+  phone: string
+}
+
+export interface ClientStatsToday {
+  totalClientsAttended: number
+  todayClientsAttended: number
 }

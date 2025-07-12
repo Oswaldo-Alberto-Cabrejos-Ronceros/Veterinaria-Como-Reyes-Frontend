@@ -5,7 +5,7 @@ export interface VeterinaryRecordInfoTable {
   nameEmployee: string
   diagnosis: string
   treatment: string
-  observation: string
-  resultUrl: string
+  observation?: string
+  resultUrl?: string
   status: string
 }

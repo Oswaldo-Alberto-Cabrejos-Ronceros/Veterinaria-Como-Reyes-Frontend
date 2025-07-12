@@ -16,6 +16,7 @@ import type { InfoAppointmentForPanel } from '@/models/InfoAppointmentForPanel'
 import type { PetInfoForAppointment } from '@/models/PetInfoForAppointment'
 import type { ClientInfoForAppointment } from '@/models/ClientInfoForAppointment'
 import type { PaymentInfoForAppointment } from '@/models/PaymentInfoForAppointment'
+import { usePayment } from '@/composables/usePayment'
 
 const props = defineProps<{
   appointmentId: string
@@ -25,6 +26,9 @@ const props = defineProps<{
 
 const { getAppointmentPanelInfo,getPetInfoForAppointment,getClientInfoForAppointment,getPaymentInfoForAppointment,getAppointmentById } = useAppointment()
 const { createCareFromAppointment } = useCare()
+
+const {setPaymentStatusComplete}=usePayment()
+
 
 //ref
 const appointmentBasicInfo = ref<Appointment | null>(null)
@@ -38,6 +42,15 @@ onMounted(async () => {
   console.log(props.appointmentId)
   loadInfo()
 })
+
+
+const handleCompletePayment = async()=>{
+  if(paymentInfo.value){
+    await setPaymentStatusComplete(paymentInfo.value.paymentId)
+    showToast('Pago completado')
+    loadInfo()
+  }
+}
 
 
 const loadInfo = async () => {
@@ -69,6 +82,7 @@ const openCreateCareConfirmArrive = () => {
     onClose: async (options) => {
       const data = options?.data as FormValues
       if (data) {
+        console.log(data)
         const care = await createCareFromAppointment(data)
         loadInfo()
         showToast(`Atención creada correctamente: ${care.dateTime}`)
@@ -103,7 +117,7 @@ const showToast = (message: string) => {
       :comentario="appointmentInfo.comment"
       :status="appointmentBasicInfo?.statusAppointment"
     />
-    <div class="w-full grid grid-cols-2 gap-4">
+    <div class="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
       <CardPetInfo v-if="petInfo" :name="petInfo.name"
       :specieName="petInfo.speciesName"
       :breedName="petInfo.breedName"
@@ -162,6 +176,6 @@ const showToast = (message: string) => {
 
     <!-- payment -->
 
-    <CardBilling v-if="paymentInfo" :serviceName="paymentInfo.serviceName" :price="paymentInfo.amount"/>
+    <CardBilling @complete-payment="handleCompletePayment" v-if="paymentInfo" :button-active="false" :payment-id="paymentInfo.paymentId" :status="paymentInfo.status" :payment-method-id="paymentInfo.paymentMethod.id" :serviceName="paymentInfo.serviceName" :price="paymentInfo.amount"/>
   </div>
 </template>

@@ -80,6 +80,13 @@ export function usePet() {
     }
   }
 
+  const updatePetWeight = async (id: number, weight: number): Promise<{ name: string; weight: number }> => {
+  return await runUseCase('updateAnimalWeight', () =>
+    animalUsesCases.updateAnimalWeight.execute(id, weight),
+  )
+}
+
+
   return {
     loading,
     error,
@@ -92,5 +99,6 @@ export function usePet() {
     updatePet,
     activatePet,
     searchPets,
+    updatePetWeight
   }
 }

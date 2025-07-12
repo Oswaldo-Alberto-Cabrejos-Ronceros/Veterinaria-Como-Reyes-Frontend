@@ -5,6 +5,7 @@ import { SpecieAdapter } from '@/adapters/SpecieAdapter'
 import type { Specie as SpecieView } from '@/models/Specie'
 import type { FormValues as SpecieAddEditSchema } from '@/validation-schemas-forms/schema-add-edit-specie'
 import type { PageResponse } from '@/services/models/PageResponse'
+import type { SpecieList as SpecieListView } from '@/models/SpecieList'
 
 export function useSpecie() {
   //get from useAsyncHandle
@@ -54,23 +55,34 @@ export function useSpecie() {
   }
 
   const activateSpecie = async (specieId: number): Promise<void> => {
-    await runUseCase('activateSpecie', () =>
-      specieUsesCases.activateSpecie.execute(specieId))
+    await runUseCase('activateSpecie', () => specieUsesCases.activateSpecie.execute(specieId))
   }
 
   const searchSpecies = async (
     page: number,
     size: number,
     name?: string,
-    status?: boolean
-  ): Promise<PageResponse<SpecieView>> => {
+    status?: boolean,
+  ): Promise<PageResponse<SpecieListView>> => {
     const result = await runUseCase('searchSpecies', () =>
-      specieUsesCases.searchSpecies.execute(page, size, name, status)
+      specieUsesCases.searchSpecies.execute(page, size, name, status),
     )
     return {
       ...result,
-      content: result.content.map(SpecieAdapter.toSpecieView),
+      content: result.content.map(SpecieAdapter.fromSpecieListToSpecieListView),
     }
+  }
+
+  const getTopSpeciesGeneral = async () => {
+    return await runUseCase('getTopSpeciesGeneral', () =>
+      specieUsesCases.getTopSpeciesGeneral.execute(),
+    )
+  }
+
+  const getTopSpeciesByHeadquarter = async (headquarterId: number) => {
+    return await runUseCase('getTopSpeciesByHeadquarter', () =>
+      specieUsesCases.getTopSpeciesGeneralByHeadquarter.execute(headquarterId),
+    )
   }
 
   return {
@@ -83,5 +95,7 @@ export function useSpecie() {
     updateSpecie,
     activateSpecie,
     searchSpecies,
+    getTopSpeciesGeneral,
+    getTopSpeciesByHeadquarter
   }
 }

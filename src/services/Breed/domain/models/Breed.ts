@@ -15,3 +15,10 @@ export interface BreedRequest {
     specieId:number
   }
 }
+
+export interface BreedList{
+      breedId:number;
+    name:string;
+   specieName:string;
+   status:string;
+}

@@ -12,7 +12,7 @@ import Button from 'primevue/button'
 import { onMounted, ref } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import type { Specie as SpecieView } from '@/models/Specie'
+import type { SpecieList } from '@/models/SpecieList'
 import { useConfirm } from 'primevue'
 import { useDialog, useToast } from 'primevue'
 import AddEditSpecie from './components/AddEditSpecieCard.vue'
@@ -20,6 +20,10 @@ import type { FormValues as AddEditSpecieSchema } from '@/validation-schemas-for
 import { useSpecie } from '@/composables/useSpecie'
 import type { DataTablePageEvent } from 'primevue/datatable'
 import { debounce } from 'lodash'
+import Tag from 'primevue/tag'
+import { useAuthentication } from '@/composables/useAuthentication'
+import type { OptionSelect } from '@/models/OptionSelect'
+import Select from 'primevue/select'
 
 //toast
 const toast = useToast()
@@ -33,11 +37,15 @@ const showToast = (message: string) => {
   })
 }
 
+const roleMain = ref<string>('')
+
+const { getMainRole } = useAuthentication()
+
 //for get species
 
-const { loading, error, createSpecie, updateSpecie, activateSpecie, searchSpecies } = useSpecie()
+const { loading, error, getSpecieById,createSpecie, updateSpecie, activateSpecie, searchSpecies } = useSpecie()
 
-const species = ref<SpecieView[]>([])
+const species = ref<SpecieList[]>([])
 
 const totalRecords = ref<number>(0)
 const rows = ref<number>(10)
@@ -52,9 +60,13 @@ const loadSpecies = async (event?: DataTablePageEvent) => {
   const page = event ? event.first / event.rows : 0
   const size = event ? event.rows : rows.value
   rows.value = size
-  const response = await searchSpecies(page, size, name.value)
+  const response = await searchSpecies(page, size, name.value,status.value)
   species.value = response.content
   totalRecords.value = response.totalElements
+  const role = getMainRole()
+  if (role) {
+    roleMain.value = role
+  }
 }
 
 //form
@@ -62,10 +74,12 @@ const { handleSubmit, errors, defineField } = useForm<SearchSpecieSchema>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
     name: '',
+    status: true,
   },
 })
 
 const [name, nameAttrs] = defineField('name')
+const [status, statusAttrs] = defineField('status')
 
 const searchSpeciesDebounced = debounce(() => {
   loadSpecies()
@@ -90,7 +104,7 @@ const addSpecie = () => {
   dialog.open(AddEditSpecie, {
     props: {
       modal: true,
-      header:'Agregar especie'
+      header: 'Agregar especie',
     },
     onClose: async (options) => {
       const data = options?.data as AddEditSpecieSchema
@@ -104,14 +118,18 @@ const addSpecie = () => {
   })
 }
 
-const editPaymentMethod = (specieData: SpecieView) => {
+const editSpecie = async (specieData: SpecieList) => {
+  const specie = await getSpecieById(specieData.id)
   dialog.open(AddEditSpecie, {
     props: {
       modal: true,
-      header:`${specieData.name}`
+      header: `${specieData.name}`,
     },
     data: {
-      specieData: specieData as AddEditSpecieSchema,
+      specieData: {
+        name: specie.name,
+        imagePath: specie.imagePath,
+      } as AddEditSpecieSchema,
     },
     onClose: async (options) => {
       const data = options?.data as AddEditSpecieSchema
@@ -128,9 +146,7 @@ const editPaymentMethod = (specieData: SpecieView) => {
 //for confirm
 const confirm = useConfirm()
 
-const deleteSpecie = (event: MouseEvent | KeyboardEvent, specieData: SpecieView) => {
-  const isActive = specieData.status
-
+const deleteSpecie = (event: MouseEvent | KeyboardEvent, specieData: SpecieList) => {
   confirm.require({
     group: 'confirmPopupGeneral',
     target: event.currentTarget as HTMLElement,
@@ -142,8 +158,8 @@ const deleteSpecie = (event: MouseEvent | KeyboardEvent, specieData: SpecieView)
       outlined: true,
     },
     acceptProps: {
-      label: isActive ? 'Desactivar' : 'Activar',
-      severity: isActive ? 'danger' : 'success',
+      label: 'Eliminar',
+      severity: 'danger',
     },
     accept: async () => {
       await activateSpecie(specieData.id)
@@ -156,6 +172,16 @@ const deleteSpecie = (event: MouseEvent | KeyboardEvent, specieData: SpecieView)
   })
 }
 
+const statusOptions: OptionSelect[] = [
+  {
+    value: true,
+    name: 'Activo',
+  },
+  {
+    value: false,
+    name: 'Desactivado',
+  },
+]
 </script>
 
 <template>
@@ -186,25 +212,34 @@ const deleteSpecie = (event: MouseEvent | KeyboardEvent, specieData: SpecieView)
                 {{ errors.name }}
               </Message>
             </div>
-            <div class="form-button-search-container-grid-col-5">
-              <!-- button -->
-              <Button
-                label="Buscar"
-                type="submit"
-                severity="info"
-                icon="pi pi-search"
-                iconPos="right"
+
+            <!-- status -->
+
+            <div>
+              <label class="block mb-2">Estado</label>
+              <Select
                 class="w-full"
+                v-bind="statusAttrs"
+                v-model="status"
+                :options="statusOptions"
+                optionLabel="name"
+                optionValue="value"
+                placeholder="Selecciona Estado"
+                @update:model-value="searchSpeciesDebounced"
               />
+
+              <Message v-if="errors.status" severity="error" size="small" variant="simple">
+                {{ errors.status }}
+              </Message>
             </div>
           </form>
 
           <!-- for messague loading  -->
-          <Message v-if="loading.getAllSpecies" severity="warn" size="small" variant="simple">
+          <Message v-if="loading.searchSpecies" severity="warn" size="small" variant="simple">
             Cargando ...
           </Message>
           <!-- for messague error -->
-          <Message v-if="error.getAllSpecies" severity="error" size="small" variant="simple">
+          <Message v-if="error.searchSpecies" severity="error" size="small" variant="simple">
             Error al cargar las species
           </Message>
 
@@ -230,30 +265,47 @@ const deleteSpecie = (event: MouseEvent | KeyboardEvent, specieData: SpecieView)
                   iconPos="right"
                   severity="success"
                   label="Agregar Especie"
+                  v-if="roleMain === 'Administrador'"
                   @click="addSpecie"
                 />
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
             </template>
+
             <Column field="name" sortable style="width: 80%"></Column>
 
             <Column>
+
+            <Column field="status" header="Estado" style="width: 20%">
               <template #body="{ data }">
-                <div class="flex justify-between items-center flex-col sm:flex-row gap-1">
+                <Tag
+                  :value="data.status ? 'Activo' : 'Inactivo'"
+                  :severity="data.status ? 'success' : 'danger'"
+                />
+              </template>
+            </Column>
+            <Column header="Acciones" v-if="roleMain === 'Administrador'">
+
+              <template #body="{ data }">
+                <div class="flex items-center flex-col sm:flex-row gap-1">
                   <Button
                     icon="pi pi-pencil"
                     severity="warn"
-                    variant="outlined"
-                    aria-label="Filter"
+                    variant="text"
+                    size="small"
+                    aria-label="Editar"
                     rounded
-                    @click="editPaymentMethod(data)"
+                    v-if="roleMain === 'Administrador'"
+                    @click="editSpecie(data)"
                   ></Button>
                   <Button
-                    icon="pi pi-trash"
+                    icon="pi pi-ban"
                     severity="danger"
-                    variant="outlined"
-                    aria-label="Eliminar"
+                    variant="text"
+                    size="small"
+                    aria-label="Bloquear"
                     rounded
+                    v-if="roleMain === 'Administrador'"
                     @click="deleteSpecie($event, data)"
                   />
                 </div>

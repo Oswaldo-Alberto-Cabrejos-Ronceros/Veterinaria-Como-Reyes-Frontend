@@ -21,6 +21,10 @@ import ViewPaymentMethodCard from './components/ViewPaymentMethodCard.vue'
 import { usePaymentMethod } from '@/composables/usePaymentMethod'
 import { debounce } from 'lodash'
 import type { DataTablePageEvent } from 'primevue/datatable'
+import type { PaymentMethodList } from '@/models/PaymentMethodList'
+import { useAuthentication } from '@/composables/useAuthentication'
+import type { OptionSelect } from '@/models/OptionSelect'
+import Select from 'primevue/select'
 
 //toast
 const toast = useToast()
@@ -34,6 +38,10 @@ const showToast = (message: string) => {
   })
 }
 
+const roleMain = ref<string>('')
+
+const { getMainRole } = useAuthentication()
+
 //get from compose
 
 const {
@@ -43,11 +51,12 @@ const {
   updatePaymentMethod,
   activatePaymentMethod,
   searchPaymentMethods,
+  getPaymentMethodById
 } = usePaymentMethod()
 
 //payment methods
 
-const paymentMethods = ref<PaymentMethodView[]>([])
+const paymentMethods = ref<PaymentMethodList[]>([])
 
 const totalRecords = ref<number>(0)
 const rows = ref<number>(10)
@@ -65,10 +74,14 @@ const loadPaymentMethods = async (event?: DataTablePageEvent) => {
   const size = event ? event.rows : rows.value
   rows.value = size
 
-  const response = await searchPaymentMethods(page, size, name.value)
+  const response = await searchPaymentMethods(page, size, name.value,status.value)
 
   paymentMethods.value = response.content
   totalRecords.value = response.totalElements
+  const role = getMainRole()
+  if (role) {
+    roleMain.value = role
+  }
 }
 
 //form
@@ -76,10 +89,13 @@ const { handleSubmit, errors, defineField } = useForm<SearchPaymentMethotSchema>
   validationSchema: toTypedSchema(schema),
   initialValues: {
     name: '',
+     status: true,
   },
 })
 
 const [name, nameAttrs] = defineField('name')
+const [status, statusAttrs] = defineField('status')
+
 
 const onSubmit = handleSubmit((values) => {
   console.log(values)
@@ -92,7 +108,7 @@ const addPaymentMethod = () => {
   dialog.open(AddEditPaymentMethodCard, {
     props: {
       modal: true,
-      header:'Agregar método de pago'
+      header: 'Agregar método de pago',
     },
     onClose: async (options) => {
       const data = options?.data as AddEditPaymentMethodSchema
@@ -106,26 +122,28 @@ const addPaymentMethod = () => {
   })
 }
 
-const viewPaymentMethod = (paymentMethodData: PaymentMethodView) => {
+const viewPaymentMethod = async (paymentMethodData: PaymentMethodList) => {
+  const paymentMethod = await getPaymentMethodById(paymentMethodData.id)
   dialog.open(ViewPaymentMethodCard, {
     props: {
       modal: true,
-      header:`${paymentMethodData.name}`
+      header: `${paymentMethodData.name}`,
     },
     data: {
-      paymentMethodData: paymentMethodData,
+      paymentMethodData: paymentMethod,
     },
   })
 }
 
-const editPaymentMethod = (paymentMethodData: PaymentMethodView) => {
+const editPaymentMethod = async (paymentMethodData: PaymentMethodList) => {
+  const paymentMethod = await getPaymentMethodById(paymentMethodData.id)
   dialog.open(AddEditPaymentMethodCard, {
     props: {
       modal: true,
-      header:`${paymentMethodData.name}`
+      header: `${paymentMethodData.name}`,
     },
     data: {
-      paymentMethodData: paymentMethodData as AddEditPaymentMethodSchema,
+      paymentMethodData: paymentMethod as AddEditPaymentMethodSchema,
     },
     onClose: async (options) => {
       const data = options?.data as AddEditPaymentMethodSchema
@@ -142,8 +160,11 @@ const editPaymentMethod = (paymentMethodData: PaymentMethodView) => {
 //for confirm
 const confirm = useConfirm()
 
-const deletePaymentMethod = (event: MouseEvent | KeyboardEvent, paymentMethodData: PaymentMethodView) => {
-  const isActive = paymentMethodData.status
+const deletePaymentMethod = (
+  event: MouseEvent | KeyboardEvent,
+  paymentMethodData: PaymentMethodView,
+) => {
+  const isActive = true
 
   confirm.require({
     group: 'confirmPopupGeneral',
@@ -170,13 +191,25 @@ const deletePaymentMethod = (event: MouseEvent | KeyboardEvent, paymentMethodDat
   })
 }
 
-
 //for export
 
 const dt = ref()
 const exportCSV = () => {
   dt.value.exportCSV()
 }
+
+
+const statusOptions: OptionSelect[] = [
+  {
+    value: true,
+    name: 'Activo',
+  },
+  {
+    value: false,
+    name: 'Desactivado',
+  },
+]
+
 </script>
 
 <template>
@@ -194,23 +227,39 @@ const exportCSV = () => {
                 <InputGroupAddon class="text-neutral-400">
                   <i class="pi pi-info"></i>
                 </InputGroupAddon>
-                <InputText v-model="name" v-bind="nameAttrs" :invalid="Boolean(errors.name)" @update:model-value="searchPaymentMethodsDebounced" class="w-full" placeholder="Nombre" />
+                <InputText
+                  v-model="name"
+                  v-bind="nameAttrs"
+                  :invalid="Boolean(errors.name)"
+                  @update:model-value="searchPaymentMethodsDebounced"
+                  class="w-full"
+                  placeholder="Nombre"
+                />
               </InputGroup>
               <Message v-if="errors.name" severity="error" size="small" variant="simple">
                 {{ errors.name }}
               </Message>
             </div>
-            <div class="form-button-search-container-grid-col-5">
-              <!-- button -->
-              <Button
-                label="Buscar"
-                type="submit"
-                severity="info"
-                icon="pi pi-search"
-                iconPos="right"
+                                    <!-- status -->
+
+            <div>
+              <label class="block mb-2">Estado</label>
+              <Select
                 class="w-full"
+                v-bind="statusAttrs"
+                v-model="status"
+                :options="statusOptions"
+                optionLabel="name"
+                optionValue="value"
+                placeholder="Selecciona Estado"
+                @update:model-value="searchPaymentMethodsDebounced"
               />
+
+              <Message v-if="errors.status" severity="error" size="small" variant="simple">
+                {{ errors.status }}
+              </Message>
             </div>
+
           </form>
 
           <!-- for messague loading  -->
@@ -250,6 +299,7 @@ const exportCSV = () => {
                   severity="success"
                   label="Agregar Método"
                   @click="addPaymentMethod"
+                    v-if="roleMain==='Administrador'"
                 />
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
@@ -261,31 +311,36 @@ const exportCSV = () => {
               sortable
               style="width: 60%"
             ></Column>
-            <Column>
+            <Column header="Acciones">
               <template #body="{ data }">
-                <div class="flex justify-between items-center flex-col sm:flex-row gap-1">
+                <div class="flex items-center flex-col sm:flex-row gap-1">
                   <Button
                     icon="pi pi-eye"
                     severity="info"
-                    variant="outlined"
-                    aria-label="Filter"
+                    variant="text"
+                    size="small"
+                    aria-label="Ver"
                     rounded
                     @click="viewPaymentMethod(data)"
                   ></Button>
                   <Button
                     icon="pi pi-pencil"
                     severity="warn"
-                    variant="outlined"
-                    aria-label="Filter"
+                    variant="text"
+                    size="small"
+                    aria-label="Editar"
                     rounded
+                      v-if="roleMain==='Administrador'"
                     @click="editPaymentMethod(data)"
                   ></Button>
                   <Button
-                    icon="pi pi-trash"
+                    icon="pi pi-ban"
                     severity="danger"
-                    variant="outlined"
-                    aria-label="Eliminar"
+                    variant="text"
+                    size="small"
+                    aria-label="Bloquear"
                     rounded
+                      v-if="roleMain==='Administrador'"
                     @click="deletePaymentMethod($event, data)"
                   />
                 </div>

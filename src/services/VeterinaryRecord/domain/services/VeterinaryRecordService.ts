@@ -1,5 +1,5 @@
 import type { PageResponse } from '@/services/models/PageResponse'
-import type { VeterinaryRecord, VeterinaryRecordInfoTable, VeterinaryRecordRequest } from '../models/VeterinaryRecord'
+import type { RecentMedicalRecord, VeterinaryRecord, VeterinaryRecordInfoTable, VeterinaryRecordRequest, VeterinaryRecordStats } from '../models/VeterinaryRecord'
 
 export interface VeterinaryRecordService {
   create(veterinaryRecordRequest: VeterinaryRecordRequest): Promise<VeterinaryRecord>
@@ -14,4 +14,7 @@ export interface VeterinaryRecordService {
     page?: number,
     size?: number,
   ): Promise<PageResponse<VeterinaryRecordInfoTable>>
+  getRecentRecordsByEmployee(employeeId: number): Promise<RecentMedicalRecord[]>
+getStatsByVeterinarian(employeeId: number): Promise<VeterinaryRecordStats>
+getRecordsByAnimalId(animalId: number): Promise<VeterinaryRecordInfoTable[]>
 }

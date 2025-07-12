@@ -10,6 +10,7 @@ import { SearchAnimals } from '@/services/Animal/aplication/SearchAnimals'
 //import axiosHttpClient
 import { AxiosHttpClient } from '@/services/Http/infrastructure/AxiosHttpClient'
 import { AnimalServiceImpl } from '@/services/Animal/infraestructure/AnimalServiceImpl'
+import { UpdateAnimalWeight } from '@/services/Animal/aplication/UpdateAnimalWeight'
 
 //instantiete AciosHttpClient
 
@@ -29,4 +30,5 @@ export const animalUsesCases = {
   updateAnimal: new UpdateAnimal(animalService),
   activateAnimal: new ActivateAnimal(animalService),
   searchAnimals: new SearchAnimals(animalService),
+  updateAnimalWeight: new UpdateAnimalWeight(animalService),
 }

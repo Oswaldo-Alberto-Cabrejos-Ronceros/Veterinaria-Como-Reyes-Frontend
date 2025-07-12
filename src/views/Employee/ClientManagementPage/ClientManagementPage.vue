@@ -123,11 +123,14 @@ const viewClient = async (clientData: ClientList) => {
   })
 }
 
-const addClient = () => {
+const addClient = async () => {
   dialog.open(AddClientCard, {
     props: {
       modal: true,
       header: 'Agregar cliente',
+    },
+    data:{
+  headquartersOptions: headquartersToOptionsSelect(await getAllHeadquarters()),
     },
     onClose: async (options) => {
       const data = options?.data as SchemaClientAdd
@@ -154,6 +157,7 @@ const editClient = async (clientData: ClientList) => {
         birthdate: new Date(client.birthdate),
         headquarterId: client.headquarter.headquarterId,
       } as SchemaEditClient,
+       headquartersOptions: headquartersToOptionsSelect(await getAllHeadquarters()),
     },
     props: {
       modal: true,
@@ -281,7 +285,7 @@ const statusOptions: OptionSelect[] = [
   },
   {
     value: false,
-    name: 'Desativado',
+    name: 'Desactivado',
   },
 ]
 
@@ -435,7 +439,7 @@ const headquartersToOptionsSelect = (headquarters: Headquarter[]): OptionSelect[
                     @click="editClient(data)"
                   ></Button>
                   <Button
-                    icon="pi pi-trash"
+                    icon="pi pi-ban"
                     severity="danger"
                     variant="text"
                     aria-label="Bloquear"

@@ -54,4 +54,12 @@ export class AnimalServiceImpl implements AnimalService {
     )
     return response.data
   }
+
+  async updateAnimalWeight(id: number, weight: number): Promise<{ name: string; weight: number }> {
+  const response = await this.httpClient.patch<{ name: string; weight: number }>(
+    `${this.urlBase}/${id}/weight`,
+    { weight },
+  )
+  return response.data
+}
 }

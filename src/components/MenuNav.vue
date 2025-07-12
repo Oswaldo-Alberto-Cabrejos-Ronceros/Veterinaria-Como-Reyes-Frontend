@@ -51,7 +51,7 @@ const handleClick = (event: MouseEvent) => {
   const clickedInsideHeader = document.querySelector('header')?.contains(target)
   if (
     props.showMenu &&
-    window.innerWidth < 640 &&
+    window.innerWidth < 769 &&
     asideRef.value &&
     !menuWrapperRef.value?.contains(target) &&
     !clickedInsideHeader
@@ -62,7 +62,7 @@ const handleClick = (event: MouseEvent) => {
 
 //event for verify if show menu is true, if width screen < 640, close cmenu
 const handleResize = () => {
-  if (window.innerWidth < 640 && props.showMenu) {
+  if (window.innerWidth < 769 && props.showMenu) {
     emitCloseMenu()
   }
 }
@@ -71,7 +71,7 @@ const handleResize = () => {
 
 const handleMenuItemClick = (navigate: () => void) => {
   navigate()
-  if (window.innerWidth < 640) {
+  if (window.innerWidth < 769) {
     emitCloseMenu()
   }
 }
@@ -80,7 +80,7 @@ const handleMenuItemClick = (navigate: () => void) => {
 onMounted(() => {
   document.addEventListener('click', handleClick)
   window.addEventListener('resize', handleResize)
-  if (window.innerWidth < 640) {
+  if (window.innerWidth < 769) {
     emitCloseMenu()
   }
 })
@@ -102,16 +102,11 @@ const isActive = (path: string) => route.path.startsWith(path)
   <aside
     ref="asideRef"
     :class="[
-      'transition-all duration-200 ease-out fixed top-0 left-0 h-screen max-h-screen z-30 backdrop-blur-xs bg-surface-0 dark:bg-surface-800 border-r border-neutral-200 dark:border-neutral-800 ',
-      showMenu ? ' w-screen md:w-64' : 'w-0 sm:w-20 overflow-hidden',
+      'transition-all duration-200 ease-out fixed top-0 left-0 h-screen max-h-screen z-[100] backdrop-blur-xs border-r border-neutral-200 dark:border-neutral-800 ',
+      showMenu ? ' w-screen md:w-64' : 'w-0 md:w-20 overflow-hidden',
     ]"
   >
-
-    <!--    <div
-      class="w-full bg-primary z-40 h-screen block sm:hidden fixed top-0 left-0 brightness-50"
-      v-if="showMenu"
-    ></div>  -->
-    <div class="w-2/3 sm:w-auto h-screen bg-surface-0 dark:bg-neutral-800 z-50" ref="menuWrapperRef">
+    <div class="w-2/3 md:w-auto h-screen bg-surface-0 dark:bg-neutral-800 z-30" ref="menuWrapperRef">
       <div
         :class="[
           'w-full h-16 flex items-center px-3 border-b-1 border-neutral-200 dark:border-neutral-700',

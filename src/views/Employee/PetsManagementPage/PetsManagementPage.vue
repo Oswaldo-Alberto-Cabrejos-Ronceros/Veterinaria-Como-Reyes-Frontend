@@ -30,6 +30,7 @@ import { debounce } from 'lodash'
 import { useClient } from '@/composables/useClient'
 import type { Client } from '@/models/Client'
 import { watch } from 'vue'
+import { useAuthentication } from '@/composables/useAuthentication'
 
 //toast
 const toast = useToast()
@@ -47,6 +48,8 @@ const showToast = (message: string) => {
 
 const { loading, error, searchPets, createPet, getPetById, updatePet, deletePet, activatePet } =
   usePet()
+
+const { getMainRole } = useAuthentication()
 
 const { getAllSpecies } = useSpecie()
 
@@ -68,6 +71,8 @@ const totalRecords = ref<number>(0)
 const rows = ref<number>(1)
 
 const first = ref<number>(0)
+
+const mainRole = ref<string|null>('')
 
 onMounted(async () => {
   loadPets()
@@ -98,6 +103,8 @@ const loadPets = async (event?: DataTablePageEvent) => {
   species.value = await getAllSpecies()
   speciesOptions.value = speciesNameToOptionsSelect(species.value)
   loadsBreed()
+  const role = getMainRole()
+  if (role != null) mainRole.value = getMainRole()
 }
 
 const loadsBreed = async () => {
@@ -470,6 +477,7 @@ watch(
             removableSort
             :rows-per-page-options="[1, 2, 3, 4]"
             ref="dt"
+
           >
             <template #header>
               <div class="w-full flex flex-col xs:flex-row justify-between gap-2 pb-4">
@@ -528,7 +536,8 @@ watch(
                     @click="editPet(data)"
                   ></Button>
                   <Button
-                    v-if="data.status === 'Activo'"
+          v-if="data.status === 'Activo'"
+
                     icon="pi pi-ban"
                     severity="danger"
                     variant="text"
@@ -538,7 +547,7 @@ watch(
                     @click="confirmDeletePet($event, data)"
                   ></Button>
                   <Button
-                    v-else
+   v-if="data.status === 'Inactivado'"
                     icon="pi pi-refresh"
                     severity="warn"
                     variant="text"
