@@ -1,4 +1,7 @@
-import type { HeadquarterServiceInfoPanel, HeadquarterVetService } from '../domain/models/HeadquarterVetService'
+import type {
+  HeadquarterServiceInfoPanel,
+  HeadquarterVetService,
+} from '../domain/models/HeadquarterVetService'
 import type { EmployeeBasicInfo } from '@/services/Employee/domain/models/Employee'
 import type { HeadquarterVetServiceRequest } from '../domain/models/HeadquarterVetService'
 import type { HeadquarterVetServiceService } from '../domain/services/HeadquarterVetServiceService'
@@ -94,7 +97,7 @@ export class HeadquarterVetServiceServiceImpl implements HeadquarterVetServiceSe
 
     const response = await this.httpClient.get<PageResponse<HeadquarterServiceInfoPanel>>(
       '/headquarter-vet-services/filter',
-      params,
+      { params: params },
     )
     return response.data
   }

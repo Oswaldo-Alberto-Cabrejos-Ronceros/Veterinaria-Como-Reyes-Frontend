@@ -50,7 +50,7 @@ export class PaymentMethodServiceImpl implements PaymentMethodService {
 
     const response = await this.httpClient.get<PageResponse<PaymentMethodList>>(
       `${this.url}/search`,
-      params,
+      {params:params},
     )
     return response.data
   }

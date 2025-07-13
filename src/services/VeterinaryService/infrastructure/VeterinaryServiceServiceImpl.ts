@@ -85,7 +85,7 @@ export class VeterinaryServiceServiceImpl implements VeterinaryServiceService {
 
     const response = await this.httpClient.get<PageResponse<VeterinaryServiceList>>(
       `${this.url}/search`,
-      params
+      { params:params }
     )
 
     return response.data

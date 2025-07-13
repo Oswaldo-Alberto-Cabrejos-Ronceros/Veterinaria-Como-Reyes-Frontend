@@ -105,7 +105,9 @@ export class AppointmentServiceImpl implements AppointmentService {
 
     const response = await this.httpClient.get<PageResponse<AppointmentList>>(
       `${this.url}/search`,
-      queryParams,
+     {
+      params:queryParams
+     },
     )
     return response.data
   }

@@ -56,7 +56,7 @@ export class SpecieServiceImpl implements SpecieService {
 
     const response = await this.httpClient.get<PageResponse<SpecieList>>(
       `${this.url}/search`,
-      params,
+      { params: params},
     )
     return response.data
   }
