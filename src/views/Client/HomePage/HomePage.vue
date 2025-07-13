@@ -170,8 +170,15 @@ const searchHeadquartersDebounced = debounce(() => {
 //paginator
 
 const totalRecords = ref<number>(0)
-const rows = ref<number>(10)
+const rows = ref<number>(4)
 const first = ref<number>(0)
+
+
+
+const redirectToAppointmentUnitary = (appointmentId:number)=>{
+router.push(`/client/my-appointments/appointment/${appointmentId}`)
+}
+
 </script>
 
 <template>
@@ -235,6 +242,9 @@ const first = ref<number>(0)
                     :petName="appointment.pet.name"
                     :date="appointment.date"
                     :time="appointment.time"
+                    v-ripple
+                    class="cursor-pointer"
+                    @click="redirectToAppointmentUnitary(appointment.id)"
                   ></CardAppointmentPrimary>
                 </div>
               </ScrollPanel>
@@ -376,7 +386,7 @@ const first = ref<number>(0)
                 :rows="rows"
                 :first="first"
                 :totalRecords="totalRecords"
-                :rows-per-page-options="[10, 15, 20]"
+                :rows-per-page-options="[4,8,12]"
                 :value="headquatersVetServices"
                 paginator
                 data-key="headquarterId"

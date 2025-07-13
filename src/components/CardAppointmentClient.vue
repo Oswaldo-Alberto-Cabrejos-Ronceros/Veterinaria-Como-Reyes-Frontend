@@ -19,9 +19,9 @@ defineProps<{
 </script>
 
 <template>
-  <div class="card-primary dark:bg-surface-900 flex w-full p-4">
+  <div class="card-primary dark:bg-surface-900 flex w-full p-4 transition-opacity duration-300 hover:opacity-80 group">
     <Image
-      class="size-20 mr-4 rounded-full overflow-hidden"
+      class="size-20 mr-4 rounded-full overflow-hidden transition-transform duration-300 group-hover:scale-105"
       image-class="size-full object-cover"
       :src="serviceImage"
     />
@@ -42,7 +42,7 @@ defineProps<{
         </div>
 
         <div class="flex items-center gap-2">
-          <i class="pi pi-clock"></i>
+          <i class="pi pi-calendar-plus"></i>
           <p>{{ serviceName }}</p>
         </div>
 
@@ -52,12 +52,12 @@ defineProps<{
         </div>
 
         <div class="flex items-center gap-2">
-          <i class="pi pi-user"></i>
+          <i class="pi pi-map-marker"></i>
           <p>{{ headquarterName }}</p>
         </div>
 
         <div class="flex items-center gap-2">
-          <i class="pi pi-user"></i>
+          <i class="pi pi-map"></i>
           <p>{{ headquarterAddress }}</p>
         </div>
       </div>

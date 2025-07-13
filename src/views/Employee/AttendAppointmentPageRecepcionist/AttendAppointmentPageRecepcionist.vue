@@ -172,7 +172,7 @@ const showToast = (message: string) => {
             />
           </div>
           <!-- time -->
-          <div
+          <div hidden
             v-if="appointmentBasicInfo?.statusAppointment === 'Confirmada'"
             class="p-4 shadow-none border-1 rounded-sm border-green-500 bg-green-50 dark:bg-transparent w-full flex justify-between items-center"
           >
@@ -187,6 +187,6 @@ const showToast = (message: string) => {
 
     <!-- payment -->
 
-    <CardBilling @complete-payment="handleCompletePayment" @download-ticket="handleDownloadPaymentTicket" v-if="paymentInfo" :button-active="false" :payment-id="paymentInfo.paymentId" :status="paymentInfo.status" :payment-method-id="paymentInfo.paymentMethod.id" :serviceName="paymentInfo.serviceName" :price="paymentInfo.amount"/>
+    <CardBilling :button-active="paymentInfo.status==='Completada'" @complete-payment="handleCompletePayment" @download-ticket="handleDownloadPaymentTicket" v-if="paymentInfo" :payment-id="paymentInfo.paymentId" :status="paymentInfo.status" :payment-method-id="paymentInfo.paymentMethod.id" :serviceName="paymentInfo.serviceName" :price="paymentInfo.amount"/>
   </div>
 </template>
