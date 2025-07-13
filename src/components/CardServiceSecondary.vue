@@ -10,12 +10,13 @@ defineProps<{
   duration: number
   price: string
   selected?: boolean
+  headquarterName?: string
 }>()
 </script>
 
 <template>
   <Card
-    class="overflow-hidden card-primary max-w-lg transition-opacity duration-300 hover:opacity-80 group cursor-pointer"
+    class="overflow-hidden card-primary max-w-md transition-opacity duration-300 hover:opacity-80 group cursor-pointer"
     :class="
       selected
         ? ' bg-surface-100 hover:bg-surface-50 dark:bg-surface-950 hover:dark:bg-surface-900 !border-primary-500 !dark:border-primary-900'
@@ -32,12 +33,16 @@ defineProps<{
     <template #content>
       <div class="flex w-full flex-col gap-2">
         <p class="text-lg font-medium">{{ serviceName }}</p>
+        <div v-if="headquarterName" class="flex items-center gap-2 text-neutral-500 dark:text-neutral-400 textSm">
+          <i class="pi pi-warehouse"></i>
+          <p>{{ headquarterName }}</p>
+        </div>
         <p>{{ specieName }}</p>
         <p>{{ categoryName }}</p>
         <div class="w-full flex gap-1 text-lg flex-1 items-center justify-between">
           <div class="flex gap-1 text-pink-500 items-center">
             <i class="pi pi-clock text-xl"></i>
-            <p>{{ duration }}</p>
+            <p>{{ duration }} minutos</p>
           </div>
 
           <div class="flex gap-1 text-green-500 items-center">

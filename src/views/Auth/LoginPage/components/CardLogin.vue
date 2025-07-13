@@ -82,7 +82,7 @@ const onSubmit = handleSubmit((values) => {
         class="flex flex-col gap-4 w-full max-w-lg xs:min-w-96 sm:min-w-md"
       >
         <div class="w-full flex flex-col gap-1 items-center justify-center">
-          <SelectButton v-bind="typeAttrs" v-model="type" :invalid="Boolean(errors.type)" :options="options" />
+          <SelectButton :allowEmpty="false" v-bind="typeAttrs" v-model="type" :invalid="Boolean(errors.type)" :options="options" />
           <Message v-if="errors.type" severity="error" size="small" variant="simple">
             {{ errors.type }}
           </Message>

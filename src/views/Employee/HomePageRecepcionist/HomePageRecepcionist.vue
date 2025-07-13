@@ -28,8 +28,24 @@ import type { CareAndAppointmentPanelEmployee } from '@/models/CareAndAppointmen
 import type { RecentPayment } from '@/models/RecientPayment'
 import { useRouter } from 'vue-router'
 import ScrollPanel from 'primevue/scrollpanel'
+import Message from 'primevue/message'
+import type { Headquarter } from '@/models/Headquarter'
+import { useHeadquarter } from '@/composables/useHeadquarter'
+import type { OptionSelect } from '@/models/OptionSelect'
+import { useSpecie } from '@/composables/useSpecie'
+import { useCategory } from '@/composables/useCategory'
+import type { Category } from '@/models/Category'
+import type { Specie } from '@/models/Specie'
+import DataView from 'primevue/dataview'
+import { schema } from '@/validation-schemas-forms/schema-search-headquarter-service'
+import type { FormValues as SearchHeadServiceSchema } from '@/validation-schemas-forms/schema-search-headquarter-service'
+import { toTypedSchema } from '@vee-validate/yup'
+import { useForm } from 'vee-validate'
 
-import Paginator from 'primevue/paginator'
+import { useHeadquarterVetService } from '@/composables/useHeadquarterVetService'
+import type { DataViewPageEvent } from 'primevue'
+import { debounce } from 'lodash'
+import type { HeadquarterServiceInfoPanel } from '@/models/HeadquarterServiceInfoPanel'
 
 const { getEntityId } = useAuthentication()
 const { getEmployeeMyInfo } = useEmployee()
@@ -43,6 +59,8 @@ const { getClientStatsToday } = useClient()
 const { getCareStatsToday } = useCare()
 
 const { getCaresByHeadquarterId } = useCare()
+
+const { filterHeadquarterVetServices } = useHeadquarterVetService()
 
 const paymentsRecent = ref<RecentPayment[]>([])
 
@@ -64,6 +82,22 @@ const entityId = ref<number | null>(null)
 
 const today = DateAdapter.toFormatView(new Date())
 
+const speciesOptions = ref<OptionSelect[]>([])
+
+const categoriesOptions = ref<OptionSelect[]>([])
+
+const headquarterOptions = ref<OptionSelect[]>([])
+
+const headquatersVetServices = ref<HeadquarterServiceInfoPanel[]>([])
+
+const { getAllSpecies } = useSpecie()
+
+const { getAllCategories } = useCategory()
+
+const { getAllHeadquarters } = useHeadquarter()
+
+const {} = useHeadquarterVetService()
+
 onMounted(() => {
   loadMyInfo()
 })
@@ -73,6 +107,7 @@ const loadMyInfo = async () => {
   entityId.value = entityIdGet
   if (entityIdGet) {
     myInfoEmployee.value = await getEmployeeMyInfo(entityIdGet)
+    headquarterId.value=myInfoEmployee.value.headquarter.id
   }
 
   clientStatsToday.value = await getClientStatsToday()
@@ -87,138 +122,39 @@ const loadMyInfo = async () => {
     carePending.value = await getCaresByHeadquarterId(headquarterId)
     paymentsRecent.value = await getRecentCompletedPayments(headquarterId)
   }
+  headquarterOptions.value = headquartersCategoriesSpeciesToOptionsSelect(
+    await getAllHeadquarters(),
+  )
+  categoriesOptions.value = headquartersCategoriesSpeciesToOptionsSelect(await getAllCategories())
+  speciesOptions.value = headquartersCategoriesSpeciesToOptionsSelect(await getAllSpecies())
+  loadHeadquarterService()
 }
 
-const services: {
-  serviceId: number
-  serviceName: string
-  serviceImageUrl: string
-  specieName: string
-  categoryName: string
-  duration: number
-  price: string
-}[] = [
-  {
-    serviceId: 1,
-    serviceName: 'Consulta general',
-    serviceImageUrl:
-      'https://clinicaveterinarium.es/wp-content/uploads/2019/11/Realmente-es-necesario-llevar-el-gato-al-veterinario.jpg',
-    specieName: 'Canino',
-    categoryName: 'Salud',
-    duration: 30,
-    price: '50.00',
+//form search
+const { errors, defineField } = useForm<SearchHeadServiceSchema>({
+  validationSchema: toTypedSchema(schema),
+  initialValues: {
+    name: '',
+    specieId: undefined,
+    categoryId: undefined,
+    headquarterId: undefined,
   },
-  {
-    serviceId: 2,
-    serviceName: 'Vacunación antirrábica',
-    serviceImageUrl:
-      'https://clinicaveterinarium.es/wp-content/uploads/2019/11/Realmente-es-necesario-llevar-el-gato-al-veterinario.jpg',
-    specieName: 'Felino',
-    categoryName: 'Prevención',
-    duration: 15,
-    price: '25.00',
-  },
-  {
-    serviceId: 3,
-    serviceName: 'Desparasitación interna',
-    serviceImageUrl:
-      'https://clinicaveterinarium.es/wp-content/uploads/2019/11/Realmente-es-necesario-llevar-el-gato-al-veterinario.jpg',
-    specieName: 'Canino',
-    categoryName: 'Prevención',
-    duration: 20,
-    price: '30.00',
-  },
-  {
-    serviceId: 4,
-    serviceName: 'Control dental',
-    serviceImageUrl:
-      'https://clinicaveterinarium.es/wp-content/uploads/2019/11/Realmente-es-necesario-llevar-el-gato-al-veterinario.jpg',
-    specieName: 'Felino',
-    categoryName: 'Higiene',
-    duration: 25,
-    price: '45.00',
-  },
-  {
-    serviceId: 5,
-    serviceName: 'Corte de uñas',
-    serviceImageUrl:
-      'https://clinicaveterinarium.es/wp-content/uploads/2019/11/Realmente-es-necesario-llevar-el-gato-al-veterinario.jpg',
-    specieName: 'Canino',
-    categoryName: 'Estética',
-    duration: 10,
-    price: '15.00',
-  },
-  {
-    serviceId: 6,
-    serviceName: 'Baño medicinal',
-    serviceImageUrl:
-      'https://clinicaveterinarium.es/wp-content/uploads/2019/11/Realmente-es-necesario-llevar-el-gato-al-veterinario.jpg',
-    specieName: 'Felino',
-    categoryName: 'Tratamiento',
-    duration: 40,
-    price: '60.00',
-  },
-  {
-    serviceId: 7,
-    serviceName: 'Esterilización',
-    serviceImageUrl:
-      'https://clinicaveterinarium.es/wp-content/uploads/2019/11/Realmente-es-necesario-llevar-el-gato-al-veterinario.jpg',
-    specieName: 'Canino',
-    categoryName: 'Cirugía',
-    duration: 90,
-    price: '120.00',
-  },
-  {
-    serviceId: 8,
-    serviceName: 'Limpieza de oídos',
-    serviceImageUrl:
-      'https://clinicaveterinarium.es/wp-content/uploads/2019/11/Realmente-es-necesario-llevar-el-gato-al-veterinario.jpg',
-    specieName: 'Felino',
-    categoryName: 'Higiene',
-    duration: 15,
-    price: '20.00',
-  },
-  {
-    serviceId: 9,
-    serviceName: 'Ecografía',
-    serviceImageUrl:
-      'https://clinicaveterinarium.es/wp-content/uploads/2019/11/Realmente-es-necesario-llevar-el-gato-al-veterinario.jpg',
-    specieName: 'Canino',
-    categoryName: 'Diagnóstico',
-    duration: 30,
-    price: '70.00',
-  },
-  {
-    serviceId: 10,
-    serviceName: 'Radiografía',
-    serviceImageUrl:
-      'https://clinicaveterinarium.es/wp-content/uploads/2019/11/Realmente-es-necesario-llevar-el-gato-al-veterinario.jpg',
-    specieName: 'Felino',
-    categoryName: 'Diagnóstico',
-    duration: 35,
-    price: '80.00',
-  },
-  {
-    serviceId: 11,
-    serviceName: 'Consulta geriátrica',
-    serviceImageUrl:
-      'https://clinicaveterinarium.es/wp-content/uploads/2019/11/Realmente-es-necesario-llevar-el-gato-al-veterinario.jpg',
-    specieName: 'Canino',
-    categoryName: 'Salud',
-    duration: 40,
-    price: '55.00',
-  },
-  {
-    serviceId: 12,
-    serviceName: 'Cirugía menor',
-    serviceImageUrl:
-      'https://clinicaveterinarium.es/wp-content/uploads/2019/11/Realmente-es-necesario-llevar-el-gato-al-veterinario.jpg',
-    specieName: 'Felino',
-    categoryName: 'Cirugía',
-    duration: 60,
-    price: '100.00',
-  },
-]
+})
+
+const [name, nameAttrs] = defineField('name')
+const [specieId, specieIdAttrs] = defineField('specieId')
+const [categoryId, categoryIdAttrs] = defineField('categoryId')
+
+const [headquarterId, headquarterIdAttrs] = defineField('headquarterId')
+
+const headquartersCategoriesSpeciesToOptionsSelect = (
+  items: Headquarter[] | Category[] | Specie[],
+): OptionSelect[] => {
+  return items.map((item) => ({
+    value: item.id,
+    name: item.name,
+  }))
+}
 
 const router = useRouter()
 const redirect = (name: string) => {
@@ -228,6 +164,26 @@ const redirect = (name: string) => {
 const totalRecords = ref<number>(0)
 const rows = ref<number>(10)
 const first = ref<number>(0)
+
+const loadHeadquarterService = async (event?: DataViewPageEvent) => {
+  const page = event ? event.first / event.rows : 0
+  const size = event ? event.rows : rows.value
+  rows.value = size
+
+  const response = await filterHeadquarterVetServices(page, size, {
+    serviceName: name.value,
+    categoryId: categoryId.value ?? undefined,
+    speciesId: specieId.value ?? undefined,
+    headquarterId: headquarterId.value ?? undefined,
+  })
+
+  headquatersVetServices.value = response.content
+  totalRecords.value = response.totalElements
+}
+
+const searchHeadquartersDebounced = debounce(() => {
+  loadHeadquarterService()
+}, 400)
 </script>
 
 <template>
@@ -325,7 +281,11 @@ const first = ref<number>(0)
             <template #title>
               <div class="w-full flex justify-between items-baseline">
                 <h2 class="h3 font-semibold">Citas de Hoy</h2>
-                <Tag :value="`${todayAppointments.length} citas`" severity="secondary" class="self-start"></Tag>
+                <Tag
+                  :value="`${todayAppointments.length} citas`"
+                  severity="secondary"
+                  class="self-start"
+                ></Tag>
               </div>
             </template>
             <template #subtitle>
@@ -373,7 +333,11 @@ const first = ref<number>(0)
               <template #title>
                 <div class="w-full flex justify-between items-baseline">
                   <h2 class="h3 font-semibold">Sala de espera</h2>
-                  <Tag :value="`${carePending.length} esperando`" severity="secondary" class="self-start"></Tag>
+                  <Tag
+                    :value="`${carePending.length} esperando`"
+                    severity="secondary"
+                    class="self-start"
+                  ></Tag>
                 </div>
               </template>
               <template #subtitle>
@@ -404,7 +368,11 @@ const first = ref<number>(0)
               <template #title>
                 <div class="w-full flex justify-between items-baseline">
                   <h2 class="h3 font-semibold">Ultimos pagos</h2>
-                  <Tag :value="`${paymentsRecent.length} pendientes`" severity="secondary" class="self-start"></Tag>
+                  <Tag
+                    :value="`${paymentsRecent.length} pendientes`"
+                    severity="secondary"
+                    class="self-start"
+                  ></Tag>
                 </div>
               </template>
               <template #content>
@@ -455,37 +423,81 @@ const first = ref<number>(0)
                   <InputGroupAddon>
                     <i class="pi pi-search"></i>
                   </InputGroupAddon>
-                  <InputText placeholder="Busque un servicio ..." />
+                  <InputText
+                    v-model="name"
+                    v-bind="nameAttrs"
+                    placeholder="Busque un servicio ..."
+                    @update:model-value="searchHeadquartersDebounced"
+                  />
                 </InputGroup>
-                <div class="grid grid-cols-2 gap-2 min-w-2xs text-sm">
-                  <Select placeholder="Categoria"></Select>
-                  <Select placeholder="Especie"></Select>
+                <div class="grid grid-cols-3 gap-2 min-w-max text-sm">
+                  <Select
+                    v-bind="categoryIdAttrs"
+                    v-model="categoryId"
+                    :options="categoriesOptions"
+                    optionLabel="name"
+                    optionValue="value"
+                    placeholder="Categoria"
+                    showClear
+                    @update:model-value="searchHeadquartersDebounced"
+                  ></Select>
+                  <Select
+                    v-bind="specieIdAttrs"
+                    v-model="specieId"
+                    optionLabel="name"
+                    optionValue="value"
+                    :options="speciesOptions"
+                    placeholder="Especie"
+                    showClear
+                    @update:model-value="searchHeadquartersDebounced"
+                  ></Select>
+                  <Select
+                    v-bind="headquarterIdAttrs"
+                    v-model="headquarterId"
+                    optionLabel="name"
+                    optionValue="value"
+                    :options="headquarterOptions"
+                    placeholder="Sede"
+                    showClear
+                    @update:model-value="searchHeadquartersDebounced"
+                  ></Select>
                 </div>
+                <Message v-if="errors.name" severity="error" size="small" variant="simple">
+                  {{ errors.name }}
+                </Message>
               </div>
               <!-- services cards -->
-              <div
-                class="w-full grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 3xl:grid-cols-4 gap-x-12 gap-y-6 mt-4"
-              >
-                <CardServiceTerciary
-                  v-for="service of services"
-                  :key="service.serviceId"
-                  :serviceId="service.serviceId"
-                  :serviceName="service.serviceName"
-                  :serviceImageUrl="service.serviceImageUrl"
-                  :specieName="service.specieName"
-                  :categoryName="service.categoryName"
-                  :duration="service.duration"
-                  :price="service.price"
-                >
-                </CardServiceTerciary>
-              </div>
-              <Paginator
+              <DataView
                 lazy
                 :rows="rows"
                 :first="first"
                 :totalRecords="totalRecords"
-                :rows-per-page-options="[2, 4, 6, 8, 10]"
-              />
+                :rows-per-page-options="[10,15,20]"
+                :value="headquatersVetServices"
+                paginator
+                data-key="headquarterId"
+                @page="loadHeadquarterService"
+              >
+                <template #list="slotProps">
+                  <div
+                    class="w-full grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 3xl:grid-cols-4 gap-x-12 gap-y-6 my-4"
+                  >
+                    <CardServiceTerciary
+                      v-for="(item, index) in slotProps.items"
+                      :key="index"
+                      :serviceId="item.serviceId"
+                      :serviceName="item.serviceName"
+                      :serviceImageUrl="''"
+                      :specieName="item.specieName"
+                      :categoryName="item.categoryName"
+                      :duration="item.serviceDuration"
+                      :price="item.servicePrice"
+                      :headquarter-name="item.headquarterName"
+                    >
+                    </CardServiceTerciary>
+                  </div>
+                </template>
+              </DataView>
             </div>
           </template>
         </Card>

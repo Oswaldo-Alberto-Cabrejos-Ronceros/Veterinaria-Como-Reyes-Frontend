@@ -43,7 +43,7 @@ export class HeadquarterVetServiceAdapter {
       servicePrice: domain.servicePrice,
       serviceDuration: domain.serviceDuration,
       categoryName: domain.categoryName,
-      speciesName: domain.speciesName,
+      specieName: domain.speciesName,
     }
   }
 }

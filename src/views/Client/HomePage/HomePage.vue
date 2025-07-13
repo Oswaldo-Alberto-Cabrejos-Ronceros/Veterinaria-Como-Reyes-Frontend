@@ -13,10 +13,28 @@ import Message from 'primevue/message'
 import { RouterLink, useRouter } from 'vue-router'
 import { useClient } from '@/composables/useClient'
 import { useAppointment } from '@/composables/useAppointment'
-import type { BasicServiceForAppointment } from '@/models/BasicServiceForAppointment'
 import type { InfoBasicAppointmentClient } from '@/models/InfoBasicAppointmentClient'
 import Button from 'primevue/button'
-
+import { useHeadquarterVetService } from '@/composables/useHeadquarterVetService'
+import type { OptionSelect } from '@/models/OptionSelect'
+import type { HeadquarterServiceInfoPanel } from '@/models/HeadquarterServiceInfoPanel'
+import { useSpecie } from '@/composables/useSpecie'
+import { useCategory } from '@/composables/useCategory'
+import { useHeadquarter } from '@/composables/useHeadquarter'
+import type { Headquarter } from '@/models/Headquarter'
+import type { Category } from '@/models/Category'
+import type { Specie } from '@/models/Specie'
+import { schema } from '@/validation-schemas-forms/schema-search-headquarter-service'
+import type { FormValues as SearchHeadServiceSchema } from '@/validation-schemas-forms/schema-search-headquarter-service'
+import { useForm } from 'vee-validate'
+import { toTypedSchema } from '@vee-validate/yup'
+import type { DataViewPageEvent } from 'primevue'
+import { debounce } from 'lodash'
+import DataView from 'primevue/dataview'
+import Select from 'primevue/select'
+import InputText from 'primevue/inputtext'
+import InputGroup from 'primevue/inputgroup'
+import InputGroupAddon from 'primevue/inputgroupaddon'
 //methods
 const { getEntityId } = useAuthentication()
 const { error: petError, loading: petLoading, getPetByClientId } = usePet()
@@ -24,7 +42,6 @@ const { error: petError, loading: petLoading, getPetByClientId } = usePet()
 const {
   error: appointmentError,
   loading: appointmentLoading,
-  getServicesByHeadquarterAndSpecies,
   getAppointmentsForClient,
 } = useAppointment()
 
@@ -35,15 +52,17 @@ const namesAndLastnames = ref<{ name: string; lastnames: string }>({
   lastnames: '',
 })
 
+const headquarterIdForClient = ref<number | undefined>(undefined)
+
 //example for pet cards
 const pets = ref<PetByClient[]>([])
-const services = ref<BasicServiceForAppointment[]>([])
 const appointments = ref<InfoBasicAppointmentClient[]>([])
 //get all for view
-onMounted(() => {
-  loadPets()
-  loadServicesByHeadquarterSpecie()
-  loadAppointments()
+onMounted(async  () => {
+  await loadInfoClient()
+  await loadPets()
+  await loadAppointments()
+  await loadHeadquarterService()
 })
 
 const loadPets = async () => {
@@ -53,7 +72,7 @@ const loadPets = async () => {
   }
 }
 
-const loadServicesByHeadquarterSpecie = async () => {
+const loadInfoClient = async () => {
   const clientId = getEntityId()
   if (clientId) {
     const infoClient = await myInfoAsClient(clientId)
@@ -61,12 +80,15 @@ const loadServicesByHeadquarterSpecie = async () => {
       name: infoClient.names,
       lastnames: infoClient.lastnames,
     }
-    const headquarterId = infoClient.headquarter.id
-    const pet = pets.value[0]
-    if (pet) {
-      services.value = await getServicesByHeadquarterAndSpecies(headquarterId, pet.specieId)
-    }
+    const headquarterIdGet = infoClient.headquarter.id
+    headquarterIdForClient.value = headquarterIdGet
+    headquarterId.value=headquarterIdGet
   }
+  headquarterOptions.value = headquartersCategoriesSpeciesToOptionsSelect(
+    await getAllHeadquarters(),
+  )
+  categoriesOptions.value = headquartersCategoriesSpeciesToOptionsSelect(await getAllCategories())
+  speciesOptions.value = headquartersCategoriesSpeciesToOptionsSelect(await getAllSpecies())
 }
 
 const loadAppointments = async () => {
@@ -81,6 +103,75 @@ const redirect = (url: string) => {
   router.push(url)
 }
 
+//for service
+
+const { filterHeadquarterVetServices } = useHeadquarterVetService()
+
+const speciesOptions = ref<OptionSelect[]>([])
+
+const categoriesOptions = ref<OptionSelect[]>([])
+
+const headquarterOptions = ref<OptionSelect[]>([])
+
+const headquatersVetServices = ref<HeadquarterServiceInfoPanel[]>([])
+
+const { getAllSpecies } = useSpecie()
+
+const { getAllCategories } = useCategory()
+
+const { getAllHeadquarters } = useHeadquarter()
+
+const {} = useHeadquarterVetService()
+
+//form search
+const { errors, defineField } = useForm<SearchHeadServiceSchema>({
+  validationSchema: toTypedSchema(schema),
+  initialValues: {
+    name: '',
+    specieId: undefined,
+    categoryId: undefined,
+    headquarterId: undefined,
+  },
+})
+
+const [name, nameAttrs] = defineField('name')
+const [specieId, specieIdAttrs] = defineField('specieId')
+const [categoryId, categoryIdAttrs] = defineField('categoryId')
+
+const [headquarterId, headquarterIdAttrs] = defineField('headquarterId')
+
+const headquartersCategoriesSpeciesToOptionsSelect = (
+  items: Headquarter[] | Category[] | Specie[],
+): OptionSelect[] => {
+  return items.map((item) => ({
+    value: item.id,
+    name: item.name,
+  }))
+}
+
+const loadHeadquarterService = async (event?: DataViewPageEvent) => {
+  const page = event ? event.first / event.rows : 0
+  const size = event ? event.rows : rows.value
+  rows.value = size
+  const response = await filterHeadquarterVetServices(page, size, {
+    serviceName: name.value,
+    categoryId: categoryId.value ?? undefined,
+    speciesId: specieId.value ?? undefined,
+    headquarterId: headquarterId.value ?? undefined,
+  })
+
+  headquatersVetServices.value = response.content
+  totalRecords.value = response.totalElements
+}
+const searchHeadquartersDebounced = debounce(() => {
+  loadHeadquarterService()
+}, 400)
+
+//paginator
+
+const totalRecords = ref<number>(0)
+const rows = ref<number>(10)
+const first = ref<number>(0)
 </script>
 
 <template>
@@ -102,14 +193,20 @@ const redirect = (url: string) => {
             <template #title>
               <div class="w-full flex justify-between items-baseline">
                 <h3>Citas Programadas</h3>
-                <Button label="Nueva Cita" @click="redirect('/client/my-appointments/schedule-appointment')" icon="pi pi-plus" size="small"> </Button>
+                <Button
+                  label="Nueva Cita"
+                  @click="redirect('/client/my-appointments/schedule-appointment')"
+                  icon="pi pi-plus"
+                  size="small"
+                >
+                </Button>
               </div>
             </template>
             <template #subtitle>
               <p>Sus proximas citas</p>
             </template>
             <template #content>
-              <ScrollPanel class="h-96 pr-4">
+              <ScrollPanel v-if="appointments.length > 0" class="h-96 pr-4">
                 <div class="flex flex-col gap-2">
                   <!-- for messague loading  -->
                   <Message
@@ -141,6 +238,9 @@ const redirect = (url: string) => {
                   ></CardAppointmentPrimary>
                 </div>
               </ScrollPanel>
+              <div class="h-96 w-full flex items-center justify-center" v-else>
+                <p>No tiene citas agendadas</p>
+              </div>
             </template>
           </Card>
 
@@ -149,14 +249,20 @@ const redirect = (url: string) => {
             <template #title>
               <div class="w-full flex justify-between items-baseline">
                 <h3>Mis Mascotas</h3>
-                <Button label="Ver todas" @click="redirect('/client/my-pets')" variant="outlined" size="small"> </Button>
+                <Button
+                  label="Ver todas"
+                  @click="redirect('/client/my-pets')"
+                  variant="outlined"
+                  size="small"
+                >
+                </Button>
               </div>
             </template>
             <template #subtitle>
               <p>Datos de tus engreidos</p>
             </template>
             <template #content>
-              <ScrollPanel class="h-96 pr-4">
+              <ScrollPanel v-if="pets.length > 0" class="h-96 pr-4">
                 <div class="flex flex-col gap-2">
                   <!-- for messague loading  -->
                   <Message
@@ -191,6 +297,9 @@ const redirect = (url: string) => {
                   ></RouterLink>
                 </div>
               </ScrollPanel>
+              <div class="h-96 w-full flex items-center justify-center" v-else>
+                <p>No tiene masctotas registradas</p>
+              </div>
             </template>
           </Card>
         </div>
@@ -204,16 +313,55 @@ const redirect = (url: string) => {
             <p>Conoce los servicios que tenemos disponibles para el cuadado de tus mascotas</p>
           </template>
           <template #content>
-            <div class="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-4">
-              <!-- for messague loading  -->
-              <Message
-                v-if="appointmentLoading.getServicesByHeadquarterAndSpecies"
-                severity="warn"
-                size="small"
-                variant="simple"
-              >
-                Cargando ...
-              </Message>
+            <div class="flex flex-col w-full">
+              <div class="flex flex-col sm:flex-row w-full justify-end gap-2">
+                <InputGroup>
+                  <InputGroupAddon>
+                    <i class="pi pi-search"></i>
+                  </InputGroupAddon>
+                  <InputText
+                    v-model="name"
+                    v-bind="nameAttrs"
+                    placeholder="Busque un servicio ..."
+                    @update:model-value="searchHeadquartersDebounced"
+                  />
+                </InputGroup>
+                <div class="grid grid-cols-3 gap-2 min-w-max text-sm">
+                  <Select
+                    v-bind="categoryIdAttrs"
+                    v-model="categoryId"
+                    :options="categoriesOptions"
+                    optionLabel="name"
+                    optionValue="value"
+                    placeholder="Categoria"
+                    showClear
+                    @update:model-value="searchHeadquartersDebounced"
+                  ></Select>
+                  <Select
+                    v-bind="specieIdAttrs"
+                    v-model="specieId"
+                    optionLabel="name"
+                    optionValue="value"
+                    :options="speciesOptions"
+                    placeholder="Especie"
+                    showClear
+                    @update:model-value="searchHeadquartersDebounced"
+                  ></Select>
+                  <Select
+                    v-bind="headquarterIdAttrs"
+                    v-model="headquarterId"
+                    optionLabel="name"
+                    optionValue="value"
+                    :options="headquarterOptions"
+                    placeholder="Sede"
+                    showClear
+                    @update:model-value="searchHeadquartersDebounced"
+                  ></Select>
+                </div>
+                <Message v-if="errors.name" severity="error" size="small" variant="simple">
+                  {{ errors.name }}
+                </Message>
+              </div>
               <!-- for messague error -->
               <Message
                 v-if="appointmentError.getServicesByHeadquarterAndSpecies"
@@ -223,17 +371,36 @@ const redirect = (url: string) => {
               >
                 Error al cargar los servicios
               </Message>
-              <CardServicePrimary
-                v-for="service in services"
-                :key="service.id"
-                :serviceId="service.id"
-                :serviceName="service.name"
-                :serviceImageUrl="service.imageUrl"
-                :specieName="service.specie.name"
-                :categoryName="service.category.name"
-                :duration="service.duration"
-                :price="service.price"
-              ></CardServicePrimary>
+              <DataView
+                lazy
+                :rows="rows"
+                :first="first"
+                :totalRecords="totalRecords"
+                :rows-per-page-options="[10, 15, 20]"
+                :value="headquatersVetServices"
+                paginator
+                data-key="headquarterId"
+                @page="loadHeadquarterService"
+              >
+                <template #list="slotProps">
+                  <div
+                    class="w-full grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 3xl:grid-cols-4 gap-x-12 gap-y-6 my-4"
+                  >
+                    <CardServicePrimary
+                      v-for="(item, index) in slotProps.items"
+                      :key="index"
+                      :service-id="item.serviceId"
+                      :service-name="item.serviceName"
+                      :service-image-url="''"
+                      :specie-name="item.specieName"
+                      :category-name="item.categoryName"
+                      :duration="item.serviceDuration"
+                      :price="item.servicePrice"
+                      :headquarter-name="item.headquarterName"
+                    />
+                  </div>
+                </template>
+              </DataView>
             </div>
           </template>
           <template #footer>

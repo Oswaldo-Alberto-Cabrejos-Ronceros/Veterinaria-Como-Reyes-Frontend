@@ -7,5 +7,5 @@ export interface HeadquarterServiceInfoPanel {
   servicePrice: string
   serviceDuration: string
   categoryName: string
-  speciesName: string
+  specieName: string
 }

@@ -86,6 +86,9 @@ const redirectToScheduleAppointment = () => {
             :headquarter-name="'Ica'"
             :headquarter-address="'Av. Tupac Amaru'"
           ></CardAppointmentClient>
+          <div v-if="appointments.length===0" class="size-full flex items-center justify-center">
+            <p>No tiene citas agendas</p>
+          </div>
         </div>
       </template>
     </Card>
