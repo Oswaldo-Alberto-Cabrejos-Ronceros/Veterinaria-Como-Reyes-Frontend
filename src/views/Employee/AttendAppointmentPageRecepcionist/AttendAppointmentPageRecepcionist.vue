@@ -17,6 +17,7 @@ import type { PetInfoForAppointment } from '@/models/PetInfoForAppointment'
 import type { ClientInfoForAppointment } from '@/models/ClientInfoForAppointment'
 import type { PaymentInfoForAppointment } from '@/models/PaymentInfoForAppointment'
 import { usePayment } from '@/composables/usePayment'
+import { usePaymentTicket } from '@/composables/usePaymentTicket'
 
 const props = defineProps<{
   appointmentId: string
@@ -29,6 +30,16 @@ const { createCareFromAppointment } = useCare()
 
 const {setPaymentStatusComplete}=usePayment()
 
+//for download ticket
+
+const {downloadPaymentTicket}= usePaymentTicket()
+
+
+const handleDownloadPaymentTicket = async ()=>{
+  if(paymentInfo.value){
+    await downloadPaymentTicket(paymentInfo.value.paymentId)
+  }
+}
 
 //ref
 const appointmentBasicInfo = ref<Appointment | null>(null)
@@ -176,6 +187,6 @@ const showToast = (message: string) => {
 
     <!-- payment -->
 
-    <CardBilling @complete-payment="handleCompletePayment" v-if="paymentInfo" :button-active="false" :payment-id="paymentInfo.paymentId" :status="paymentInfo.status" :payment-method-id="paymentInfo.paymentMethod.id" :serviceName="paymentInfo.serviceName" :price="paymentInfo.amount"/>
+    <CardBilling @complete-payment="handleCompletePayment" @download-ticket="handleDownloadPaymentTicket" v-if="paymentInfo" :button-active="false" :payment-id="paymentInfo.paymentId" :status="paymentInfo.status" :payment-method-id="paymentInfo.paymentMethod.id" :serviceName="paymentInfo.serviceName" :price="paymentInfo.amount"/>
   </div>
 </template>
