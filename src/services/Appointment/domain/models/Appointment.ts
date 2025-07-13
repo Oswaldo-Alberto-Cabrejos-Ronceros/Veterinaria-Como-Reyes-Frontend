@@ -96,15 +96,6 @@ export interface ClientInfoForAppointment {
   address: string
 }
 
-export interface PaymentInfoForAppointment {
-  paymentId: number
-  amount: number
-  serviceName: string
-  paymentMethodId: number
-  paymentMethod: string
-  paymentStatus: string
-}
-
 export interface AppointmentStatsToday {
   totalAppointments: number
   todayRegisteredAppointments: number

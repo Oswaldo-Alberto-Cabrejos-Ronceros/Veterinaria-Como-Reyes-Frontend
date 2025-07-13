@@ -1,4 +1,6 @@
-import type { PaymentInfoForAppointment } from '../domain/models/Appointment'
+
+
+import type { PaymentInfoForAppointment } from '@/services/Payment/domain/models/Payment'
 import type { AppointmentService } from '../domain/services/AppointmentService'
 
 export class GetPaymentInfoForAppointment {

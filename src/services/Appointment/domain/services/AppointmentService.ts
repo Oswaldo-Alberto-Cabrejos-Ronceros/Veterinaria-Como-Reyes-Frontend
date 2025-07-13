@@ -14,9 +14,9 @@ import type {
   ClientInfoForAppointment,
   InfoAppointmentForPanel,
   InfoBasicAppointment,
-  PaymentInfoForAppointment,
   TimesForTurn,
 } from '../models/Appointment'
+import type { PaymentInfoForAppointment } from '@/services/Payment/domain/models/Payment'
 
 export interface AppointmentService {
   getAllAppointments(): Promise<Appointment[]>

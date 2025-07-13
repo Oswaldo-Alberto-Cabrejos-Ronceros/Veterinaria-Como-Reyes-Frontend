@@ -19,6 +19,7 @@ import type { ClientInfoForAppointment as ClientInfoForAppointmentView } from '@
 import type { PaymentInfoForAppointment as PaymentInfoForAppointmentView } from '@/models/PaymentInfoForAppointment'
 import type { AppointmentInfoPanelAdmin as AppointmentInfoPanelAdminView } from '@/models/AppointmentInfoPanelAdmin'
 import type { CareAndAppointmentPanelEmployee as CareAndAppointmentPanelEmployeeView } from '@/models/CareAndAppointmentPanelEmployee'
+import { PaymentAdapter } from '@/adapters/PaymentAdapter'
 
 export function useAppointment() {
   //get from useAsyncHandle
@@ -164,7 +165,7 @@ export function useAppointment() {
     const paymentInfoAppoinment = await runUseCase('getPaymentInfoForAppointment', () =>
       appointmentUsesCases.getPaymentInfoForAppointment.execute(appoinmentId),
     )
-    return AppointmentAdapter.toPaymentInfoForAppointmentView(paymentInfoAppoinment)
+    return PaymentAdapter.toPaymentInfoForAppointmentView(paymentInfoAppoinment)
   }
 
   const getTodayAppointmentStats = async () => {

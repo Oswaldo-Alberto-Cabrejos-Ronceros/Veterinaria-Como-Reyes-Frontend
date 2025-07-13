@@ -17,6 +17,7 @@ import { GetTodayIncomeStatsUseCase } from '@/services/Payment/aplication/GetTod
 import { GetRecentCompletedPaymentsUseCase } from '@/services/Payment/aplication/GetRecentCompletedPayments'
 import { GetWeeklyIncomeGeneral } from '@/services/Payment/aplication/GetWeeklyIncomeGeneral'
 import { GetWeeklyIncomeByHeadquarter } from '@/services/Payment/aplication/GetWeeklyIncomeByHeadquarter'
+import { GetPaymentInfoByCareId } from '@/services/Payment/aplication/GetPaymentInfoByCareId'
 
 // Instancia del cliente HTTP
 const axiosHttpClient = new AxiosHttpClient()
@@ -43,5 +44,5 @@ export const paymentUsesCases = {
   getRecentCompletedPayments: new GetRecentCompletedPaymentsUseCase(paymentService),
 getWeeklyIncomeGeneral: new GetWeeklyIncomeGeneral(paymentService),
 getWeeklyIncomeByHeadquarter: new GetWeeklyIncomeByHeadquarter(paymentService),
-
+getPaymentInfoByCareId: new GetPaymentInfoByCareId(paymentService),
 }

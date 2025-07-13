@@ -1,5 +1,5 @@
 import type { PageResponse } from '@/services/models/PageResponse'
-import type { IncomeStatsToday, Payment, PaymentList, PaymentStatsForPanelAdmin, RecentPayment, WeeklyIncome } from '../models/Payment'
+import type { IncomeStatsToday, Payment, PaymentInfoForAppointment, PaymentList, PaymentStatsForPanelAdmin, RecentPayment, WeeklyIncome } from '../models/Payment'
 
 export interface PaymentService {
   getAllPayments(): Promise<Payment[]>
@@ -32,4 +32,5 @@ setPaymentStatusRefunded(paymentId: number): Promise<void>
 
   getWeeklyIncomeGeneral(): Promise<WeeklyIncome>
   getWeeklyIncomeByHeadquarter(headquarterId: number): Promise<WeeklyIncome>
+  getPaymentInfoByCareId(careId: number): Promise<PaymentInfoForAppointment>
 }

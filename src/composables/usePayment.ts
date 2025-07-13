@@ -6,7 +6,7 @@ import { paymentUsesCases } from '@/dependency-injection/payment.container'
 import type { PageResponse } from '@/services/models/PageResponse'
 import type { IncomeStatsToday, WeeklyIncome } from '@/services/Payment/domain/models/Payment'
 import type { RecentPayment as RecentPaymentView } from '@/models/RecientPayment'
-
+import type { PaymentInfoForAppointment as PaymentInfoForAppointmentView } from '@/models/PaymentInfoForAppointment'
 export function usePayment() {
   const { loading, error, runUseCase } = useAsyncHandler()
 
@@ -142,10 +142,17 @@ export function usePayment() {
   }
 
   const getWeeklyIncomeByHeadquarter = async (headquarterId: number) => {
-  return await runUseCase('getWeeklyIncomeByHeadquarter', () =>
-    paymentUsesCases.getWeeklyIncomeByHeadquarter.execute(headquarterId),
-  )
-}
+    return await runUseCase('getWeeklyIncomeByHeadquarter', () =>
+      paymentUsesCases.getWeeklyIncomeByHeadquarter.execute(headquarterId),
+    )
+  }
+
+  const getPaymentInfoByCareId = async (careId: number): Promise<PaymentInfoForAppointmentView> => {
+    const paymentInf = await runUseCase('getPaymentInfoByCareId', () =>
+      paymentUsesCases.getPaymentInfoByCareId.execute(careId),
+    )
+    return PaymentAdapter.toPaymentInfoForAppointmentView(paymentInf)
+  }
 
   return {
     loading,
@@ -166,6 +173,7 @@ export function usePayment() {
     getTodayIncomeStats,
     getRecentCompletedPayments,
     getWeeklyIncomeGeneral,
-    getWeeklyIncomeByHeadquarter
+    getWeeklyIncomeByHeadquarter,
+    getPaymentInfoByCareId,
   }
 }

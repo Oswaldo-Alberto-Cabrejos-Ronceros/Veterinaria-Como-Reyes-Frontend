@@ -10,7 +10,6 @@ import type {
   InfoAppointmentForPanel,
   AnimalInfoForAppointment,
   ClientInfoForAppointment,
-  PaymentInfoForAppointment,
   AppointmentStatsToday,
   AppointmentInfoPanelAdmin,
   CareAndAppointmentPanelEmployee,
@@ -18,6 +17,7 @@ import type {
 } from '../domain/models/Appointment'
 import type { SearchAppointmentParams } from '../domain/models/SearchAppointmentParams'
 import type { PageResponse } from '@/services/models/PageResponse'
+import type { PaymentInfoForAppointment } from '@/services/Payment/domain/models/Payment'
 
 export class AppointmentServiceImpl implements AppointmentService {
   constructor(private readonly httpClient: HttpClient) {}

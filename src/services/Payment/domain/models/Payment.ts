@@ -54,3 +54,13 @@ export interface WeeklyIncome {
   days: string[]
   totals: number[]
 }
+
+
+export interface PaymentInfoForAppointment {
+  paymentId: number
+  amount: number
+  serviceName: string
+  paymentMethodId: number
+  paymentMethod: string
+  paymentStatus: string
+}

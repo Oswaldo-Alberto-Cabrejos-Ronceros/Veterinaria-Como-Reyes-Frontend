@@ -3,6 +3,7 @@ import type { PaymentService } from '../domain/services/PaymentService'
 import type {
   IncomeStatsToday,
   Payment,
+  PaymentInfoForAppointment,
   PaymentList,
   PaymentStatsForPanelAdmin,
   RecentPayment,
@@ -160,4 +161,11 @@ export class PaymentServiceImpl implements PaymentService {
     )
     return response.data
   }
+
+async getPaymentInfoByCareId(careId: number): Promise<PaymentInfoForAppointment> {
+  const response = await this.httpClient.get<PaymentInfoForAppointment>(
+    `${this.urlBase}/care/${careId}`
+  )
+  return response.data
+}
 }

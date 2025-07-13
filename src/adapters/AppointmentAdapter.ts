@@ -16,8 +16,7 @@ import type { AnimalInfoForAppointment } from '@/services/Appointment/domain/mod
 import type { PetInfoForAppointment } from '@/models/PetInfoForAppointment'
 import type { ClientInfoForAppointment as ClientInfoForAppointmentView } from '@/models/ClientInfoForAppointment'
 import type { ClientInfoForAppointment } from '@/services/Appointment/domain/models/Appointment'
-import type { PaymentInfoForAppointment as PaymentInfoForAppointmentView } from '@/models/PaymentInfoForAppointment'
-import type { PaymentInfoForAppointment } from '@/services/Appointment/domain/models/Appointment'
+
 import type { AppointmentInfoPanelAdmin } from '@/services/Appointment/domain/models/Appointment'
 import type { AppointmentInfoPanelAdmin as AppointmentInfoPanelAdminView } from '@/models/AppointmentInfoPanelAdmin'
 import type { CareAndAppointmentPanelEmployee as CareAndAppointmentPanelEmployeeView } from '@/models/CareAndAppointmentPanelEmployee'
@@ -135,20 +134,7 @@ export class AppointmentAdapter {
     }
   }
 
-  static toPaymentInfoForAppointmentView(
-    paymentInfo: PaymentInfoForAppointment,
-  ): PaymentInfoForAppointmentView {
-    return {
-      paymentId: paymentInfo.paymentId,
-      amount: paymentInfo.amount,
-      serviceName: paymentInfo.serviceName,
-      paymentMethod: {
-        id: paymentInfo.paymentMethodId,
-        name: paymentInfo.paymentMethod,
-      },
-      status: FormatAdapter.toCaptalizeCaseWithout_(paymentInfo.paymentStatus),
-    }
-  }
+
 
   static toAppointmentInfoPanelAdminView(
     infoAppointment: AppointmentInfoPanelAdmin,

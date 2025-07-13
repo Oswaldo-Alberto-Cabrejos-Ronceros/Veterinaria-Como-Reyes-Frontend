@@ -33,7 +33,10 @@ import MyAppointmentsClientPage from '@/views/Client/MyAppointmentsClientPage/My
 import MyPetsPage from '@/views/Client/MyPetsPage/MyPetsPage.vue'
 import PetUnitaryClientPage from '@/views/Client/PetUnitaryClientPage/PetUnitaryClientPage.vue'
 import ScheduleAppointmentClientPage from '@/views/Client/ScheduleAppointmentClientPage/ScheduleAppointmentClientPage.vue'
+import AppointmentUnitaryClientPage from '@/views/Client/AppointmentUnitaryClientPage/AppointmentUnitaryClientPage.vue'
 import { useAuthentication } from '@/composables/useAuthentication'
+
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -104,6 +107,12 @@ const router = createRouter({
           props: true,
           meta: { requiresAuth: true, roles: ['Cliente'] },
         },
+        {path:'my-appointments/appointment/:appointmentId',
+          name:'client-appointment-unitary',
+          component:AppointmentUnitaryClientPage,
+          props:true,
+          meta: { requiresAuth: true, roles: ['Cliente'] },
+        }
       ],
     },
     {
