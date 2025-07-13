@@ -102,6 +102,11 @@ const items = ref<MenuItem[][]>([
       icon: 'pi pi-file-edit',
       to: '/employee/administrator/care-management',
     },
+        {
+      label: 'Analiticas',
+      icon: 'pi pi-chart-line',
+      to: '/employee/administrator/analitics',
+    },
   ],
   [
     {
