@@ -307,6 +307,7 @@ const exportCSV = () => {
             <div>
               <label class="block mb-2">Especie</label>
               <Select
+              filter
                 class="w-full"
                 v-bind="specieIdAttrs"
                 v-model="specieId"
@@ -327,6 +328,7 @@ const exportCSV = () => {
             <div>
               <label class="block mb-2">Categoria</label>
               <Select
+              filter
                 class="w-full"
                 v-bind="categoryIdAttrs"
                 v-model="categoryId"

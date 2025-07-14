@@ -152,12 +152,6 @@ const setChartDataAppointments = () => {
         borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
         data: [65, 59, 80, 81, 56, 55, 40],
       },
-      {
-        label: 'Citas canceladas',
-        backgroundColor: documentStyle.getPropertyValue('--p-gray-500'),
-        borderColor: documentStyle.getPropertyValue('--p-gray-500'),
-        data: [28, 48, 40, 19, 86, 27, 90],
-      },
     ],
   }
 }
@@ -451,10 +445,10 @@ const setChartOptionsVeterinarians = () => {
                     <!-- chart donut -->
                     <Card class="card-primary min-h-24">
                       <template #title>
-                        <h2 class="h2">Distribucion de servicios</h2>
+                        <h2 class="h2">Distribucion de metodos de pago</h2>
                       </template>
                       <template #subtitle>
-                        <p>Porcentaje por servicio</p>
+                        <p>Porcentaje por metodo de pago</p>
                       </template>
                       <template #content>
                         <div class="card flex justify-center">
@@ -470,10 +464,10 @@ const setChartOptionsVeterinarians = () => {
                     <!-- appointments -->
                     <Card class="card-primary min-h-24">
                       <template #title>
-                        <h2 class="h2">Cita por Dia de la semana</h2>
+                        <h2 class="h2">Ingresos por sede</h2>
                       </template>
                       <template #subtitle>
-                        <p>Distribucion semanal de citas</p>
+                        <p>Distribucion de ingresos por sede</p>
                       </template>
                       <template #content>
                         <div class="card flex justify-center">

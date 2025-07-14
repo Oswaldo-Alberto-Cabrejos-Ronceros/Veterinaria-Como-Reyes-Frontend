@@ -61,6 +61,8 @@ const {
   getEmployeeMyInfo,
 } = useEmployee()
 
+const typedError = error as Record<string, string | null>
+
 const { getAllRoles } = useRole()
 
 const { getAllHeadquarters } = useHeadquarter()
@@ -233,10 +235,23 @@ const addEmployee = async () => {
     onClose: async (options) => {
       const data = options?.data as AddEmployeeSchema
       if (data) {
-        const employee = await createEmployee(data)
-        console.log('Datos recibidos:', employee)
-        loadEmployees()
-        showToast('Empleado agregado exitosamente: ' + employee.names, 'success', 'Exito')
+        try {
+          const employee = await createEmployee(data)
+          console.log('Datos recibidos:', employee)
+          loadEmployees()
+          showToast('Empleado agregado exitosamente: ' + employee.names, 'success', 'Exito')
+        } catch (error) {
+          console.error(error)
+          if (typedError.createEmployee) {
+            showToast(
+              `Error al crear al empleado: ${data.names} ${typedError.createEmployee}`,
+              'warn',
+              'Error',
+            )
+          } else {
+            showToast('Error al crear al empleado: ' + data.names, 'warn', 'Error')
+          }
+        }
       }
     },
   })
@@ -290,7 +305,15 @@ const editEmployee = async (employeeData: EmployeeList) => {
           showToast('Empleado editado exitosamente: ' + employee.names, 'success', 'Exito')
         } catch (error) {
           console.error(error)
-          showToast('Error al editar al empleado: ' + employee.names, 'warn', 'Error')
+          if (typedError.updateEmployee) {
+            showToast(
+              `Error al editar al empleado: ${employee.names} ${typedError.updateEmployee}`,
+              'warn',
+              'Error',
+            )
+          } else {
+            showToast('Error al editar al empleado: ' + employee.names, 'warn', 'Error')
+          }
         }
       }
     },
@@ -466,7 +489,6 @@ const exportCSV = () => {
             </div>
           </form>
 
-
           <!-- imporve design responsive -->
           <!-- for messague loading  -->
           <Message v-if="loading.getAllEmployees" severity="warn" size="small" variant="simple">
@@ -492,7 +514,6 @@ const exportCSV = () => {
             :rows-per-page-options="[1, 2, 3, 4]"
             ref="dt"
           >
-
             <template #header>
               <div class="w-full flex flex-col xs:flex-row justify-between gap-2 pb-4">
                 <Button
@@ -505,42 +526,18 @@ const exportCSV = () => {
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
             </template>
-            <Column
-              field="names"
-              header="Nombres"
-              sortable
-              style="width: 18%"
-            ></Column>
+            <Column field="names" header="Nombres" sortable style="width: 18%"></Column>
             <Column field="lastnames" sortable header="Apellidos" style="width: 18%"></Column>
-            <Column
-              field="dni"
-              sortable
-              style="width: 15%"
-              header="DNI"
-            ></Column>
-
+            <Column field="dni" sortable style="width: 15%" header="DNI"></Column>
 
             <Column class="hidden lg:table-cell" header="CMVP" sortable style="width: 15%">
-
               <template #body="{ data }">
                 {{ data.cmvp ? data.cmvp : '' }}
                 <Tag v-if="!data.cmvp" value="No requerido" severity="secondary" /> </template
             ></Column>
 
-            <Column
-              field="rolName"
-              sortable
-              header="Rol"
-              style="width: 15%"
-            >
-            </Column>
-            <Column
-              field="nameHeadquarter"
-              sortable
-              style="width: 15%"
-              header="Sede"
-            >
-            </Column>
+            <Column field="rolName" sortable header="Rol" style="width: 15%"> </Column>
+            <Column field="nameHeadquarter" sortable style="width: 15%" header="Sede"> </Column>
 
             <Column header="Acciones">
               <template #body="{ data }">

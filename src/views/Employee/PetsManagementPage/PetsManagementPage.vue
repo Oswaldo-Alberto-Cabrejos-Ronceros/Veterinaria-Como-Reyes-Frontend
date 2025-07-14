@@ -386,6 +386,7 @@ watch(
             <div>
               <label class="block mb-2">Especie</label>
               <Select
+              filter
                 class="w-full"
                 v-bind="specieAttrs"
                 v-model="specie"
@@ -406,6 +407,7 @@ watch(
             <div>
               <label class="block mb-2">Raza</label>
               <Select
+              filter 
                 class="w-full"
                 v-bind="breedAttrs"
                 v-model="breed"
