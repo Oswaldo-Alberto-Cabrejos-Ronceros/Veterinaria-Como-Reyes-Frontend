@@ -299,7 +299,8 @@ const exportCSV = () => {
                 optionValue="value"
                 placeholder="Selecciona Servicio"
                 @update:model-value="searchPaymentsDebounce()"
-              />
+                filter
+                />
             </div>
 
             <div>

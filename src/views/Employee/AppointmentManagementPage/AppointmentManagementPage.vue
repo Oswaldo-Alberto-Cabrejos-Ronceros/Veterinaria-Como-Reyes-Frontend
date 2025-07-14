@@ -389,7 +389,8 @@ const attendAppointment = (appointmentId: number) => {
                 placeholder="Selecciona Categoria"
                 showClear
                 @update:model-value="searchAppointmentsDebounce()"
-              />
+                filter
+                />
 
               <Message v-if="errors.category" severity="error" size="small" variant="simple">
                 {{ errors.category }}

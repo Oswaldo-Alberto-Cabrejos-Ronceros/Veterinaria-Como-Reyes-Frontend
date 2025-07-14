@@ -273,6 +273,7 @@ const statusOptions: OptionSelect[] = [
                 optionValue="value"
                 placeholder="Selecciona Especie"
                 showClear
+                filter
               />
 
               <Message v-if="errors.specieId" severity="error" size="small" variant="simple">

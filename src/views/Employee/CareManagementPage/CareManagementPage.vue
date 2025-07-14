@@ -272,6 +272,7 @@ const viewCare = (careId: number) => {
                 optionValue="value"
                 showClear
                 placeholder="Selecciona Servicio"
+                filter
               />
 
               <Message

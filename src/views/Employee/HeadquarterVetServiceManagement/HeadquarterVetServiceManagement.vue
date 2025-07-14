@@ -363,6 +363,7 @@ const inanctivedHeadquarterService = ref<boolean>(false)
                 placeholder="Selecciona Especie"
                 @update:model-value="searchServicesDebounced"
                 showClear
+                filter
               />
 
               <Message v-if="errors.specieId" severity="error" size="small" variant="simple">
@@ -383,6 +384,7 @@ const inanctivedHeadquarterService = ref<boolean>(false)
                 placeholder="Selecciona Categoria"
                 @update:model-value="searchServicesDebounced"
                 showClear
+                filter
               />
               <Message v-if="errors.specieId" severity="error" size="small" variant="simple">
                 {{ errors.specieId }}

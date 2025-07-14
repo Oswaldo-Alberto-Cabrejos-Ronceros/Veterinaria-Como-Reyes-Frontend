@@ -11,11 +11,11 @@ defineProps<{
 </script>
 
 <template>
-  <Card class="card-primary">
+  <Card class="card-primary transition-opacity duration-300 hover:opacity-80 group">
     <template #title>
       <div class="w-full flex justify-between items-center">
         <h3>{{ title }}</h3>
-        <i :class="`${icon} text-3xl`"></i>
+        <i :class="`${icon} text-3xl text-primary transition-transform duration-300 group-hover:scale-105`"></i>
       </div>
     </template>
     <template #content>
@@ -24,7 +24,7 @@ defineProps<{
           {{ description }}
         </p>
         <p >Campos incluidos</p>
-        <div class="flex gap-3">
+        <div class="flex gap-3 flex-wrap">
           <Tag
             v-for="(field, index) of incluyedFields"
             :key="index"

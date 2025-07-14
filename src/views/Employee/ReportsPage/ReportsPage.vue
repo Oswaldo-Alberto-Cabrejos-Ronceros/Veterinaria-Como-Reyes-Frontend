@@ -1,6 +1,9 @@
 <script lang="ts" setup>
 import Card from 'primevue/card'
 import CardGenerateReport from '@/components/CardGenerateReport.vue'
+import { useDialog } from 'primevue'
+import CardFormGenerateReport from '@/components/CardFormGenerateReport.vue'
+import type { FormValues as SchemaGenerateReport } from '@/validation-schemas-forms/schema-generate-report'
 
 const reportTypes: {
   title: string
@@ -10,20 +13,44 @@ const reportTypes: {
   lastGeneraded: number
 }[] = [
   {
-    title: 'Ingresos por especie',
+    title: 'Ingresos por servicios',
     icon: 'fa-solid fa-shield-dog',
-    description: 'Recuento de ingresos por especie',
+    description: 'Recuento de ingresos por servicios',
+    incluyedFields: ['Servicio', 'Precio unitario', 'Cantidad', 'Total'],
+    lastGeneraded: 5,
+  },
+  {
+    title: 'Ingresos por metodo de pago',
+    icon: 'pi pi-money-bill',
+    description: 'Recuento de ingresos por metodos de pago',
     incluyedFields: ['Cantidad de ingresos', 'Especie'],
     lastGeneraded: 5,
   },
-    {
-    title: 'Ingresos por especie',
-    icon: 'fa-solid fa-shield-dog',
-    description: 'Recuento de ingresos por especie',
+  {
+    title: 'Atenciones por sede y veterinario',
+    icon: 'fa-solid fa-house-medical',
+    description: 'Recuento de atenciones por sede y veterinario',
     incluyedFields: ['Cantidad de ingresos', 'Especie'],
     lastGeneraded: 5,
   },
 ]
+
+const dialog = useDialog()
+
+const generateReport = () => {
+  dialog.open(CardFormGenerateReport, {
+    props: {
+      modal: true,
+      header: 'Agregar raza',
+    },
+    onClose: async (options) => {
+      const data = options?.data as SchemaGenerateReport
+      if (data) {
+        console.log('Datos recibidos', data)
+      }
+    },
+  })
+}
 </script>
 
 <template>
@@ -38,9 +65,12 @@ const reportTypes: {
       <template #content>
         <div class="w-full grid grid-cols-2 gap-y-4 lg:grid-cols-4 gap-x-6 lg:gap-x-12 mt-4">
           <CardGenerateReport
+            v-ripple
+            class="cursor-pointer"
             v-for="(reportType, item) of reportTypes"
             :key="item"
             v-bind="reportType"
+            @click="generateReport"
           />
         </div>
       </template>

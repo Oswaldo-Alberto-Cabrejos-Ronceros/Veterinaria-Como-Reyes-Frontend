@@ -263,7 +263,7 @@ const toggleMenu = () => {
       ]"
     >
       <TheHeader @show-menu="toggleMenu()" :show-menu="showMenu" :role="mainRole" />
-      <section class="flex-1 h-auto py-1 px-0.5 xs:px-4 transition-all duration-200 ease-out">
+      <section class="flex-1 h-auto py-1 px-0.5 xs:px-4 transition-all duration-200 ease-out flex flex-col">
         <router-view />
       </section>
     </main>

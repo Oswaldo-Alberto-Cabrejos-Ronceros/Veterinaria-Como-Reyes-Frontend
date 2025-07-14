@@ -238,8 +238,8 @@ const addEmployee = async () => {
         try {
           const employee = await createEmployee(data)
           console.log('Datos recibidos:', employee)
-          loadEmployees()
           showToast('Empleado agregado exitosamente: ' + employee.names, 'success', 'Exito')
+          loadEmployees()
         } catch (error) {
           console.error(error)
           if (typedError.createEmployee) {

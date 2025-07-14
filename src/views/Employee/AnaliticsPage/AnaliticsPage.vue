@@ -376,8 +376,8 @@ const setChartOptionsVeterinarians = () => {
         <p >Analisis y metricas de la clinica</p>
       </template>
       <template #content>
-        <Tabs value="0">
-          <TabList>
+        <Tabs value="0" class=" bg-surface-800">
+          <TabList class=" bg-surface-800">
             <Tab value="0">Financieras</Tab>
             <Tab value="1">Operacionales</Tab>
           </TabList>
