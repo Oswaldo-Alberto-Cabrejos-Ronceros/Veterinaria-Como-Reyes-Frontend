@@ -379,7 +379,7 @@ const setChartOptionsVeterinarians = () => {
         <h2 class="h2">Analiticas</h2>
       </template>
       <template #subtitle>
-        <p class="textLg">Analisis y metricas de la clinica</p>
+        <p >Analisis y metricas de la clinica</p>
       </template>
       <template #content>
         <Tabs value="0">
@@ -394,7 +394,7 @@ const setChartOptionsVeterinarians = () => {
                   <h2 class="h2">Financieras</h2>
                 </template>
                 <template #subtitle>
-                  <p class="textLg">Analisis de ingresos y rentabilidad</p>
+                  <p>Analisis de ingresos y rentabilidad</p>
                 </template>
                 <template #content>
                   <div
@@ -496,7 +496,7 @@ const setChartOptionsVeterinarians = () => {
                   <h2 class="h2">Operacionales</h2>
                 </template>
                 <template #subtitle>
-                  <p class="textLg">Analisis de pacientes y veterinarios</p>
+                  <p >Analisis de pacientes y veterinarios</p>
                 </template>
                 <template #content>
                   <!-- news -->

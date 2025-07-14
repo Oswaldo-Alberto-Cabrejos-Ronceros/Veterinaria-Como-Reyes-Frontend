@@ -13,10 +13,10 @@ defineProps<{
 </script>
 
 <template>
-  <div class="card-primary flex w-full p-4 items-center gap-3">
+  <div class="card-primary flex w-full p-4 items-center gap-3 transition-opacity duration-300 hover:opacity-80 group">
     <Image
       class="size-max shadow self-start"
-      image-class=" rounded size-12 object-cover"
+      image-class=" rounded size-12 object-cover transition-transform duration-300 group-hover:scale-105"
       :src="serviceImageUrl"
     />
     <div class="flex-1 flex flex-col gap-1 justify-center items-start">

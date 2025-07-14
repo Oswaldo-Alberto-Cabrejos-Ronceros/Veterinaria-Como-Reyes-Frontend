@@ -187,6 +187,6 @@ const showToast = (message: string) => {
 
     <!-- payment -->
 
-    <CardBilling :button-active="paymentInfo.status==='Completada'" @complete-payment="handleCompletePayment" @download-ticket="handleDownloadPaymentTicket" v-if="paymentInfo" :payment-id="paymentInfo.paymentId" :status="paymentInfo.status" :payment-method-id="paymentInfo.paymentMethod.id" :serviceName="paymentInfo.serviceName" :price="paymentInfo.amount"/>
+    <CardBilling :button-active="paymentInfo.status!=='Completada'" @complete-payment="handleCompletePayment" @download-ticket="handleDownloadPaymentTicket" v-if="paymentInfo" :payment-id="paymentInfo.paymentId" :status="paymentInfo.status" :payment-method-id="paymentInfo.paymentMethod.id" :serviceName="paymentInfo.serviceName" :price="paymentInfo.amount"/>
   </div>
 </template>

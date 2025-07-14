@@ -53,12 +53,14 @@ export interface InfoBasicAppointment {
   categoryServiceName: string
   status: string
   duration: number
+  nameHeadquarter: string
+  addressHeadquarter: string
 }
 
 export interface AppointmentList {
   appointmentId: number
-  petName:string,
-  petOwner:string
+  petName: string
+  petOwner: string
   day: string
   headquarter: string
   categoryService: string
@@ -131,4 +133,3 @@ export interface AppointmentStatsForReceptionist {
   confirmedAppointmentsToday: number
   pendingAppointmentsToday: number
 }
-

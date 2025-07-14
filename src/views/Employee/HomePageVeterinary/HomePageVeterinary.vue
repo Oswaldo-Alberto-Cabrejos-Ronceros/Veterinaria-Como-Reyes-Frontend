@@ -380,7 +380,7 @@ const handleRedirectPet = (petId: number) => {
                   class="flex min-h-120 max-h-122 items-center justify-center"
                   v-if="careRecents.length === 0"
                 >
-                  <p>No servicios que mostrar</p>
+                  <p>No clientes que mostrar</p>
                 </div>
               </template>
             </Card>

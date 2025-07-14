@@ -33,8 +33,8 @@ const redirectToScheduleAppointment = () => {
   router.push('/client/my-appointments/schedule-appointment')
 }
 
-const redirectToAppointmentUnitary = (appointmentId:number)=>{
-router.push(`/client/my-appointments/appointment/${appointmentId}`)
+const redirectToAppointmentUnitary = (appointmentId: number) => {
+  router.push(`/client/my-appointments/appointment/${appointmentId}`)
 }
 </script>
 
@@ -73,8 +73,9 @@ router.push(`/client/my-appointments/appointment/${appointmentId}`)
           >
             Error al cargar tus citas
           </Message>
-          <CardAppointmentClient class="cursor-pointer"
-          v-ripple
+          <CardAppointmentClient
+            class="cursor-pointer"
+            v-ripple
             v-for="appointment in appointments"
             :key="appointment.id"
             :pet-name="appointment.pet.name"
@@ -88,11 +89,11 @@ router.push(`/client/my-appointments/appointment/${appointmentId}`)
             :service-price="'60'"
             :appointment-status="appointment.status"
             :date="appointment.date"
-            :headquarter-name="'Ica'"
-            :headquarter-address="'Av. Tupac Amaru'"
+            :headquarter-name="appointment.headquarter.name"
+            :headquarter-address="appointment.headquarter.address"
             @click="redirectToAppointmentUnitary(appointment.id)"
           ></CardAppointmentClient>
-          <div v-if="appointments.length===0" class="size-full flex items-center justify-center">
+          <div v-if="appointments.length === 0" class="size-full flex items-center justify-center">
             <p>No tiene citas agendas</p>
           </div>
         </div>

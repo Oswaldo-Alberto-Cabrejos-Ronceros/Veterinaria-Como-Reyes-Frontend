@@ -70,6 +70,10 @@ export class AppointmentAdapter {
       categoryService: {
         name: infoBasicAppointment.categoryServiceName,
       },
+      headquarter: {
+        name: infoBasicAppointment.nameHeadquarter,
+        address: infoBasicAppointment.addressHeadquarter,
+      },
       status: FormatAdapter.toCaptalizeCaseWithout_(infoBasicAppointment.status),
       duration: infoBasicAppointment.duration,
     }
@@ -80,8 +84,8 @@ export class AppointmentAdapter {
   ): AppointmentListView {
     return {
       id: appointmentList.appointmentId,
-        petName:appointmentList.petName,
-  petOwner:appointmentList.petOwner,
+      petName: appointmentList.petName,
+      petOwner: appointmentList.petOwner,
       date: appointmentList.day,
       headquarter: appointmentList.headquarter,
       categoryService: appointmentList.categoryService,
@@ -133,8 +137,6 @@ export class AppointmentAdapter {
       address: clientInfoAppointment.address,
     }
   }
-
-
 
   static toAppointmentInfoPanelAdminView(
     infoAppointment: AppointmentInfoPanelAdmin,

@@ -29,6 +29,7 @@ import CareUnitaryPage from '@/views/Employee/CareUnitaryPage/CareUnitaryPage.vu
 import HeadquarterVetServiceManagement from '@/views/Employee/HeadquarterVetServiceManagement/HeadquarterVetServiceManagement.vue'
 import AppointmentsVeterinaryPage from '@/views/Employee/AppointmentsVeterinaryPage/AppointmentsVeterinaryPage.vue'
 import AnaliticsPage from '@/views/Employee/AnaliticsPage/AnaliticsPage.vue'
+import ReportsPage from '@/views/Employee/ReportsPage/ReportsPage.vue'
 //client
 import MyAppointmentsClientPage from '@/views/Client/MyAppointmentsClientPage/MyAppointmentsClientPage.vue'
 import MyPetsPage from '@/views/Client/MyPetsPage/MyPetsPage.vue'
@@ -253,6 +254,11 @@ const router = createRouter({
               name: 'administrator-analitics',
               component: AnaliticsPage,
               meta: { requiresAuth: true, roles: ['Administrador'] },
+            },
+            {
+              path: 'reports',
+              name: 'administrador-reports',
+              component: ReportsPage,
             },
           ],
         },

@@ -43,9 +43,10 @@ import { toTypedSchema } from '@vee-validate/yup'
 import { useForm } from 'vee-validate'
 
 import { useHeadquarterVetService } from '@/composables/useHeadquarterVetService'
-import type { DataViewPageEvent } from 'primevue'
+import { useDialog, type DataViewPageEvent } from 'primevue'
 import { debounce } from 'lodash'
 import type { HeadquarterServiceInfoPanel } from '@/models/HeadquarterServiceInfoPanel'
+import CardHeadquarterService from '@/components/CardHeadquarterService.vue'
 
 const { getEntityId } = useAuthentication()
 const { getEmployeeMyInfo } = useEmployee()
@@ -184,6 +185,24 @@ const loadHeadquarterService = async (event?: DataViewPageEvent) => {
 const searchHeadquartersDebounced = debounce(() => {
   loadHeadquarterService()
 }, 400)
+
+
+const dialog = useDialog()
+
+const viewHeadquarterService = (headquarterService: HeadquarterServiceInfoPanel) => {
+  dialog.open(CardHeadquarterService, {
+    props: {
+      modal: true,
+      header: headquarterService.serviceName,
+      blockScroll: true,
+      dismissableMask: true,
+    },
+    data: {
+      headquarterServiceInfo: headquarterService,
+    },
+  })
+}
+
 </script>
 
 <template>
@@ -369,7 +388,7 @@ const searchHeadquartersDebounced = debounce(() => {
                 <div class="w-full flex justify-between items-baseline">
                   <h2 class="h3 font-semibold">Ultimos pagos</h2>
                   <Tag
-                    :value="`${paymentsRecent.length} pendientes`"
+                    :value="`${paymentsRecent.length} pagos`"
                     severity="secondary"
                     class="self-start"
                   ></Tag>
@@ -482,8 +501,9 @@ const searchHeadquartersDebounced = debounce(() => {
                   <div
                     class="w-full grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 3xl:grid-cols-4 gap-x-12 gap-y-6 my-4"
                   >
-                    <CardServiceTerciary
-                      v-for="(item, index) in slotProps.items"
+                    <CardServiceTerciary class="cursor-pointer"
+                      v-ripple
+                    v-for="(item, index) in slotProps.items"
                       :key="index"
                       :serviceId="item.serviceId"
                       :serviceName="item.serviceName"
@@ -493,6 +513,7 @@ const searchHeadquartersDebounced = debounce(() => {
                       :duration="item.serviceDuration"
                       :price="item.servicePrice"
                       :headquarter-name="item.headquarterName"
+                      @click="viewHeadquarterService(item)"
                     >
                     </CardServiceTerciary>
                   </div>

@@ -28,13 +28,14 @@ import { schema } from '@/validation-schemas-forms/schema-search-headquarter-ser
 import type { FormValues as SearchHeadServiceSchema } from '@/validation-schemas-forms/schema-search-headquarter-service'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/yup'
-import type { DataViewPageEvent } from 'primevue'
+import { useDialog, type DataViewPageEvent } from 'primevue'
 import { debounce } from 'lodash'
 import DataView from 'primevue/dataview'
 import Select from 'primevue/select'
 import InputText from 'primevue/inputtext'
 import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
+import CardHeadquarterService from '@/components/CardHeadquarterService.vue'
 //methods
 const { getEntityId } = useAuthentication()
 const { error: petError, loading: petLoading, getPetByClientId } = usePet()
@@ -58,7 +59,7 @@ const headquarterIdForClient = ref<number | undefined>(undefined)
 const pets = ref<PetByClient[]>([])
 const appointments = ref<InfoBasicAppointmentClient[]>([])
 //get all for view
-onMounted(async  () => {
+onMounted(async () => {
   await loadInfoClient()
   await loadPets()
   await loadAppointments()
@@ -82,7 +83,7 @@ const loadInfoClient = async () => {
     }
     const headquarterIdGet = infoClient.headquarter.id
     headquarterIdForClient.value = headquarterIdGet
-    headquarterId.value=headquarterIdGet
+    headquarterId.value = headquarterIdGet
   }
   headquarterOptions.value = headquartersCategoriesSpeciesToOptionsSelect(
     await getAllHeadquarters(),
@@ -173,12 +174,25 @@ const totalRecords = ref<number>(0)
 const rows = ref<number>(4)
 const first = ref<number>(0)
 
+const dialog = useDialog()
 
-
-const redirectToAppointmentUnitary = (appointmentId:number)=>{
-router.push(`/client/my-appointments/appointment/${appointmentId}`)
+const viewHeadquarterService = (headquarterService: HeadquarterServiceInfoPanel) => {
+  dialog.open(CardHeadquarterService, {
+    props: {
+      modal: true,
+      header: headquarterService.serviceName,
+      blockScroll: true,
+      dismissableMask: true,
+    },
+    data: {
+      headquarterServiceInfo: headquarterService,
+    },
+  })
 }
 
+const redirectToAppointmentUnitary = (appointmentId: number) => {
+  router.push(`/client/my-appointments/appointment/${appointmentId}`)
+}
 </script>
 
 <template>
@@ -242,6 +256,8 @@ router.push(`/client/my-appointments/appointment/${appointmentId}`)
                     :petName="appointment.pet.name"
                     :date="appointment.date"
                     :time="appointment.time"
+                    :headquarter-name="appointment.headquarter.name"
+                    :headquarter-address="appointment.headquarter.address"
                     v-ripple
                     class="cursor-pointer"
                     @click="redirectToAppointmentUnitary(appointment.id)"
@@ -386,7 +402,7 @@ router.push(`/client/my-appointments/appointment/${appointmentId}`)
                 :rows="rows"
                 :first="first"
                 :totalRecords="totalRecords"
-                :rows-per-page-options="[4,8,12]"
+                :rows-per-page-options="[4, 8, 12]"
                 :value="headquatersVetServices"
                 paginator
                 data-key="headquarterId"
@@ -397,6 +413,7 @@ router.push(`/client/my-appointments/appointment/${appointmentId}`)
                     class="w-full grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 3xl:grid-cols-4 gap-x-12 gap-y-6 my-4"
                   >
                     <CardServicePrimary
+                      v-ripple
                       v-for="(item, index) in slotProps.items"
                       :key="index"
                       :service-id="item.serviceId"
@@ -407,6 +424,7 @@ router.push(`/client/my-appointments/appointment/${appointmentId}`)
                       :duration="item.serviceDuration"
                       :price="item.servicePrice"
                       :headquarter-name="item.headquarterName"
+                      @click="viewHeadquarterService(item)"
                     />
                   </div>
                 </template>
@@ -414,7 +432,7 @@ router.push(`/client/my-appointments/appointment/${appointmentId}`)
             </div>
           </template>
           <template #footer>
-            <Button
+            <Button hidden
               class="w-full"
               size="small"
               iconPos="right"

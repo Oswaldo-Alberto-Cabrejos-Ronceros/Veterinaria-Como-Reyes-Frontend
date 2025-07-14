@@ -102,10 +102,15 @@ const items = ref<MenuItem[][]>([
       icon: 'pi pi-file-edit',
       to: '/employee/administrator/care-management',
     },
-        {
+    {
       label: 'Analiticas',
       icon: 'pi pi-chart-line',
       to: '/employee/administrator/analitics',
+    },
+    {
+      label: 'Reportes',
+      icon: 'pi pi-file',
+      to: '/employee/administrator/reports',
     },
   ],
   [
@@ -129,7 +134,7 @@ const items = ref<MenuItem[][]>([
       icon: 'fa-solid fa-paw',
       to: '/employee/manager/pets-management',
     },
-      {
+    {
       label: 'Categorias',
       icon: 'pi pi-sort-amount-up-alt',
       to: '/employee/manager/category-management',
@@ -156,12 +161,12 @@ const items = ref<MenuItem[][]>([
       to: '/employee/manager/breeds-management',
     },
 
-        {
+    {
       label: 'Servicios por Sede',
       icon: 'pi pi-arrow-right-arrow-left',
       to: '/employee/manager/services-headquarters-management',
     },
-        {
+    {
       label: 'Pagos',
       icon: 'pi pi-receipt',
       to: '/employee/manager/payment-management',
@@ -193,7 +198,6 @@ const items = ref<MenuItem[][]>([
       icon: 'fa-solid fa-paw',
       to: '/employee/veterinary/pets-management',
     },
-
   ],
   [
     {
@@ -201,7 +205,7 @@ const items = ref<MenuItem[][]>([
       icon: 'pi pi-home',
       to: '/employee/receptionist/home',
     },
-        {
+    {
       label: 'Clientes',
       icon: 'pi pi-users',
       to: '/employee/receptionist/client-management',
@@ -246,8 +250,18 @@ const toggleMenu = () => {
 </script>
 <template>
   <div class="w-full min-h-screen flex">
-    <MenuNav :role="mainRole" :items="itemsRole" :show-menu="showMenu" @update:show-menu="toggleMenu()" />
-    <main :class="['w-full flex-1 flex flex-col transition-all duration-200 ease-out' ,showMenu?'md:ml-64':'ml-0 md:ml-20']">
+    <MenuNav
+      :role="mainRole"
+      :items="itemsRole"
+      :show-menu="showMenu"
+      @update:show-menu="toggleMenu()"
+    />
+    <main
+      :class="[
+        'w-full flex-1 flex flex-col transition-all duration-200 ease-out',
+        showMenu ? 'md:ml-64' : 'ml-0 md:ml-20',
+      ]"
+    >
       <TheHeader @show-menu="toggleMenu()" :show-menu="showMenu" :role="mainRole" />
       <section class="flex-1 h-auto py-1 px-0.5 xs:px-4 transition-all duration-200 ease-out">
         <router-view />
