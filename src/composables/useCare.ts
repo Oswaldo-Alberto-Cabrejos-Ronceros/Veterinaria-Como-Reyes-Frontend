@@ -121,6 +121,18 @@ export function useCare() {
     return patients.map((p) => AnimalAdapter.toRecentPatientView(p))
   }
 
+const getMonthlyPerformanceStatsByVeterinary = async (employeeId: number) => {
+  return await runUseCase('getMonthlyPerformanceStatsByVeterinary', () =>
+    careUsesCases.getMonthlyPerformanceStatsByVeterinary.execute(employeeId),
+  )
+}
+
+const getWeeklyPerformanceGraphicByVeterinary = async (employeeId: number) => {
+  return await runUseCase('getWeeklyPerformanceGraphicByVeterinary', () =>
+    careUsesCases.getWeeklyPerformanceGraphicByVeterinary.execute(employeeId),
+  )
+}
+
   return {
     loading,
     error,
@@ -138,5 +150,7 @@ export function useCare() {
     getCaresByHeadquarterId,
     setOnGoingCare,
     getRecentPatientsByEmployee,
+    getMonthlyPerformanceStatsByVeterinary,
+    getWeeklyPerformanceGraphicByVeterinary
   }
 }

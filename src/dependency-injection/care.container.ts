@@ -14,6 +14,8 @@ import { GetCareStatsToday } from '@/services/Care/aplication/GetCareStatsToday'
 import { GetCaresByHeadquarterId } from '@/services/Care/aplication/GetCaresByHeadquarterId'
 import { SetOnGoingCare } from '@/services/Care/aplication/SetOnGoingCare'
 import { GetRecentPatientsByEmployee } from '@/services/Care/aplication/GetRecentPatientsByEmployee'
+import { GetMonthlyPerformanceStatsByVeterinary } from '@/services/Care/aplication/GetMonthlyPerformanceStatsByVeterinary'
+import { GetWeeklyPerformanceGraphicByVeterinary } from '@/services/Care/aplication/GetWeeklyPerformanceGraphicByVeterinary'
 
 // Instancia del cliente HTTP
 const axiosHttpClient = new AxiosHttpClient()
@@ -32,9 +34,11 @@ export const careUsesCases = {
   createCareFromAppointment: new CreateCareFromAppointment(careService),
   createCareFromRequest: new CreateCareFromRequest(careService),
   searchCares: new SearchCares(careService),
-    getCaresForEmployee: new GetCaresForEmployee(careService),
+  getCaresForEmployee: new GetCaresForEmployee(careService),
   getCareStatsToday: new GetCareStatsToday(careService),
   getCaresByHeadquarterId: new GetCaresByHeadquarterId(careService),
   setOnGoingCare: new SetOnGoingCare(careService),
   getRecentPatientsByEmployee: new GetRecentPatientsByEmployee(careService),
+  getMonthlyPerformanceStatsByVeterinary: new GetMonthlyPerformanceStatsByVeterinary(careService),
+  getWeeklyPerformanceGraphicByVeterinary: new GetWeeklyPerformanceGraphicByVeterinary(careService),
 }

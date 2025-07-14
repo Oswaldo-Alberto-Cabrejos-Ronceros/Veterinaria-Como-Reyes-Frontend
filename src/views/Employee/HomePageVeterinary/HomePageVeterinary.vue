@@ -23,6 +23,10 @@ import type { VeterinaryRecordStats } from '@/services/VeterinaryRecord/domain/m
 import { useVeterinaryRecord } from '@/composables/useVeterinaryRecord'
 import type { RecentMedicalRecord } from '@/models/RecentMedicalRecord'
 import type { RecentPatient } from '@/models/RecentPatient'
+import type {
+  MonthlyCareStatsVeterinary,
+  WeeklyCareStatsVeterinary,
+} from '@/services/Care/domain/models/Care'
 
 const { getEntityId } = useAuthentication()
 const { getEmployeeMyInfo } = useEmployee()
@@ -32,7 +36,16 @@ const appointments = ref<CareAndAppointmentPanelEmployee[]>([])
 
 const statsRecords = ref<VeterinaryRecordStats | null>(null)
 
-const { getRecentPatientsByEmployee, getCaresForEmployee } = useCare()
+const {
+  getWeeklyPerformanceGraphicByVeterinary,
+  getMonthlyPerformanceStatsByVeterinary,
+  getRecentPatientsByEmployee,
+  getCaresForEmployee,
+} = useCare()
+
+const monthlyPerformanceStats = ref<MonthlyCareStatsVeterinary | null>(null)
+
+const weeklyPerformanceGraficInfo = ref<WeeklyCareStatsVeterinary | null>(null)
 
 const recentsPacients = ref<RecentPatient[]>([])
 
@@ -51,9 +64,9 @@ const entityId = ref<number | null>(null)
 const today = DateAdapter.toFormatView(new Date())
 
 onMounted(async () => {
-  loadMyInfo()
-  chartData.value = setChartData()
-  chartOptions.value = setChartOptions()
+  await loadMyInfo()
+   chartData.value = setChartData()
+   chartOptions.value = setChartOptions()
 })
 
 const chartData = ref()
@@ -64,11 +77,11 @@ const setChartData = () => {
   const documentStyle = getComputedStyle(document.documentElement)
 
   return {
-    labels: ['02/06', '09/06', '16/06', '23/06', '30/06'],
+    labels: weeklyPerformanceGraficInfo.value?.weekLabels,
     datasets: [
       {
         label: 'Atenciones',
-        data: [65, 59, 80, 81, 50],
+        data: weeklyPerformanceGraficInfo.value?.totalCares,
         fill: false,
         borderColor: documentStyle.getPropertyValue('--p-pink-500'),
         tension: 0.4,
@@ -122,6 +135,8 @@ const loadMyInfo = async () => {
     appointmentStats.value = await getTodayAppointmentStatsByHeadquarter(
       myInfoEmployee.value.headquarter.id,
     )
+    monthlyPerformanceStats.value = await getMonthlyPerformanceStatsByVeterinary(entityIdGet)
+    weeklyPerformanceGraficInfo.value = await getWeeklyPerformanceGraphicByVeterinary(entityIdGet)
     careRecents.value = await getCareAndAppointmentsForEmployee(entityIdGet)
     appointments.value = await getCaresForEmployee(entityIdGet)
     statsRecords.value = await getStatsByVeterinarian(entityIdGet)
@@ -286,7 +301,11 @@ const handleRedirectPet = (petId: number) => {
                   <h2 class="h3 font-semibold">Citas de Hoy</h2>
                 </div>
 
-                <Tag :value="`${appointments.length} citas`" severity="secondary" class="self-start"></Tag>
+                <Tag
+                  :value="`${appointments.length} citas`"
+                  severity="secondary"
+                  class="self-start"
+                ></Tag>
               </div>
             </template>
             <template #subtitle>
@@ -357,7 +376,11 @@ const handleRedirectPet = (petId: number) => {
                     <i class="pi pi-users"></i>
                     <h2 class="h3 font-semibold">Sala de espera</h2>
                   </div>
-                  <Tag :value="`${careRecents.length} esperando`" severity="secondary" class="self-start"></Tag>
+                  <Tag
+                    :value="`${careRecents.length} esperando`"
+                    severity="secondary"
+                    class="self-start"
+                  ></Tag>
                 </div>
               </template>
               <template #subtitle>
@@ -448,7 +471,11 @@ const handleRedirectPet = (petId: number) => {
                   <i class="pi pi-file"></i>
                   <h2 class="h3 font-semibold">Ultimos diagnosticos</h2>
                 </div>
-                <Tag :value="`${recentRecords.length} registros`" severity="secondary" class="self-start"></Tag>
+                <Tag
+                  :value="`${recentRecords.length} registros`"
+                  severity="secondary"
+                  class="self-start"
+                ></Tag>
               </div>
             </template>
             <template #subtitle>
@@ -524,7 +551,11 @@ const handleRedirectPet = (petId: number) => {
                   <i class="pi pi-heart"></i>
                   <h2 class="h3 font-semibold">Pacientes Recientes</h2>
                 </div>
-                <Tag :value="`${recentsPacients.length} pacientes`" severity="secondary" class="self-start"></Tag>
+                <Tag
+                  :value="`${recentsPacients.length} pacientes`"
+                  severity="secondary"
+                  class="self-start"
+                ></Tag>
               </div>
             </template>
             <template #subtitle>
