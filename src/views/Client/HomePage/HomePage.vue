@@ -418,7 +418,7 @@ const redirectToAppointmentUnitary = (appointmentId: number) => {
                       :key="index"
                       :service-id="item.serviceId"
                       :service-name="item.serviceName"
-                      :service-image-url="''"
+                      :service-image-url="item.serviceImageUrl"
                       :specie-name="item.specieName"
                       :category-name="item.categoryName"
                       :duration="item.serviceDuration"

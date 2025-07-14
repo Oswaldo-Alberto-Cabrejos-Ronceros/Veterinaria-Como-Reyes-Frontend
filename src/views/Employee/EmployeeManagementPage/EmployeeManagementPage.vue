@@ -35,6 +35,7 @@ import Tag from 'primevue/tag'
 import BlockCardPrimary from '@/components/BlockCardPrimary.vue'
 import type { FormValues as BlockSchema } from '@/validation-schemas-forms/schema-block-employee-client'
 import { useAuthentication } from '@/composables/useAuthentication'
+import CardLoader from '@/components/CardLoader.vue'
 //toast
 const toast = useToast()
 
@@ -171,7 +172,7 @@ const headquartersToOptionsSelect = (headquarters: Headquarter[]): OptionSelect[
 
 //form
 
-const { errors, defineField } = useForm<FormValues>({
+const { resetForm,errors, defineField } = useForm<FormValues>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
     dni: '',
@@ -183,6 +184,11 @@ const { errors, defineField } = useForm<FormValues>({
     status: true,
   },
 })
+
+const handleResetForm =()=>{
+  resetForm()
+  loadEmployees()
+}
 
 const fieldMap = {
   dni: defineField('dni'),
@@ -409,6 +415,7 @@ const exportCSV = () => {
 
 <template>
   <div class="layout-principal-flex">
+    <CardLoader v-if="loading.createEmployee||loading.updateEmployee||loading.restoreEmployee||loading.blockEmployee"/>
     <Card class="card-principal-color-neutral">
       <template #title>
         <h3 class="h3">Gestión de empleados</h3>
@@ -486,6 +493,9 @@ const exportCSV = () => {
               <Message v-if="errors.status" severity="error" size="small" variant="simple">
                 {{ errors.status }}
               </Message>
+            </div>
+            <div class="form-button-search-container-grid-col-5-end">
+              <Button size="small" class="py-2" severity="secondary" variant="outlined" label="Limpiar" iconPos="left" icon="pi pi-replay" @click="handleResetForm"/>
             </div>
           </form>
 

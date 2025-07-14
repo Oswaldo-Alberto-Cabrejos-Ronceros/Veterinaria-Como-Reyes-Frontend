@@ -91,6 +91,10 @@ body {
   @apply flex items-end justify-center md:col-start-2 lg:col-start-3 xl:col-start-4 2xl:col-start-5
 }
 
+.form-button-search-container-grid-col-5-end{
+    @apply flex items-end justify-end md:col-start-2 lg:col-start-3 xl:col-start-4 2xl:col-start-5
+}
+
 .card-primary{
   @apply shadow-none border-1 border-neutral-200 dark:border-neutral-700
 }

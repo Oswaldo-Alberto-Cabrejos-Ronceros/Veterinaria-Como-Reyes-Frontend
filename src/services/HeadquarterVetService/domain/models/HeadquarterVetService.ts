@@ -26,4 +26,5 @@ export interface HeadquarterServiceInfoPanel {
   serviceDuration: string
   categoryName: string
   speciesName: string
+  serviceImageUrl:string
 }

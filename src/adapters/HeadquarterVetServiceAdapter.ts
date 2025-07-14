@@ -44,6 +44,7 @@ export class HeadquarterVetServiceAdapter {
       serviceDuration: domain.serviceDuration,
       categoryName: domain.categoryName,
       specieName: domain.speciesName,
+      serviceImageUrl:domain.serviceImageUrl
     }
   }
 }

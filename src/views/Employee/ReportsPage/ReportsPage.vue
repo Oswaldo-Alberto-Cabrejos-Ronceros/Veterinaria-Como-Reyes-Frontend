@@ -41,7 +41,7 @@ const generateReport = () => {
   dialog.open(CardFormGenerateReport, {
     props: {
       modal: true,
-      header: 'Agregar raza',
+      header: 'Generar reporte',
     },
     onClose: async (options) => {
       const data = options?.data as SchemaGenerateReport

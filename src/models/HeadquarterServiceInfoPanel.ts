@@ -8,4 +8,5 @@ export interface HeadquarterServiceInfoPanel {
   serviceDuration: string
   categoryName: string
   specieName: string
+  serviceImageUrl:string
 }
