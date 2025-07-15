@@ -15,6 +15,10 @@ import { useClient } from '@/composables/useClient'
 import CardOwnerPrimary from '@/components/CardOwnerPrimary.vue'
 import Tag from 'primevue/tag'
 import type { Client } from '@/models/Client'
+import CardEditVetRecord from '../../../components/CardEditVetRecord.vue'
+import { useDialog } from 'primevue/usedialog'
+import type { FormValues as AddEditVeterinaryRecord } from '@/validation-schemas-forms/schema-add-edit-veterinary-record'
+
 const props = defineProps<{
   petId: string
 }>()
@@ -30,6 +34,7 @@ const { getMainRole } = useAuthentication()
 const {
   loading: veterinaryRecordLoading,
   error: veterinaryRecordError,
+  findVeterinaryRecordById,
   getAllInfoVeterinaryRecordsByPet,
 } = useVeterinaryRecord()
 
@@ -70,6 +75,31 @@ onMounted(async () => {
   loadVeterinaryRecords()
 })
 
+//for dialog
+const dialog = useDialog()
+
+const editRecord = async (recordInfoTable: VeterinaryRecordInfoTable) => {
+  const record = await findVeterinaryRecordById(recordInfoTable.id)
+  dialog.open(CardEditVetRecord, {
+    props: {
+      modal: true,
+      header: 'Editar Informe',
+    },
+    data: {
+      recordData: {
+        careId: record.careId,
+        employeeId: record.employeeId,
+        dateCreate: new Date(record.date),
+        diagnosis: record.diagnosis,
+        treatment: record.treatment,
+        observation: record.observation,
+        resultUrl: record.resultUrl,
+        status: record.status,
+      } as AddEditVeterinaryRecord,
+    },
+  })
+}
+
 //for export
 
 const dt = ref()
@@ -92,7 +122,13 @@ const exportCSV = () => {
       </template>
       <template #content>
         <div class="w-full flex flex-col gap-2">
-             <CardOwnerPrimary v-if="ownerInfo" :names="ownerInfo.names" :lastnames="ownerInfo.lastnames" :phone="ownerInfo.phone" :address="ownerInfo.address" ></CardOwnerPrimary>
+          <CardOwnerPrimary
+            v-if="ownerInfo"
+            :names="ownerInfo.names"
+            :lastnames="ownerInfo.lastnames"
+            :phone="ownerInfo.phone"
+            :address="ownerInfo.address"
+          ></CardOwnerPrimary>
           <!-- section appointements -->
           <!-- section 1 pet information -->
           <div class="card-primary p-4 dark:bg-surface-900 flex flex-col-reverse sm:flex-row gap-3">
@@ -169,7 +205,7 @@ const exportCSV = () => {
             :totalRecords="totalRecords"
             :lazy="true"
             :first="first"
-                        scrollable
+            scrollable
             removableSort
             :loading="veterinaryRecordLoading.getAllInfoVeterinaryRecordsByPet"
             @page="loadVeterinaryRecords"
@@ -182,47 +218,22 @@ const exportCSV = () => {
               </div>
             </template>
             <Column field="date" sortable header="Fecha" style="width: 10%"></Column>
-            <Column
-              field="nameHeadquarter"
-              sortable
-              header="Sede"
-              style="width: 12%"
+            <Column field="nameHeadquarter" sortable header="Sede" style="width: 12%"></Column>
+            <Column field="nameEmployee" header="Empleado" sortable style="width: 15%"></Column>
+            <Column field="diagnosis" header="Diagnostico" sortable style="width: 10%"></Column>
+            <Column field="treatment" header="Tratamiento" sortable style="width: 10%"></Column>
+            <Column header="Observación" sortable style="width: 10%">
+              <template #body="{ data }">
+                {{ data.observation }}
+                <Tag
+                  v-if="!data.observation"
+                  severity="secondary"
+                  value="No contiene"
+                ></Tag> </template
             ></Column>
-            <Column
-              field="nameEmployee"
-              header="Empleado"
-              sortable
-              style="width: 15%"
-            ></Column>
-            <Column
-              field="diagnosis"
-              header="Diagnostico"
-              sortable
-              style="width: 10%"
-            ></Column>
-            <Column
-              field="treatment"
-              header="Tratamiento"
-              sortable
-              style="width: 10%"
-            ></Column>
-            <Column
-              header="Observación"
-              sortable
-              style="width: 10%"
-            >
-          <template #body="{data}">
-            {{ data.observation }}
-            <Tag v-if="!data.observation" severity="secondary" value="No contiene"></Tag>
-          </template></Column>
-            <Column
-              field="status"
-              header="Estado"
-              sortable
-              style="width: 12%"
-            ></Column>
+            <Column field="status" header="Estado" sortable style="width: 12%"></Column>
             <Column header="Acciones" v-if="roleMain !== 'Cliente'">
-              <template #body>
+              <template #body="{ data }">
                 <div class="flex items-center flex-col sm:flex-row lg:flex-row gap-1">
                   <Button
                     icon="pi pi-eye"
@@ -231,6 +242,7 @@ const exportCSV = () => {
                     size="small"
                     aria-label="Ver"
                     rounded
+                    hidden
                   ></Button>
                   <Button
                     icon="pi pi-pencil"
@@ -239,6 +251,7 @@ const exportCSV = () => {
                     size="small"
                     aria-label="Editar"
                     rounded
+                    @click="editRecord(data)"
                   ></Button>
                   <Button
                     icon="pi pi-file"

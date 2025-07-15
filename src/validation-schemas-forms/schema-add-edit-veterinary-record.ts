@@ -14,6 +14,7 @@ export const schema = yup.object({
   treatment:yup.string().required('El tratamiento es obligatorio'),
   observation:yup.string().required('La obsevación es obligatorio'),
   resultUrl:yup.string(),
+  status:yup.string()
 
 })
 export type FormValues = yup.InferType<typeof schema>

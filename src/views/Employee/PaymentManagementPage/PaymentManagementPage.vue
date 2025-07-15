@@ -413,6 +413,7 @@ const exportCSV = () => {
                     size="small"
                     aria-label="Ver"
                     rounded
+                    hidden
                   ></Button>
                   <Button
                     icon="pi pi-ban"
