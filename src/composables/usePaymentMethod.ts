@@ -1,11 +1,15 @@
 import { paymentMethodUseCases } from '@/dependency-injection/payment-method.container'
 import { useAsyncHandler } from './useAsyncHandler'
-import type { PaymentMethod } from '@/services/PaymentMethod/domain/models/PaymentMethod'
+import type {
+  PaymentMethod,
+  TopPaymentMethods,
+} from '@/services/PaymentMethod/domain/models/PaymentMethod'
 import type { PaymentMethod as PaymentMethodView } from '@/models/PaymentMethod'
 import type { FormValues as PaymentMethodSchema } from '@/validation-schemas-forms/schema-add-edit-payment-method'
 import { PaymentMethodAdapter } from '@/adapters/PaymentMethodAdapter'
 import type { PageResponse } from '@/services/models/PageResponse'
 import type { PaymentMethodList as PaymentMethodListView } from '@/models/PaymentMethodList'
+import type { ReportPeriod } from '@/services/enums/ReportPeriod'
 
 export function usePaymentMethod() {
   const { loading, error, runUseCase } = useAsyncHandler()
@@ -67,8 +71,25 @@ export function usePaymentMethod() {
 
     return {
       ...result,
-      content: result.content.map(PaymentMethodAdapter.fromPaymentMethodListToPaymentMethodListView),
+      content: result.content.map(
+        PaymentMethodAdapter.fromPaymentMethodListToPaymentMethodListView,
+      ),
     }
+  }
+
+  const getTopPaymentMethods = async (period: ReportPeriod): Promise<TopPaymentMethods> => {
+    return await runUseCase('getTopPaymentMethods', () =>
+      paymentMethodUseCases.getTopPaymentMethods.execute(period),
+    )
+  }
+
+  const getTopPaymentMethodsByHeadquarter = async (
+    period: ReportPeriod,
+    headquarterId: number,
+  ): Promise<TopPaymentMethods> => {
+    return await runUseCase('getTopPaymentMethodsByHeadquarter', () =>
+      paymentMethodUseCases.getTopPaymentMethodsByHeadquarter.execute(period, headquarterId),
+    )
   }
 
   return {
@@ -81,5 +102,7 @@ export function usePaymentMethod() {
     getPaymentMethodById,
     activatePaymentMethod,
     searchPaymentMethods,
+    getTopPaymentMethods,
+    getTopPaymentMethodsByHeadquarter,
   }
 }

@@ -244,7 +244,7 @@ const handleRedirectPet = (petId: number) => {
           <template #subtitle>
             <p>Funciones más utilizadas</p>
             <div
-              class="grid grid-cols-1 xs:grid-cols-2 gap-y-4 lg:grid-cols-4 gap-x-6 lg:gap-x-12 mt-2"
+              class="grid grid-cols-1 xs:grid-cols-2 gap-y-4  gap-x-6 lg:gap-x-12 mt-2"
             >
               <Button
                 label="Atender cita"
@@ -259,19 +259,6 @@ const handleRedirectPet = (petId: number) => {
                 icon="pi pi-search"
                 severity="info"
                 @click="redirect('/employee/veterinary/pets-management')"
-              ></Button>
-              <Button
-                label="Registrar informe médico"
-                severity="warn"
-                iconPos="top"
-                icon="pi pi-pen-to-square"
-                @click="redirect('/employee/veterinary/pets-management')"
-              ></Button>
-              <Button
-                label="Solicitar cita"
-                severity="help"
-                iconPos="top"
-                icon="pi pi-plus"
               ></Button>
             </div>
           </template>
@@ -473,7 +460,7 @@ const handleRedirectPet = (petId: number) => {
             <template #content>
               <div class="w-full flex flex-col gap-1.5 items-end" v-if="statsRecords">
                 <!-- abstract -->
-                <div class="w-full grid grid-cols-2 3xl:grid-cols-4 gap-y-3 gap-x-6">
+                <div class="w-full grid grid-cols-1 sm:grid-cols-2 3xl:grid-cols-4 gap-y-3 gap-x-6">
                   <CardNewsPrimary
                     title="En curso"
                     icon="pi-clock"

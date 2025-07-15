@@ -34,14 +34,19 @@ const emitView = ()=>{
     <!-- info general -->
     <div class="flex-1 flex flex-col mx-4 gap-2">
       <!-- avatar , pet breed and owner name -->
-      <div class="flex gap-2">
+      <div class="flex  gap-2">
         <Avatar class="size-10" shape="circle" :label="petName.slice(0,2)"></Avatar>
         <div class="flex flex-col gap-0.5">
+          <div class="flex gap-2 items-center">
           <p>{{ petName }}</p>
-          <p class="text-neutral-500 text-sm">{{ petBreed }} - {{ ownerName }}</p>
+                   <Tag class="block xs:hidden" :value="status" severity="secondary"> </Tag>
+          </div>
+
+          <p class="text-neutral-500 text-sm w-min xs:w-fit">{{ petBreed }}  {{ ownerName }}</p>
+
         </div>
       </div>
-      <div class="flex gap-2">
+      <div class="flex flex-col xs:flex-row gap-2">
         <Button
           v-if="status === 'En curso'"
           label="Finalizar"
@@ -73,8 +78,9 @@ const emitView = ()=>{
             @click="emitView"
         >
         </Button>
+
       </div>
     </div>
-    <Tag :value="status" severity="secondary"> </Tag>
+    <Tag class="hidden xs:block" :value="status" severity="secondary"> </Tag>
   </div>
 </template>

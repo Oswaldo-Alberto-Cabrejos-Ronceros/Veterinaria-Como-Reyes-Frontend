@@ -133,6 +133,7 @@ const getWeeklyPerformanceGraphicByVeterinary = async (employeeId: number) => {
   )
 }
 
+
   return {
     loading,
     error,
@@ -151,6 +152,7 @@ const getWeeklyPerformanceGraphicByVeterinary = async (employeeId: number) => {
     setOnGoingCare,
     getRecentPatientsByEmployee,
     getMonthlyPerformanceStatsByVeterinary,
-    getWeeklyPerformanceGraphicByVeterinary
+    getWeeklyPerformanceGraphicByVeterinary,
+
   }
 }

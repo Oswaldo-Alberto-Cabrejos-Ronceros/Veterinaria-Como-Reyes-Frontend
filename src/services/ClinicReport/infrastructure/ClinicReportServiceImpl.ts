@@ -6,6 +6,7 @@ import type { AppointmentsByVet } from '../domain/models/AppointmentsByVet'
 import type { PopularService } from '../domain/models/PopularService'
 import type { AnimalByType } from '../domain/models/AnimalByType'
 import type { AppointmentsByVetAndPeriod } from '../domain/models/AppointmentsByVetAndPeriod'
+import type { CaresByVetAndHeadquarter } from '../domain/models/CaresByVetAndHeadquarter'
 
 export class ClinicReportServiceImpl implements ClinicReportService {
   constructor(private readonly httpClient: HttpClient) {}
@@ -98,4 +99,19 @@ export class ClinicReportServiceImpl implements ClinicReportService {
     )
     return response.data
   }
+
+  async getCaresByVetAndHeadquarter(): Promise<CaresByVetAndHeadquarter[]> {
+  const response = await this.httpClient.get<CaresByVetAndHeadquarter[]>(
+    `/reports/clinical/veterinarians/by-headquarter/cares`
+  )
+  return response.data
+}
+
+async getCaresByVetAndHeadquarterPdf(): Promise<Blob> {
+  const response = await this.httpClient.get<Blob>(
+    `/reports/clinical/veterinarians/by-headquarter/cares/pdf`,
+    { responseType: 'blob' }
+  )
+  return response.data
+}
 }

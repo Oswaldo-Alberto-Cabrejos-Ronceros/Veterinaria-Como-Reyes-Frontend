@@ -3,4 +3,7 @@ export enum ReportPeriod {
   WEEKLY = 'WEEKLY',
   MONTHLY = 'MONTHLY',
   YEARLY = 'YEARLY',
+  WEEK='WEEK',
+  MONTH='MONTH',
+  YEAR='YEAR'
 }

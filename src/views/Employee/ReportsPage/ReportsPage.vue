@@ -4,49 +4,87 @@ import CardGenerateReport from '@/components/CardGenerateReport.vue'
 import { useDialog } from 'primevue'
 import CardFormGenerateReport from '@/components/CardFormGenerateReport.vue'
 import type { FormValues as SchemaGenerateReport } from '@/validation-schemas-forms/schema-generate-report'
+import { useClinicReport } from '@/composables/useClinicReport'
+import { useFinancialReport } from '@/composables/useFinancialReport'
+import { ReportPeriod } from '@/services/enums/ReportPeriod'
 
-const reportTypes: {
-  title: string
-  icon: string
-  description: string
-  incluyedFields: string[]
-  lastGeneraded: number
-}[] = [
-  {
-    title: 'Ingresos por servicios',
-    icon: 'fa-solid fa-shield-dog',
-    description: 'Recuento de ingresos por servicios',
-    incluyedFields: ['Servicio', 'Precio unitario', 'Cantidad', 'Total'],
-    lastGeneraded: 5,
-  },
-  {
-    title: 'Ingresos por metodo de pago',
-    icon: 'pi pi-money-bill',
-    description: 'Recuento de ingresos por metodos de pago',
-    incluyedFields: ['Cantidad de ingresos', 'Especie'],
-    lastGeneraded: 5,
-  },
-  {
-    title: 'Atenciones por sede y veterinario',
-    icon: 'fa-solid fa-house-medical',
-    description: 'Recuento de atenciones por sede y veterinario',
-    incluyedFields: ['Cantidad de ingresos', 'Especie'],
-    lastGeneraded: 5,
-  },
-]
+const { getCaresByVetAndHeadquarterPdf } = useClinicReport()
 
+const { getIncomeByPeriodAndServicePdf, getIncomeByHeadquarterPeriodPdf } = useFinancialReport()
 const dialog = useDialog()
 
-const generateReport = () => {
+const generateReportCaresForVeterinary = () => {
   dialog.open(CardFormGenerateReport, {
     props: {
       modal: true,
-      header: 'Generar reporte',
+      header: 'Citas por veterinario',
     },
     onClose: async (options) => {
       const data = options?.data as SchemaGenerateReport
       if (data) {
         console.log('Datos recibidos', data)
+        const blob = await getCaresByVetAndHeadquarterPdf()
+        if (blob) {
+          const url = window.URL.createObjectURL(blob)
+          const link = document.createElement('a')
+          link.href = url
+          link.setAttribute('download', 'cares_by_vet_and_headquarter.pdf')
+          document.body.appendChild(link)
+          link.click()
+          link.remove()
+        }
+      }
+    },
+  })
+}
+
+const generateIncomeByPeriodAndServicePdf = () => {
+  dialog.open(CardFormGenerateReport, {
+    props: {
+      modal: true,
+      header: 'Ingresos por periodo y servicios',
+    },
+    onClose: async (options) => {
+      const data = options?.data as SchemaGenerateReport
+      if (data) {
+        console.log('Datos recibidos', data)
+        const period = ReportPeriod[data.period as keyof typeof ReportPeriod]
+        const blob = await getIncomeByPeriodAndServicePdf(period)
+        if (blob) {
+          const url = window.URL.createObjectURL(blob)
+          const link = document.createElement('a')
+          link.href = url
+          link.setAttribute('download', 'income_by_period_and_services.pdf')
+          document.body.appendChild(link)
+          link.click()
+          link.remove()
+        }
+      }
+    },
+  })
+}
+
+const generateIncomeByHeadquarterPeriodPdf = () => {
+  dialog.open(CardFormGenerateReport, {
+    props: {
+      modal: true,
+      header: 'Ingresos por sede y periodo',
+    },
+    onClose: async (options) => {
+      const data = options?.data as SchemaGenerateReport
+      if (data) {
+        console.log('Datos recibidos', data)
+        const period = ReportPeriod[data.period as keyof typeof ReportPeriod]
+        const blob = await getIncomeByHeadquarterPeriodPdf(period)
+        if (blob) {
+          const url = window.URL.createObjectURL(blob)
+          const link = document.createElement('a')
+          link.href = url
+          link.setAttribute('download', 'income_by_headquarter_and_period.pdf')
+          document.body.appendChild(link)
+          link.click()
+          link.remove()
+        }
       }
     },
   })
@@ -67,10 +105,31 @@ const generateReport = () => {
           <CardGenerateReport
             v-ripple
             class="cursor-pointer"
-            v-for="(reportType, item) of reportTypes"
-            :key="item"
-            v-bind="reportType"
-            @click="generateReport"
+            title="Citas por veterinario"
+            icon="fa-solid fa-shield-dog"
+            description="Recuento de citas por veterinario"
+            :incluyedFields="['Citas', 'Veterinario']"
+            @click="generateReportCaresForVeterinary"
+          />
+
+          <CardGenerateReport
+            v-ripple
+            class="cursor-pointer"
+            title="Ingresos por periodo y servicios"
+            icon="fa-solid fa-house-medical"
+            description="Recuento de ingresos por servicios"
+            :incluyedFields="['Ingresos', 'Servicios']"
+            @click="generateIncomeByPeriodAndServicePdf"
+          />
+
+          <CardGenerateReport
+            v-ripple
+            class="cursor-pointer"
+            title="Ingresos sede y periodo"
+            icon="pi pi-money-bill"
+            description="Recuento de ingresos por sede"
+            :incluyedFields="['Ingresos', 'Sede']"
+            @click="generateIncomeByHeadquarterPeriodPdf"
           />
         </div>
       </template>

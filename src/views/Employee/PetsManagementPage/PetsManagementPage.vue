@@ -72,10 +72,12 @@ const rows = ref<number>(1)
 
 const first = ref<number>(0)
 
-const mainRole = ref<string|null>('')
+const mainRole = ref<string | null>('')
 
 onMounted(async () => {
   loadPets()
+  const role = getMainRole()
+  if (role != null) mainRole.value = getMainRole()
 })
 
 const searchPetsDebounce = debounce(() => {
@@ -103,8 +105,6 @@ const loadPets = async (event?: DataTablePageEvent) => {
   species.value = await getAllSpecies()
   speciesOptions.value = speciesNameToOptionsSelect(species.value)
   loadsBreed()
-  const role = getMainRole()
-  if (role != null) mainRole.value = getMainRole()
 }
 
 const loadsBreed = async () => {
@@ -386,7 +386,7 @@ watch(
             <div>
               <label class="block mb-2">Especie</label>
               <Select
-              filter
+                filter
                 class="w-full"
                 v-bind="specieAttrs"
                 v-model="specie"
@@ -407,7 +407,7 @@ watch(
             <div>
               <label class="block mb-2">Raza</label>
               <Select
-              filter 
+                filter
                 class="w-full"
                 v-bind="breedAttrs"
                 v-model="breed"
@@ -479,7 +479,6 @@ watch(
             removableSort
             :rows-per-page-options="[1, 2, 3, 4]"
             ref="dt"
-
           >
             <template #header>
               <div class="w-full flex flex-col xs:flex-row justify-between gap-2 pb-4">
@@ -489,37 +488,16 @@ watch(
                   severity="success"
                   label="Agregar Mascota"
                   @click="addPet"
+                  v-if="mainRole !== 'Veterinario'"
                 />
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
             </template>
-            <Column
-              field="name"
-              sortable
-              style="width: 18%"
-              header="Nombre"
-            ></Column>
+            <Column field="name" sortable style="width: 18%" header="Nombre"></Column>
             <Column field="owner" sortable header="Dueño" style="width: 18%"></Column>
-            <Column
-              field="specie"
-              header="Especie"
-              sortable
-              style="width: 15%"
-            >
-            </Column>
-            <Column
-              field="breed"
-              sortable
-              style="width: 15%"
-              header="Raza"
-            >
-            </Column>
-            <Column
-              field="gender"
-              sortable
-              style="width: 15%"
-              header="Sexo"
-            ></Column>
+            <Column field="specie" header="Especie" sortable style="width: 15%"> </Column>
+            <Column field="breed" sortable style="width: 15%" header="Raza"> </Column>
+            <Column field="gender" sortable style="width: 15%" header="Sexo"></Column>
             <Column header="Acciones">
               <template #body="{ data }">
                 <div class="flex items-center flex-row lg:flex-col xl:flex-row gap-1">
@@ -540,10 +518,10 @@ watch(
                     aria-label="Editar"
                     rounded
                     @click="editPet(data)"
+                    v-if="mainRole !== 'Veterinario'"
                   ></Button>
                   <Button
-          v-if="data.status === 'Activo'"
-
+                    v-if="data.status === 'Activo' && mainRole !== 'Veterinario'"
                     icon="pi pi-ban"
                     severity="danger"
                     variant="text"
@@ -553,7 +531,7 @@ watch(
                     @click="confirmDeletePet($event, data)"
                   ></Button>
                   <Button
-   v-if="data.status === 'Inactivado'"
+                    v-if="data.status === 'Inactivado' && mainRole !== 'Veterinario'"
                     icon="pi pi-refresh"
                     severity="warn"
                     variant="text"

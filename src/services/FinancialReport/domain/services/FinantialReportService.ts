@@ -7,4 +7,6 @@ export interface FinancialReportService {
   getIncomeByPaymentMethodExcel(): Promise<Blob>
   getIncomeByPeriodAndServicePdf(period: ReportPeriod): Promise<Blob>
   getIncomeByHeadquarterPdf(): Promise<Blob>
+    getIncomeByPeriodAndServicePdf(period: ReportPeriod): Promise<Blob>
+  getIncomeByHeadquarterPeriodPdf(period: ReportPeriod): Promise<Blob>
 }

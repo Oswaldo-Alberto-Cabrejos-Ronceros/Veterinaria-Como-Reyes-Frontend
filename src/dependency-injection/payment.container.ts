@@ -45,4 +45,5 @@ export const paymentUsesCases = {
 getWeeklyIncomeGeneral: new GetWeeklyIncomeGeneral(paymentService),
 getWeeklyIncomeByHeadquarter: new GetWeeklyIncomeByHeadquarter(paymentService),
 getPaymentInfoByCareId: new GetPaymentInfoByCareId(paymentService),
+
 }

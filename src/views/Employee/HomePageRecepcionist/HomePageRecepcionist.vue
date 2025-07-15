@@ -108,7 +108,7 @@ const loadMyInfo = async () => {
   entityId.value = entityIdGet
   if (entityIdGet) {
     myInfoEmployee.value = await getEmployeeMyInfo(entityIdGet)
-    headquarterId.value=myInfoEmployee.value.headquarter.id
+    headquarterId.value = myInfoEmployee.value.headquarter.id
   }
 
   clientStatsToday.value = await getClientStatsToday()
@@ -162,6 +162,15 @@ const redirect = (name: string) => {
   router.push({ name: name })
 }
 
+const redirectToAddAppointment = () => {
+  router.push({ name: 'receptionist-appointment-management', query: { add: '1' } })
+}
+
+const redirectToAddCare = () => {
+  router.push({ name: 'receptionist-care-management', query: { add: '1' } })
+}
+
+
 const totalRecords = ref<number>(0)
 const rows = ref<number>(10)
 const first = ref<number>(0)
@@ -186,7 +195,6 @@ const searchHeadquartersDebounced = debounce(() => {
   loadHeadquarterService()
 }, 400)
 
-
 const dialog = useDialog()
 
 const viewHeadquarterService = (headquarterService: HeadquarterServiceInfoPanel) => {
@@ -202,7 +210,6 @@ const viewHeadquarterService = (headquarterService: HeadquarterServiceInfoPanel)
     },
   })
 }
-
 </script>
 
 <template>
@@ -265,7 +272,7 @@ const viewHeadquarterService = (headquarterService: HeadquarterServiceInfoPanel)
                 label="Nueva cita"
                 iconPos="top"
                 icon="pi pi-plus"
-                @click="redirect('receptionist-appointment-management')"
+                @click="redirectToAddAppointment"
               ></Button>
               <Button
                 label="Buscar cliente"
@@ -281,7 +288,7 @@ const viewHeadquarterService = (headquarterService: HeadquarterServiceInfoPanel)
                 variant="outlined"
                 iconPos="top"
                 icon="pi pi-clipboard"
-                @click="redirect('receptionist-care-management')"
+                @click="redirectToAddCare"
               ></Button>
               <Button
                 label="Procesar pago"
@@ -437,7 +444,7 @@ const viewHeadquarterService = (headquarterService: HeadquarterServiceInfoPanel)
           </template>
           <template #content>
             <div class="flex flex-col w-full">
-              <div class="flex flex-col sm:flex-row w-full justify-end gap-2">
+              <div class="flex flex-col lg:flex-row w-full justify-end gap-2">
                 <InputGroup>
                   <InputGroupAddon>
                     <i class="pi pi-search"></i>
@@ -449,7 +456,7 @@ const viewHeadquarterService = (headquarterService: HeadquarterServiceInfoPanel)
                     @update:model-value="searchHeadquartersDebounced"
                   />
                 </InputGroup>
-                <div class="grid grid-cols-3 gap-2 min-w-max text-sm">
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-2 min-w-max text-sm">
                   <Select
                     v-bind="categoryIdAttrs"
                     v-model="categoryId"
@@ -477,6 +484,7 @@ const viewHeadquarterService = (headquarterService: HeadquarterServiceInfoPanel)
                     optionValue="value"
                     :options="headquarterOptions"
                     placeholder="Sede"
+                    class=" col-span-2 md:col-span-1"
                     showClear
                     @update:model-value="searchHeadquartersDebounced"
                   ></Select>
@@ -491,7 +499,7 @@ const viewHeadquarterService = (headquarterService: HeadquarterServiceInfoPanel)
                 :rows="rows"
                 :first="first"
                 :totalRecords="totalRecords"
-                :rows-per-page-options="[10,15,20]"
+                :rows-per-page-options="[10, 15, 20]"
                 :value="headquatersVetServices"
                 paginator
                 data-key="headquarterId"
@@ -501,9 +509,10 @@ const viewHeadquarterService = (headquarterService: HeadquarterServiceInfoPanel)
                   <div
                     class="w-full grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 3xl:grid-cols-4 gap-x-12 gap-y-6 my-4"
                   >
-                    <CardServiceTerciary class="cursor-pointer"
+                    <CardServiceTerciary
+                      class="cursor-pointer"
                       v-ripple
-                    v-for="(item, index) in slotProps.items"
+                      v-for="(item, index) in slotProps.items"
                       :key="index"
                       :serviceId="item.serviceId"
                       :serviceName="item.serviceName"

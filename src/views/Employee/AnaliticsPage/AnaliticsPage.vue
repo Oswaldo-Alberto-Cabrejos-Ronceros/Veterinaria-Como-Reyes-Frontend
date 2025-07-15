@@ -8,12 +8,18 @@ import TabPanel from 'primevue/tabpanel'
 import CardNewsPrimary from '@/components/CardNewsPrimary.vue'
 import { onMounted, ref } from 'vue'
 import Chart from 'primevue/chart'
+import { usePaymentMethod } from '@/composables/usePaymentMethod'
+import type { TopPaymentMethods } from '@/services/PaymentMethod/domain/models/PaymentMethod'
+import { ReportPeriod } from '@/services/enums/ReportPeriod'
+import { useAuthentication } from '@/composables/useAuthentication'
+import { useEmployee } from '@/composables/useEmployee'
 
-onMounted(() => {
+onMounted(async () => {
+  await loadInfo()
   chartDataIncome.value = setChartDataIncome()
   chartOptionsIncome.value = setChartOptionsIncome()
-  chartDataServices.value = setChartDataServices()
-  chartOptionsServices.value = setChartOptionsServices()
+  chartDataPaymentMethods.value = setChartDataPaymentMethods()
+  chartOptionsPaymentMethods.value = setChartOptionsPaymentMethods()
   chartDataAppointments.value = setChartDataAppointments()
   chartOptionsAppointments.value = setChartOptionsAppointments()
 
@@ -27,10 +33,44 @@ onMounted(() => {
   chartOptionsVeterinarians.value = setChartOptionsVeterinarians()
 })
 
+const { getEmployeeMyInfo } = useEmployee()
+
+//methods
+
+const { getMainRole, getEntityId } = useAuthentication()
+
+const headquarterId = ref<number | null>(null)
+
+const topPaymentMethods = ref<TopPaymentMethods | null>(null)
+
+const { getTopPaymentMethodsByHeadquarter, getTopPaymentMethods } = usePaymentMethod()
+
+const loadInfo = async () => {
+  const role = getMainRole()
+  if (role != null) {
+    if (role === 'Administrador') {
+      topPaymentMethods.value = await getTopPaymentMethods(ReportPeriod.WEEK)
+    } else {
+      const entityIdGet = getEntityId()
+      if (entityIdGet) {
+        const info = await getEmployeeMyInfo(entityIdGet)
+
+        headquarterId.value = info.headquarter.id
+        if (headquarterId.value) {
+          topPaymentMethods.value = await getTopPaymentMethodsByHeadquarter(
+            ReportPeriod.WEEK,
+            headquarterId.value,
+          )
+        }
+      }
+    }
+  }
+}
+
 const chartDataIncome = ref()
 const chartOptionsIncome = ref()
-const chartDataServices = ref()
-const chartOptionsServices = ref()
+const chartDataPaymentMethods = ref()
+const chartOptionsPaymentMethods = ref()
 
 const chartDataAppointments = ref()
 const chartOptionsAppointments = ref()
@@ -101,30 +141,32 @@ const setChartOptionsIncome = () => {
   }
 }
 
-const setChartDataServices = () => {
+const setChartDataPaymentMethods = () => {
   const documentStyle = getComputedStyle(document.body)
 
   return {
-    labels: ['Baño perro', 'Vacunacion parvovirus', 'Otros'],
+    labels: topPaymentMethods.value?.methodLabels,
     datasets: [
       {
-        data: [540, 325, 702],
+        data: topPaymentMethods.value?.totalPayments,
         backgroundColor: [
           documentStyle.getPropertyValue('--p-cyan-500'),
           documentStyle.getPropertyValue('--p-orange-500'),
           documentStyle.getPropertyValue('--p-gray-500'),
+          documentStyle.getPropertyValue('--p-emerald-500'),
         ],
         hoverBackgroundColor: [
           documentStyle.getPropertyValue('--p-cyan-400'),
           documentStyle.getPropertyValue('--p-orange-400'),
           documentStyle.getPropertyValue('--p-gray-400'),
+          documentStyle.getPropertyValue('--p-emerald-400'),
         ],
       },
     ],
   }
 }
 
-const setChartOptionsServices = () => {
+const setChartOptionsPaymentMethods = () => {
   const documentStyle = getComputedStyle(document.documentElement)
   const textColor = documentStyle.getPropertyValue('--p-text-color')
 
@@ -373,11 +415,11 @@ const setChartOptionsVeterinarians = () => {
         <h2 class="h2">Analiticas</h2>
       </template>
       <template #subtitle>
-        <p >Analisis y metricas de la clinica</p>
+        <p>Analisis y metricas de la clinica</p>
       </template>
       <template #content>
-        <Tabs value="0" class=" bg-surface-800">
-          <TabList class=" bg-surface-800">
+        <Tabs value="0" class="bg-surface-800">
+          <TabList class="bg-surface-800">
             <Tab value="0">Financieras</Tab>
             <Tab value="1">Operacionales</Tab>
           </TabList>
@@ -454,8 +496,8 @@ const setChartOptionsVeterinarians = () => {
                         <div class="card flex justify-center">
                           <Chart
                             type="doughnut"
-                            :data="chartDataServices"
-                            :options="chartOptionsServices"
+                            :data="chartDataPaymentMethods"
+                            :options="chartOptionsPaymentMethods"
                             class="w-full md:w-[30rem]"
                           />
                         </div>
@@ -490,7 +532,7 @@ const setChartOptionsVeterinarians = () => {
                   <h2 class="h2">Operacionales</h2>
                 </template>
                 <template #subtitle>
-                  <p >Analisis de pacientes y veterinarios</p>
+                  <p>Analisis de pacientes y veterinarios</p>
                 </template>
                 <template #content>
                   <!-- news -->

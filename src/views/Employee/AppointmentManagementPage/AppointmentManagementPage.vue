@@ -35,6 +35,9 @@ import { useEmployee } from '@/composables/useEmployee'
 
 onMounted(async () => {
   loadAppoinments()
+    if (route.query.add === '1') {
+    addAppointment()
+  }
 })
 
 //methods for appointments
@@ -247,6 +250,7 @@ const addAppointment = async () => {
     },
     onClose: async (options) => {
       const data = options?.data as AddEditPaymentSchema
+            router.replace({ query: { ...route.query, add: undefined } })
       if (data) {
         console.log(data)
         sendConfirm(

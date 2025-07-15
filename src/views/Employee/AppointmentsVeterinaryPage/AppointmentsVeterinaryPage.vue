@@ -13,7 +13,9 @@ const { loading, error,getCaresForEmployee } = useCare()
 onMounted(async () => {
   const employeeId = getEntityId()
   if (employeeId) appointments.value = await getCaresForEmployee(employeeId)
-})
+}
+
+)
 
 
 const router = useRouter()
@@ -34,7 +36,7 @@ const handleRedirectPet = (petId:number)=>{
         <h2 class="h2">Mis citas</h2>
       </template>
       <template #subtitle>
-        <p class="textLg">Gestiona tus citas</p>
+        <p >Gestiona tus citas</p>
       </template>
       <template #content>
         <!-- for messague loading  -->
@@ -62,7 +64,7 @@ const handleRedirectPet = (petId:number)=>{
             :appointement-id="appoinment.id"
             :key="appoinment.id"
             :pet-name="appoinment.pet.name"
-            :pet-breed="''"
+            :pet-breed="appoinment.pet.breedName"
             :service-name="appoinment.serviceName"
             :service-duration="''"
             :owner-name="appoinment.clientName"

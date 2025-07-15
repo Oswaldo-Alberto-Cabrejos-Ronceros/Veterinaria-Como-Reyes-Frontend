@@ -1,6 +1,7 @@
 import { clinicReportUseCases } from '@/dependency-injection/clinic-report.container'
 import { useAsyncHandler } from './useAsyncHandler'
 import type { ReportPeriod } from '@/services/enums/ReportPeriod'
+import type { CaresByVetAndHeadquarter } from '@/services/ClinicReport/domain/models/CaresByVetAndHeadquarter'
 
 export function useClinicReport() {
   const { loading, error, runUseCase } = useAsyncHandler()
@@ -63,6 +64,20 @@ export function useClinicReport() {
       clinicReportUseCases.generateAppointmentsByVetAndPeriodExcel.execute(period),
     )
 
+
+    const getCaresByVetAndHeadquarter = async (): Promise<CaresByVetAndHeadquarter[]> => {
+  return await runUseCase('getCaresByVetAndHeadquarter', () =>
+    clinicReportUseCases.getCaresByVetAndHeadquarter.execute(),
+  )
+}
+
+const getCaresByVetAndHeadquarterPdf = async (): Promise<Blob> => {
+  return await runUseCase('getCaresByVetAndHeadquarterPdf', () =>
+    clinicReportUseCases.getCaresByVetAndHeadquarterPdf.execute(),
+  )
+}
+
+
   return {
     loading,
     error,
@@ -80,5 +95,7 @@ export function useClinicReport() {
     generateAnimalsBySpecieOrBreedPdf,
     generateAppointmentsByVetAndPeriodPdf,
     generateAppointmentsByVetAndPeriodExcel,
+    getCaresByVetAndHeadquarter,
+    getCaresByVetAndHeadquarterPdf
   }
 }

@@ -63,7 +63,7 @@ export class PaymentMethodServiceImpl implements PaymentMethodService {
 
   async getTopPaymentMethods(period: ReportPeriod): Promise<TopPaymentMethods> {
     const response = await this.httpClient.get<TopPaymentMethods>(
-      `/panel-admin/${this.url}/${period}`,
+      `/panel-admin/payment-method/${period}`,
     )
     return response.data
   }
@@ -73,7 +73,7 @@ export class PaymentMethodServiceImpl implements PaymentMethodService {
     headquarterId: number,
   ): Promise<TopPaymentMethods> {
     const response = await this.httpClient.get<TopPaymentMethods>(
-      `${this.url}/${period}/headquarter/${headquarterId}`,
+      `/panel-manager/payment-method/${period}/headquarter/${headquarterId}`,
     )
     return response.data
   }

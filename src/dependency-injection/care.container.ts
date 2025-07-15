@@ -41,4 +41,5 @@ export const careUsesCases = {
   getRecentPatientsByEmployee: new GetRecentPatientsByEmployee(careService),
   getMonthlyPerformanceStatsByVeterinary: new GetMonthlyPerformanceStatsByVeterinary(careService),
   getWeeklyPerformanceGraphicByVeterinary: new GetWeeklyPerformanceGraphicByVeterinary(careService),
+
 }

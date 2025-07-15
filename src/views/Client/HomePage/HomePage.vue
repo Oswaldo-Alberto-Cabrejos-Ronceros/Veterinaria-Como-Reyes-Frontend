@@ -340,7 +340,7 @@ const redirectToAppointmentUnitary = (appointmentId: number) => {
           </template>
           <template #content>
             <div class="flex flex-col w-full">
-              <div class="flex flex-col sm:flex-row w-full justify-end gap-2">
+              <div class="flex flex-col lg:flex-row w-full justify-end gap-2">
                 <InputGroup>
                   <InputGroupAddon>
                     <i class="pi pi-search"></i>
@@ -352,7 +352,7 @@ const redirectToAppointmentUnitary = (appointmentId: number) => {
                     @update:model-value="searchHeadquartersDebounced"
                   />
                 </InputGroup>
-                <div class="grid grid-cols-3 gap-2 min-w-max text-sm">
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-2 min-w-max text-sm">
                   <Select
                     v-bind="categoryIdAttrs"
                     v-model="categoryId"
@@ -381,6 +381,7 @@ const redirectToAppointmentUnitary = (appointmentId: number) => {
                     :options="headquarterOptions"
                     placeholder="Sede"
                     showClear
+                                     class=" col-span-2 md:col-span-1"
                     @update:model-value="searchHeadquartersDebounced"
                   ></Select>
                 </div>

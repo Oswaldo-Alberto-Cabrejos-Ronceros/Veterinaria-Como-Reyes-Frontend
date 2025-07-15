@@ -41,6 +41,12 @@ export function useFinancialReport() {
     )
   }
 
+  const getIncomeByHeadquarterPeriodPdf = async (period: ReportPeriod): Promise<Blob> => {
+    return await runUseCase('getIncomeByHeadquarterPeriodPdf', () =>
+      financialReportUseCases.getIncomeByHeadquarterPeriodPdf.execute(period),
+    )
+  }
+
   return {
     loading,
     error,
@@ -50,5 +56,6 @@ export function useFinancialReport() {
     getIncomeByPaymentMethodExcel,
     getIncomeByPeriodAndServicePdf,
     getIncomeByHeadquarterPdf,
+    getIncomeByHeadquarterPeriodPdf,
   }
 }

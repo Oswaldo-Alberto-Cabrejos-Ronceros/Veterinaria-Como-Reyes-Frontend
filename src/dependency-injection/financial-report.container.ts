@@ -6,7 +6,7 @@ import { GetIncomeBySpeciePdf } from '@/services/FinancialReport/aplication/GetI
 import { GetIncomeByPaymentMethodExcel } from '@/services/FinancialReport/aplication/GetIncomeByPaymentMethodExcel'
 import { GetIncomeByPeriodAndServicePdf } from '@/services/FinancialReport/aplication/GetIncomeByPeriodAndServicePdf'
 import { GetIncomeByHeadquarterPdf } from '@/services/FinancialReport/aplication/GetIncomeByHeadquarterPdf'
-
+import { GetIncomeByHeadquarterPeriodPdf } from '@/services/FinancialReport/aplication/GetIncomeByHeadquarterPeriodPdf'
 
 const httpClient = new AxiosHttpClient()
 
@@ -20,5 +20,6 @@ export const financialReportUseCases = {
   getIncomeBySpeciePdf: new GetIncomeBySpeciePdf(financialReportService),
   getIncomeByPaymentMethodExcel: new GetIncomeByPaymentMethodExcel(financialReportService),
   getIncomeByPeriodAndServicePdf: new GetIncomeByPeriodAndServicePdf(financialReportService),
-  getIncomeByHeadquarterPdf: new GetIncomeByHeadquarterPdf(financialReportService)
+  getIncomeByHeadquarterPdf: new GetIncomeByHeadquarterPdf(financialReportService),
+  getIncomeByHeadquarterPeriodPdf: new GetIncomeByHeadquarterPeriodPdf(financialReportService),
 }

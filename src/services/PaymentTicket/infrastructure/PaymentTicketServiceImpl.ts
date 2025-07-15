@@ -7,10 +7,9 @@ export class PaymentTicketServiceImpl implements PaymentTicketService {
   private readonly baseUrl = '/boletas'
 
   async downloadPaymentTicket(paymentId: number): Promise<void> {
-    const response = await this.httpClient.get<Blob>(
-      `${this.baseUrl}/${paymentId}`,
-      { responseType: 'blob' }
-    )
+    const response = await this.httpClient.get<Blob>(`${this.baseUrl}/${paymentId}`, {
+      responseType: 'blob',
+    })
 
     const blob = new Blob([response.data], { type: 'application/pdf' })
     const url = window.URL.createObjectURL(blob)

@@ -33,6 +33,9 @@ onMounted(async () => {
   headquartersOptions.value = headquartersServicesToOptionsSelect(await getAllHeadquarters())
   servicesOptions.value = headquartersServicesToOptionsSelect(await getAllVeterinaryServices())
   await loadCares()
+      if (route.query.add === '1') {
+    addCare()
+  }
 })
 
 //methods for care
@@ -192,6 +195,7 @@ const addCare = async () => {
     },
     onClose: async (options) => {
       const data = options?.data as AddCareFromRequestSchema
+          router.replace({ query: { ...route.query, add: undefined } })
       console.log(data)
       if (data) {
         const care = await createCareFromRequest(data)

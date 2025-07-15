@@ -6,7 +6,7 @@ defineProps<{
   icon: string
   description: string
   incluyedFields: string[]
-  lastGeneraded: number
+  lastGeneraded?: number
 }>()
 </script>
 
@@ -32,7 +32,7 @@ defineProps<{
             severity="secondary"
           />
         </div>
-        <p class="textSm text-neutral-600 dark:text-neutral-400">
+        <p v-if="lastGeneraded" class="textSm text-neutral-600 dark:text-neutral-400">
           Ultimo generado: Hace {{ lastGeneraded }} dias
         </p>
       </div>

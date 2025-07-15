@@ -34,9 +34,12 @@ export class FinancialReportServiceImpl implements FinancialReportService {
   }
 
   async getIncomeByPeriodAndServicePdf(period: ReportPeriod): Promise<Blob> {
-    const response = await this.httpClient.get<Blob>(`${this.baseUrl}/income/by-period-service/${period}`, {
-      responseType: 'blob',
-    })
+    const response = await this.httpClient.get<Blob>(
+      `${this.baseUrl}/income/by-period-service/${period}`,
+      {
+        responseType: 'blob',
+      },
+    )
     return response.data
   }
 
@@ -44,6 +47,16 @@ export class FinancialReportServiceImpl implements FinancialReportService {
     const response = await this.httpClient.get<Blob>(`${this.baseUrl}/income/by-headquarter/pdf`, {
       responseType: 'blob',
     })
+    return response.data
+  }
+
+  async getIncomeByHeadquarterPeriodPdf(period: ReportPeriod): Promise<Blob> {
+    const response = await this.httpClient.get<Blob>(
+      `${this.baseUrl}/income/by-headquarter/period/pdf?period=${period}`,
+      {
+        responseType: 'blob',
+      },
+    )
     return response.data
   }
 }

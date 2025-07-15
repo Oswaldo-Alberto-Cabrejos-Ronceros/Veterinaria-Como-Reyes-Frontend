@@ -39,4 +39,5 @@ export interface CareService {
 
   getMonthlyPerformanceStatsByVeterinary(employeeId: number): Promise<MonthlyCareStatsVeterinary>
   getWeeklyPerformanceGraphicByVeterinary(employeeId: number): Promise<WeeklyCareStatsVeterinary>
+
 }

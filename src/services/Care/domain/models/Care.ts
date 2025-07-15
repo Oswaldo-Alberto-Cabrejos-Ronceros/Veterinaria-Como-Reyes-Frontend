@@ -73,3 +73,4 @@ export interface WeeklyCareStatsVeterinary {
   weekLabels: string[]
   totalCares: string[]
 }
+

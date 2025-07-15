@@ -12,10 +12,10 @@ import { GeneratePopularServicesPdf } from '@/services/ClinicReport/aplication/G
 import { GenerateAnimalsBySpecieOrBreedPdf } from '@/services/ClinicReport/aplication/GenerateAnimalsBySpecieOrBreedPdf'
 import { GenerateAppointmentsByVetAndPeriodPdf } from '@/services/ClinicReport/aplication/GenerateAppointmentsByVetAndPeriodPdf'
 import { GenerateAppointmentsByVetAndPeriodExcel } from '@/services/ClinicReport/aplication/GenerateAppointmentsByVetAndPeriodExcel'
-
+import { GetCaresByVetAndHeadquarter } from '@/services/ClinicReport/aplication/GetCaresByVetAndHeadquarter'
+import { GetCaresByVetAndHeadquarterPdf } from '@/services/ClinicReport/aplication/GetCaresByVetAndHeadquarterPdf'
 
 const httpClient = new AxiosHttpClient()
-
 
 const clinicReportService = new ClinicReportServiceImpl(httpClient)
 
@@ -32,6 +32,12 @@ export const clinicReportUseCases = {
   generateAppointmentsByVetPdf: new GenerateAppointmentsByVetPdf(clinicReportService),
   generatePopularServicesPdf: new GeneratePopularServicesPdf(clinicReportService),
   generateAnimalsBySpecieOrBreedPdf: new GenerateAnimalsBySpecieOrBreedPdf(clinicReportService),
-  generateAppointmentsByVetAndPeriodPdf: new GenerateAppointmentsByVetAndPeriodPdf(clinicReportService),
-  generateAppointmentsByVetAndPeriodExcel: new GenerateAppointmentsByVetAndPeriodExcel(clinicReportService)
+  generateAppointmentsByVetAndPeriodPdf: new GenerateAppointmentsByVetAndPeriodPdf(
+    clinicReportService,
+  ),
+  generateAppointmentsByVetAndPeriodExcel: new GenerateAppointmentsByVetAndPeriodExcel(
+    clinicReportService,
+  ),
+  getCaresByVetAndHeadquarter: new GetCaresByVetAndHeadquarter(clinicReportService),
+  getCaresByVetAndHeadquarterPdf: new GetCaresByVetAndHeadquarterPdf(clinicReportService),
 }
