@@ -25,8 +25,10 @@ const props = defineProps<{
 
 //methods
 
-const { getAppointmentPanelInfo,getPetInfoForAppointment,getClientInfoForAppointment,getPaymentInfoForAppointment,getAppointmentById } = useAppointment()
+const { error, getAppointmentPanelInfo,getPetInfoForAppointment,getClientInfoForAppointment,getPaymentInfoForAppointment,getAppointmentById } = useAppointment()
 const { createCareFromAppointment } = useCare()
+
+const typedError = error as Record<string, string | null>
 
 const {setPaymentStatusComplete}=usePayment()
 
@@ -58,7 +60,7 @@ onMounted(async () => {
 const handleCompletePayment = async()=>{
   if(paymentInfo.value){
     await setPaymentStatusComplete(paymentInfo.value.paymentId)
-    showToast('Pago completado')
+    showToast('Pago completado', 'success', 'Éxito')
     loadInfo()
   }
 }
@@ -85,6 +87,8 @@ const openCreateCareConfirmArrive = () => {
     props: {
       modal: true,
       header: 'Crear Atención',
+      blockScroll: true,
+      dismissableMask: true,
     },
     data: {
       appointmentId: Number(props.appointmentId),
@@ -93,10 +97,19 @@ const openCreateCareConfirmArrive = () => {
     onClose: async (options) => {
       const data = options?.data as FormValues
       if (data) {
-        console.log(data)
-        const care = await createCareFromAppointment(data)
-        loadInfo()
-        showToast(`Atención creada correctamente: ${care.dateTime}`)
+        try {
+          console.log(data)
+          const care = await createCareFromAppointment(data)
+          loadInfo()
+          showToast(`Atención creada correctamente: ${care.dateTime}`, 'success', 'Éxito')
+        } catch (error) {
+          console.error(error)
+          if (typedError.createCareFromAppointment) {
+            showToast('Error al crear la atención: ' + typedError.createCareFromAppointment, 'warn', 'Error')
+          } else {
+            showToast('Error al crear la atención', 'warn', 'Error')
+          }
+        }
       }
     },
   })
@@ -107,10 +120,10 @@ const openCreateCareConfirmArrive = () => {
 //toast
 const toast = useToast()
 
-const showToast = (message: string) => {
+const showToast = (message: string, severity: string, sumary: string) => {
   toast.add({
-    severity: 'success',
-    summary: 'Éxito',
+    severity: severity,
+    summary: sumary,
     detail: message,
     life: 3000,
   })

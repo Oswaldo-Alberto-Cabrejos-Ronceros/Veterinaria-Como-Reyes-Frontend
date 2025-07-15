@@ -52,6 +52,8 @@ const {
   deleteAppointment,
 } = useAppointment()
 
+const typedError = error as Record<string, string | null>
+
 const { getAllPaymentMethods } = usePaymentMethod()
 
 const { getMainRole, getEntityId } = useAuthentication()
@@ -113,13 +115,13 @@ const handleChangeStatus = async (appointmentId: number, status: string) => {
   try {
     if (status === 'CONFIRMADA') {
       await confirmAppointment(appointmentId)
-      showToast('Cita confirmada exitodamente')
+      showToast('Cita confirmada exitodamente', 'success', 'Éxito')
     } else if (status === 'COMPLETADA') {
       await completeAppointment(appointmentId)
-      showToast('Cita completada exitodamente')
+      showToast('Cita completada exitodamente', 'success', 'Éxito')
     } else if (status == 'CANCELADA') {
       await deleteAppointment(appointmentId)
-      showToast('Cita cancelada exitodamente')
+      showToast('Cita cancelada exitodamente', 'success', 'Éxito')
     }
     await loadAppoinments()
   } catch (err) {
@@ -202,10 +204,10 @@ const dialog = useDialog()
 //toast
 const toast = useToast()
 
-const showToast = (message: string) => {
+const showToast = (message: string, severity: string, sumary: string) => {
   toast.add({
-    severity: 'success',
-    summary: 'Éxito',
+    severity: severity,
+    summary: sumary,
     detail: message,
     life: 3000,
   })
@@ -233,7 +235,7 @@ const sendConfirm = async (
   console.log(appointmentRequest)
   const appointment = await createAppointment(appointmentRequest)
   if (appointment) {
-    showToast(`Cita creada exitosamente: ${appointment.scheduleDateTime}`)
+    showToast(`Cita creada exitosamente: ${appointment.scheduleDateTime}`, 'success', 'Éxito')
     loadAppoinments()
   }
 }
@@ -244,23 +246,36 @@ const addAppointment = async () => {
     props: {
       modal: true,
       header: 'Agendar cita',
+      blockScroll: true,
+      dismissableMask: true,
     },
     data: {
       paymentMethodsOptions: headquartersCategoriesIdsToOptionsSelect(await getAllPaymentMethods()),
     },
     onClose: async (options) => {
-      const data = options?.data as AddEditPaymentSchema
-            router.replace({ query: { ...route.query, add: undefined } })
+      const data = options?.data as AddEditPaymentSchema;
+      router.replace({ query: { ...route.query, add: undefined } });
       if (data) {
-        console.log(data)
-        sendConfirm(
+        console.log('Datos recibidos:', data)
+        try {
+          await sendConfirm(
           data.petId,
           data.headquarterVetServiceId,
           data.scheduleDateTime,
           data.date,
           data.paymentMethodId,
-          data.comment,
-        )
+          data.comment
+          );
+          loadAppoinments()
+          showToast('Cita agendada exitosamente', 'success', 'Éxito')
+        } catch (error) {
+          console.error(error)
+          if (typedError.createAppointment) {
+            showToast('Error al agendar la cita' + typedError.createAppointment, 'warn', 'Error')
+          } else {
+            showToast('Error al agendar la cita', 'error', 'Error')
+          }
+        }
       }
     },
   })

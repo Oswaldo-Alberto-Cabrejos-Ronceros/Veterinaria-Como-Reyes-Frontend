@@ -31,10 +31,10 @@ import { useAuthentication } from '@/composables/useAuthentication'
 //toast
 const toast = useToast()
 
-const showToast = (message: string) => {
+const showToast = (message: string, severity: string, sumary: string) => {
   toast.add({
-    severity: 'success',
-    summary: 'Éxito',
+    severity: severity,
+    summary: sumary,
     detail: message,
     life: 3000,
   })
@@ -52,6 +52,8 @@ const {
   searchVeterinaryServices,
   getVeterinaryServiceById,
 } = useVeterinaryService()
+
+const typedError = error as Record<string, string | null>
 
 const { getAllSpecies } = useSpecie()
 
@@ -165,6 +167,8 @@ const viewService = async (serviceData: ServiceList) => {
     props: {
       modal: true,
       header: `${serviceData.name}`,
+      blockScroll: true,
+      dismissableMask: true,
     },
     data: {
       serviceData: service,
@@ -177,6 +181,8 @@ const addService = async () => {
     props: {
       modal: true,
       header: 'Agregar servicio',
+      blockScroll: true,
+      dismissableMask: true,
     },
     data: {
       speciesOptions: speciesToOptionsSelect(await getAllSpecies()),
@@ -185,10 +191,19 @@ const addService = async () => {
     onClose: async (options) => {
       const data = options?.data
       if (data) {
-        const service = await createVeterinaryService(data)
-        console.log('Datos recibidos', service)
-        showToast('Servicio agregado exitosamente: ' + data.name)
-        loadServices()
+        try {
+          const service = await createVeterinaryService(data)
+          console.log('Datos recibidos', service)
+          showToast('Servicio agregado exitosamente: ' + data.name, 'success', 'Éxito')
+          loadServices()
+        } catch (error) {
+          console.error(error)
+          if (typedError.createVeterinaryService) {
+            showToast('Error al agregar servicio: ' + data.name + typedError.createVeterinaryService, 'warn', 'Error')
+          } else {
+            showToast('Error al agregar servicio: ' + data.name, 'warn', 'Error')
+          }
+        }
       }
     },
   })
@@ -202,6 +217,8 @@ const editService = async (serviceData: ServiceList) => {
     props: {
       modal: true,
       header: `${serviceData.name}`,
+      blockScroll: true,
+      dismissableMask: true,
     },
     data: {
       serviceData: {
@@ -219,10 +236,19 @@ const editService = async (serviceData: ServiceList) => {
     onClose: async (options) => {
       const data = options?.data
       if (data) {
-        const service = await updateVeterinaryService(serviceData.serviceId, data)
-        console.log('Datos recibidos', service)
-        showToast('Servicio editado exitosamente: ' + data.name)
-        loadServices()
+        try {
+          const service = await updateVeterinaryService(serviceData.serviceId, data)
+          console.log('Datos recibidos', service)
+          showToast('Servicio editado exitosamente: ' + data.name, 'success', 'Éxito')
+          loadServices()
+        } catch (error) {
+          console.error(error)
+          if (typedError.updateVeterinaryService) {
+            showToast('Error al actualizar servicio: ' + data.name + typedError.updateVeterinaryService, 'warn', 'Error')
+          } else {
+            showToast('Error al actualizar servicio: ' + data.name, 'warn', 'Error')
+          }
+        }
       }
     },
   })
@@ -253,10 +279,10 @@ const deleteReactiveService = (event: MouseEvent | KeyboardEvent, serviceData: S
     accept: async () => {
       if (isActive) {
         await deleteVeterinaryService(serviceData.serviceId)
-        showToast('Servicio eliminado exitosamente: ' + serviceData.name)
+        showToast('Servicio eliminado exitosamente: ' + serviceData.name, 'success', 'Éxito')
       } else {
         await activateVeterinaryService(serviceData.serviceId)
-        showToast('Servicio reactivado exitosamente: ' + serviceData.name)
+        showToast('Servicio reactivado exitosamente: ' + serviceData.name, 'success', 'Éxito')
       }
 
       loadServices()

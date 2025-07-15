@@ -28,10 +28,10 @@ import Select from 'primevue/select'
 //for toast
 const toast = useToast()
 
-const showToast = (message: string) => {
+const showToast = (message: string, severity: string, sumary: string) => {
   toast.add({
-    severity: 'success',
-    summary: 'Exito',
+    severity: severity,
+    summary: sumary,
     detail: message,
     life: 3000,
   })
@@ -53,6 +53,8 @@ const {
   deleteCategory,
   searchCategories,
 } = useCategory()
+
+const typedError = error as Record<string, string | null>
 
 //categories
 
@@ -126,14 +128,25 @@ const addCategory = () => {
     props: {
       modal: true,
       header: 'Agregar categoria',
+      blockScroll: true,
+      dismissableMask: true,
     },
     onClose: async (options) => {
       const data = options?.data as AddEditCategorySchema
       if (data) {
-        const category = await createCategory(data)
+        try {
+          const category = await createCategory(data)
         console.log('Datos recibidos', category)
         loadCategories()
-        showToast('Categoria agregada exitosamente: ' + category.name)
+        showToast('Categoria agregada exitosamente: ' + category.name, 'success', 'Éxito')
+        } catch (error) {
+          console.error(error)
+          if(typedError.createCategory){
+            showToast('Error al crear la categoria: ' + data.name + typedError.createCategory, 'warn', 'Error')
+          } else {
+            showToast('Error al crear la categoria', 'warn', 'Error')
+          }
+        }
       }
     },
   })
@@ -147,16 +160,29 @@ const editCategory = async (categoryData: CategoryList) => {
     props: {
       modal: true,
       header: `${categoryData.name}`,
+      blockScroll: true,
+      dismissableMask: true,
     },
     data: {
       categoryData: category as AddEditCategorySchema,
     },
     onClose: async (options) => {
       const data = options?.data as AddEditCategorySchema
-      const category = await updateCategory(categoryData.categoryId, data)
-      console.log('Datos recibidos', category)
-      loadCategories()
-      showToast('Categoria editada exitosamente: ' + category.name)
+      if (data) {
+        try {
+          const updatedCategory = await updateCategory(categoryData.categoryId, data)
+          console.log('Datos recibidos', updatedCategory)
+          loadCategories()
+          showToast('Categoría actualizada exitosamente: ' + updatedCategory.name, 'success', 'Éxito')
+        } catch (error) {
+          console.error(error)
+          if (typedError.updateCategory) {
+            showToast('Error al actualizar la categoría: ' + data.name + typedError.updateCategory, 'warn', 'Error')
+          } else {
+            showToast('Error al actualizar la categoría', 'warn', 'Error')
+          }
+        }
+      }
     },
   })
 }
@@ -169,6 +195,8 @@ const viewCategory = async (categoryData: CategoryList) => {
     props: {
       modal: true,
       header: `${categoryData.name}`,
+      blockScroll: true,
+      dismissableMask: true,
     },
     data: {
       categoryData: category,
@@ -204,10 +232,10 @@ const handleDeleteReactiveCategory = (
     accept: async () => {
       if (isActive) {
         await deleteCategory(categoryData.categoryId)
-        showToast('Categoría eliminado exitosamente: ' + categoryData.name)
+        showToast('Categoría eliminado exitosamente: ' + categoryData.name, 'success', 'Éxito')
       } else {
         await activateCategory(categoryData.categoryId)
-        showToast('Categoría reactivada exitosamente: ' + categoryData.name)
+        showToast('Categoría reactivada exitosamente: ' + categoryData.name , 'success', 'Éxito')
       }
 
       loadCategories()
