@@ -96,5 +96,5 @@ body {
 }
 
 .card-primary{
-  @apply shadow-none border-1 border-neutral-200 dark:border-neutral-700
+  @apply shadow-none border-1 border-neutral-300 dark:border-neutral-700
 }
