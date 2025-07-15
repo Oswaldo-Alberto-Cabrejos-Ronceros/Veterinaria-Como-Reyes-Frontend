@@ -65,8 +65,9 @@ const today = DateAdapter.toFormatView(new Date())
 
 onMounted(async () => {
   await loadMyInfo()
-   chartData.value = setChartData()
-   chartOptions.value = setChartOptions()
+  chartData.value = setChartData()
+  console.log(weeklyPerformanceGraficInfo.value)
+  chartOptions.value = setChartOptions()
 })
 
 const chartData = ref()
@@ -168,23 +169,6 @@ const news: { title: string; icon: string; content: string; plus?: string }[] = 
 
 const recentRecords = ref<RecentMedicalRecord[]>([])
 
-const newsStadistics: { title: string; icon: string; content: string; plus?: string }[] = [
-  {
-    title: 'Pacientes',
-    icon: 'pi-github',
-    content: '20',
-  },
-  {
-    title: 'Atenciones',
-    icon: 'pi-clipboard',
-    content: '10',
-  },
-  {
-    title: 'Horas acumuladas',
-    icon: 'pi-clock',
-    content: '5',
-  },
-]
 
 const appoinmentsAbstract: { title: string; value: number }[] = [
   {
@@ -334,7 +318,7 @@ const handleRedirectPet = (petId: number) => {
                   class="flex min-h-120 max-h-122 items-center justify-center"
                   v-if="appointments.length === 0"
                 >
-                  <p>No servicios que mostrar</p>
+                  <p>No citas que mostrar</p>
                 </div>
                 <!-- abstract  -->
 
@@ -433,17 +417,22 @@ const handleRedirectPet = (petId: number) => {
                 <div class="w-full flex flex-col gap-2">
                   <div class="flex gap-2 items-center">
                     <i class="pi pi-calendar"></i>
-                    <h2 class="h3 font-semibold">Del mes</h2>
+                    <h2 class="h3 font-semibold">Del mes {{ monthlyPerformanceStats?.month }}</h2>
                   </div>
                   <!-- card news -->
                   <div class="w-full grid grid-cols-1 3xl:grid-cols-2 gap-y-3 gap-x-6">
                     <CardNewsPrimary
-                      v-for="(noticia, index) in newsStadistics"
-                      :key="index"
-                      :title="noticia.title"
-                      :icon="noticia.icon"
-                      :content="noticia.content"
-                      :plus="noticia.plus"
+                      v-if="monthlyPerformanceStats"
+                      title="Pacientes"
+                      icon="pi-github"
+                      :content="monthlyPerformanceStats.totalPatients.toString()"
+                    >
+                    </CardNewsPrimary>
+                           <CardNewsPrimary
+                      v-if="monthlyPerformanceStats"
+                      title="Atenciones"
+                      icon="pi-clipboard"
+                      :content="monthlyPerformanceStats.totalCares.toString()"
                     >
                     </CardNewsPrimary>
                   </div>
@@ -541,6 +530,9 @@ const handleRedirectPet = (petId: number) => {
                   hidden
                 />
               </div>
+              <div class="flex min-h-120 max-h-122 items-center justify-center" v-else>
+                <p>No hay diagnosticos que mostrar</p>
+              </div>
             </template>
           </Card>
           <!-- pet recent -->
@@ -562,7 +554,7 @@ const handleRedirectPet = (petId: number) => {
               <p>Historial de pacientes atendidos recientemente</p>
             </template>
             <template #content>
-              <ScrollPanel class="h-156 mt-2 w-full">
+              <ScrollPanel v-if="recentsPacients.length > 0" class="h-156 mt-2 w-full">
                 <div class="w-full flex flex-col gap-1.5 items-end">
                   <CardPetTerciary
                     v-for="pet of recentsPacients"
@@ -583,7 +575,7 @@ const handleRedirectPet = (petId: number) => {
                 class="flex min-h-120 max-h-122 items-center justify-center"
                 v-if="recentsPacients.length === 0"
               >
-                <p>No servicios que mostrar</p>
+                <p>No hay servicios que mostrar</p>
               </div>
               <Button
                 class="mt-2 w-full"

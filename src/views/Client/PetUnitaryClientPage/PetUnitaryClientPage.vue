@@ -12,20 +12,20 @@ import Column from 'primevue/column'
 import Button from 'primevue/button'
 import { useAuthentication } from '@/composables/useAuthentication'
 import { useClient } from '@/composables/useClient'
-import type { MyInfoClient } from '@/models/MyInfoClient'
 import CardOwnerPrimary from '@/components/CardOwnerPrimary.vue'
 import Tag from 'primevue/tag'
+import type { Client } from '@/models/Client'
 const props = defineProps<{
   petId: string
 }>()
 
-const ownerInfo = ref<MyInfoClient | null>(null)
+const ownerInfo = ref<Client | null>(null)
 
 const { loading: petLoading, error: petError, getPetById } = usePet()
 
 const roleMain = ref<string>('')
 
-const { getEntityId, getMainRole } = useAuthentication()
+const { getMainRole } = useAuthentication()
 
 const {
   loading: veterinaryRecordLoading,
@@ -43,7 +43,7 @@ const rows = ref<number>(1)
 
 const first = ref<number>(0)
 
-const { myInfoAsClient } = useClient()
+const { getClientById } = useClient()
 
 //for loadVeterinaryRecords
 const loadVeterinaryRecords = async (event?: DataTablePageEvent) => {
@@ -60,10 +60,10 @@ onMounted(async () => {
   const role = getMainRole()
   if (role) {
     roleMain.value = role
-    if (role != 'Cliente') {
-      const clientId = getEntityId()
+    if (role !== 'Cliente') {
+      const clientId = petData.value.clientId
       if (clientId) {
-        ownerInfo.value = await myInfoAsClient(clientId)
+        ownerInfo.value = await getClientById(clientId)
       }
     }
   }
