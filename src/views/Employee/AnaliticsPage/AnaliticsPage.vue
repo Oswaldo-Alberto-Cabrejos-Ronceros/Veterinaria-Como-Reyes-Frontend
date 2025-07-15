@@ -425,14 +425,12 @@ const setChartOptionsVeterinarians = () => {
           </TabList>
           <TabPanels>
             <TabPanel value="0">
-              <Card class="card-principal-color-neutral">
-                <template #title>
-                  <h2 class="h2">Financieras</h2>
-                </template>
-                <template #subtitle>
-                  <p>Analisis de ingresos y rentabilidad</p>
-                </template>
-                <template #content>
+              <div class="layout-principal-flex">
+                <div class="flex flex-col">
+                  <h2 class="p-card-title h2">Financieras</h2>
+
+                  <p class="p-card-subtitle">Analisis de ingresos y rentabilidad</p>
+
                   <div
                     class="w-full grid grid-cols-2 gap-y-4 lg:grid-cols-4 gap-x-6 lg:gap-x-12 mt-4"
                   >
@@ -523,18 +521,16 @@ const setChartOptionsVeterinarians = () => {
                       </template>
                     </Card>
                   </div>
-                </template>
-              </Card>
+                </div>
+              </div>
             </TabPanel>
             <TabPanel value="1">
-              <Card class="card-principal-color-neutral">
-                <template #title>
-                  <h2 class="h2">Operacionales</h2>
-                </template>
-                <template #subtitle>
-                  <p>Analisis de pacientes y veterinarios</p>
-                </template>
-                <template #content>
+              <div class="layout-principal-flex">
+                <div class="flex flex-col">
+                  <h2 class="p-card-title h2">Operacionales</h2>
+
+                  <p p-card-subtitle>Analisis de pacientes y veterinarios</p>
+
                   <!-- news -->
                   <div
                     class="w-full grid grid-cols-2 gap-y-4 lg:grid-cols-4 gap-x-6 lg:gap-x-12 mt-4"
@@ -626,8 +622,8 @@ const setChartOptionsVeterinarians = () => {
                       </template>
                     </Card>
                   </div>
-                </template>
-              </Card>
+                </div>
+              </div>
             </TabPanel>
           </TabPanels>
         </Tabs>
