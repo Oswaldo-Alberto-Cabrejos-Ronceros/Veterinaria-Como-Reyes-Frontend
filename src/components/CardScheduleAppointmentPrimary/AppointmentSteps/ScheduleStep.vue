@@ -67,7 +67,7 @@ const emitSelectTime = () => {
             <span>8h-13h</span>
           </template>
           <div
-            class="w-full grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 my-2"
+            class="w-full grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8 3xl:grid-cols-9 place-items-center gap-2 my-2"
             v-if="schedules[0]"
           >
             <CardScheduleUnitary
@@ -94,7 +94,7 @@ const emitSelectTime = () => {
             <span>13h-18h</span>
           </template>
           <div
-            class="w-full grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 my-2"
+            class="w-full grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8 3xl:grid-cols-9 place-items-center gap-2 my-2"
             v-if="schedules[1]"
           >
             <CardScheduleUnitary
@@ -122,7 +122,7 @@ const emitSelectTime = () => {
             <span>18h-22h</span>
           </template>
           <div
-            class="w-full grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 my-2"
+            class="w-full grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8 3xl:grid-cols-9 place-items-center gap-2 my-2"
             v-if="schedules[2]"
           >
             <CardScheduleUnitary

@@ -38,7 +38,7 @@ const toggleMenu = () => {
 <TabNav :items="items"/>
       </div>
 
-      <section class="flex-1 mt-4 h-auto px-0.5 xs:px-12 transition-all duration-200 ease-out">
+      <section class="flex-1 mt-4 h-auto px-0.5 xs:px-12 transition-all duration-200 ease-out flex flex-col">
 
         <router-view />
       </section>

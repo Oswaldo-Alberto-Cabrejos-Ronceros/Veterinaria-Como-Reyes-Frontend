@@ -1,5 +1,5 @@
 import type { HttpClient } from '@/services/Http/model/HttpClient'
-import type { Care, CareList, CareRequest, CareRequestCreate, CareStatsToday, CreateCareFromAppointmentRequest, RecentPatient } from '../domain/models/Care'
+import type { Care, CareList, CareRequest, CareRequestCreate, CareStatsToday, CreateCareFromAppointmentRequest, MonthlyCareStatsVeterinary, RecentPatient, WeeklyCareStatsVeterinary } from '../domain/models/Care'
 import type { CareService } from '../domain/services/CareService'
 import type { PageResponse } from '@/services/models/PageResponse'
 import type { CareAndAppointmentPanelEmployee } from '@/services/Appointment/domain/models/Appointment'
@@ -99,8 +99,25 @@ async getCaresByHeadquarterId(headquarterId: number): Promise<CareAndAppointment
 
   async getRecentPatientsByEmployee(employeeId: number): Promise<RecentPatient[]> {
   const response = await this.httpClient.get<RecentPatient[]>(
-    `panel/veterinarians/care/recent-patients/${employeeId}`,
+    `panel-veterinarians/care/recent-patients/${employeeId}`,
   )
   return response.data
 }
+
+async getMonthlyPerformanceStatsByVeterinary(employeeId: number): Promise<MonthlyCareStatsVeterinary> {
+  const response = await this.httpClient.get<MonthlyCareStatsVeterinary>(
+    `/panel-veterinarians/care/performance-statistic/${employeeId}`,
+  )
+  return response.data
+}
+
+async getWeeklyPerformanceGraphicByVeterinary(employeeId: number): Promise<WeeklyCareStatsVeterinary> {
+  const response = await this.httpClient.get<WeeklyCareStatsVeterinary>(
+    `/panel-veterinarians/care/performance-statistic/graphic/${employeeId}`,
+  )
+  return response.data
+}
+
+
+
 }

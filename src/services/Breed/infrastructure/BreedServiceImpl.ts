@@ -50,7 +50,9 @@ export class BreedServiceImpl implements BreedService {
     if (typeof params.size === 'number') queryParams.size = params.size
     if (params.sort) queryParams.sort = params.sort
 
-    const response = await this.httpClient.get<PageResponse<BreedList>>(`${this.url}/search`, queryParams)
+    const response = await this.httpClient.get<PageResponse<BreedList>>(`${this.url}/search`, {
+      params:queryParams
+    })
     return response.data
   }
 }

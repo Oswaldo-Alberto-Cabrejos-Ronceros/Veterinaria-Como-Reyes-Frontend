@@ -48,7 +48,7 @@ export class CategoryServiceImpl implements CategoryService {
 
     const response = await this.httpClient.get<PageResponse<CategoryList>>(
       `${this.urlBase}/search`,
-      queryParams
+      { params: queryParams },
     )
     return response.data
   }

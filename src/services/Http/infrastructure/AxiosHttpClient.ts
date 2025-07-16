@@ -1,10 +1,22 @@
-import axios, { type AxiosInstance } from 'axios'
+import axios, { type AxiosInstance, type AxiosRequestConfig } from 'axios'
 import { LogoutUser } from '@/services/Authentication/aplication/LogoutUser'
 import { AuthenticationServiceImpl } from '@/services/Authentication/infrastructure/AuthenticationServiceImpl'
 import type { HttpClient } from '../model/HttpClient'
+import type { RequestConfig } from '../model/RequestConfig'
+
+
 
 export class AxiosHttpClient implements HttpClient {
   private axiosInstance: AxiosInstance
+  //for adapt from requestConfig to AxiosRequestConfig
+private adaptConfig(config?: RequestConfig): AxiosRequestConfig {
+  return {
+    headers: config?.headers,
+    params: config?.params,
+    timeout: config?.timeout,
+    responseType: config?.responseType,
+  };
+}
 
   constructor() {
     this.axiosInstance = axios.create({
@@ -41,11 +53,11 @@ export class AxiosHttpClient implements HttpClient {
     )
   }
 
-  async get<T>(url: string, params?: Record<string, string | number|boolean>): Promise<{ data: T }> {
+  async get<T>(
+    url: string, config?: RequestConfig
+  ): Promise<{ data: T }> {
     try {
-      const response = await this.axiosInstance.get<T>(url, {
-        params,
-      })
+      const response = await this.axiosInstance.get<T>(url, this.adaptConfig(config))
       return { data: response.data }
     } catch (e) {
       this.handleError(e as Error)
@@ -53,18 +65,18 @@ export class AxiosHttpClient implements HttpClient {
     }
   }
 
-  async post<T>(url: string, body: unknown): Promise<{ data: T }> {
+  async post<T>(url: string, body: unknown, config?: RequestConfig): Promise<{ data: T }> {
     try {
-      const response = await this.axiosInstance.post<T>(url, body)
+      const response = await this.axiosInstance.post<T>(url, body,  this.adaptConfig(config))
       return { data: response.data }
     } catch (e) {
       this.handleError(e as Error)
       throw e
     }
   }
-  async put<T>(url: string, body: unknown): Promise<{ data: T }> {
+  async put<T>(url: string, body: unknown, config?: RequestConfig): Promise<{ data: T }> {
     try {
-      const response = await this.axiosInstance.put(url, body)
+      const response = await this.axiosInstance.put(url, body,  this.adaptConfig(config))
       return { data: response.data }
     } catch (e) {
       this.handleError(e as Error)
@@ -73,22 +85,19 @@ export class AxiosHttpClient implements HttpClient {
   }
   async patch<T>(
     url: string,
-    body?: unknown,
-    params?: Record<string, string | number>,
+    body?: unknown, config?: RequestConfig
   ): Promise<{ data: T }> {
     try {
-      const response = await this.axiosInstance.patch(url, body, {
-        params,
-      })
+      const response = await this.axiosInstance.patch(url, body,  this.adaptConfig(config))
       return { data: response.data }
     } catch (e) {
       this.handleError(e as Error)
       throw e
     }
   }
-  async delete<T>(url: string): Promise<{ data: T }> {
+  async delete<T>(url: string, config?: RequestConfig): Promise<{ data: T }> {
     try {
-      const response = await this.axiosInstance.delete(url)
+      const response = await this.axiosInstance.delete(url, this.adaptConfig(config))
       return { data: response.data }
     } catch (e) {
       this.handleError(e as Error)

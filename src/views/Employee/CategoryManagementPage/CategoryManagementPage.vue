@@ -28,10 +28,10 @@ import Select from 'primevue/select'
 //for toast
 const toast = useToast()
 
-const showToast = (message: string) => {
+const showToast = (message: string, severity: string, sumary: string) => {
   toast.add({
-    severity: 'success',
-    summary: 'Exito',
+    severity: severity,
+    summary: sumary,
     detail: message,
     life: 3000,
   })
@@ -43,8 +43,18 @@ const { getMainRole } = useAuthentication()
 
 //methods
 
-const { loading, error, getCategoryById,createCategory, updateCategory, activateCategory, searchCategories } =
-  useCategory()
+const {
+  loading,
+  error,
+  getCategoryById,
+  createCategory,
+  updateCategory,
+  activateCategory,
+  deleteCategory,
+  searchCategories,
+} = useCategory()
+
+const typedError = error as Record<string, string | null>
 
 //categories
 
@@ -118,14 +128,25 @@ const addCategory = () => {
     props: {
       modal: true,
       header: 'Agregar categoria',
+      blockScroll: true,
+      dismissableMask: true,
     },
     onClose: async (options) => {
       const data = options?.data as AddEditCategorySchema
       if (data) {
-        const category = await createCategory(data)
+        try {
+          const category = await createCategory(data)
         console.log('Datos recibidos', category)
         loadCategories()
-        showToast('Categoria agregada exitosamente: ' + category.name)
+        showToast('Categoria agregada exitosamente: ' + category.name, 'success', 'Éxito')
+        } catch (error) {
+          console.error(error)
+          if(typedError.createCategory){
+            showToast('Error al crear la categoria: ' + data.name + typedError.createCategory, 'warn', 'Error')
+          } else {
+            showToast('Error al crear la categoria', 'warn', 'Error')
+          }
+        }
       }
     },
   })
@@ -139,16 +160,29 @@ const editCategory = async (categoryData: CategoryList) => {
     props: {
       modal: true,
       header: `${categoryData.name}`,
+      blockScroll: true,
+      dismissableMask: true,
     },
     data: {
       categoryData: category as AddEditCategorySchema,
     },
     onClose: async (options) => {
       const data = options?.data as AddEditCategorySchema
-      const category = await updateCategory(categoryData.categoryId, data)
-      console.log('Datos recibidos', category)
-      loadCategories()
-      showToast('Categoria editada exitosamente: ' + category.name)
+      if (data) {
+        try {
+          const updatedCategory = await updateCategory(categoryData.categoryId, data)
+          console.log('Datos recibidos', updatedCategory)
+          loadCategories()
+          showToast('Categoría actualizada exitosamente: ' + updatedCategory.name, 'success', 'Éxito')
+        } catch (error) {
+          console.error(error)
+          if (typedError.updateCategory) {
+            showToast('Error al actualizar la categoría: ' + data.name + typedError.updateCategory, 'warn', 'Error')
+          } else {
+            showToast('Error al actualizar la categoría', 'warn', 'Error')
+          }
+        }
+      }
     },
   })
 }
@@ -156,11 +190,13 @@ const editCategory = async (categoryData: CategoryList) => {
 //for view
 
 const viewCategory = async (categoryData: CategoryList) => {
-const category = await getCategoryById(categoryData.categoryId)
+  const category = await getCategoryById(categoryData.categoryId)
   dialog.open(ViewCategoryCard, {
     props: {
       modal: true,
       header: `${categoryData.name}`,
+      blockScroll: true,
+      dismissableMask: true,
     },
     data: {
       categoryData: category,
@@ -171,13 +207,18 @@ const category = await getCategoryById(categoryData.categoryId)
 //for confirm
 const confirm = useConfirm()
 
-const deleteCategory = (event: MouseEvent | KeyboardEvent, categoryData: CategoryList) => {
+const handleDeleteReactiveCategory = (
+  event: MouseEvent | KeyboardEvent,
+  categoryData: CategoryList,
+) => {
   const isActive = categoryData.status
 
   confirm.require({
     group: 'confirmPopupGeneral',
     target: event.currentTarget as HTMLElement,
-    message: '¿Seguro que quiere eliminar esta categoría?',
+    message: isActive
+      ? '¿Seguro que quiere eliminar esta categoría?'
+      : 'Seguro que quiere reactivar esta categoria',
     icon: 'pi pi-exclamation-triangle',
     rejectProps: {
       label: 'Cancelar',
@@ -189,8 +230,14 @@ const deleteCategory = (event: MouseEvent | KeyboardEvent, categoryData: Categor
       severity: isActive ? 'danger' : 'success',
     },
     accept: async () => {
-      await activateCategory(categoryData.categoryId)
-      showToast('Categoría eliminado exitosamente: ' + categoryData.name)
+      if (isActive) {
+        await deleteCategory(categoryData.categoryId)
+        showToast('Categoría eliminado exitosamente: ' + categoryData.name, 'success', 'Éxito')
+      } else {
+        await activateCategory(categoryData.categoryId)
+        showToast('Categoría reactivada exitosamente: ' + categoryData.name , 'success', 'Éxito')
+      }
+
       loadCategories()
     },
     reject: () => {
@@ -274,6 +321,8 @@ const exportCSV = () => {
             :loading="loading.searchCategories"
             :rows-per-page-options="[5, 10, 15, 20]"
             @page="loadCategories"
+            scrollable
+            removableSort
             ref="dt"
           >
             <template #header>
@@ -290,14 +339,8 @@ const exportCSV = () => {
               </div>
             </template>
 
-            <Column field="name" sortable header="Nombre" style="width: 20%"></Column>
-            <Column
-              field="description"
-              class="hidden md:table-cell"
-              header="Descripción"
-              sortable
-              style="width: 60%"
-            ></Column>
+            <Column field="name" header="Nombre" sortable style="width: 20%"></Column>
+            <Column field="description" sortable header="Descripción" style="width: 60%"></Column>
             <Column header="Acciones">
               <template #body="{ data }">
                 <div class="flex items-center flex-col sm:flex-row gap-1">
@@ -327,9 +370,19 @@ const exportCSV = () => {
                     aria-label="Eliminar"
                     rounded
                     size="small"
-                    v-if="roleMain === 'Administrador'"
-                    @click="deleteCategory($event, data)"
+                    v-if="data.status === 'Activo' && roleMain === 'Administrador'"
+                    @click="handleDeleteReactiveCategory($event, data)"
                   />
+                  <Button
+                    v-if="data.status === 'Inactivo' && roleMain === 'Administrador'"
+                    icon="pi pi-refresh"
+                    severity="warn"
+                    variant="text"
+                    aria-label="Desbloquear"
+                    rounded
+                    size="small"
+                    @click="handleDeleteReactiveCategory($event, data)"
+                  ></Button>
                 </div>
               </template>
             </Column>

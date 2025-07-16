@@ -35,6 +35,9 @@ import { useEmployee } from '@/composables/useEmployee'
 
 onMounted(async () => {
   loadAppoinments()
+    if (route.query.add === '1') {
+    addAppointment()
+  }
 })
 
 //methods for appointments
@@ -48,6 +51,8 @@ const {
   completeAppointment,
   deleteAppointment,
 } = useAppointment()
+
+const typedError = error as Record<string, string | null>
 
 const { getAllPaymentMethods } = usePaymentMethod()
 
@@ -110,13 +115,13 @@ const handleChangeStatus = async (appointmentId: number, status: string) => {
   try {
     if (status === 'CONFIRMADA') {
       await confirmAppointment(appointmentId)
-      showToast('Cita confirmada exitodamente')
+      showToast('Cita confirmada exitodamente', 'success', 'Éxito')
     } else if (status === 'COMPLETADA') {
       await completeAppointment(appointmentId)
-      showToast('Cita completada exitodamente')
+      showToast('Cita completada exitodamente', 'success', 'Éxito')
     } else if (status == 'CANCELADA') {
       await deleteAppointment(appointmentId)
-      showToast('Cita cancelada exitodamente')
+      showToast('Cita cancelada exitodamente', 'success', 'Éxito')
     }
     await loadAppoinments()
   } catch (err) {
@@ -199,10 +204,10 @@ const dialog = useDialog()
 //toast
 const toast = useToast()
 
-const showToast = (message: string) => {
+const showToast = (message: string, severity: string, sumary: string) => {
   toast.add({
-    severity: 'success',
-    summary: 'Éxito',
+    severity: severity,
+    summary: sumary,
     detail: message,
     life: 3000,
   })
@@ -230,7 +235,7 @@ const sendConfirm = async (
   console.log(appointmentRequest)
   const appointment = await createAppointment(appointmentRequest)
   if (appointment) {
-    showToast(`Cita creada exitosamente: ${appointment.scheduleDateTime}`)
+    showToast(`Cita creada exitosamente: ${appointment.scheduleDateTime}`, 'success', 'Éxito')
     loadAppoinments()
   }
 }
@@ -241,22 +246,36 @@ const addAppointment = async () => {
     props: {
       modal: true,
       header: 'Agendar cita',
+      blockScroll: true,
+      dismissableMask: true,
     },
     data: {
       paymentMethodsOptions: headquartersCategoriesIdsToOptionsSelect(await getAllPaymentMethods()),
     },
     onClose: async (options) => {
-      const data = options?.data as AddEditPaymentSchema
+      const data = options?.data as AddEditPaymentSchema;
+      router.replace({ query: { ...route.query, add: undefined } });
       if (data) {
-        console.log(data)
-        sendConfirm(
+        console.log('Datos recibidos:', data)
+        try {
+          await sendConfirm(
           data.petId,
           data.headquarterVetServiceId,
           data.scheduleDateTime,
           data.date,
           data.paymentMethodId,
-          data.comment,
-        )
+          data.comment
+          );
+          loadAppoinments()
+          showToast('Cita agendada exitosamente', 'success', 'Éxito')
+        } catch (error) {
+          console.error(error)
+          if (typedError.createAppointment) {
+            showToast('Error al agendar la cita' + typedError.createAppointment, 'warn', 'Error')
+          } else {
+            showToast('Error al agendar la cita', 'error', 'Error')
+          }
+        }
       }
     },
   })
@@ -389,7 +408,8 @@ const attendAppointment = (appointmentId: number) => {
                 placeholder="Selecciona Categoria"
                 showClear
                 @update:model-value="searchAppointmentsDebounce()"
-              />
+                filter
+                />
 
               <Message v-if="errors.category" severity="error" size="small" variant="simple">
                 {{ errors.category }}
@@ -435,6 +455,8 @@ const attendAppointment = (appointmentId: number) => {
             :first="first"
             :loading="loading.searchAppointments"
             @page="loadAppoinments"
+            scrollable
+            removableSort
             :rows-per-page-options="[1, 2, 3, 4]"
             ref="dt"
           >
@@ -451,32 +473,40 @@ const attendAppointment = (appointmentId: number) => {
               </div>
             </template>
             <Column
+            header="Fecha"
               field="date"
               sortable
-              header="Dia programado"
-              class="hidden lg:table-cell"
-              style="width: 18%"
+              style="width: 16%"
+            ></Column>
+                        <Column
+              field="petName"
+              header="Masctota"
+              sortable
+              style="width: 13%"
+            ></Column>
+                        <Column
+              field="petOwner"
+              header="Dueño"
+              sortable
+              style="width: 20%"
             ></Column>
             <Column
               field="headquarter"
-              class="hidden lg:table-cell"
               header="Sede"
               sortable
-              style="width: 15%"
+              style="width: 14%"
             ></Column>
             <Column
               field="categoryService"
-              class="hidden lg:table-cell"
               header="Categoria"
               sortable
               style="width: 15%"
             ></Column>
             <Column
-              class="hidden md:table-cell"
               field="appointmentStatus"
               header="Estado"
               sortable
-              style="width: 15%"
+              style="width: 12%"
             >
             </Column>
             <Column header="Acciones">

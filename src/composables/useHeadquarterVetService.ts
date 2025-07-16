@@ -5,6 +5,8 @@ import { HeadquarterVetServiceAdapter } from '@/adapters/HeadquarterVetServiceAd
 import type { EmployeeBasicInfo as EmployeeBasicInfoView } from '@/models/EmployeeBasicInfo'
 import { EmployeeAdapter } from '@/adapters/EmployeeAdapter'
 import type { FormValues as AddHeadquarterVetServiceSchema } from '@/validation-schemas-forms/schema-add-headquarter-vet-service'
+import type { HeadquarterServiceInfoPanel as HeadquarterServiceInfoPanelView } from '@/models/HeadquarterServiceInfoPanel'
+import type { PageResponse } from '@/services/models/PageResponse'
 
 export function useHeadquarterVetService() {
   //get from useAsyncHandle
@@ -42,14 +44,16 @@ export function useHeadquarterVetService() {
     return services.map(HeadquarterVetServiceAdapter.toHeadquarterVetServiceView)
   }
 
-const getAllHeadquarterVetServiceByHeadquarter = async (
-  headquarterId: number,
-): Promise<HeadquarterVetServiceView[]> => {
-  const services = await runUseCase('getAllHeadquarterVetServiceByHeadquarter', () =>
-    headquarterVetServiceUsesCases.getAllHeadquarterVetServiceByHeadquarter.execute(headquarterId),
-  )
-  return services.map(HeadquarterVetServiceAdapter.toHeadquarterVetServiceView)
-}
+  const getAllHeadquarterVetServiceByHeadquarter = async (
+    headquarterId: number,
+  ): Promise<HeadquarterVetServiceView[]> => {
+    const services = await runUseCase('getAllHeadquarterVetServiceByHeadquarter', () =>
+      headquarterVetServiceUsesCases.getAllHeadquarterVetServiceByHeadquarter.execute(
+        headquarterId,
+      ),
+    )
+    return services.map(HeadquarterVetServiceAdapter.toHeadquarterVetServiceView)
+  }
 
   const getHeadquarterVetServiceById = async (id: number): Promise<HeadquarterVetServiceView> => {
     const service = await runUseCase('getHeadquarterVetServiceById', () =>
@@ -76,10 +80,30 @@ const getAllHeadquarterVetServiceByHeadquarter = async (
   }
 
   const updateSimultaneousCapacity = async (id: number, capacity: number): Promise<void> => {
-    console.log(id,capacity)
+    console.log(id, capacity)
     await runUseCase('updateSimultaneousCapacity', () =>
       headquarterVetServiceUsesCases.updateSimultaneousCapacity.execute(id, capacity),
     )
+  }
+
+  const filterHeadquarterVetServices = async (
+    page: number,
+    size: number,
+    filters: {
+      serviceName?: string
+      categoryId?: number
+      speciesId?: number
+      headquarterId?: number
+    },
+  ): Promise<PageResponse<HeadquarterServiceInfoPanelView>> => {
+    const result = await runUseCase('filterHeadquarterVetServices', () =>
+      headquarterVetServiceUsesCases.filterHeadquarterVetServices.execute(page, size, filters),
+    )
+
+    return {
+      ...result,
+      content: result.content.map(HeadquarterVetServiceAdapter.fromPanelInfoToPanelInfoView),
+    }
   }
 
   return {
@@ -93,6 +117,7 @@ const getAllHeadquarterVetServiceByHeadquarter = async (
     listVeterinariansByHeadVetService,
     enableHeadquarterVetService,
     updateSimultaneousCapacity,
-    getAllHeadquarterVetServiceByHeadquarter
+    getAllHeadquarterVetServiceByHeadquarter,
+    filterHeadquarterVetServices
   }
 }

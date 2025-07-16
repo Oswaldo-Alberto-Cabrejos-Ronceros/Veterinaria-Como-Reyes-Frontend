@@ -36,7 +36,7 @@ describe('TheHeader.vue',()=>{
     const wrapper = mountWithPrimeVueAndRouter(TheHeader);
     const buttons = wrapper.findAllComponents(Button);
     //for now
-    expect(buttons.length).toBe(5);
+    expect(buttons.length).toBe(3);
   });
 
 })

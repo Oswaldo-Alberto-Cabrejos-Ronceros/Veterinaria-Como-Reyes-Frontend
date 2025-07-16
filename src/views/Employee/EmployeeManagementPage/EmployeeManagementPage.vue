@@ -35,6 +35,7 @@ import Tag from 'primevue/tag'
 import BlockCardPrimary from '@/components/BlockCardPrimary.vue'
 import type { FormValues as BlockSchema } from '@/validation-schemas-forms/schema-block-employee-client'
 import { useAuthentication } from '@/composables/useAuthentication'
+import CardLoader from '@/components/CardLoader.vue'
 //toast
 const toast = useToast()
 
@@ -60,6 +61,8 @@ const {
   restoreEmployee,
   getEmployeeMyInfo,
 } = useEmployee()
+
+const typedError = error as Record<string, string | null>
 
 const { getAllRoles } = useRole()
 
@@ -169,7 +172,7 @@ const headquartersToOptionsSelect = (headquarters: Headquarter[]): OptionSelect[
 
 //form
 
-const { errors, defineField } = useForm<FormValues>({
+const { resetForm,errors, defineField } = useForm<FormValues>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
     dni: '',
@@ -181,6 +184,11 @@ const { errors, defineField } = useForm<FormValues>({
     status: true,
   },
 })
+
+const handleResetForm =()=>{
+  resetForm()
+  loadEmployees()
+}
 
 const fieldMap = {
   dni: defineField('dni'),
@@ -225,6 +233,8 @@ const addEmployee = async () => {
     props: {
       modal: true,
       header: 'Agregar empleado',
+      blockScroll: true,
+      dismissableMask: true,
     },
     data: {
       headquartersOptions: headquartersToOptionsSelect(await getAllHeadquarters()),
@@ -233,10 +243,23 @@ const addEmployee = async () => {
     onClose: async (options) => {
       const data = options?.data as AddEmployeeSchema
       if (data) {
-        const employee = await createEmployee(data)
-        console.log('Datos recibidos:', employee)
-        loadEmployees()
-        showToast('Empleado agregado exitosamente: ' + employee.names, 'success', 'Exito')
+        try {
+          const employee = await createEmployee(data)
+          console.log('Datos recibidos:', employee)
+          showToast('Empleado agregado exitosamente: ' + employee.names, 'success', 'Éxito')
+          loadEmployees()
+        } catch (error) {
+          console.error(error)
+          if (typedError.createEmployee) {
+            showToast(
+              `Error al crear al empleado: ${data.names} ${typedError.createEmployee}`,
+              'warn',
+              'Error',
+            )
+          } else {
+            showToast('Error al crear al empleado: ' + data.names, 'warn', 'Error')
+          }
+        }
       }
     },
   })
@@ -251,6 +274,8 @@ const viewEmployee = async (employee: EmployeeList) => {
     props: {
       modal: true,
       header: `${employee.lastnames} ,${employee.names}`,
+      blockScroll: true,
+      dismissableMask: true,
     },
   })
 }
@@ -279,6 +304,8 @@ const editEmployee = async (employeeData: EmployeeList) => {
     props: {
       modal: true,
       header: `${employeeData.lastnames} , ${employeeData.names}`,
+      blockScroll: true,
+      dismissableMask: true,
     },
     onClose: async (options) => {
       const data = options?.data as EditEmployeeSchema
@@ -287,10 +314,18 @@ const editEmployee = async (employeeData: EmployeeList) => {
           const employee = await updateEmployee(employeeData.id, data)
           console.log('Datos recibidos:', employee)
           loadEmployees()
-          showToast('Empleado editado exitosamente: ' + employee.names, 'success', 'Exito')
+          showToast('Empleado editado exitosamente: ' + employee.names, 'success', 'Éxito')
         } catch (error) {
           console.error(error)
-          showToast('Error al editar al empleado: ' + employee.names, 'warn', 'Error')
+          if (typedError.updateEmployee) {
+            showToast(
+              `Error al editar al empleado: ${employee.names} ${typedError.updateEmployee}`,
+              'warn',
+              'Error',
+            )
+          } else {
+            showToast('Error al editar al empleado: ' + employee.names, 'warn', 'Error')
+          }
         }
       }
     },
@@ -305,13 +340,15 @@ const openModalBlock = async (employee: EmployeeList) => {
     props: {
       modal: true,
       header: `Bloquear ${employee.names} ${employee.lastnames}`,
+      blockScroll: true,
+      dismissableMask: true,
     },
     onClose: async (options) => {
       const data = options?.data as BlockSchema
       if (data) {
         await blockEmployee(employee.id, data.blockNote)
         loadEmployees()
-        showToast('Empleado eliminado exitosamente: ' + employee.names, 'success', 'Exito')
+        showToast('Empleado eliminado exitosamente: ' + employee.names, 'success', 'Éxito')
       }
     },
   })
@@ -365,7 +402,7 @@ const restoreEmployeeConfirm = (event: MouseEvent | KeyboardEvent, employee: Emp
     },
     accept: async () => {
       await restoreEmployee(employee.id)
-      showToast('Empleado restaurado exitosamente: ' + employee.names, 'success', 'Exito')
+      showToast('Empleado restaurado exitosamente: ' + employee.names, 'success', 'Éxito')
       loadEmployees()
     },
     reject: () => {
@@ -386,6 +423,7 @@ const exportCSV = () => {
 
 <template>
   <div class="layout-principal-flex">
+    <CardLoader v-if="loading.createEmployee||loading.updateEmployee||loading.restoreEmployee||loading.blockEmployee"/>
     <Card class="card-principal-color-neutral">
       <template #title>
         <h3 class="h3">Gestión de empleados</h3>
@@ -464,8 +502,10 @@ const exportCSV = () => {
                 {{ errors.status }}
               </Message>
             </div>
+            <div class="form-button-search-container-grid-col-5-end">
+              <Button size="small" class="py-2" severity="secondary" variant="outlined" label="Limpiar" iconPos="left" icon="pi pi-replay" @click="handleResetForm"/>
+            </div>
           </form>
-
 
           <!-- imporve design responsive -->
           <!-- for messague loading  -->
@@ -477,17 +517,6 @@ const exportCSV = () => {
             Error al cargar los empleados
           </Message>
           <!-- table -->
-                         <div class="w-full flex flex-col xs:flex-row justify-between gap-2">
-                <Button
-                  icon="pi pi-user-plus"
-                  iconPos="right"
-                  severity="success"
-                  label="Agregar Empleado"
-                  @click="addEmployee"
-                  v-if="roleMain === 'Administrador'"
-                />
-                <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
-              </div>
           <DataTable
             v-if="employees"
             paginator
@@ -503,16 +532,31 @@ const exportCSV = () => {
             :rows-per-page-options="[1, 2, 3, 4]"
             ref="dt"
           >
-            <Column field="names" sortable header="Nombres" style="width: 18%"></Column>
+            <template #header>
+              <div class="w-full flex flex-col xs:flex-row justify-between gap-2 pb-4">
+                <Button
+                  icon="pi pi-user-plus"
+                  iconPos="right"
+                  severity="success"
+                  label="Agregar Empleado"
+                  @click="addEmployee"
+                />
+                <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
+              </div>
+            </template>
+            <Column field="names" header="Nombres" sortable style="width: 18%"></Column>
             <Column field="lastnames" sortable header="Apellidos" style="width: 18%"></Column>
-            <Column field="dni" header="DNI" sortable style="width: 15%"></Column>
+            <Column field="dni" sortable style="width: 15%" header="DNI"></Column>
+
             <Column class="hidden lg:table-cell" header="CMVP" sortable style="width: 15%">
               <template #body="{ data }">
                 {{ data.cmvp ? data.cmvp : '' }}
                 <Tag v-if="!data.cmvp" value="No requerido" severity="secondary" /> </template
             ></Column>
-            <Column field="rolName" header="Rol" sortable style="width: 15%"> </Column>
-            <Column field="nameHeadquarter" header="Sede" sortable style="width: 15%"> </Column>
+
+            <Column field="rolName" sortable header="Rol" style="width: 15%"> </Column>
+            <Column field="nameHeadquarter" sortable style="width: 15%" header="Sede"> </Column>
+
             <Column header="Acciones">
               <template #body="{ data }">
                 <div

@@ -35,10 +35,10 @@ import { useAuthentication } from '@/composables/useAuthentication'
 //toast
 const toast = useToast()
 
-const showToast = (message: string) => {
+const showToast = (message: string, severity: string, sumary: string) => {
   toast.add({
-    severity: 'success',
-    summary: 'Éxito',
+    severity: severity,
+    summary: sumary,
     detail: message,
     life: 3000,
   })
@@ -46,8 +46,9 @@ const showToast = (message: string) => {
 
 //methods
 
-const { loading, error, searchPets, createPet, getPetById, updatePet, deletePet, activatePet } =
-  usePet()
+const { loading, error, searchPets, createPet, getPetById, updatePet, deletePet, activatePet } = usePet()
+
+const typedError = error as Record<string, string | null>
 
 const { getMainRole } = useAuthentication()
 
@@ -72,10 +73,12 @@ const rows = ref<number>(1)
 
 const first = ref<number>(0)
 
-const mainRole = ref<string|null>('')
+const mainRole = ref<string | null>('')
 
 onMounted(async () => {
   loadPets()
+  const role = getMainRole()
+  if (role != null) mainRole.value = getMainRole()
 })
 
 const searchPetsDebounce = debounce(() => {
@@ -103,8 +106,6 @@ const loadPets = async (event?: DataTablePageEvent) => {
   species.value = await getAllSpecies()
   speciesOptions.value = speciesNameToOptionsSelect(species.value)
   loadsBreed()
-  const role = getMainRole()
-  if (role != null) mainRole.value = getMainRole()
 }
 
 const loadsBreed = async () => {
@@ -213,6 +214,8 @@ const addPet = async () => {
     props: {
       modal: true,
       header: 'Agregar mascota',
+      blockScroll: true,
+      dismissableMask: true,
     },
     data: {
       speciesOptions: speciesToOptionsSelect(await getAllSpecies()),
@@ -220,9 +223,18 @@ const addPet = async () => {
     onClose: async (options) => {
       const data = options?.data as AddEditPetSchema
       if (data) {
-        await createPet(data)
-        loadPets()
-        showToast('Mascota agregada exitosamente: ' + data.name)
+        try {
+          await createPet(data)
+          loadPets()
+          showToast('Mascota agregada exitosamente: ' + data.name, 'success', 'Éxito')
+        } catch (error) {
+          console.error(error)
+          if (typedError.createPet) {
+            showToast('Error al agregar la mascota: ' + data.name + typedError.createPet, 'warn', 'Error')
+          } else {
+            showToast('Error al agregar la mascota' + data.name, 'warn', 'Error')
+          }
+        }
       }
     },
   })
@@ -246,6 +258,8 @@ const editPet = async (petData: PetList) => {
     props: {
       modal: true,
       header: `${petData.name}`,
+      blockScroll: true,
+      dismissableMask: true,
     },
     data: {
       petData: {
@@ -266,9 +280,18 @@ const editPet = async (petData: PetList) => {
     onClose: async (options) => {
       const data = options?.data as AddEditPetSchema
       if (data) {
-        await updatePet(petData.id, data)
-        loadPets()
-        showToast('Mascota editada exitosamente: ' + data.name)
+        try {
+          await updatePet(petData.id, data)
+          loadPets()
+          showToast('Mascota editada exitosamente: ' + data.name, 'success', 'Éxito')
+        } catch (error) {
+          console.error(error)
+          if (typedError.updatePet) {
+            showToast('Error al editar la mascota: ' + data.name + typedError.updatePet, 'warn', 'Error')
+          } else {
+            showToast('Error al editar la mascota: ' + data.name, 'warn', 'Error')
+          }
+        }
       }
     },
   })
@@ -297,7 +320,7 @@ const confirmDeletePet = (event: MouseEvent | KeyboardEvent, pet: PetList) => {
       console.log('Eliminando mascota: ', pet.id)
       await deletePet(pet.id) // esta es la que viene de usePet()
       loadPets()
-      showToast('Mascota eliminada exitosamente: ' + pet.name)
+      showToast('Mascota eliminada exitosamente: ' + pet.name, 'success', 'Éxito')
     },
     reject: () => {
       console.log('Cancelando eliminación')
@@ -326,7 +349,7 @@ const confirmActivatePet = (event: MouseEvent | KeyboardEvent, pet: PetList) => 
       console.log('Activando mascota: ', pet.id)
       await activatePet(pet.id)
       loadPets()
-      showToast('Mascota activada exitosamente: ' + pet.name)
+      showToast('Mascota activada exitosamente: ' + pet.name, 'success', 'Éxito')
     },
     reject: () => {
       console.log('Cancelando activación')
@@ -386,6 +409,7 @@ watch(
             <div>
               <label class="block mb-2">Especie</label>
               <Select
+                filter
                 class="w-full"
                 v-bind="specieAttrs"
                 v-model="specie"
@@ -406,6 +430,7 @@ watch(
             <div>
               <label class="block mb-2">Raza</label>
               <Select
+                filter
                 class="w-full"
                 v-bind="breedAttrs"
                 v-model="breed"
@@ -473,9 +498,10 @@ watch(
             :first="first"
             :loading="loading.searchPets"
             @page="loadPets"
+            scrollable
+            removableSort
             :rows-per-page-options="[1, 2, 3, 4]"
             ref="dt"
-
           >
             <template #header>
               <div class="w-full flex flex-col xs:flex-row justify-between gap-2 pb-4">
@@ -485,41 +511,16 @@ watch(
                   severity="success"
                   label="Agregar Mascota"
                   @click="addPet"
+                  v-if="mainRole !== 'Veterinario'"
                 />
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
             </template>
-            <Column
-              field="name"
-              sortable
-              header="Nombre"
-              class="hidden lg:table-cell"
-              style="width: 18%"
-            ></Column>
+            <Column field="name" sortable style="width: 18%" header="Nombre"></Column>
             <Column field="owner" sortable header="Dueño" style="width: 18%"></Column>
-            <Column
-              class="hidden lg:table-cell"
-              header="Especie"
-              field="specie"
-              sortable
-              style="width: 15%"
-            >
-            </Column>
-            <Column
-              class="hidden lg:table-cell"
-              header="Raza"
-              field="breed"
-              sortable
-              style="width: 15%"
-            >
-            </Column>
-            <Column
-              field="gender"
-              class="hidden md:table-cell"
-              header="Sexo"
-              sortable
-              style="width: 15%"
-            ></Column>
+            <Column field="specie" header="Especie" sortable style="width: 15%"> </Column>
+            <Column field="breed" sortable style="width: 15%" header="Raza"> </Column>
+            <Column field="gender" sortable style="width: 15%" header="Sexo"></Column>
             <Column header="Acciones">
               <template #body="{ data }">
                 <div class="flex items-center flex-row lg:flex-col xl:flex-row gap-1">
@@ -540,10 +541,10 @@ watch(
                     aria-label="Editar"
                     rounded
                     @click="editPet(data)"
+                    v-if="mainRole !== 'Veterinario'"
                   ></Button>
                   <Button
-          v-if="data.status === 'Activo'"
-
+                    v-if="data.status === 'Activo' && mainRole !== 'Veterinario'"
                     icon="pi pi-ban"
                     severity="danger"
                     variant="text"
@@ -553,7 +554,7 @@ watch(
                     @click="confirmDeletePet($event, data)"
                   ></Button>
                   <Button
-   v-if="data.status === 'Inactivado'"
+                    v-if="data.status === 'Inactivado' && mainRole !== 'Veterinario'"
                     icon="pi pi-refresh"
                     severity="warn"
                     variant="text"

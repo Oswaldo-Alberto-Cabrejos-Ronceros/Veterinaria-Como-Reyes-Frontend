@@ -53,10 +53,14 @@ export interface InfoBasicAppointment {
   categoryServiceName: string
   status: string
   duration: number
+  nameHeadquarter: string
+  addressHeadquarter: string
 }
 
 export interface AppointmentList {
   appointmentId: number
+  petName: string
+  petOwner: string
   day: string
   headquarter: string
   categoryService: string
@@ -92,15 +96,6 @@ export interface ClientInfoForAppointment {
   phoneNumber: string
   email: string
   address: string
-}
-
-export interface PaymentInfoForAppointment {
-  paymentId: number
-  amount: number
-  serviceName: string
-  paymentMethodId: number
-  paymentMethod: string
-  paymentStatus: string
 }
 
 export interface AppointmentStatsToday {
@@ -139,3 +134,15 @@ export interface AppointmentStatsForReceptionist {
   pendingAppointmentsToday: number
 }
 
+export interface OperationalMonthlyStats {
+  totalPatients: number
+  totalClients: number
+  activeVeterinarians: number
+  avgIncomePerVet: number
+}
+
+export interface DailyAppointmentStats {
+  dayLabels: string[]
+  completedCounts: number[]
+  cancelledCounts: number[]
+}

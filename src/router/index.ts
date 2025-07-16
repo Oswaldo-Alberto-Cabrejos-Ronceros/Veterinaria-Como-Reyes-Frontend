@@ -28,11 +28,14 @@ import AttendAppointmentVeterinaryPage from '@/views/Employee/AttendAppointmentV
 import CareUnitaryPage from '@/views/Employee/CareUnitaryPage/CareUnitaryPage.vue'
 import HeadquarterVetServiceManagement from '@/views/Employee/HeadquarterVetServiceManagement/HeadquarterVetServiceManagement.vue'
 import AppointmentsVeterinaryPage from '@/views/Employee/AppointmentsVeterinaryPage/AppointmentsVeterinaryPage.vue'
+import AnaliticsPage from '@/views/Employee/AnaliticsPage/AnaliticsPage.vue'
+import ReportsPage from '@/views/Employee/ReportsPage/ReportsPage.vue'
 //client
 import MyAppointmentsClientPage from '@/views/Client/MyAppointmentsClientPage/MyAppointmentsClientPage.vue'
 import MyPetsPage from '@/views/Client/MyPetsPage/MyPetsPage.vue'
 import PetUnitaryClientPage from '@/views/Client/PetUnitaryClientPage/PetUnitaryClientPage.vue'
 import ScheduleAppointmentClientPage from '@/views/Client/ScheduleAppointmentClientPage/ScheduleAppointmentClientPage.vue'
+import AppointmentUnitaryClientPage from '@/views/Client/AppointmentUnitaryClientPage/AppointmentUnitaryClientPage.vue'
 import { useAuthentication } from '@/composables/useAuthentication'
 
 const router = createRouter({
@@ -101,6 +104,13 @@ const router = createRouter({
           path: 'my-pets/:petId',
           name: 'client-pets-unitary-pet',
           component: PetUnitaryClientPage,
+          props: true,
+          meta: { requiresAuth: true, roles: ['Cliente'] },
+        },
+        {
+          path: 'my-appointments/appointment/:appointmentId',
+          name: 'client-appointment-unitary',
+          component: AppointmentUnitaryClientPage,
           props: true,
           meta: { requiresAuth: true, roles: ['Cliente'] },
         },
@@ -239,6 +249,17 @@ const router = createRouter({
               props: true,
               meta: { requiresAuth: true, roles: ['Administrador'] },
             },
+            {
+              path: 'analitics',
+              name: 'administrator-analitics',
+              component: AnaliticsPage,
+              meta: { requiresAuth: true, roles: ['Administrador'] },
+            },
+            {
+              path: 'reports',
+              name: 'administrador-reports',
+              component: ReportsPage,
+            },
           ],
         },
         {
@@ -282,7 +303,7 @@ const router = createRouter({
               component: AppointmentManagementPage,
               meta: { requiresAuth: true, roles: ['Encargado Sede'] },
             },
-                        {
+            {
               path: 'pets-management/pet/:petId',
               name: 'manager-pets-unitary-pet',
               component: PetUnitaryClientPage,
@@ -315,24 +336,25 @@ const router = createRouter({
               component: ServiceManagementPage,
               meta: { requiresAuth: true, roles: ['Encargado Sede'] },
             },
-                        {
+            {
               path: 'category-management',
               name: 'manager-category-management',
               component: CategoryManagementPage,
               meta: { requiresAuth: true, roles: ['Encargado Sede'] },
-            },            {
+            },
+            {
               path: 'services-headquarters-management',
               name: 'manager-services-headquarters-management',
               component: HeadquarterVetServiceManagement,
               meta: { requiresAuth: true, roles: ['Encargado Sede'] },
             },
-                        {
+            {
               path: 'payment-method-management',
               name: 'manager-payment-method-management',
               component: PaymentMethodManagementPage,
               meta: { requiresAuth: true, roles: ['Encargado Sede'] },
             },
-                        {
+            {
               path: 'species-management',
               name: 'manager-species-management',
               component: SpecieManagementPage,
@@ -344,7 +366,7 @@ const router = createRouter({
               component: BreedManagementPage,
               meta: { requiresAuth: true, roles: ['Encargado Sede'] },
             },
-                        {
+            {
               path: 'payment-management',
               name: 'manager-payment-management',
               component: PaymentManagementPage,
@@ -416,7 +438,7 @@ const router = createRouter({
               props: true,
               meta: { requiresAuth: true, roles: ['Recepcionista'] },
             },
-                        {
+            {
               path: 'client-management',
               name: 'receptionist-client-management',
               component: ClientManagementPage,
@@ -447,7 +469,7 @@ const router = createRouter({
               component: PetsManagementPage,
               meta: { requiresAuth: true, roles: ['Veterinario'] },
             },
-                                    {
+            {
               path: 'pets-management/pet/:petId',
               name: 'veterinary-pets-unitary-pet',
               component: PetUnitaryClientPage,
@@ -455,16 +477,16 @@ const router = createRouter({
               meta: { requiresAuth: true, roles: ['Veterinario'] },
             },
             {
-              path:'appointments',
-              name:'appointments',
-              component:AppointmentsVeterinaryPage,
-                            props: true,
+              path: 'appointments',
+              name: 'appointments',
+              component: AppointmentsVeterinaryPage,
+              props: true,
               meta: { requiresAuth: true, roles: ['Veterinario'] },
             },
             {
               path: 'appointments/attend/:appointmentId',
               name: 'veterinary-appointments-attend',
-              props:true,
+              props: true,
               component: AttendAppointmentVeterinaryPage,
               meta: { requiresAuth: true, roles: ['Veterinario'] },
             },

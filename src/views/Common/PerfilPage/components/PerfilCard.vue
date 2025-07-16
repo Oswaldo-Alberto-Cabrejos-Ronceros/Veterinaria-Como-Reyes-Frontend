@@ -111,7 +111,7 @@ const handleEditUserClient = () => {
               icon="pi pi-camera"
               rounded
               aria-label="Foto"
-              class="absolute bottom-2 right-2 z-20"
+              class="absolute bottom-2 left-2 z-20"
             />
           </div>
           <div class="flex flex-col items-center mt-4">

@@ -28,10 +28,10 @@ import Select from 'primevue/select'
 //toast
 const toast = useToast()
 
-const showToast = (message: string) => {
+const showToast = (message: string, severity: string, sumary: string) => {
   toast.add({
-    severity: 'success',
-    summary: 'Éxito',
+    severity: severity,
+    summary: sumary,
     detail: message,
     life: 3000,
   })
@@ -43,7 +43,18 @@ const { getMainRole } = useAuthentication()
 
 //for get species
 
-const { loading, error, getSpecieById,createSpecie, updateSpecie, activateSpecie, searchSpecies } = useSpecie()
+const {
+  loading,
+  error,
+  deleteSpecie,
+  getSpecieById,
+  createSpecie,
+  updateSpecie,
+  activateSpecie,
+  searchSpecies,
+} = useSpecie()
+
+const typedError = error as Record<string, string | null>
 
 const species = ref<SpecieList[]>([])
 
@@ -60,7 +71,7 @@ const loadSpecies = async (event?: DataTablePageEvent) => {
   const page = event ? event.first / event.rows : 0
   const size = event ? event.rows : rows.value
   rows.value = size
-  const response = await searchSpecies(page, size, name.value,status.value)
+  const response = await searchSpecies(page, size, name.value, status.value)
   species.value = response.content
   totalRecords.value = response.totalElements
   const role = getMainRole()
@@ -105,14 +116,25 @@ const addSpecie = () => {
     props: {
       modal: true,
       header: 'Agregar especie',
+      blockScroll: true,
+      dismissableMask: true,
     },
     onClose: async (options) => {
       const data = options?.data as AddEditSpecieSchema
       if (data) {
-        const specie = await createSpecie(data)
-        console.log('Datos recibidos del dialogo', specie)
-        showToast('Especie agregada exitosamente: ' + data.name)
-        loadSpecies()
+        try {
+          const specie = await createSpecie(data)
+          console.log('Datos recibidos del dialogo', specie)
+          showToast('Especie agregada exitosamente: ' + data.name, 'success', 'Éxito')
+          loadSpecies()
+        } catch (error) {
+          console.error(error)
+          if (typedError.createSpecie) {
+            showToast('Error al agregar especie: ' + data.name + typedError.createSpecie, 'warn', 'Error')
+          } else {
+            showToast('Error al agregar especie: ' + data.name, 'warn', 'Error')
+          }
+        }
       }
     },
   })
@@ -124,6 +146,8 @@ const editSpecie = async (specieData: SpecieList) => {
     props: {
       modal: true,
       header: `${specieData.name}`,
+      blockScroll: true,
+      dismissableMask: true,
     },
     data: {
       specieData: {
@@ -134,10 +158,19 @@ const editSpecie = async (specieData: SpecieList) => {
     onClose: async (options) => {
       const data = options?.data as AddEditSpecieSchema
       if (data) {
-        const specie = await updateSpecie(specieData.id, data)
-        console.log('Datos recibidos del dialogo', specie)
-        showToast('Especie editada exitosamente: ' + data.name)
-        loadSpecies()
+        try {
+          const specie = await updateSpecie(specieData.id, data)
+          console.log('Datos recibidos del dialogo', specie)
+          showToast('Especie editada exitosamente: ' + data.name, 'success', 'Éxito')
+          loadSpecies()
+        } catch (error) {
+          console.error(error)
+          if (typedError.updateSpecie) {
+            showToast('Error al actualizar especie: ' + data.name + typedError.updateSpecie, 'warn', 'Error')
+          } else {
+            showToast('Error al actualizar especie: ' + data.name, 'warn', 'Error')
+          }
+        }
       }
     },
   })
@@ -146,11 +179,14 @@ const editSpecie = async (specieData: SpecieList) => {
 //for confirm
 const confirm = useConfirm()
 
-const deleteSpecie = (event: MouseEvent | KeyboardEvent, specieData: SpecieList) => {
+const handleDeleteReactiveSpecie = (event: MouseEvent | KeyboardEvent, specieData: SpecieList) => {
+  const isActive = specieData.status
   confirm.require({
     group: 'confirmPopupGeneral',
     target: event.currentTarget as HTMLElement,
-    message: '¿Seguro que quiere eliminar esta especie?',
+    message: isActive
+      ? '¿Seguro que quiere eliminar esta especie?'
+      : '¿Seguro que quiere reactivar esta especie?',
     icon: 'pi pi-exclamation-triangle',
     rejectProps: {
       label: 'Cancelar',
@@ -158,12 +194,19 @@ const deleteSpecie = (event: MouseEvent | KeyboardEvent, specieData: SpecieList)
       outlined: true,
     },
     acceptProps: {
-      label: 'Eliminar',
-      severity: 'danger',
+      label: isActive ? 'Desactivar' : 'Activar',
+      severity: isActive ? 'danger' : 'success',
     },
     accept: async () => {
-      await activateSpecie(specieData.id)
-      showToast('Especie eliminada exitosamente: ' + specieData.name)
+      if (isActive) {
+        await deleteSpecie(specieData.id)
+
+        showToast('Especie eliminada exitosamente: ' + specieData.name, 'success', 'Éxito')
+      } else {
+        await activateSpecie(specieData.id)
+        showToast('Especie reactivado exitosamente: ' + specieData.name, 'success', 'Éxito')
+      }
+
       loadSpecies()
     },
     reject: () => {
@@ -252,6 +295,8 @@ const statusOptions: OptionSelect[] = [
             :first="first"
             :loading="loading.searchSpecies"
             :totalRecords="totalRecords"
+            scrollable
+            removableSort
             :rows-per-page-options="[5, 10, 20]"
             ref="dt"
             @page="loadSpecies"
@@ -269,12 +314,14 @@ const statusOptions: OptionSelect[] = [
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
             </template>
-            <Column field="name" sortable header="Nombre" style="width: 60%" />
+
+            <Column field="name" header="Nombre" sortable style="width: 80%"></Column>
+
             <Column field="status" header="Estado" style="width: 20%">
               <template #body="{ data }">
                 <Tag
-                  :value="data.status ? 'Activo' : 'Inactivo'"
-                  :severity="data.status ? 'success' : 'danger'"
+                  :value="data.status === 'Activo' ? 'Activo' : 'Inactivo'"
+                  :severity="data.status === 'Activo' ? 'success' : 'danger'"
                 />
               </template>
             </Column>
@@ -298,9 +345,20 @@ const statusOptions: OptionSelect[] = [
                     size="small"
                     aria-label="Bloquear"
                     rounded
-                    v-if="roleMain === 'Administrador'"
-                    @click="deleteSpecie($event, data)"
+                    v-if="data.status === 'Activo' && roleMain === 'Administrador'"
+                    @click="handleDeleteReactiveSpecie($event, data)"
                   />
+
+                  <Button
+                    v-if="data.status === 'Inactivo' && roleMain === 'Administrador'"
+                    icon="pi pi-refresh"
+                    severity="warn"
+                    variant="text"
+                    aria-label="Desbloquear"
+                    rounded
+                    size="small"
+                    @click="handleDeleteReactiveSpecie($event, data)"
+                  ></Button>
                 </div>
               </template>
             </Column>

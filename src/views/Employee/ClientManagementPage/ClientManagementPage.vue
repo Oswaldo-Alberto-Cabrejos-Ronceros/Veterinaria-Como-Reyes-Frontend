@@ -33,20 +33,22 @@ import type { FormValues as BlockSchema } from '@/validation-schemas-forms/schem
 //toast
 const toast = useToast()
 
-const showToast = (message: string) => {
+const showToast = (message: string, severity: string, sumary: string) => {
   toast.add({
-    severity: 'success',
-    summary: 'Éxito',
+    severity: severity,
+    summary: sumary,
     detail: message,
     life: 3000,
   })
 }
 
 //methods
-const { loading, error, createClient, updateClient, blockClient, searchClient, getClientById } =
+const { loading, error,createClient, updateClient, blockClient, searchClient, getClientById } =
   useClient()
 
 const { getAllHeadquarters } = useHeadquarter()
+
+const typedError = error as Record<string, string | null>
 
 //clients
 //refs
@@ -119,6 +121,8 @@ const viewClient = async (clientData: ClientList) => {
     props: {
       modal: true,
       header: `${clientData.lastnames}, ${clientData.names}`,
+      blockScroll: true,
+      dismissableMask: true,
     },
   })
 }
@@ -128,6 +132,8 @@ const addClient = async () => {
     props: {
       modal: true,
       header: 'Agregar cliente',
+      blockScroll: true,
+      dismissableMask: true,
     },
     data:{
   headquartersOptions: headquartersToOptionsSelect(await getAllHeadquarters()),
@@ -135,10 +141,19 @@ const addClient = async () => {
     onClose: async (options) => {
       const data = options?.data as SchemaClientAdd
       if (data) {
-        const client = await createClient(data)
-        console.log('Datos recibidos', client)
-        loadClients()
-        showToast('Cliente agregado exitosamente: ' + client.names)
+        try {
+          const client = await createClient(data)
+          console.log('Datos recibidos:', client)
+          showToast('Cliente agregado exitosamente: ' + client.names, 'success', 'Éxito')
+          loadClients()
+        } catch (error) {
+          console.error(error)
+          if (typedError.createClient) {
+            showToast('Error al crear el cliente: ' + data.names + typedError.createClient, 'warn', 'Error')
+          } else {
+            showToast('Error al crear el cliente' + data.names, 'warn', 'Error')
+          }
+        }
       }
     },
   })
@@ -162,15 +177,25 @@ const editClient = async (clientData: ClientList) => {
     props: {
       modal: true,
       header: `${clientData.lastnames}, ${clientData.names}`,
+      blockScroll: true,
+      dismissableMask: true,
     },
     onClose: async (options) => {
       const data = options?.data as SchemaEditClient
       if (data) {
-        console.log(clientData)
-        const client = await updateClient(clientData.id, data)
-        console.log('Datos recibidos', client)
-        loadClients()
-        showToast('Cliente editado exitosamente: ' + client.names)
+        try {
+          const client = await updateClient(clientData.id, data)
+          console.log('Datos recibidos:', client)
+          loadClients()
+          showToast('Cliente editado exitosamente: ' + client.names, 'success', 'Éxito')
+        } catch (error) {
+          console.error(error)
+          if (typedError.updateClient) {
+            showToast('Error al editar el cliente: ' + data.names + typedError.updateClient, 'warn', 'Error')
+          } else {
+            showToast('Error al editar el cliente: ' + data.names, 'warn', 'Error')
+          }
+        }
       }
     },
   })
@@ -187,13 +212,15 @@ const openModalBlock = async (client: ClientList) => {
     props: {
       modal: true,
       header: `Bloquear ${client.names} ${client.lastnames}`,
+      blockScroll: true,
+      dismissableMask: true,
     },
     onClose: async (options) => {
       const data = options?.data as BlockSchema
       if (data) {
         await blockClient(client.id, data.blockNote)
         loadClients()
-        showToast('Cliente eliminado exitosamente: ' + client.names)
+        showToast('Cliente eliminado exitosamente: ' + client.names, 'success', 'Éxito')
       }
     },
   })
@@ -243,8 +270,10 @@ const restoreClientAction = (event: MouseEvent | KeyboardEvent, client: ClientLi
     },
     accept: async () => {
       console.log('Restaurando cliente ', client.id)
+
+
       loadClients()
-      showToast('Cliente restaurado exitosamente: ' + client.names)
+      showToast('Cliente restaurado exitosamente: ' + client.names, 'success', 'Éxito')
     },
     reject: () => {
       console.log('Cancelando')
@@ -383,7 +412,9 @@ const headquartersToOptionsSelect = (headquarters: Headquarter[]): OptionSelect[
             :first="first"
             :loading="loading.searchClient"
             @page="loadClients"
-            :rows-per-page-options="[4,8,12]"
+            scrollable
+            removableSort
+            :rows-per-page-options="[1, 2, 3, 4]"
             ref="dt"
           >
             <template #header>
@@ -401,24 +432,21 @@ const headquartersToOptionsSelect = (headquarters: Headquarter[]): OptionSelect[
             <Column
               field="dni"
               sortable
-              header="DNI"
-              class="hidden lg:table-cell"
               style="width: 18%"
+              header="DNI"
             ></Column>
-            <Column field="names" sortable header="Nombres" style="width: 18%"></Column>
+            <Column header="Nombres" field="names" sortable style="width: 18%"></Column>
             <Column
               field="lastnames"
-              class="hidden md:table-cell"
-              header="Apellidos"
               sortable
               style="width: 15%"
+              header="Apellidos"
             ></Column>
             <Column
-              class="hidden lg:table-cell"
-              header="Sede"
               field="headquarterName"
               sortable
               style="width: 15%"
+              header="Sede"
             >
             </Column>
             <Column header="Acciones">

@@ -24,14 +24,15 @@ import type { Specie } from '@/models/Specie'
 import { useSpecie } from '@/composables/useSpecie'
 import type { DataTablePageEvent } from 'primevue/datatable'
 import { debounce } from 'lodash'
+import { useAuthentication } from '@/composables/useAuthentication'
 
 //toast
 const toast = useToast()
 
-const showToast = (message: string) => {
+const showToast = (message: string, severity: string, sumary: string) => {
   toast.add({
-    severity: 'success',
-    summary: 'Éxito',
+    severity: severity,
+    summary: sumary,
     detail: message,
     life: 3000,
   })
@@ -39,7 +40,22 @@ const showToast = (message: string) => {
 
 //get from compose
 
-const { loading, error, getBreedByUd,createBreed, updateBreed, activateBreed, searchBreeds } = useBreed()
+const roleMain = ref<string>('')
+
+const { getMainRole } = useAuthentication()
+
+const {
+  loading,
+  error,
+  deleteBreed,
+  getBreedByUd,
+  createBreed,
+  updateBreed,
+  activateBreed,
+  searchBreeds,
+} = useBreed()
+
+const typedError = error as Record<string, string | null>
 
 const { getAllSpecies } = useSpecie()
 
@@ -55,6 +71,10 @@ const searchBreedsDebounced = debounce(() => loadBreeds(), 400)
 onMounted(async () => {
   speciesOptions.value = speciesToOptionsSelect(await getAllSpecies())
   await loadBreeds()
+  const role = getMainRole()
+  if (role) {
+    roleMain.value = role
+  }
 })
 
 //for load breeds
@@ -113,6 +133,8 @@ const addBreed = () => {
     props: {
       modal: true,
       header: 'Agregar raza',
+      blockScroll: true,
+      dismissableMask: true,
     },
     data: {
       speciesOptions: speciesOptions,
@@ -120,36 +142,56 @@ const addBreed = () => {
     onClose: async (options) => {
       const data = options?.data as AddEditBreedSchema
       if (data) {
-        const breed = await createBreed(data)
-        console.log('Datos recibidos', breed)
-        loadBreeds()
-        showToast('Raza agregada exitosamente: ' + breed.name)
+        try {
+          const breed = await createBreed(data)
+          console.log('Datos recibidos', breed)
+          loadBreeds()
+          showToast('Raza agregada exitosamente: ' + breed.name, 'success', 'Éxito')
+        } catch (error) {
+          console.error(error)
+          if(typedError.createBreed){
+            showToast('Error al crear la raza: ' + data.name + typedError.createBreed, 'warn', 'Error')
+          } else {
+            showToast('Error al crear la raza', 'warn', 'Error')
+          }
+        }
       }
     },
   })
 }
 
 const editBreed = async (breedData: BreedList) => {
-  const breed= await getBreedByUd(breedData.id)
+  const breed = await getBreedByUd(breedData.id)
   dialog.open(AddEditBreedCard, {
     props: {
       modal: true,
       header: `${breedData.name}`,
+      blockScroll: true,
+      dismissableMask: true,
     },
     data: {
       breedData: {
         name: breed.name,
-        specieId:breed.specie.id
+        specieId: breed.specie.id,
       } as AddEditBreedSchema,
       speciesOptions: speciesOptions,
     },
     onClose: async (options) => {
       const data = options?.data as AddEditBreedSchema
       if (data) {
-        const breed = await updateBreed(breedData.id, data)
-        console.log('Datos recibidos', breed)
-        loadBreeds()
-        showToast('Raza editada exitosamente: ' + breed.name)
+        try {
+          const breed = await updateBreed(breedData.id, data)
+          console.log('Datos recibidos', breed)
+          loadBreeds()
+          showToast('Raza editada exitosamente: ' + breed.name, 'success', 'Éxito')
+        } catch (error) {
+          console.error(error)
+          if (typedError.updateBreed) {
+            showToast('Error al editar la raza: ' + data.name + typedError.updateBreed, 'warn', 'Error')
+          } else {
+            showToast('Error al editar la raza', 'warn', 'Error')
+          }
+        }
       }
     },
   })
@@ -158,13 +200,15 @@ const editBreed = async (breedData: BreedList) => {
 //for confirm
 const confirm = useConfirm()
 
-const deleteBreed = (event: MouseEvent | KeyboardEvent, breedData: BreedList) => {
+const handleDeleteReactiveBreed = (event: MouseEvent | KeyboardEvent, breedData: BreedList) => {
   const isActive = breedData.status
 
   confirm.require({
     group: 'confirmPopupGeneral',
     target: event.currentTarget as HTMLElement,
-    message: '¿Seguro que quiere eliminar esta raza?',
+    message: isActive
+      ? '¿Seguro que quiere eliminar esta raza?'
+      : '¿Seguro que quiere reactivar esta raza?',
     icon: 'pi pi-exclamation-triangle',
     rejectProps: {
       label: 'Cancelar',
@@ -176,8 +220,14 @@ const deleteBreed = (event: MouseEvent | KeyboardEvent, breedData: BreedList) =>
       severity: isActive ? 'danger' : 'success',
     },
     accept: async () => {
-      await activateBreed(breedData.id)
-      showToast('Raza eliminada exitosamente: ' + breedData.name)
+      if (isActive) {
+        await deleteBreed(breedData.id)
+        showToast('Raza eliminada exitosamente: ' + breedData.name, 'success', 'Éxito')
+      } else {
+        await activateBreed(breedData.id)
+        showToast('Raza reactivada exitosamente: ' + breedData.name, 'success', 'Éxito')
+      }
+
       loadBreeds()
     },
     reject: () => {
@@ -247,6 +297,7 @@ const statusOptions: OptionSelect[] = [
                 optionValue="value"
                 placeholder="Selecciona Especie"
                 showClear
+                filter
               />
 
               <Message v-if="errors.specieId" severity="error" size="small" variant="simple">
@@ -318,7 +369,7 @@ const statusOptions: OptionSelect[] = [
               class="hidden xs:table-cell"
             >
             </Column>
-            <Column header="Acciones">
+            <Column v-if="roleMain === 'Administrador'" header="Acciones">
               <template #body="{ data }">
                 <div class="flex items-center flex-row xs:flex-col lg:flex-row gap-1">
                   <Button
@@ -337,8 +388,20 @@ const statusOptions: OptionSelect[] = [
                     size="small"
                     aria-label="Bloquear"
                     rounded
-                    @click="deleteBreed($event, data)"
+                    v-if="data.status === 'Activo' && roleMain === 'Administrador'"
+                    @click="handleDeleteReactiveBreed($event, data)"
                   />
+
+                  <Button
+                    v-if="data.status === 'Inactivo' && roleMain === 'Administrador'"
+                    icon="pi pi-refresh"
+                    severity="warn"
+                    variant="text"
+                    aria-label="Desbloquear"
+                    rounded
+                    size="small"
+                    @click="handleDeleteReactiveBreed($event, data)"
+                  ></Button>
                 </div>
               </template>
             </Column>

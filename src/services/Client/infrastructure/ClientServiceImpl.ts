@@ -67,8 +67,8 @@ export class ClientServiceImpl implements ClientService {
     return response.data
   }
   async blockClient(clientId: number, note: string): Promise<void> {
-    await this.httpClient.patch<void>(`${this.urlBase}/${clientId}/block`,null, {
-      note: note,
+    await this.httpClient.patch<void>(`${this.urlBase}/${clientId}/block`, null, {
+      params: { note: note },
     })
   }
   async deleteClient(clientId: number): Promise<void> {
@@ -95,7 +95,7 @@ export class ClientServiceImpl implements ClientService {
     const response = await this.httpClient.patch<string>(
       `${this.urlBase}/${clientId}/block`,
       null,
-      params,
+      {params:params},
     )
     return response.data
   }
@@ -109,32 +109,38 @@ export class ClientServiceImpl implements ClientService {
     return response.data
   }
   async getClientInfoPanelAdmin(): Promise<ClientInfoPanelAdmin[]> {
-  const response = await this.httpClient.get<ClientInfoPanelAdmin[]>(`${this.urlBase}/panel-admin`)
-  return response.data
-}
+    const response = await this.httpClient.get<ClientInfoPanelAdmin[]>(
+      `${this.urlBase}/panel-admin`,
+    )
+    return response.data
+  }
 
-async getClientStats(): Promise<ClientStatsPanel> {
-  const response = await this.httpClient.get<ClientStatsPanel>(`${this.urlBase}/panel-admin/stats`)
-  return response.data
-}
+  async getClientStats(): Promise<ClientStatsPanel> {
+    const response = await this.httpClient.get<ClientStatsPanel>(
+      `${this.urlBase}/panel-admin/stats`,
+    )
+    return response.data
+  }
 
-async getClientInfoPanelByHeadquarterManager(headquarterId: number): Promise<ClientInfoPanelAdmin[]> {
-  const response = await this.httpClient.get<ClientInfoPanelAdmin[]>(
-    `${this.urlBase}/panel-manager/${headquarterId}`
-  )
-  return response.data
-}
+  async getClientInfoPanelByHeadquarterManager(
+    headquarterId: number,
+  ): Promise<ClientInfoPanelAdmin[]> {
+    const response = await this.httpClient.get<ClientInfoPanelAdmin[]>(
+      `${this.urlBase}/panel-manager/${headquarterId}`,
+    )
+    return response.data
+  }
 
-async getClientStatsByHeadquarter(headquarterId: number): Promise<ClientStatsPanel> {
-  const response = await this.httpClient.get<ClientStatsPanel>(
-    `${this.urlBase}/panel-manager/stats/${headquarterId}`
-  )
-  return response.data
-}
-async getClientStatsToday(): Promise<ClientStatsToday> {
-  const response = await this.httpClient.get<ClientStatsToday>(
-    `${this.urlBase}/panel-receptionist/stats`,
-  )
-  return response.data
-}
+  async getClientStatsByHeadquarter(headquarterId: number): Promise<ClientStatsPanel> {
+    const response = await this.httpClient.get<ClientStatsPanel>(
+      `${this.urlBase}/panel-manager/stats/${headquarterId}`,
+    )
+    return response.data
+  }
+  async getClientStatsToday(): Promise<ClientStatsToday> {
+    const response = await this.httpClient.get<ClientStatsToday>(
+      `${this.urlBase}/panel-receptionist/stats`,
+    )
+    return response.data
+  }
 }

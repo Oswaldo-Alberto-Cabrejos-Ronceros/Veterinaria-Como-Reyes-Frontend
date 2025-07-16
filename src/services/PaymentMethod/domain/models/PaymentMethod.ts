@@ -15,3 +15,8 @@ export interface PaymentMethodList {
   name: string;
   description:string
 }
+
+export interface TopPaymentMethods{
+methodLabels:string[]
+totalPayments:number[]
+}

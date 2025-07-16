@@ -20,6 +20,7 @@ export class VeterinaryRecordServiceImpl implements VeterinaryRecordService {
       `${this.url}/${id}`,
       veterinaryRecordRequest,
     )
+    console.log('desde service',response)
     return response.data
   }
   async findAll(): Promise<VeterinaryRecord[]> {
@@ -63,13 +64,13 @@ export class VeterinaryRecordServiceImpl implements VeterinaryRecordService {
   }
     async getRecentRecordsByEmployee(employeeId: number): Promise<RecentMedicalRecord[]> {
     const response = await this.httpClient.get<RecentMedicalRecord[]>(
-      `/panel/veterinarians/recent-medical-records/${employeeId}`,
+      `/panel-veterinarians/recent-medical-records/${employeeId}`,
     )
     return response.data
   }
     async getStatsByVeterinarian(employeeId: number): Promise<VeterinaryRecordStats> {
     const response = await this.httpClient.get<VeterinaryRecordStats>(
-      `/panel/veterinarians/medical-records/statistics/${employeeId}`
+      `/panel-veterinarians/medical-records/statistics/${employeeId}`
     )
     return response.data
   }

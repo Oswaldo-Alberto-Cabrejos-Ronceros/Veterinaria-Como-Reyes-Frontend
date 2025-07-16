@@ -1,4 +1,5 @@
-import type { Specie, SpecieRequest, SpecieList, TopSpeciesByAppointments } from '../models/Specie'
+import type { ReportPeriod } from '@/services/enums/ReportPeriod'
+import type { Specie, SpecieRequest, SpecieList, TopSpeciesByAppointments, TopSpeciesCare } from '../models/Specie'
 import type { PageResponse } from '@/services/models/PageResponse'
 
 export interface SpecieService {
@@ -18,4 +19,9 @@ export interface SpecieService {
 
   getTopSpeciesGeneral(): Promise<TopSpeciesByAppointments>
 getTopSpeciesByHeadquarter(headquarterId: number): Promise<TopSpeciesByAppointments>
+getTopSpeciesByPeriod(period: ReportPeriod): Promise<TopSpeciesCare>
+getTopSpeciesByPeriodAndHeadquarter(period: ReportPeriod, headquarterId: number): Promise<TopSpeciesCare>
+
+
 }
+

@@ -33,6 +33,9 @@ onMounted(async () => {
   headquartersOptions.value = headquartersServicesToOptionsSelect(await getAllHeadquarters())
   servicesOptions.value = headquartersServicesToOptionsSelect(await getAllVeterinaryServices())
   await loadCares()
+      if (route.query.add === '1') {
+    addCare()
+  }
 })
 
 //methods for care
@@ -40,6 +43,8 @@ const { loading, error, searchCares, completeCare, createCareFromRequest } = use
 
 const { getMainRole, getEntityId } = useAuthentication()
 const { getEmployeeMyInfo } = useEmployee()
+
+const typedError = error as Record<string, string | null>
 
 const roleMain = ref<string>('')
 //for cares
@@ -94,10 +99,10 @@ const searchCaresDebounced = debounce(() => {
 const onCompleteCare = async (careId: number) => {
   try {
     await completeCare(careId)
-    showToast('Completada correctamente')
+    showToast('Completada correctamente', 'success', 'Éxito')
     await loadCares()
   } catch (err) {
-    console.error('Error al completar atención', err)
+    console.error('Error al completar atención' + err, 'warn', 'Error')
   }
 }
 
@@ -143,7 +148,12 @@ const headquartersServicesToOptionsSelect = (
 //for status
 
 const statusOptions: OptionSelect[] = [
-  {
+
+{
+    value: 'EN_ESPERA',
+    name: 'En espera',
+  },
+{
     value: 'EN_CURSO',
     name: 'En Curso',
   },
@@ -163,10 +173,10 @@ const exportCSV = () => {
 //for toast
 const toast = useToast()
 
-const showToast = (message: string) => {
+const showToast = (message: string, severity: string, sumary: string) => {
   toast.add({
-    severity: 'success',
-    summary: 'Exito',
+    severity: severity,
+    summary: sumary,
     detail: message,
     life: 3000,
   })
@@ -181,17 +191,29 @@ const addCare = async () => {
     props: {
       modal: true,
       header: 'Crear atención',
+      blockScroll: true,
+      dismissableMask: true,
     },
     data: {
       paymentMethodsOptions: headquartersServicesToOptionsSelect(await getAllPaymentMethods()),
     },
     onClose: async (options) => {
       const data = options?.data as AddCareFromRequestSchema
+          router.replace({ query: { ...route.query, add: undefined } })
       console.log(data)
       if (data) {
-        const care = await createCareFromRequest(data)
-        loadCares()
-        showToast(`Atención creada: ${care.dateTime}`)
+        try {
+          const care = await createCareFromRequest(data)
+          loadCares()
+          showToast(`Atención creada: ${care.dateTime}`, 'success', 'Éxito')
+        } catch (error) {
+          console.error(error)
+          if(typedError.createCareFromRequest) {
+            showToast('Error al crear la atención: ' + typedError.createCareFromRequest, 'warn', 'Error')
+          } else {
+            showToast('Error al crear la atención', 'warn', 'Error')
+          }
+        }
       }
     },
   })
@@ -267,6 +289,7 @@ const viewCare = (careId: number) => {
                 optionValue="value"
                 showClear
                 placeholder="Selecciona Servicio"
+                filter
               />
 
               <Message
@@ -319,6 +342,8 @@ const viewCare = (careId: number) => {
             :loading="loading.searchCares"
             :rows-per-page-options="[10, 15, 20, 25, 30]"
             @page="loadCares"
+            scrollable
+            removableSort
             ref="dt"
           >
             <template #header>
@@ -336,30 +361,35 @@ const viewCare = (careId: number) => {
             <Column
               field="careDateTime"
               sortable
+
+              style="width: 16%"
+
               header="Dia programado"
               class="hidden lg:table-cell"
-              style="width: 18%"
+
             ></Column>
             <Column
               field="status"
               sortable
+              style="width: 20%"
+
               header="Estado"
               class="hidden lg:table-cell"
-              style="width: 18%"
+
             ></Column>
-            <Column sortable header="Mascota" class="hidden lg:table-cell" style="width: 16%">
+            <Column sortable header="Mascota" class="hidden lg:table-cell" style="width: 20%">
               <template #body="{ data }">
                 {{ data.pet.name }}
               </template>
             </Column>
 
-            <Column sortable header="Empleado" class="hidden lg:table-cell" style="width: 20%">
+            <Column sortable header="Empleado" class="hidden lg:table-cell" style="width: 30%">
               <template #body="{ data }">
                 {{ data.employee.fullName ? data.employee.fullName : '' }}
               </template>
             </Column>
 
-            <Column sortable header="Sede" class="hidden lg:table-cell" style="width: 20%">
+            <Column sortable header="Sede" class="hidden lg:table-cell" style="width: 30%">
               <template #body="{ data }">
                 {{ data.headquarter.name }}
               </template>

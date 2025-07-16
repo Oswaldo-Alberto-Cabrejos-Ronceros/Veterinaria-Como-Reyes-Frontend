@@ -13,19 +13,52 @@ import CardPetInfo from '@/components/CardPetInfo.vue'
 import CardOwnerInfo from '@/components/CardOwnerInfo.vue'
 import { useClient } from '@/composables/useClient'
 import type { Client } from '@/models/Client'
-//import CardBilling from '@/components/CardBilling.vue'
-//import type { InfoAppointmentForPanel } from '@/models/InfoAppointmentForPanel'
+import { usePayment } from '@/composables/usePayment'
+import type { PaymentInfoForAppointment } from '@/models/PaymentInfoForAppointment'
+import { useToast } from 'primevue'
+import { usePaymentTicket } from '@/composables/usePaymentTicket'
+import CardBilling from '@/components/CardBilling.vue'
 
 const props = defineProps<{
-  careId: number
+  careId: string
 }>()
 
+const toast = useToast()
+
+const showToast = (message: string, severity: string, sumary: string) => {
+  toast.add({
+    severity: severity,
+    summary: sumary,
+    detail: message,
+    life: 3000,
+  })
+}
+
 //methods
+
+const handleDownloadPaymentTicket = async () => {
+  if (paymentInfo.value) {
+    await downloadPaymentTicket(paymentInfo.value.paymentId)
+  }
+}
+
+const handleCompletePayment = async () => {
+  if (paymentInfo.value) {
+    await setPaymentStatusComplete(paymentInfo.value.paymentId)
+    showToast('Pago completado', 'success', 'Éxito')
+    loadInfo()
+  }
+}
+//for download ticket
+
+const { downloadPaymentTicket } = usePaymentTicket()
+
 const { getCareById } = useCare()
 const { getHeadquarterVetServiceById } = useHeadquarterVetService()
 const { getPetById } = usePet()
 const { getEmployeeById } = useEmployee()
 const { getClientById } = useClient()
+const { setPaymentStatusComplete, getPaymentInfoByCareId } = usePayment()
 //ref
 
 const care = ref<Care | null>(null)
@@ -33,10 +66,12 @@ const headquarterVetService = ref<HeadquarterVetService | null>(null)
 const pet = ref<Pet | null>(null)
 const employee = ref<Employee | null>(null)
 const client = ref<Client | null>(null)
+const paymentInfo = ref<PaymentInfoForAppointment | null>(null)
+
 //const appointmentInfo = ref<InfoAppointmentForPanel|null>(null)
 
 const loadInfo = async () => {
-  care.value = await getCareById(props.careId)
+  care.value = await getCareById(Number (props.careId))
   headquarterVetService.value = await getHeadquarterVetServiceById(
     care.value.headquarterVetService.id,
   )
@@ -45,6 +80,7 @@ const loadInfo = async () => {
   if (pet.value.clientId) {
     client.value = await getClientById(pet.value.clientId)
   }
+  paymentInfo.value = await getPaymentInfoByCareId(Number( props.careId))
 }
 
 onMounted(() => {
@@ -82,7 +118,20 @@ onMounted(() => {
         :address="client.address"
         :headquarter-name="client.headquarter.name"
       />
-    </div><!--  <CardBilling serviceName="Consulta General" :price="80" /> -->
+    </div>
+    <!--  <CardBilling serviceName="Consulta General" :price="80" /> -->
+    <!-- payment -->
 
+    <CardBilling
+      @complete-payment="handleCompletePayment"
+      @download-ticket="handleDownloadPaymentTicket"
+      v-if="paymentInfo"
+      :button-active="false"
+      :payment-id="paymentInfo.paymentId"
+      :status="paymentInfo.status"
+      :payment-method-id="paymentInfo.paymentMethod.id"
+      :serviceName="paymentInfo.serviceName"
+      :price="paymentInfo.amount"
+    />
   </div>
 </template>

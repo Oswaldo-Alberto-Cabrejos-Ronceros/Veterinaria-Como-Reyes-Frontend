@@ -13,6 +13,10 @@ export interface InfoBasicAppointmentClient{
   categoryService:{
     name:string
   }
+  headquarter:{
+    name:string,
+    address:string
+  }
   status:string
   duration:number
 }

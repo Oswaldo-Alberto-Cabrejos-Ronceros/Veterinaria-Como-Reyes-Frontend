@@ -29,10 +29,10 @@ import Select from 'primevue/select'
 //toast
 const toast = useToast()
 
-const showToast = (message: string) => {
+const showToast = (message: string, severity: string, sumary: string) => {
   toast.add({
-    severity: 'success',
-    summary: 'Éxito',
+    severity: severity,
+    summary: sumary,
     detail: message,
     life: 3000,
   })
@@ -50,9 +50,12 @@ const {
   createPaymentMethod,
   updatePaymentMethod,
   activatePaymentMethod,
+  deletePaymentMethod,
   searchPaymentMethods,
-  getPaymentMethodById
+  getPaymentMethodById,
 } = usePaymentMethod()
+
+const typedError = error as Record<string, string | null>
 
 //payment methods
 
@@ -74,7 +77,7 @@ const loadPaymentMethods = async (event?: DataTablePageEvent) => {
   const size = event ? event.rows : rows.value
   rows.value = size
 
-  const response = await searchPaymentMethods(page, size, name.value,status.value)
+  const response = await searchPaymentMethods(page, size, name.value, status.value)
 
   paymentMethods.value = response.content
   totalRecords.value = response.totalElements
@@ -89,13 +92,12 @@ const { handleSubmit, errors, defineField } = useForm<SearchPaymentMethotSchema>
   validationSchema: toTypedSchema(schema),
   initialValues: {
     name: '',
-     status: true,
+    status: true,
   },
 })
 
 const [name, nameAttrs] = defineField('name')
 const [status, statusAttrs] = defineField('status')
-
 
 const onSubmit = handleSubmit((values) => {
   console.log(values)
@@ -109,14 +111,25 @@ const addPaymentMethod = () => {
     props: {
       modal: true,
       header: 'Agregar método de pago',
+      blockScroll: true,
+      dismissableMask: true,
     },
     onClose: async (options) => {
       const data = options?.data as AddEditPaymentMethodSchema
       if (data) {
-        const paymentMethod = await createPaymentMethod(data)
-        console.log('Datos recibidos del dialogo', paymentMethod)
-        loadPaymentMethods()
-        showToast('Método de pago agregado correctamente.')
+        try {
+          const paymentMethod = await createPaymentMethod(data)
+          console.log('Datos recibidos del dialogo', paymentMethod)
+          loadPaymentMethods()
+          showToast('Método de pago agregado correctamente.', 'success', 'Éxito')
+        } catch (error) {
+          console.error('Error al crear el método de pago', error)
+          if (typedError.createPaymentMethod) {
+            showToast('Error al crear el método de pago: ' + data.name + typedError.createPaymentMethod, 'warn', 'Error')
+          } else {
+            showToast('Error al crear el método de pago' + data.name, 'warn', 'Error')
+          }
+        }
       }
     },
   })
@@ -128,6 +141,8 @@ const viewPaymentMethod = async (paymentMethodData: PaymentMethodList) => {
     props: {
       modal: true,
       header: `${paymentMethodData.name}`,
+      blockScroll: true,
+      dismissableMask: true,
     },
     data: {
       paymentMethodData: paymentMethod,
@@ -141,6 +156,8 @@ const editPaymentMethod = async (paymentMethodData: PaymentMethodList) => {
     props: {
       modal: true,
       header: `${paymentMethodData.name}`,
+      blockScroll: true,
+      dismissableMask: true,
     },
     data: {
       paymentMethodData: paymentMethod as AddEditPaymentMethodSchema,
@@ -148,10 +165,19 @@ const editPaymentMethod = async (paymentMethodData: PaymentMethodList) => {
     onClose: async (options) => {
       const data = options?.data as AddEditPaymentMethodSchema
       if (data) {
-        const paymentMethod = await updatePaymentMethod(paymentMethodData.id, data)
+        try {
+          const paymentMethod = await updatePaymentMethod(paymentMethodData.id, data)
         console.log('Datos recibidos del dialogo', paymentMethod)
         loadPaymentMethods()
-        showToast('Método de pago editado correctamente.')
+        showToast('Método de pago editado correctamente.', 'success', 'Éxito')
+        } catch (error) {
+          console.error(error)
+          if (typedError.updatePaymentMethod) {
+            showToast('Error al actualizar el método de pago: ' + data.name + typedError.updatePaymentMethod, 'warn', 'Error')
+          } else {
+            showToast('Error al actualizar el método de pago' + data.name, 'warn', 'Error')
+          }
+        }
       }
     },
   })
@@ -160,7 +186,7 @@ const editPaymentMethod = async (paymentMethodData: PaymentMethodList) => {
 //for confirm
 const confirm = useConfirm()
 
-const deletePaymentMethod = (
+const handleDeleteReactivePaymentMethod = (
   event: MouseEvent | KeyboardEvent,
   paymentMethodData: PaymentMethodView,
 ) => {
@@ -169,7 +195,9 @@ const deletePaymentMethod = (
   confirm.require({
     group: 'confirmPopupGeneral',
     target: event.currentTarget as HTMLElement,
-    message: '¿Seguro que quiere eliminar este método de pago?',
+    message: isActive
+      ? '¿Seguro que quiere eliminar este método de pago?'
+      : '¿Seguro que quiere reactivar este método de pago?',
     icon: 'pi pi-exclamation-triangle',
     rejectProps: {
       label: 'Cancelar',
@@ -181,8 +209,14 @@ const deletePaymentMethod = (
       severity: isActive ? 'danger' : 'success',
     },
     accept: async () => {
-      await activatePaymentMethod(paymentMethodData.id)
-      showToast('Método de pago eliminado exitosamente: ' + paymentMethodData.name)
+      if (isActive) {
+        await deletePaymentMethod(paymentMethodData.id)
+        showToast('Método de pago eliminado exitosamente: ' + paymentMethodData.name, 'success', 'Éxito')
+      } else {
+        await activatePaymentMethod(paymentMethodData.id)
+        showToast('Método de pago reactivado exitosamente: ' + paymentMethodData.name, 'success', 'Éxito')
+      }
+
       loadPaymentMethods()
     },
     reject: () => {
@@ -198,7 +232,6 @@ const exportCSV = () => {
   dt.value.exportCSV()
 }
 
-
 const statusOptions: OptionSelect[] = [
   {
     value: true,
@@ -209,7 +242,6 @@ const statusOptions: OptionSelect[] = [
     name: 'Desactivado',
   },
 ]
-
 </script>
 
 <template>
@@ -240,7 +272,7 @@ const statusOptions: OptionSelect[] = [
                 {{ errors.name }}
               </Message>
             </div>
-                                    <!-- status -->
+            <!-- status -->
 
             <div>
               <label class="block mb-2">Estado</label>
@@ -259,7 +291,6 @@ const statusOptions: OptionSelect[] = [
                 {{ errors.status }}
               </Message>
             </div>
-
           </form>
 
           <!-- for messague loading  -->
@@ -287,6 +318,8 @@ const statusOptions: OptionSelect[] = [
             :loading="loading.searchPaymentMethods"
             :rows-per-page-options="[5, 10]"
             @page="loadPaymentMethods"
+            scrollable
+            removableSort
             ref="dt"
           >
             <template #header>
@@ -297,20 +330,14 @@ const statusOptions: OptionSelect[] = [
                   severity="success"
                   label="Agregar Método"
                   @click="addPaymentMethod"
-                    v-if="roleMain==='Administrador'"
+                  v-if="roleMain === 'Administrador'"
                 />
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
             </template>
 
-            <Column field="name" sortable header="Nombre" style="width: 20%"></Column>
-            <Column
-              field="description"
-              class="hidden md:table-cell"
-              header="Descripción"
-              sortable
-              style="width: 60%"
-            ></Column>
+            <Column field="name" header="Nombre" sortable style="width: 20%"></Column>
+            <Column field="description" sortable style="width: 60%" header="Descripción"></Column>
             <Column header="Acciones">
               <template #body="{ data }">
                 <div class="flex items-center flex-col sm:flex-row gap-1">
@@ -330,7 +357,7 @@ const statusOptions: OptionSelect[] = [
                     size="small"
                     aria-label="Editar"
                     rounded
-                      v-if="roleMain==='Administrador'"
+                    v-if="roleMain === 'Administrador'"
                     @click="editPaymentMethod(data)"
                   ></Button>
                   <Button
@@ -340,9 +367,20 @@ const statusOptions: OptionSelect[] = [
                     size="small"
                     aria-label="Bloquear"
                     rounded
-                      v-if="roleMain==='Administrador'"
-                    @click="deletePaymentMethod($event, data)"
+                    v-if="data.status === 'Activo' && roleMain === 'Administrador'"
+                    @click="handleDeleteReactivePaymentMethod($event, data)"
                   />
+
+                  <Button
+                    v-if="data.status === 'Inactivo' && roleMain === 'Administrador'"
+                    icon="pi pi-refresh"
+                    severity="warn"
+                    variant="text"
+                    aria-label="Desbloquear"
+                    rounded
+                    size="small"
+                    @click="handleDeleteReactivePaymentMethod($event, data)"
+                  ></Button>
                 </div>
               </template>
             </Column>

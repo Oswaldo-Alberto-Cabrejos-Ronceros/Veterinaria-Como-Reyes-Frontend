@@ -52,11 +52,11 @@ body {
 }
 
 .layout-principal-flex{
-  @apply w-full flex justify-center
+  @apply w-full flex justify-center flex-1
 }
 
 .card-principal-color-neutral{
- @apply h-min min-w-full flex dark:bg-surface-800 px-4 py-4
+ @apply h-min min-w-full flex dark:bg-surface-800 px-4 py-4 min-h-full
 }
 
 .card-principal-color-inherit{
@@ -91,6 +91,10 @@ body {
   @apply flex items-end justify-center md:col-start-2 lg:col-start-3 xl:col-start-4 2xl:col-start-5
 }
 
+.form-button-search-container-grid-col-5-end{
+    @apply flex items-end justify-end md:col-start-2 lg:col-start-3 xl:col-start-4 2xl:col-start-5
+}
+
 .card-primary{
-  @apply shadow-none border-1 border-neutral-200 dark:border-neutral-700
+  @apply shadow-none border-1 border-neutral-300 dark:border-neutral-700
 }

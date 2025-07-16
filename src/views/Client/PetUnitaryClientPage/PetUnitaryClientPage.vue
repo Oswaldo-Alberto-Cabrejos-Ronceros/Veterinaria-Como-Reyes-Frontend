@@ -12,26 +12,35 @@ import Column from 'primevue/column'
 import Button from 'primevue/button'
 import { useAuthentication } from '@/composables/useAuthentication'
 import { useClient } from '@/composables/useClient'
-import type { MyInfoClient } from '@/models/MyInfoClient'
 import CardOwnerPrimary from '@/components/CardOwnerPrimary.vue'
 import Tag from 'primevue/tag'
+import type { Client } from '@/models/Client'
+import CardEditVetRecord from '../../../components/CardEditVetRecord.vue'
+import { useDialog } from 'primevue/usedialog'
+import type { FormValues as AddEditVeterinaryRecord } from '@/validation-schemas-forms/schema-add-edit-veterinary-record'
+import { useToast } from 'primevue/usetoast'
+
 const props = defineProps<{
   petId: string
 }>()
 
-const ownerInfo = ref<MyInfoClient | null>(null)
+const ownerInfo = ref<Client | null>(null)
 
 const { loading: petLoading, error: petError, getPetById } = usePet()
 
 const roleMain = ref<string>('')
 
-const { getEntityId, getMainRole } = useAuthentication()
+const { getMainRole } = useAuthentication()
 
 const {
   loading: veterinaryRecordLoading,
   error: veterinaryRecordError,
+  updateVeterinaryRecord,
+  findVeterinaryRecordById,
   getAllInfoVeterinaryRecordsByPet,
 } = useVeterinaryRecord()
+
+const typedError = veterinaryRecordError as Record<string, string | null>
 
 const petData = ref<Pet | null>(null)
 //for record
@@ -43,7 +52,7 @@ const rows = ref<number>(1)
 
 const first = ref<number>(0)
 
-const { myInfoAsClient } = useClient()
+const { getClientById } = useClient()
 
 //for loadVeterinaryRecords
 const loadVeterinaryRecords = async (event?: DataTablePageEvent) => {
@@ -60,15 +69,72 @@ onMounted(async () => {
   const role = getMainRole()
   if (role) {
     roleMain.value = role
-    if (role != 'Cliente') {
-      const clientId = getEntityId()
+    if (role !== 'Cliente') {
+      const clientId = petData.value.clientId
       if (clientId) {
-        ownerInfo.value = await myInfoAsClient(clientId)
+        ownerInfo.value = await getClientById(clientId)
       }
     }
   }
   loadVeterinaryRecords()
 })
+
+//for dialog
+const dialog = useDialog()
+
+const toast = useToast()
+
+const showToast = (message: string, severity: string, sumary: string) => {
+  toast.add({
+    severity: severity,
+    summary: sumary,
+    detail: message,
+    life: 3000,
+  })
+}
+
+const editRecord = async (recordInfoTable: VeterinaryRecordInfoTable) => {
+  const record = await findVeterinaryRecordById(recordInfoTable.id)
+  dialog.open(CardEditVetRecord, {
+    props: {
+      modal: true,
+      header: 'Editar Informe',
+    },
+    data: {
+      recordData: {
+        careId: record.careId,
+        employeeId: record.employeeId,
+        dateCreate: new Date(record.date),
+        diagnosis: record.diagnosis,
+        treatment: record.treatment,
+        observation: record.observation,
+        resultUrl: record.resultUrl,
+        status: record.status,
+      } as AddEditVeterinaryRecord,
+    },
+    onClose: async (options) => {
+      const data = options?.data as AddEditVeterinaryRecord
+      if (data) {
+        try {
+          await updateVeterinaryRecord(recordInfoTable.id,data)
+          loadVeterinaryRecords()
+          showToast('Reporte medico editado correctamente', 'success', 'Exito')
+        } catch (error) {
+          console.error(error)
+          if (typedError.updateVeterinaryRecord) {
+            showToast(
+              `Error al editar reporte medico: ${typedError.updateEmployee}`,
+              'warn',
+              'Error',
+            )
+          } else {
+            showToast('Error al editar el reporte medico: ', 'warn', 'Error')
+          }
+        }
+      }
+    },
+  })
+}
 
 //for export
 
@@ -92,7 +158,13 @@ const exportCSV = () => {
       </template>
       <template #content>
         <div class="w-full flex flex-col gap-2">
-             <CardOwnerPrimary v-if="ownerInfo" :names="ownerInfo.names" :lastnames="ownerInfo.lastnames" :phone="ownerInfo.phone" :address="ownerInfo.address" ></CardOwnerPrimary>
+          <CardOwnerPrimary
+            v-if="ownerInfo"
+            :names="ownerInfo.names"
+            :lastnames="ownerInfo.lastnames"
+            :phone="ownerInfo.phone"
+            :address="ownerInfo.address"
+          ></CardOwnerPrimary>
           <!-- section appointements -->
           <!-- section 1 pet information -->
           <div class="card-primary p-4 dark:bg-surface-900 flex flex-col-reverse sm:flex-row gap-3">
@@ -169,6 +241,8 @@ const exportCSV = () => {
             :totalRecords="totalRecords"
             :lazy="true"
             :first="first"
+            scrollable
+            removableSort
             :loading="veterinaryRecordLoading.getAllInfoVeterinaryRecordsByPet"
             @page="loadVeterinaryRecords"
             :rows-per-page-options="[4, 8, 12]"
@@ -180,53 +254,22 @@ const exportCSV = () => {
               </div>
             </template>
             <Column field="date" sortable header="Fecha" style="width: 10%"></Column>
-            <Column
-              field="nameHeadquarter"
-              sortable
-              header="Sede"
-              class="hidden lg:table-cell"
-              style="width: 12%"
+            <Column field="nameHeadquarter" sortable header="Sede" style="width: 12%"></Column>
+            <Column field="nameEmployee" header="Empleado" sortable style="width: 15%"></Column>
+            <Column field="diagnosis" header="Diagnostico" sortable style="width: 10%"></Column>
+            <Column field="treatment" header="Tratamiento" sortable style="width: 10%"></Column>
+            <Column header="Observación" sortable style="width: 10%">
+              <template #body="{ data }">
+                {{ data.observation }}
+                <Tag
+                  v-if="!data.observation"
+                  severity="secondary"
+                  value="No contiene"
+                ></Tag> </template
             ></Column>
-            <Column
-              field="nameEmployee"
-              class="hidden xl:table-cell"
-              header="Empleado"
-              sortable
-              style="width: 15%"
-            ></Column>
-            <Column
-              field="diagnosis"
-              class="hidden xs:table-cell sm:hidden lg:table-cell"
-              header="Diagnostico"
-              sortable
-              style="width: 10%"
-            ></Column>
-            <Column
-              field="treatment"
-              class="hidden xl:table-cell"
-              header="Tratamiento"
-              sortable
-              style="width: 10%"
-            ></Column>
-            <Column
-              class="table-cell sm:hidden lg:table-cell"
-              header="Observación"
-              sortable
-              style="width: 10%"
-            >
-          <template #body="{data}">
-            {{ data.observation }}
-            <Tag v-if="!data.observation" severity="secondary" value="No contiene"></Tag>
-          </template></Column>
-            <Column
-              field="status"
-              class="hidden md:table-cell"
-              header="Estado"
-              sortable
-              style="width: 12%"
-            ></Column>
+            <Column field="status" header="Estado" sortable style="width: 12%"></Column>
             <Column header="Acciones" v-if="roleMain !== 'Cliente'">
-              <template #body>
+              <template #body="{ data }">
                 <div class="flex items-center flex-col sm:flex-row lg:flex-row gap-1">
                   <Button
                     icon="pi pi-eye"
@@ -235,6 +278,7 @@ const exportCSV = () => {
                     size="small"
                     aria-label="Ver"
                     rounded
+                    hidden
                   ></Button>
                   <Button
                     icon="pi pi-pencil"
@@ -243,6 +287,7 @@ const exportCSV = () => {
                     size="small"
                     aria-label="Editar"
                     rounded
+                    @click="editRecord(data)"
                   ></Button>
                   <Button
                     icon="pi pi-file"

@@ -17,6 +17,7 @@ import type { PetInfoForAppointment } from '@/models/PetInfoForAppointment'
 import type { ClientInfoForAppointment } from '@/models/ClientInfoForAppointment'
 import type { PaymentInfoForAppointment } from '@/models/PaymentInfoForAppointment'
 import { usePayment } from '@/composables/usePayment'
+import { usePaymentTicket } from '@/composables/usePaymentTicket'
 
 const props = defineProps<{
   appointmentId: string
@@ -24,11 +25,23 @@ const props = defineProps<{
 
 //methods
 
-const { getAppointmentPanelInfo,getPetInfoForAppointment,getClientInfoForAppointment,getPaymentInfoForAppointment,getAppointmentById } = useAppointment()
+const { error, getAppointmentPanelInfo,getPetInfoForAppointment,getClientInfoForAppointment,getPaymentInfoForAppointment,getAppointmentById } = useAppointment()
 const { createCareFromAppointment } = useCare()
+
+const typedError = error as Record<string, string | null>
 
 const {setPaymentStatusComplete}=usePayment()
 
+//for download ticket
+
+const {downloadPaymentTicket}= usePaymentTicket()
+
+
+const handleDownloadPaymentTicket = async ()=>{
+  if(paymentInfo.value){
+    await downloadPaymentTicket(paymentInfo.value.paymentId)
+  }
+}
 
 //ref
 const appointmentBasicInfo = ref<Appointment | null>(null)
@@ -47,7 +60,7 @@ onMounted(async () => {
 const handleCompletePayment = async()=>{
   if(paymentInfo.value){
     await setPaymentStatusComplete(paymentInfo.value.paymentId)
-    showToast('Pago completado')
+    showToast('Pago completado', 'success', 'Éxito')
     loadInfo()
   }
 }
@@ -74,6 +87,8 @@ const openCreateCareConfirmArrive = () => {
     props: {
       modal: true,
       header: 'Crear Atención',
+      blockScroll: true,
+      dismissableMask: true,
     },
     data: {
       appointmentId: Number(props.appointmentId),
@@ -82,10 +97,19 @@ const openCreateCareConfirmArrive = () => {
     onClose: async (options) => {
       const data = options?.data as FormValues
       if (data) {
-        console.log(data)
-        const care = await createCareFromAppointment(data)
-        loadInfo()
-        showToast(`Atención creada correctamente: ${care.dateTime}`)
+        try {
+          console.log(data)
+          const care = await createCareFromAppointment(data)
+          loadInfo()
+          showToast(`Atención creada correctamente: ${care.dateTime}`, 'success', 'Éxito')
+        } catch (error) {
+          console.error(error)
+          if (typedError.createCareFromAppointment) {
+            showToast('Error al crear la atención: ' + typedError.createCareFromAppointment, 'warn', 'Error')
+          } else {
+            showToast('Error al crear la atención', 'warn', 'Error')
+          }
+        }
       }
     },
   })
@@ -96,10 +120,10 @@ const openCreateCareConfirmArrive = () => {
 //toast
 const toast = useToast()
 
-const showToast = (message: string) => {
+const showToast = (message: string, severity: string, sumary: string) => {
   toast.add({
-    severity: 'success',
-    summary: 'Éxito',
+    severity: severity,
+    summary: sumary,
     detail: message,
     life: 3000,
   })
@@ -161,7 +185,7 @@ const showToast = (message: string) => {
             />
           </div>
           <!-- time -->
-          <div
+          <div hidden
             v-if="appointmentBasicInfo?.statusAppointment === 'Confirmada'"
             class="p-4 shadow-none border-1 rounded-sm border-green-500 bg-green-50 dark:bg-transparent w-full flex justify-between items-center"
           >
@@ -176,6 +200,6 @@ const showToast = (message: string) => {
 
     <!-- payment -->
 
-    <CardBilling @complete-payment="handleCompletePayment" v-if="paymentInfo" :button-active="false" :payment-id="paymentInfo.paymentId" :status="paymentInfo.status" :payment-method-id="paymentInfo.paymentMethod.id" :serviceName="paymentInfo.serviceName" :price="paymentInfo.amount"/>
+    <CardBilling :button-active="paymentInfo.status!=='Completada'" @complete-payment="handleCompletePayment" @download-ticket="handleDownloadPaymentTicket" v-if="paymentInfo" :payment-id="paymentInfo.paymentId" :status="paymentInfo.status" :payment-method-id="paymentInfo.paymentMethod.id" :serviceName="paymentInfo.serviceName" :price="paymentInfo.amount"/>
   </div>
 </template>

@@ -1,8 +1,12 @@
-import type { HeadquarterVetService } from '../domain/models/HeadquarterVetService'
+import type {
+  HeadquarterServiceInfoPanel,
+  HeadquarterVetService,
+} from '../domain/models/HeadquarterVetService'
 import type { EmployeeBasicInfo } from '@/services/Employee/domain/models/Employee'
 import type { HeadquarterVetServiceRequest } from '../domain/models/HeadquarterVetService'
 import type { HeadquarterVetServiceService } from '../domain/services/HeadquarterVetServiceService'
 import type { HttpClient } from '@/services/Http/model/HttpClient'
+import type { PageResponse } from '@/services/models/PageResponse'
 
 export class HeadquarterVetServiceServiceImpl implements HeadquarterVetServiceService {
   constructor(private readonly httpClient: HttpClient) {}
@@ -24,7 +28,9 @@ export class HeadquarterVetServiceServiceImpl implements HeadquarterVetServiceSe
     return response.data
   }
 
-    async getAllHeadquarterVetServiceByHeadquarter(headquarterId: number): Promise<HeadquarterVetService[]> {
+  async getAllHeadquarterVetServiceByHeadquarter(
+    headquarterId: number,
+  ): Promise<HeadquarterVetService[]> {
     const response = await this.httpClient.get<HeadquarterVetService[]>(
       `${this.urlBase}/headquarter/${headquarterId}/all`,
     )
@@ -55,7 +61,7 @@ export class HeadquarterVetServiceServiceImpl implements HeadquarterVetServiceSe
     }
     const response = await this.httpClient.get<EmployeeBasicInfo[]>(
       `${this.urlBase}/veterinarians`,
-      params,
+      {params:params},
     )
     return response.data
   }
@@ -67,5 +73,32 @@ export class HeadquarterVetServiceServiceImpl implements HeadquarterVetServiceSe
   async updateSimultaneousCapacity(id: number, capacity: number): Promise<void> {
     const body = { simultaneousCapacity: capacity }
     await this.httpClient.patch(`${this.urlBase}/${id}/capacity`, body)
+  }
+
+  async filterHeadquarterServices(
+    page: number,
+    size: number,
+    filters: {
+      serviceName?: string
+      categoryId?: number
+      speciesId?: number
+      headquarterId?: number
+    },
+  ): Promise<PageResponse<HeadquarterServiceInfoPanel>> {
+    const params: Record<string, string | number> = {
+      page,
+      size,
+    }
+
+    if (filters.serviceName) params.serviceName = filters.serviceName
+    if (filters.categoryId !== undefined) params.categoryId = filters.categoryId
+    if (filters.speciesId !== undefined) params.speciesId = filters.speciesId
+    if (filters.headquarterId !== undefined) params.headquarterId = filters.headquarterId
+
+    const response = await this.httpClient.get<PageResponse<HeadquarterServiceInfoPanel>>(
+      '/headquarter-vet-services/filter',
+      { params: params },
+    )
+    return response.data
   }
 }

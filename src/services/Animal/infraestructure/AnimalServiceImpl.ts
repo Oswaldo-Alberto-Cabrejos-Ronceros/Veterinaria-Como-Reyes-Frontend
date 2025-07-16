@@ -50,7 +50,9 @@ export class AnimalServiceImpl implements AnimalService {
 
     const response = await this.httpClient.get<PageResponse<AnimalList>>(
       `${this.urlBase}/search`,
-      queryParams,
+      {
+        params:queryParams
+      },
     )
     return response.data
   }

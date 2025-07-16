@@ -17,6 +17,12 @@ import { GetTodayIncomeStatsUseCase } from '@/services/Payment/aplication/GetTod
 import { GetRecentCompletedPaymentsUseCase } from '@/services/Payment/aplication/GetRecentCompletedPayments'
 import { GetWeeklyIncomeGeneral } from '@/services/Payment/aplication/GetWeeklyIncomeGeneral'
 import { GetWeeklyIncomeByHeadquarter } from '@/services/Payment/aplication/GetWeeklyIncomeByHeadquarter'
+import { GetPaymentInfoByCareId } from '@/services/Payment/aplication/GetPaymentInfoByCareId'
+import { GetIncomePerHeadquarterByPeriod } from '@/services/Payment/aplication/GetIncomePerHeadquarterByPeriod'
+import { GetAnnualFinancialEvolutionByHeadquarter } from '@/services/Payment/aplication/GetAnnualFinancialEvolutionByHeadquarter'
+import { GetAnnualFinancialEvolution } from '@/services/Payment/aplication/GetAnnualFinancialEvolution'
+import { GetGeneralMonthlyStats } from '@/services/Payment/aplication/GetGeneralMonthlyStats'
+import { GetMonthlyStatsByHeadquarter } from '@/services/Payment/aplication/GetMonthlyStatsByHeadquarter'
 
 // Instancia del cliente HTTP
 const axiosHttpClient = new AxiosHttpClient()
@@ -39,9 +45,17 @@ export const paymentUsesCases = {
   setPaymentStatusCancelled: new SetPaymentStatusCancelled(paymentService),
   setPaymentStatusPending: new SetPaymentStatusPending(paymentService),
   setPaymentStatusRefunded: new SetPaymentStatusRefunded(paymentService),
-    getTodayIncomeStats: new GetTodayIncomeStatsUseCase(paymentService),
+  getTodayIncomeStats: new GetTodayIncomeStatsUseCase(paymentService),
   getRecentCompletedPayments: new GetRecentCompletedPaymentsUseCase(paymentService),
-getWeeklyIncomeGeneral: new GetWeeklyIncomeGeneral(paymentService),
-getWeeklyIncomeByHeadquarter: new GetWeeklyIncomeByHeadquarter(paymentService),
+  getWeeklyIncomeGeneral: new GetWeeklyIncomeGeneral(paymentService),
+  getWeeklyIncomeByHeadquarter: new GetWeeklyIncomeByHeadquarter(paymentService),
+  getPaymentInfoByCareId: new GetPaymentInfoByCareId(paymentService),
+  getIncomePerHeadquarterByPeriod: new GetIncomePerHeadquarterByPeriod(paymentService),
+  getAnnualFinancialEvolutionByHeadquarter: new GetAnnualFinancialEvolutionByHeadquarter(
+    paymentService,
+  ),
 
+  getAnnualFinancialEvolution: new GetAnnualFinancialEvolution(paymentService),
+  getGeneralMonthlyStats: new GetGeneralMonthlyStats(paymentService),
+  getMonthlyStatsByHeadquarter: new GetMonthlyStatsByHeadquarter(paymentService),
 }

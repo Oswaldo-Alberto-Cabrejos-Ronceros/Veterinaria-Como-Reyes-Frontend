@@ -26,6 +26,9 @@ import type { Pet } from '@/models/Pet'
 import type { Client } from '@/models/Client'
 import type { FormValues as SchemaEditWeight } from '@/validation-schemas-forms/schema-add-weight-pet'
 import { useToast } from 'primevue/usetoast'
+import type { FormValues as CreateRecordSchema } from '@/validation-schemas-forms/schema-add-edit-veterinary-record'
+import { useVeterinaryRecord } from '@/composables/useVeterinaryRecord'
+
 const props = defineProps<{
   appointmentId: string
 }>()
@@ -36,19 +39,26 @@ onMounted(async () => {
 
 const { loading, updatePetWeight } = usePet()
 
-const {completeCare,setOnGoingCare}=useCare()
+const { completeCare, setOnGoingCare } = useCare()
 
 //for toast
 //toast
 const toast = useToast()
 
-const showToast = (message: string) => {
+const showToast = (message: string, severity: string, sumary: string) => {
   toast.add({
-    severity: 'success',
-    summary: 'Éxito',
+    severity: severity,
+    summary: sumary,
     detail: message,
     life: 3000,
   })
+}
+
+const { createVeterinaryRecord } = useVeterinaryRecord()
+const handleCreateRecord = async (schema: CreateRecordSchema) => {
+  await createVeterinaryRecord(schema)
+  showToast('Diagostico creado exitosamente', 'success', 'Éxito')
+  await loadInfo()
 }
 
 const handleEditWeight = async (schema: SchemaEditWeight) => {
@@ -57,10 +67,10 @@ const handleEditWeight = async (schema: SchemaEditWeight) => {
     if (petId) {
       const response = await updatePetWeight(petId, schema.weight)
       await loadInfo()
-      showToast(`Peso actualizado correctamente ${response.name}`)
+      showToast(`Peso actualizado correctamente ${response.name}`, 'success', 'Éxito')
     }
   } catch (error) {
-    console.error('Error al cambiar el peso', error)
+    console.error('Error al cambiar el peso', 'warn', 'Error', error)
   }
 }
 
@@ -89,38 +99,36 @@ const loadInfo = async () => {
   }
 }
 
-const setOnGoingTo = async ()=>{
+const setOnGoingTo = async () => {
   const response = await setOnGoingCare(Number(props.appointmentId))
-  if(response){
-    showToast('Cambiado en curso exitosamente')
+  if (response) {
+    showToast('Cambiado en curso exitosamente', 'success', 'Éxito')
     loadInfo()
   }
 }
 
-
-const handleCompleteCare = async ()=>{
-const response = await completeCare(Number(props.appointmentId))
-if(response){
-    showToast('Cambiado en curso exitosamente')
+const handleCompleteCare = async () => {
+  const response = await completeCare(Number(props.appointmentId))
+  if (response) {
+    showToast('Cambiado en curso exitosamente', 'success', 'Éxito')
     loadInfo()
-}
-
+  }
 }
 </script>
 
 <template>
-  <div  class="layout-principal-flex flex-col gap-2" v-if="headquarterVetService && care">
-            <div class="w-full flex justify-end">
-          <Button
-            severity="success"
-            icon-pos="left"
-            icon="pi pi-check-circle"
-            v-if="care.statusCare==='En espera'"
-            variant="outlined"
-            label="Atender consulta"
-            @click="setOnGoingTo()"
-          />
-        </div>
+  <div class="layout-principal-flex flex-col gap-2" v-if="headquarterVetService && care">
+    <div class="w-full flex justify-end">
+      <Button
+        severity="success"
+        icon-pos="left"
+        icon="pi pi-check-circle"
+        v-if="care.statusCare === 'En espera'"
+        variant="outlined"
+        label="Atender consulta"
+        @click="setOnGoingTo()"
+      />
+    </div>
     <CardAppointmentInfo
       v-if="headquarterVetService && care"
       is-care
@@ -162,15 +170,22 @@ if(response){
           <TabPanels>
             <TabPanel value="0"
               ><CardVitalSigns
-              :desactive="care.statusCare==='En espera'||care.statusCare==='Completado'"
+                :desactive="care.statusCare === 'En espera' || care.statusCare === 'Completado'"
                 @set-weight="handleEditWeight($event)"
                 :loading="loading.updatePetWeight"
               ></CardVitalSigns
             ></TabPanel>
             <TabPanel value="1">
-              <CardHistoryVeterinaryRecord v-if="pet" :pet-id="pet?.id"/>
+              <CardHistoryVeterinaryRecord v-if="pet" :pet-id="pet?.id" />
             </TabPanel>
-            <TabPanel value="2"><CardAddVeterinaryRecord :disabled="care.statusCare==='En espera'||care.statusCare==='Completado'" v-if="employee" :careId="Number(appointmentId)" :employeeId="employee.employeeId"  /></TabPanel>
+            <TabPanel value="2"
+              ><CardAddVeterinaryRecord
+                @create-record="handleCreateRecord($event)"
+                :disabled="care.statusCare === 'En espera' || care.statusCare === 'Completado'"
+                v-if="employee"
+                :careId="Number(appointmentId)"
+                :employeeId="employee.employeeId"
+            /></TabPanel>
           </TabPanels>
         </Tabs>
         <Divider />
@@ -180,7 +195,7 @@ if(response){
             icon-pos="left"
             icon="pi pi-check-circle"
             label="Finalizar consulta"
-            v-if="care.statusCare==='En curso'"
+            v-if="care.statusCare === 'En curso'"
             @click="handleCompleteCare()"
           />
         </div>

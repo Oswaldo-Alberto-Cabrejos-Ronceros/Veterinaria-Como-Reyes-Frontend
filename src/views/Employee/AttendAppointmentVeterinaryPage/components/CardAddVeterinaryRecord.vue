@@ -7,8 +7,6 @@ import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/yup'
 import { schema } from '@/validation-schemas-forms/schema-add-edit-veterinary-record'
 import type { FormValues } from '@/validation-schemas-forms/schema-add-edit-veterinary-record'
-import { useVeterinaryRecord } from '@/composables/useVeterinaryRecord'
-import { useToast } from 'primevue/usetoast'
 
 const props = defineProps<{
   careId:number,
@@ -29,31 +27,21 @@ const { handleSubmit, errors, defineField } = useForm<FormValues>({
   },
 })
 
-const {createVeterinaryRecord} = useVeterinaryRecord()
+
 
 const [diagnosis, diagnosisAttrs] = defineField('diagnosis')
 const [treatment, treatmentAttrs] = defineField('treatment')
 const [observation, observationAttrs] = defineField('observation')
 const [resultUrl, resultUrlAttrs] = defineField('resultUrl')
 
-//toast
-const toast = useToast()
 
-const showToast = (message: string) => {
-  toast.add({
-    severity: 'success',
-    summary: 'Éxito',
-    detail: message,
-    life: 3000,
-  })
-}
 
-const onSubmit = handleSubmit(async (values) => {
+const onSubmit = handleSubmit((values) => {
   console.log(values)
-  const response = await createVeterinaryRecord(values)
-  console.log(response)
-  showToast(`Registro creado con exito`)
+  emit('create-record',values)
 })
+
+const emit = defineEmits(['create-record'])
 
 
 </script>

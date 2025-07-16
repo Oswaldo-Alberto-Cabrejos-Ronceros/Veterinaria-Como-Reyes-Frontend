@@ -23,6 +23,10 @@ import type { VeterinaryRecordStats } from '@/services/VeterinaryRecord/domain/m
 import { useVeterinaryRecord } from '@/composables/useVeterinaryRecord'
 import type { RecentMedicalRecord } from '@/models/RecentMedicalRecord'
 import type { RecentPatient } from '@/models/RecentPatient'
+import type {
+  MonthlyCareStatsVeterinary,
+  WeeklyCareStatsVeterinary,
+} from '@/services/Care/domain/models/Care'
 
 const { getEntityId } = useAuthentication()
 const { getEmployeeMyInfo } = useEmployee()
@@ -32,7 +36,16 @@ const appointments = ref<CareAndAppointmentPanelEmployee[]>([])
 
 const statsRecords = ref<VeterinaryRecordStats | null>(null)
 
-const { getRecentPatientsByEmployee, getCaresForEmployee } = useCare()
+const {
+  getWeeklyPerformanceGraphicByVeterinary,
+  getMonthlyPerformanceStatsByVeterinary,
+  getRecentPatientsByEmployee,
+  getCaresForEmployee,
+} = useCare()
+
+const monthlyPerformanceStats = ref<MonthlyCareStatsVeterinary | null>(null)
+
+const weeklyPerformanceGraficInfo = ref<WeeklyCareStatsVeterinary | null>(null)
 
 const recentsPacients = ref<RecentPatient[]>([])
 
@@ -51,8 +64,9 @@ const entityId = ref<number | null>(null)
 const today = DateAdapter.toFormatView(new Date())
 
 onMounted(async () => {
-  loadMyInfo()
+  await loadMyInfo()
   chartData.value = setChartData()
+  console.log(weeklyPerformanceGraficInfo.value)
   chartOptions.value = setChartOptions()
 })
 
@@ -64,11 +78,11 @@ const setChartData = () => {
   const documentStyle = getComputedStyle(document.documentElement)
 
   return {
-    labels: ['02/06', '09/06', '16/06', '23/06', '30/06'],
+    labels: weeklyPerformanceGraficInfo.value?.weekLabels,
     datasets: [
       {
         label: 'Atenciones',
-        data: [65, 59, 80, 81, 50],
+        data: weeklyPerformanceGraficInfo.value?.totalCares,
         fill: false,
         borderColor: documentStyle.getPropertyValue('--p-pink-500'),
         tension: 0.4,
@@ -122,6 +136,8 @@ const loadMyInfo = async () => {
     appointmentStats.value = await getTodayAppointmentStatsByHeadquarter(
       myInfoEmployee.value.headquarter.id,
     )
+    monthlyPerformanceStats.value = await getMonthlyPerformanceStatsByVeterinary(entityIdGet)
+    weeklyPerformanceGraficInfo.value = await getWeeklyPerformanceGraphicByVeterinary(entityIdGet)
     careRecents.value = await getCareAndAppointmentsForEmployee(entityIdGet)
     appointments.value = await getCaresForEmployee(entityIdGet)
     statsRecords.value = await getStatsByVeterinarian(entityIdGet)
@@ -153,23 +169,6 @@ const news: { title: string; icon: string; content: string; plus?: string }[] = 
 
 const recentRecords = ref<RecentMedicalRecord[]>([])
 
-const newsStadistics: { title: string; icon: string; content: string; plus?: string }[] = [
-  {
-    title: 'Pacientes',
-    icon: 'pi-github',
-    content: '20',
-  },
-  {
-    title: 'Atenciones',
-    icon: 'pi-clipboard',
-    content: '10',
-  },
-  {
-    title: 'Horas acumuladas',
-    icon: 'pi-clock',
-    content: '5',
-  },
-]
 
 const appoinmentsAbstract: { title: string; value: number }[] = [
   {
@@ -245,7 +244,7 @@ const handleRedirectPet = (petId: number) => {
           <template #subtitle>
             <p>Funciones más utilizadas</p>
             <div
-              class="grid grid-cols-1 xs:grid-cols-2 gap-y-4 lg:grid-cols-4 gap-x-6 lg:gap-x-12 mt-2"
+              class="grid grid-cols-1 xs:grid-cols-2 gap-y-4  gap-x-6 lg:gap-x-12 mt-2"
             >
               <Button
                 label="Atender cita"
@@ -261,19 +260,6 @@ const handleRedirectPet = (petId: number) => {
                 severity="info"
                 @click="redirect('/employee/veterinary/pets-management')"
               ></Button>
-              <Button
-                label="Registrar informe médico"
-                severity="warn"
-                iconPos="top"
-                icon="pi pi-pen-to-square"
-                @click="redirect('/employee/veterinary/pets-management')"
-              ></Button>
-              <Button
-                label="Solicitar cita"
-                severity="help"
-                iconPos="top"
-                icon="pi pi-plus"
-              ></Button>
             </div>
           </template>
         </Card>
@@ -286,7 +272,11 @@ const handleRedirectPet = (petId: number) => {
                   <h2 class="h3 font-semibold">Citas de Hoy</h2>
                 </div>
 
-                <Tag :value="`${appointments.length} citas`" severity="secondary" class="self-start"></Tag>
+                <Tag
+                  :value="`${appointments.length} citas`"
+                  severity="secondary"
+                  class="self-start"
+                ></Tag>
               </div>
             </template>
             <template #subtitle>
@@ -315,7 +305,7 @@ const handleRedirectPet = (petId: number) => {
                   class="flex min-h-120 max-h-122 items-center justify-center"
                   v-if="appointments.length === 0"
                 >
-                  <p>No servicios que mostrar</p>
+                  <p>No citas que mostrar</p>
                 </div>
                 <!-- abstract  -->
 
@@ -357,7 +347,11 @@ const handleRedirectPet = (petId: number) => {
                     <i class="pi pi-users"></i>
                     <h2 class="h3 font-semibold">Sala de espera</h2>
                   </div>
-                  <Tag :value="`${careRecents.length} esperando`" severity="secondary" class="self-start"></Tag>
+                  <Tag
+                    :value="`${careRecents.length} esperando`"
+                    severity="secondary"
+                    class="self-start"
+                  ></Tag>
                 </div>
               </template>
               <template #subtitle>
@@ -380,7 +374,7 @@ const handleRedirectPet = (petId: number) => {
                   class="flex min-h-120 max-h-122 items-center justify-center"
                   v-if="careRecents.length === 0"
                 >
-                  <p>No servicios que mostrar</p>
+                  <p>No clientes que mostrar</p>
                 </div>
               </template>
             </Card>
@@ -410,17 +404,22 @@ const handleRedirectPet = (petId: number) => {
                 <div class="w-full flex flex-col gap-2">
                   <div class="flex gap-2 items-center">
                     <i class="pi pi-calendar"></i>
-                    <h2 class="h3 font-semibold">Del mes</h2>
+                    <h2 class="h3 font-semibold">Del mes {{ monthlyPerformanceStats?.month }}</h2>
                   </div>
                   <!-- card news -->
                   <div class="w-full grid grid-cols-1 3xl:grid-cols-2 gap-y-3 gap-x-6">
                     <CardNewsPrimary
-                      v-for="(noticia, index) in newsStadistics"
-                      :key="index"
-                      :title="noticia.title"
-                      :icon="noticia.icon"
-                      :content="noticia.content"
-                      :plus="noticia.plus"
+                      v-if="monthlyPerformanceStats"
+                      title="Pacientes"
+                      icon="pi-github"
+                      :content="monthlyPerformanceStats.totalPatients.toString()"
+                    >
+                    </CardNewsPrimary>
+                           <CardNewsPrimary
+                      v-if="monthlyPerformanceStats"
+                      title="Atenciones"
+                      icon="pi-clipboard"
+                      :content="monthlyPerformanceStats.totalCares.toString()"
                     >
                     </CardNewsPrimary>
                   </div>
@@ -448,7 +447,11 @@ const handleRedirectPet = (petId: number) => {
                   <i class="pi pi-file"></i>
                   <h2 class="h3 font-semibold">Ultimos diagnosticos</h2>
                 </div>
-                <Tag :value="`${recentRecords.length} registros`" severity="secondary" class="self-start"></Tag>
+                <Tag
+                  :value="`${recentRecords.length} registros`"
+                  severity="secondary"
+                  class="self-start"
+                ></Tag>
               </div>
             </template>
             <template #subtitle>
@@ -457,7 +460,7 @@ const handleRedirectPet = (petId: number) => {
             <template #content>
               <div class="w-full flex flex-col gap-1.5 items-end" v-if="statsRecords">
                 <!-- abstract -->
-                <div class="w-full grid grid-cols-2 3xl:grid-cols-4 gap-y-3 gap-x-6">
+                <div class="w-full grid grid-cols-1 sm:grid-cols-2 3xl:grid-cols-4 gap-y-3 gap-x-6">
                   <CardNewsPrimary
                     title="En curso"
                     icon="pi-clock"
@@ -514,6 +517,9 @@ const handleRedirectPet = (petId: number) => {
                   hidden
                 />
               </div>
+              <div class="flex min-h-120 max-h-122 items-center justify-center" v-else>
+                <p>No hay diagnosticos que mostrar</p>
+              </div>
             </template>
           </Card>
           <!-- pet recent -->
@@ -524,14 +530,18 @@ const handleRedirectPet = (petId: number) => {
                   <i class="pi pi-heart"></i>
                   <h2 class="h3 font-semibold">Pacientes Recientes</h2>
                 </div>
-                <Tag :value="`${recentsPacients.length} pacientes`" severity="secondary" class="self-start"></Tag>
+                <Tag
+                  :value="`${recentsPacients.length} pacientes`"
+                  severity="secondary"
+                  class="self-start"
+                ></Tag>
               </div>
             </template>
             <template #subtitle>
               <p>Historial de pacientes atendidos recientemente</p>
             </template>
             <template #content>
-              <ScrollPanel class="h-156 mt-2 w-full">
+              <ScrollPanel v-if="recentsPacients.length > 0" class="h-156 mt-2 w-full">
                 <div class="w-full flex flex-col gap-1.5 items-end">
                   <CardPetTerciary
                     v-for="pet of recentsPacients"
@@ -552,7 +562,7 @@ const handleRedirectPet = (petId: number) => {
                 class="flex min-h-120 max-h-122 items-center justify-center"
                 v-if="recentsPacients.length === 0"
               >
-                <p>No servicios que mostrar</p>
+                <p>No hay servicios que mostrar</p>
               </div>
               <Button
                 class="mt-2 w-full"

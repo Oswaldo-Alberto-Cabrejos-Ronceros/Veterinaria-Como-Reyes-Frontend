@@ -4,8 +4,8 @@ export interface Care {
   statusCare: string
   headquarterVetServiceId: number
   appointmentId?: number
-  animalId: number,
-  employeeId:number
+  animalId: number
+  employeeId: number
 }
 
 export interface CareRequest {
@@ -16,24 +16,22 @@ export interface CareRequest {
   animalId: number
 }
 
-
-export interface CreateCareFromAppointmentRequest{
-  appointmentId:number,
-  employeeId:number
+export interface CreateCareFromAppointmentRequest {
+  appointmentId: number
+  employeeId: number
 }
 
 export interface CareRequestCreate {
-  headquarterVetServiceId:number,
-  animalId:number,
-  employeeId:number,
-  paymentMethodId:number
+  headquarterVetServiceId: number
+  animalId: number
+  employeeId: number
+  paymentMethodId: number
 }
 
-export interface  CareStatsToday {
-  totalCares: number;
-  todayCares: number;
+export interface CareStatsToday {
+  totalCares: number
+  todayCares: number
 }
-
 
 export interface CareList {
   careId: number
@@ -54,14 +52,25 @@ export interface CareList {
   appointmentId: number
 }
 
-
 export interface RecentPatient {
-  animalId: number;
-  animalName: string;
-  breedName: string;
-  clientFullName: string;
-  lastVisitDate?: string;
-  animalWeight: number;
-  animalSex: string;
-  animalBirthDate: string;
+  animalId: number
+  animalName: string
+  breedName: string
+  clientFullName: string
+  lastVisitDate?: string
+  animalWeight: number
+  animalSex: string
+  animalBirthDate: string
 }
+
+export interface MonthlyCareStatsVeterinary {
+  month: string
+  totalPatients: number
+  totalCares: number
+}
+
+export interface WeeklyCareStatsVeterinary {
+  weekLabels: string[]
+  totalCares: string[]
+}
+

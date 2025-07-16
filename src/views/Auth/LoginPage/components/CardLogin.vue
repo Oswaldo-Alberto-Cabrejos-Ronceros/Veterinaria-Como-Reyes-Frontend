@@ -82,7 +82,13 @@ const onSubmit = handleSubmit((values) => {
         class="flex flex-col gap-4 w-full max-w-lg xs:min-w-96 sm:min-w-md"
       >
         <div class="w-full flex flex-col gap-1 items-center justify-center">
-          <SelectButton v-bind="typeAttrs" v-model="type" :invalid="Boolean(errors.type)" :options="options" />
+          <SelectButton
+            :allowEmpty="false"
+            v-bind="typeAttrs"
+            v-model="type"
+            :invalid="Boolean(errors.type)"
+            :options="options"
+          />
           <Message v-if="errors.type" severity="error" size="small" variant="simple">
             {{ errors.type }}
           </Message>
@@ -93,7 +99,13 @@ const onSubmit = handleSubmit((values) => {
           <InputGroupAddon class="text-neutral-400">
             <i class="pi pi-user"></i>
           </InputGroupAddon>
-          <InputText v-bind="emailAttrs" v-model="email" :invalid="Boolean(errors.email)" type="text" placeholder="Email" />
+          <InputText
+            v-bind="emailAttrs"
+            v-model="email"
+            :invalid="Boolean(errors.email)"
+            type="email"
+            placeholder="Email"
+          />
         </InputGroup>
         <Message v-if="errors.email" severity="error" size="small" variant="simple">
           {{ errors.email }}
@@ -132,3 +144,10 @@ const onSubmit = handleSubmit((values) => {
     </template>
   </Card>
 </template>
+
+<style scoped>
+::v-deep(.p-togglebutton.p-togglebutton-checked) {
+  background-color: var(--p-primary-color) !important;
+  color: white;
+}
+</style>

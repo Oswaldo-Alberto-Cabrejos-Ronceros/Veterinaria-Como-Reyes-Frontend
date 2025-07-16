@@ -57,10 +57,10 @@ export class HeadquarterServiceImpl implements HeadquarterService {
     if (district) params.district = district
     if (province) params.province = province
     if (status != undefined) params.status = status
-    
+
     const response = await this.httpClient.get<PageResponse<HeadquarterList>>(
       `${this.urlBase}/search`,
-      params,
+      { params: params },
     )
     return response.data
   }

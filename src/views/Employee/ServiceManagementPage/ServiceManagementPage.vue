@@ -31,10 +31,10 @@ import { useAuthentication } from '@/composables/useAuthentication'
 //toast
 const toast = useToast()
 
-const showToast = (message: string) => {
+const showToast = (message: string, severity: string, sumary: string) => {
   toast.add({
-    severity: 'success',
-    summary: 'Éxito',
+    severity: severity,
+    summary: sumary,
     detail: message,
     life: 3000,
   })
@@ -47,10 +47,13 @@ const {
   error,
   createVeterinaryService,
   updateVeterinaryService,
+  deleteVeterinaryService,
   activateVeterinaryService,
   searchVeterinaryServices,
-  getVeterinaryServiceById
+  getVeterinaryServiceById,
 } = useVeterinaryService()
+
+const typedError = error as Record<string, string | null>
 
 const { getAllSpecies } = useSpecie()
 
@@ -164,6 +167,8 @@ const viewService = async (serviceData: ServiceList) => {
     props: {
       modal: true,
       header: `${serviceData.name}`,
+      blockScroll: true,
+      dismissableMask: true,
     },
     data: {
       serviceData: service,
@@ -176,6 +181,8 @@ const addService = async () => {
     props: {
       modal: true,
       header: 'Agregar servicio',
+      blockScroll: true,
+      dismissableMask: true,
     },
     data: {
       speciesOptions: speciesToOptionsSelect(await getAllSpecies()),
@@ -184,10 +191,19 @@ const addService = async () => {
     onClose: async (options) => {
       const data = options?.data
       if (data) {
-        const service = await createVeterinaryService(data)
-        console.log('Datos recibidos', service)
-        showToast('Servicio agregado exitosamente: ' + data.name)
-        loadServices()
+        try {
+          const service = await createVeterinaryService(data)
+          console.log('Datos recibidos', service)
+          showToast('Servicio agregado exitosamente: ' + data.name, 'success', 'Éxito')
+          loadServices()
+        } catch (error) {
+          console.error(error)
+          if (typedError.createVeterinaryService) {
+            showToast('Error al agregar servicio: ' + data.name + typedError.createVeterinaryService, 'warn', 'Error')
+          } else {
+            showToast('Error al agregar servicio: ' + data.name, 'warn', 'Error')
+          }
+        }
       }
     },
   })
@@ -201,6 +217,8 @@ const editService = async (serviceData: ServiceList) => {
     props: {
       modal: true,
       header: `${serviceData.name}`,
+      blockScroll: true,
+      dismissableMask: true,
     },
     data: {
       serviceData: {
@@ -218,10 +236,19 @@ const editService = async (serviceData: ServiceList) => {
     onClose: async (options) => {
       const data = options?.data
       if (data) {
-        const service = await updateVeterinaryService(serviceData.serviceId, data)
-        console.log('Datos recibidos', service)
-        showToast('Servicio editado exitosamente: ' + data.name)
-        loadServices()
+        try {
+          const service = await updateVeterinaryService(serviceData.serviceId, data)
+          console.log('Datos recibidos', service)
+          showToast('Servicio editado exitosamente: ' + data.name, 'success', 'Éxito')
+          loadServices()
+        } catch (error) {
+          console.error(error)
+          if (typedError.updateVeterinaryService) {
+            showToast('Error al actualizar servicio: ' + data.name + typedError.updateVeterinaryService, 'warn', 'Error')
+          } else {
+            showToast('Error al actualizar servicio: ' + data.name, 'warn', 'Error')
+          }
+        }
       }
     },
   })
@@ -230,13 +257,15 @@ const editService = async (serviceData: ServiceList) => {
 //for confirm
 const confirm = useConfirm()
 
-const deleteService = (event: MouseEvent | KeyboardEvent, serviceData: ServiceList) => {
+const deleteReactiveService = (event: MouseEvent | KeyboardEvent, serviceData: ServiceList) => {
   const isActive = serviceData.status
 
   confirm.require({
     group: 'confirmPopupGeneral',
     target: event.currentTarget as HTMLElement,
-    message: '¿Seguro que quiere eliminar este servicio?',
+    message: isActive
+      ? '¿Seguro que quiere eliminar este servicio?'
+      : '¿Seguro que quiere reactivar este servicio?',
     icon: 'pi pi-exclamation-triangle',
     rejectProps: {
       label: 'Cancelar',
@@ -248,8 +277,14 @@ const deleteService = (event: MouseEvent | KeyboardEvent, serviceData: ServiceLi
       severity: isActive ? 'danger' : 'success',
     },
     accept: async () => {
-      await activateVeterinaryService(serviceData.serviceId)
-      showToast('Servicio eliminado exitosamente: ' + serviceData.name)
+      if (isActive) {
+        await deleteVeterinaryService(serviceData.serviceId)
+        showToast('Servicio eliminado exitosamente: ' + serviceData.name, 'success', 'Éxito')
+      } else {
+        await activateVeterinaryService(serviceData.serviceId)
+        showToast('Servicio reactivado exitosamente: ' + serviceData.name, 'success', 'Éxito')
+      }
+
       loadServices()
     },
     reject: () => {
@@ -298,6 +333,7 @@ const exportCSV = () => {
             <div>
               <label class="block mb-2">Especie</label>
               <Select
+              filter
                 class="w-full"
                 v-bind="specieIdAttrs"
                 v-model="specieId"
@@ -318,6 +354,7 @@ const exportCSV = () => {
             <div>
               <label class="block mb-2">Categoria</label>
               <Select
+              filter
                 class="w-full"
                 v-bind="categoryIdAttrs"
                 v-model="categoryId"
@@ -385,6 +422,8 @@ const exportCSV = () => {
             :loading="loading.searchVeterinaryServices"
             :rows-per-page-options="[10, 15, 20, 25, 30]"
             @page="loadServices"
+            scrollable
+            removableSort
             ref="dt"
           >
             <template #header>
@@ -400,35 +439,11 @@ const exportCSV = () => {
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
             </template>
-            <Column
-              field="name"
-              sortable
-              header="Nombre"
-              class="hidden lg:table-cell"
-              style="width: 18%"
-            ></Column>
+            <Column field="name" sortable header="Nombre" style="width: 18%"></Column>
             <Column field="category" sortable header="Categoria" style="width: 18%"></Column>
-            <Column
-              field="duration"
-              class="hidden lg:table-cell"
-              header="Duración"
-              sortable
-              style="width: 15%"
-            ></Column>
-            <Column
-              field="price"
-              class="hidden lg:table-cell"
-              header="Precio"
-              sortable
-              style="width: 15%"
-            ></Column>
-            <Column
-              field="specie"
-              class="hidden md:table-cell"
-              header="Especie"
-              sortable
-              style="width: 15%"
-            ></Column>
+            <Column field="duration" header="Duración" sortable style="width: 15%"></Column>
+            <Column field="price" header="Precio" sortable style="width: 15%"></Column>
+            <Column field="specie" sortable header="Especie" style="width: 15%"></Column>
             <Column header="Acciones">
               <template #body="{ data }">
                 <div class="flex items-center flex-row lg:flex-col xl:flex-row gap-1">
@@ -458,9 +473,19 @@ const exportCSV = () => {
                     aria-label="Eliminar"
                     rounded
                     size="small"
-                    v-if="roleMain === 'Administrador'"
-                    @click="deleteService($event, data)"
+                    v-if="data.status === 'Activo' && roleMain === 'Administrador'"
+                    @click="deleteReactiveService($event, data)"
                   />
+                  <Button
+                    v-if="data.status === 'Inactivo' && roleMain === 'Administrador'"
+                    icon="pi pi-refresh"
+                    severity="warn"
+                    variant="text"
+                    aria-label="Desbloquear"
+                    rounded
+                    size="small"
+                    @click="deleteReactiveService($event, data)"
+                  ></Button>
                 </div>
               </template>
             </Column>

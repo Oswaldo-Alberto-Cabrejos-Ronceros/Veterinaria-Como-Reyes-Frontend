@@ -25,24 +25,35 @@ const emitView = () => {
     <div class="flex-1 flex flex-col gap-2 2xl:gap-1 justify-center items-start">
       <p>{{ petName }}</p>
       <p class="text-neutral-500 text-sm">{{ petBreed }} - {{ ownerName }}</p>
-      <div class="flex gap-1 md:items-center">
-        <i class="pi pi-clock"></i>
-        <p>Ultima visita: {{ lastAppoinmentDate || 'No tiene' }}</p>
-        <i class="pi pi-calendar"></i>
-        <p>Próxima: {{ nextAppontmentDate || 'No tiene' }}</p>
+      <div class="flex flex-col md:flex-row gap-1 md:items-center">
+        <div class="flex items-center gap-2">
+          <i class="pi pi-clock"></i>
+          <p>Ultima visita: {{ lastAppoinmentDate || 'No tiene' }}</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <i class="pi pi-calendar"></i>
+          <p>Próxima: {{ nextAppontmentDate || 'No tiene' }}</p>
+        </div>
       </div>
-      <div class="flex gap-1">
-        <p class="font-semibold">Peso:</p>
-        <p>{{ petWeight }} Kg</p>
+      <div class="flex flex-col md:flex-row gap-1">
+        <div class="flex items-center gap-2">
+          <p class="font-semibold">Peso:</p>
+          <p>{{ petWeight }} Kg</p>
+        </div>
 
-        <p class="font-semibold">Sexo:</p>
-        <p>{{ petGender }} Kg</p>
-        <p class="font-semibold">Nacimiento:</p>
-        <p>{{ petBirtdate }}</p>
+        <div class="flex items-center gap-2">
+          <p class="font-semibold">Sexo:</p>
+          <p>{{ petGender }} Kg</p>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <p class="font-semibold">Nacimiento:</p>
+          <p>{{ petBirtdate }}</p>
+        </div>
       </div>
-      <div class="w-full flex justify-end">
+      <div class="w-full flex   justify-end">
         <Button
-          class="py-1.5"
+          class="py-1.5 w-full xs:w-auto"
           label="Ver completo"
           severity="info"
           size="small"

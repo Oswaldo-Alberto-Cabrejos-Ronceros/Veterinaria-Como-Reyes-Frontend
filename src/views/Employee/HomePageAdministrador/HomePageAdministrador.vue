@@ -28,22 +28,35 @@ import { useRouter } from 'vue-router'
 import { useSpecie } from '@/composables/useSpecie'
 import type { TopSpeciesByAppointments } from '@/services/Specie/domain/models/Specie'
 import ScrollPanel from 'primevue/scrollpanel'
+import SkeletonPrimaryCard from '../../../components/SkeletonPrimaryCard.vue'
+import SkeletonSecondaryCard from '@/components/SkeletonSecondaryCard.vue'
 
 const { getMainRole, getEntityId } = useAuthentication()
 const { getEmployeeMyInfo } = useEmployee()
 
 const {
+  loading: loadingAppointment,
   getAppointmentsByDateForPanelManager,
   getTodayAppointmentStatsByHeadquarter,
   getTodayAppointmentStats,
   getAppointmentsByDateForPanelAdmin,
 } = useAppointment()
 
-const { getTopServicesForManager, getTopServicesForAdmin } = useVeterinaryService()
-
-const { getPaymentStatsByHeadquarter, getCompletedPaymentsStats } = usePayment()
+const {
+  loading: loadingVeterinary,
+  getTopServicesForManager,
+  getTopServicesForAdmin,
+} = useVeterinaryService()
 
 const {
+  loading: loagingPayment,
+  getPaymentStatsByHeadquarter,
+  getCompletedPaymentsStats,
+} = usePayment()
+
+const {
+  loading: loadingClient,
+
   getClientStatsByHeadquarter,
   getClientInfoPanelByHeadquarter,
   getClientStatsPanel,
@@ -193,6 +206,7 @@ const setChartOptions = () => {
 
 const setChartDataSpecies = () => {
   console.log('Desde function', topsSpeciesGeneral)
+  console.log(topsSpeciesGeneral)
   return {
     labels: topsSpeciesGeneral.value?.speciesNames,
     datasets: [
@@ -273,6 +287,12 @@ const redirect = (url: string) => {
       <template #content>
         <!-- news -->
         <div class="w-full grid grid-cols-2 gap-y-4 lg:grid-cols-4 gap-x-6 lg:gap-x-12 mt-4">
+          <SkeletonPrimaryCard
+            v-if="
+              loadingAppointment.getTodayAppointmentStatsByHeadquarter ||
+              loadingAppointment.getTodayAppointmentStatsByHeadquarter
+            "
+          ></SkeletonPrimaryCard>
           <CardNewsPrimary
             v-if="todayAppoinmentStats"
             title="Citas hoy"
@@ -281,6 +301,12 @@ const redirect = (url: string) => {
             :plus="`+${todayAppoinmentStats.totalAppointments - todayAppoinmentStats.todayRegisteredAppointments} desde ayer`"
           >
           </CardNewsPrimary>
+          <SkeletonPrimaryCard
+            v-if="
+              loadingAppointment.getAppointmentsByDateForPanelManager ||
+              loadingAppointment.getAppointmentsByDateForPanelAdmin
+            "
+          ></SkeletonPrimaryCard>
           <CardNewsPrimary
             v-if="paymentStats"
             title="Ingresos del mes"
@@ -288,7 +314,12 @@ const redirect = (url: string) => {
             :content="paymentStats.currentTotal.toString()"
             :plus="`${paymentStats.percentageDifference} vs mes anterior`"
           ></CardNewsPrimary>
-
+          <SkeletonPrimaryCard
+            v-if="
+              loagingPayment.getCompletedPaymentsStats ||
+              loagingPayment.getPaymentStatsByHeadquarter
+            "
+          ></SkeletonPrimaryCard>
           <CardNewsPrimary
             v-if="clientsStats"
             title="Clientes"
@@ -322,6 +353,13 @@ const redirect = (url: string) => {
             <template #content>
               <div class="w-full flex flex-col gap-1.5">
                 <div class="flex flex-col gap-2">
+                  <SkeletonSecondaryCard
+                    v-if="
+                      loadingAppointment.getAppointmentsByDateForPanelAdmin ||
+                      loadingAppointment.getAppointmentsByDateForPanelManager
+                    "
+                  />
+
                   <div
                     class="flex min-h-44 max-h-56 items-center justify-center"
                     v-if="appointmentsToday.length === 0"
@@ -364,6 +402,12 @@ const redirect = (url: string) => {
                 <p>Servicios más perdidos</p>
               </template>
               <template #content>
+                <SkeletonSecondaryCard
+                  v-if="
+                    loadingVeterinary.getTopServicesForManager ||
+                    loadingVeterinary.getTopServicesForAdmin
+                  "
+                />
                 <ScrollPanel v-if="servicesTop.length > 0" class="56">
                   <ServiceRankingItem
                     v-for="(service, index) of servicesTop"
@@ -375,10 +419,7 @@ const redirect = (url: string) => {
                   >
                   </ServiceRankingItem>
                 </ScrollPanel>
-                <div
-                  class="flex h-56 items-center justify-center"
-                  v-if="servicesTop.length === 0"
-                >
+                <div class="flex h-56 items-center justify-center" v-if="servicesTop.length === 0">
                   <p>No servicios que mostrar</p>
                 </div>
               </template>
@@ -399,6 +440,13 @@ const redirect = (url: string) => {
                 </div>
               </template>
               <template #content>
+                <SkeletonSecondaryCard
+                  v-if="
+                    loadingClient.getClientInfoPanelAdmin ||
+                    loadingClient.getClientInfoPanelByHeadquarter
+                  "
+                />
+
                 <ClientRankingItem
                   v-for="(client, index) of clientsRecent"
                   :key="index"

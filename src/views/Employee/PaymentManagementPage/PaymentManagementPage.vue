@@ -27,15 +27,20 @@ import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
 import { useAuthentication } from '@/composables/useAuthentication'
 import { useEmployee } from '@/composables/useEmployee'
+import { usePaymentTicket } from '@/composables/usePaymentTicket'
 
 //methods
 
-const { error, loading,setPaymentStatusComplete, setPaymentStatusCancelled,searchPayments } = usePayment()
+const { error, loading, setPaymentStatusComplete, setPaymentStatusCancelled, searchPayments } =
+  usePayment()
 const { getAllHeadquarters } = useHeadquarter()
+//for download ticket
+
+const { downloadPaymentTicket } = usePaymentTicket()
 
 const { getAllVeterinaryServices } = useVeterinaryService()
 
-const {getEmployeeMyInfo}= useEmployee()
+const { getEmployeeMyInfo } = useEmployee()
 
 const payments = ref<PaymentList[]>([])
 const totalRecords = ref<number>(0)
@@ -54,13 +59,16 @@ const searchPaymentsDebounce = debounce(() => {
   loadPayments()
 })
 
-const { getMainRole,getEntityId } = useAuthentication()
+const { getMainRole, getEntityId } = useAuthentication()
 
 const roleMain = ref<string>('')
 
-const loadPayments = async (event?: DataTablePageEvent) => {
+const handleDownloadPaymentTicket = async (paymentId: number) => {
+  await downloadPaymentTicket(paymentId)
+}
 
-      const role = getMainRole()
+const loadPayments = async (event?: DataTablePageEvent) => {
+  const role = getMainRole()
   if (role) {
     roleMain.value = role
     if (role === 'Administrador') {
@@ -151,30 +159,27 @@ const headquartersServicesToOptionsSelect = (items: Headquarter[] | Service[]): 
 
 //for confirm
 
-
 //toast
 const toast = useToast()
 
-const showToast = (message: string) => {
+const showToast = (message: string, severity: string, sumary: string) => {
   toast.add({
-    severity: 'success',
-    summary: 'Éxito',
+    severity: severity,
+    summary: sumary,
     detail: message,
     life: 3000,
   })
 }
 
-
-
 //for confirm
 const confirm = useConfirm()
 
 //for delete with confirm popup
-const confirmCacelPayment = (event: MouseEvent | KeyboardEvent, payment:PaymentList) => {
+const confirmCacelPayment = (event: MouseEvent | KeyboardEvent, payment: PaymentList) => {
   confirm.require({
     group: 'confirmPopupGeneral',
     target: event.currentTarget as HTMLElement,
-    message: '¿Seguro que quiere eliminar a esta mascota?',
+    message: '¿Seguro que quiere cancelar este pago?',
     icon: 'pi pi-exclamation-triangle',
     rejectProps: {
       label: 'Cancelar',
@@ -188,7 +193,7 @@ const confirmCacelPayment = (event: MouseEvent | KeyboardEvent, payment:PaymentL
     accept: async () => {
       await setPaymentStatusCancelled(payment.id) // esta es la que viene de usePet()
       loadPayments()
-      showToast('Pago cancelado correctamente')
+      showToast('Pago cancelado correctamente', 'success', 'Éxito')
     },
     reject: () => {
       console.log('Cancelando eliminación')
@@ -199,11 +204,11 @@ const confirmCacelPayment = (event: MouseEvent | KeyboardEvent, payment:PaymentL
 //for confirm
 
 //for delete with confirm popup
-const confirmCompletePayment = (event: MouseEvent | KeyboardEvent, payment:PaymentList) => {
+const confirmCompletePayment = (event: MouseEvent | KeyboardEvent, payment: PaymentList) => {
   confirm.require({
     group: 'confirmPopupGeneral',
     target: event.currentTarget as HTMLElement,
-    message: '¿Seguro que quiere eliminar a esta mascota?',
+    message: '¿Seguro que quiere completar este pago?',
     icon: 'pi pi-exclamation-triangle',
     rejectProps: {
       label: 'Cancelar',
@@ -217,7 +222,7 @@ const confirmCompletePayment = (event: MouseEvent | KeyboardEvent, payment:Payme
     accept: async () => {
       await setPaymentStatusComplete(payment.id) // esta es la que viene de usePet()
       loadPayments()
-      showToast('Pago completado correctamente')
+      showToast('Pago completado correctamente', 'success', 'Éxito')
     },
     reject: () => {
       console.log('Cancelando eliminación')
@@ -263,7 +268,7 @@ const exportCSV = () => {
               </Message>
             </div>
             <!-- sedes -->
-            <div v-if="roleMain==='Administrador'">
+            <div v-if="roleMain === 'Administrador'">
               <label class="block mb-2">Sede</label>
               <Select
                 class="w-full"
@@ -294,7 +299,8 @@ const exportCSV = () => {
                 optionValue="value"
                 placeholder="Selecciona Servicio"
                 @update:model-value="searchPaymentsDebounce()"
-              />
+                filter
+                />
             </div>
 
             <div>
@@ -380,6 +386,8 @@ const exportCSV = () => {
             :first="first"
             :loading="loading.searchPayments"
             @page="loadPayments"
+            scrollable
+            removableSort
             :rows-per-page-options="[1, 2, 3, 4]"
             ref="dt"
           >
@@ -388,51 +396,15 @@ const exportCSV = () => {
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
             </template>
-            <Column field="clientDni" sortable header="Cliente" style="width: 10%"></Column>
-            <Column
-              field="headquarterName"
-              sortable
-              header="Sede"
-              class="hidden lg:table-cell"
-              style="width: 12%"
-            ></Column>
-            <Column
-              field="serviceName"
-              class="hidden xl:table-cell"
-              header="Servicio"
-              sortable
-              style="width: 15%"
-            ></Column>
-            <Column
-              field="amount"
-              class="hidden xs:table-cell sm:hidden lg:table-cell"
-              header="Monto"
-              sortable
-              style="width: 10%"
-            ></Column>
-            <Column
-              field="paymentMethod"
-              class="hidden xl:table-cell"
-              header="M.Pago"
-              sortable
-              style="width: 10%"
-            ></Column>
-            <Column
-              field="paymentDate"
-              class="table-cell sm:hidden lg:table-cell"
-              header="Fecha"
-              sortable
-              style="width: 10%"
-            ></Column>
-            <Column
-              field="status"
-              class="hidden md:table-cell"
-              header="Estado"
-              sortable
-              style="width: 12%"
-            ></Column>
+            <Column field="clientDni" header="DNI" sortable style="width: 10%"></Column>
+            <Column field="headquarterName" sortable style="width: 12%" header="Sede"></Column>
+            <Column field="serviceName" sortable style="width: 15%" header="Servicio"></Column>
+            <Column field="amount" sortable style="width: 10%" header="Monto"></Column>
+            <Column field="paymentMethod" sortable style="width: 10%" header="Método"></Column>
+            <Column field="paymentDate" sortable style="width: 10%" header="Fecha"></Column>
+            <Column field="status" sortable style="width: 12%" header="Estado"></Column>
             <Column header="Acciones">
-              <template #body="{data}">
+              <template #body="{ data }">
                 <div class="flex items-center flex-col sm:flex-row lg:flex-row gap-1">
                   <Button
                     icon="pi pi-eye"
@@ -441,6 +413,7 @@ const exportCSV = () => {
                     size="small"
                     aria-label="Ver"
                     rounded
+                    hidden
                   ></Button>
                   <Button
                     icon="pi pi-ban"
@@ -449,25 +422,27 @@ const exportCSV = () => {
                     size="small"
                     aria-label="Cancelar"
                     rounded
-                    v-if="data.status!=='Cancelada'&&data.status!=='Completada'"
-                    @click="confirmCacelPayment($event,data)"
+                    v-if="data.status !== 'Cancelada' && data.status !== 'Completada'"
+                    @click="confirmCacelPayment($event, data)"
                   ></Button>
 
-                                <Button
+                  <Button
                     icon="pi pi-check"
                     severity="success"
                     variant="text"
                     size="small"
                     aria-label="Completar"
                     rounded
-                    v-if="data.status!=='Completada'&&data.status!=='Cancelada'"
-                    @click="confirmCompletePayment($event,data)"
+                    v-if="data.status !== 'Completada' && data.status !== 'Cancelada'"
+                    @click="confirmCompletePayment($event, data)"
                   ></Button>
 
                   <Button
                     icon="pi pi-file"
                     severity="success"
                     variant="text"
+                    v-if="data.status === 'Completada'"
+                    @click="handleDownloadPaymentTicket(data.id)"
                     size="small"
                     aria-label="Descargar comprobante"
                     rounded

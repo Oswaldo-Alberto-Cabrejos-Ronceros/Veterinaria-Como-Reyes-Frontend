@@ -42,7 +42,12 @@ const emitView = () => {
       <div class="flex gap-2">
         <Avatar class="size-10" shape="circle" :label="petName.slice(0, 2)"></Avatar>
         <div class="flex flex-col gap-0.5">
-          <h3 class="font-semibold text-lg">{{ petName }}</h3>
+          <div class="flex flex-row gap-1 xs:items-center">
+              <h3 class="font-semibold text-lg">{{ petName }}</h3>
+              <Tag class="block xs:hidden" :value="status" severity="secondary"> </Tag>
+<p class="textSm hidden xs:block">{{ serviceName }}</p>
+          </div>
+<p class="textSm block xs:hidden">{{ serviceName }}</p>
           <p class="text-neutral-500 text-sm">{{ petBreed }}</p>
         </div>
       </div>
@@ -51,7 +56,7 @@ const emitView = () => {
         <i class="pi pi-user text-neutral-500"></i>
         <p class="">{{ ownerName }}</p>
       </div>
-      <div class="flex gap-2">
+      <div class="flex flex-col xs:flex-row gap-2">
         <Button
           label="Ver historial"
           severity="secondary"
@@ -82,6 +87,6 @@ const emitView = () => {
         />
       </div>
     </div>
-    <Tag :value="status" severity="secondary"> </Tag>
+    <Tag class="hidden xs:block" :value="status" severity="secondary"> </Tag>
   </div>
 </template>

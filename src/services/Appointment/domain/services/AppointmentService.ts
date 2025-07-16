@@ -12,11 +12,13 @@ import type {
   BasicServiceForAppointment,
   CareAndAppointmentPanelEmployee,
   ClientInfoForAppointment,
+  DailyAppointmentStats,
   InfoAppointmentForPanel,
   InfoBasicAppointment,
-  PaymentInfoForAppointment,
+  OperationalMonthlyStats,
   TimesForTurn,
 } from '../models/Appointment'
+import type { PaymentInfoForAppointment } from '@/services/Payment/domain/models/Payment'
 
 export interface AppointmentService {
   getAllAppointments(): Promise<Appointment[]>
@@ -46,7 +48,10 @@ export interface AppointmentService {
   getAppointmentsByDateForPanelManager(headquarterId: number): Promise<AppointmentInfoPanelAdmin[]>
   getTodayAppointmentStatsByHeadquarter(headquarterId: number): Promise<AppointmentStatsToday>
   getCareAndAppointmentsForEmployee(employeeId: number): Promise<CareAndAppointmentPanelEmployee[]>
-  getStatsForReceptionist(headquarterId:number): Promise<AppointmentStatsForReceptionist>
+  getStatsForReceptionist(headquarterId: number): Promise<AppointmentStatsForReceptionist>
   getAppointmentsByHeadquarterId(headquarterId: number): Promise<CareAndAppointmentPanelEmployee[]>
-
+  getOperationalMonthlyStatsByHeadquarter(headquarterId: number): Promise<OperationalMonthlyStats>
+  getDailyAppointmentStatsByHeadquarter(headquarterId: number): Promise<DailyAppointmentStats>
+  getGeneralOperationalMonthlyStats(): Promise<OperationalMonthlyStats>
+  getDailyAppointmentStatsLast7Days(): Promise<DailyAppointmentStats>
 }

@@ -4,9 +4,11 @@ import type {
   SpecieRequest,
   SpecieList,
   TopSpeciesByAppointments,
+  TopSpeciesCare,
 } from '../domain/models/Specie'
 import type { HttpClient } from '@/services/Http/model/HttpClient'
 import type { PageResponse } from '@/services/models/PageResponse'
+import type { ReportPeriod } from '@/services/enums/ReportPeriod'
 
 export class SpecieServiceImpl implements SpecieService {
   constructor(private readonly httpClient: HttpClient) {}
@@ -54,10 +56,9 @@ export class SpecieServiceImpl implements SpecieService {
     if (name) params.name = name
     if (status !== undefined) params.status = String(status)
 
-    const response = await this.httpClient.get<PageResponse<SpecieList>>(
-      `${this.url}/search`,
-      params,
-    )
+    const response = await this.httpClient.get<PageResponse<SpecieList>>(`${this.url}/search`, {
+      params: params,
+    })
     return response.data
   }
 
@@ -70,6 +71,23 @@ export class SpecieServiceImpl implements SpecieService {
   async getTopSpeciesByHeadquarter(headquarterId: number): Promise<TopSpeciesByAppointments> {
     const response = await this.httpClient.get<TopSpeciesByAppointments>(
       `/panel-manager/appointments/top-species/${headquarterId}`,
+    )
+    return response.data
+  }
+
+  async getTopSpeciesByPeriod(period: ReportPeriod): Promise<TopSpeciesCare> {
+    const response = await this.httpClient.get<TopSpeciesCare>(
+      `/panel-admin/top-specie/${period}`,
+    )
+    return response.data
+  }
+
+  async getTopSpeciesByPeriodAndHeadquarter(
+    period: ReportPeriod,
+    headquarterId: number,
+  ): Promise<TopSpeciesCare> {
+    const response = await this.httpClient.get<TopSpeciesCare>(
+      ` /manager-panel/top-specie/${period}/headquarter/${headquarterId}`,
     )
     return response.data
   }

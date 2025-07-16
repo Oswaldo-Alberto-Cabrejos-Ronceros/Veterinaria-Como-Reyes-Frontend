@@ -16,8 +16,7 @@ import type { AnimalInfoForAppointment } from '@/services/Appointment/domain/mod
 import type { PetInfoForAppointment } from '@/models/PetInfoForAppointment'
 import type { ClientInfoForAppointment as ClientInfoForAppointmentView } from '@/models/ClientInfoForAppointment'
 import type { ClientInfoForAppointment } from '@/services/Appointment/domain/models/Appointment'
-import type { PaymentInfoForAppointment as PaymentInfoForAppointmentView } from '@/models/PaymentInfoForAppointment'
-import type { PaymentInfoForAppointment } from '@/services/Appointment/domain/models/Appointment'
+
 import type { AppointmentInfoPanelAdmin } from '@/services/Appointment/domain/models/Appointment'
 import type { AppointmentInfoPanelAdmin as AppointmentInfoPanelAdminView } from '@/models/AppointmentInfoPanelAdmin'
 import type { CareAndAppointmentPanelEmployee as CareAndAppointmentPanelEmployeeView } from '@/models/CareAndAppointmentPanelEmployee'
@@ -71,6 +70,10 @@ export class AppointmentAdapter {
       categoryService: {
         name: infoBasicAppointment.categoryServiceName,
       },
+      headquarter: {
+        name: infoBasicAppointment.nameHeadquarter,
+        address: infoBasicAppointment.addressHeadquarter,
+      },
       status: FormatAdapter.toCaptalizeCaseWithout_(infoBasicAppointment.status),
       duration: infoBasicAppointment.duration,
     }
@@ -81,6 +84,8 @@ export class AppointmentAdapter {
   ): AppointmentListView {
     return {
       id: appointmentList.appointmentId,
+      petName: appointmentList.petName,
+      petOwner: appointmentList.petOwner,
       date: appointmentList.day,
       headquarter: appointmentList.headquarter,
       categoryService: appointmentList.categoryService,
@@ -130,21 +135,6 @@ export class AppointmentAdapter {
       phone: clientInfoAppointment.phoneNumber,
       email: clientInfoAppointment.email,
       address: clientInfoAppointment.address,
-    }
-  }
-
-  static toPaymentInfoForAppointmentView(
-    paymentInfo: PaymentInfoForAppointment,
-  ): PaymentInfoForAppointmentView {
-    return {
-      paymentId: paymentInfo.paymentId,
-      amount: paymentInfo.amount,
-      serviceName: paymentInfo.serviceName,
-      paymentMethod: {
-        id: paymentInfo.paymentMethodId,
-        name: paymentInfo.paymentMethod,
-      },
-      status: FormatAdapter.toCaptalizeCaseWithout_(paymentInfo.paymentStatus),
     }
   }
 

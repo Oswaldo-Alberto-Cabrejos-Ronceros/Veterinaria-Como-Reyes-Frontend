@@ -19,7 +19,7 @@ const props = defineProps<{
   buttonActive: boolean
 }>()
 
-const emit = defineEmits(['complete-payment'])
+const emit = defineEmits(['complete-payment','download-ticket'])
 
 //for
 
@@ -39,6 +39,10 @@ const paymentIdsToOptionsSelect = (items: PaymentMethod[]): OptionSelect[] => {
 
 const handleCompletePayment = () => {
   emit('complete-payment')
+}
+
+const handleDownloadTicket =()=>{
+  emit('download-ticket')
 }
 
 onMounted(async () => {
@@ -109,7 +113,7 @@ const igv = ref<number>(Number((props.price - subtotal.value).toFixed(1)))
             class="flex-1"
             type="submit"
             :disabled="status === 'Completada' || buttonActive"
-            @click="handleCompletePayment()"
+            @click="handleCompletePayment"
           />
           <Button
             label="Generar Boleta"
@@ -117,6 +121,8 @@ const igv = ref<number>(Number((props.price - subtotal.value).toFixed(1)))
             icon-pos="left"
             variant="outlined"
             severity="secondary"
+            :disabled="!(status === 'Completada')"
+            @click="handleDownloadTicket"
           />
         </div>
       </div>
