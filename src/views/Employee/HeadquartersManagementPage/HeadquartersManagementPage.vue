@@ -26,10 +26,10 @@ import { DateAdapter } from '@/adapters/DateAdapter'
 //toast
 const toast = useToast()
 
-const showToast = (message: string) => {
+const showToast = (message: string, severity: string, sumary: string) => {
   toast.add({
-    severity: 'success',
-    summary: 'Éxito',
+    severity: severity,
+    summary: sumary,
     detail: message,
     life: 3000,
   })
@@ -46,6 +46,8 @@ const {
   searchHeadquarters,
   getHeadquarterById,
 } = useHeadquarter()
+
+const typedError = error as Record<string, string | null>
 
 //headquarters
 const headquarters = ref<HeadquarterList[]>([])
@@ -177,14 +179,25 @@ const addHeadquarter = () => {
     props: {
       modal: true,
       header: 'Agregar sede',
+      blockScroll: true,
+      dismissableMask: true,
     },
     onClose: async (options) => {
       const data = options?.data as HeadquarterAddEditSchema
       if (data) {
-        const headquarter = await createHeadquarter(data)
-        console.log('Datos recibidos del dialogo', headquarter)
-        loadHeadquarters()
-        showToast('Sede agregada exitosamente: ' + headquarter.name)
+        try {
+          const headquarter = await createHeadquarter(data)
+          console.log(headquarter)
+          loadHeadquarters()
+          showToast('Sede agregada exitosamente: ' + headquarter.name, 'success', 'Éxito')
+        } catch (error) {
+          console.error(error)
+          if (typedError.createHeadquarter) {
+            showToast('Error al crear la sede: ' + data.name + typedError.createHeadquarter, 'warn', 'Error')
+          } else {
+            showToast('Error al crear la sede' + data.name, 'warn', 'Error')
+          }
+        }
       }
     },
   })
@@ -197,6 +210,8 @@ const viewHeadquarter = async (headquarterData: HeadquarterList) => {
     props: {
       modal: true,
       header: `${headquarterData.name}`,
+      blockScroll: true,
+      dismissableMask: true,
     },
     data: {
       headquarterData: headquarter,
@@ -212,6 +227,8 @@ const editHeadquarter = async (headquarterData: HeadquarterList) => {
     props: {
       modal: true,
       header: `${headquarterData.name}`,
+      blockScroll: true,
+      dismissableMask: true,
     },
     data: {
       headquarterData: {
@@ -229,10 +246,20 @@ const editHeadquarter = async (headquarterData: HeadquarterList) => {
     onClose: async (options) => {
       const data = options?.data as HeadquarterAddEditSchema
       if (data) {
-        const headquarter = await updateHeadquarter(headquarterData.id, data)
-        console.log(headquarter)
-        loadHeadquarters()
-        showToast('Sede editada exitosamente: ' + headquarter.name)
+        try {
+          const employeeData = headquarterData as HeadquarterList
+          const employee = await updateHeadquarter(employeeData.id, data)
+          console.log('Datos recibidos:', employee)
+          loadHeadquarters()
+          showToast('Sede editada exitosamente: ' + employee.name, 'success', 'Éxito')
+        } catch (error) {
+          console.error(error)
+          if (typedError.updateHeadquarter) {
+            showToast('Error al editar la sede: ' + data.name + typedError.updateHeadquarter, 'warn', 'Error')
+          } else {
+            showToast('Error al editar la sede' + data.name, 'warn', 'Error')
+          }
+        }
       }
     },
   })
@@ -265,7 +292,7 @@ const deleteHeadquarterAction = (
       console.log('Eliminando Sede ', headquarter.id)
       await deleteHeadquarter(headquarter.id)
       loadHeadquarters()
-      showToast('Sede eliminada exitosamente: ' + headquarter.name)
+      showToast('Sede eliminada exitosamente: ' + headquarter.name, 'success', 'Éxito')
     },
     reject: () => {
       console.log('Cancelando')
@@ -295,7 +322,7 @@ const activeHeadquarterAction = (
       console.log('Activando Sede ', headquarter.id)
       await activateHeadquarter(headquarter.id)
       loadHeadquarters()
-      showToast('Sede Activada exitosamente: ' + headquarter.name)
+      showToast('Sede Activada exitosamente: ' + headquarter.name, 'success', 'Éxito')
     },
     reject: () => {
       console.log('Cancelando')

@@ -233,6 +233,8 @@ const addEmployee = async () => {
     props: {
       modal: true,
       header: 'Agregar empleado',
+      blockScroll: true,
+      dismissableMask: true,
     },
     data: {
       headquartersOptions: headquartersToOptionsSelect(await getAllHeadquarters()),
@@ -244,7 +246,7 @@ const addEmployee = async () => {
         try {
           const employee = await createEmployee(data)
           console.log('Datos recibidos:', employee)
-          showToast('Empleado agregado exitosamente: ' + employee.names, 'success', 'Exito')
+          showToast('Empleado agregado exitosamente: ' + employee.names, 'success', 'Éxito')
           loadEmployees()
         } catch (error) {
           console.error(error)
@@ -272,6 +274,8 @@ const viewEmployee = async (employee: EmployeeList) => {
     props: {
       modal: true,
       header: `${employee.lastnames} ,${employee.names}`,
+      blockScroll: true,
+      dismissableMask: true,
     },
   })
 }
@@ -300,6 +304,8 @@ const editEmployee = async (employeeData: EmployeeList) => {
     props: {
       modal: true,
       header: `${employeeData.lastnames} , ${employeeData.names}`,
+      blockScroll: true,
+      dismissableMask: true,
     },
     onClose: async (options) => {
       const data = options?.data as EditEmployeeSchema
@@ -308,7 +314,7 @@ const editEmployee = async (employeeData: EmployeeList) => {
           const employee = await updateEmployee(employeeData.id, data)
           console.log('Datos recibidos:', employee)
           loadEmployees()
-          showToast('Empleado editado exitosamente: ' + employee.names, 'success', 'Exito')
+          showToast('Empleado editado exitosamente: ' + employee.names, 'success', 'Éxito')
         } catch (error) {
           console.error(error)
           if (typedError.updateEmployee) {
@@ -334,13 +340,15 @@ const openModalBlock = async (employee: EmployeeList) => {
     props: {
       modal: true,
       header: `Bloquear ${employee.names} ${employee.lastnames}`,
+      blockScroll: true,
+      dismissableMask: true,
     },
     onClose: async (options) => {
       const data = options?.data as BlockSchema
       if (data) {
         await blockEmployee(employee.id, data.blockNote)
         loadEmployees()
-        showToast('Empleado eliminado exitosamente: ' + employee.names, 'success', 'Exito')
+        showToast('Empleado eliminado exitosamente: ' + employee.names, 'success', 'Éxito')
       }
     },
   })
@@ -394,7 +402,7 @@ const restoreEmployeeConfirm = (event: MouseEvent | KeyboardEvent, employee: Emp
     },
     accept: async () => {
       await restoreEmployee(employee.id)
-      showToast('Empleado restaurado exitosamente: ' + employee.names, 'success', 'Exito')
+      showToast('Empleado restaurado exitosamente: ' + employee.names, 'success', 'Éxito')
       loadEmployees()
     },
     reject: () => {

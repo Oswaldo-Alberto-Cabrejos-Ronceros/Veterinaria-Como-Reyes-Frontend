@@ -35,10 +35,10 @@ import { useAuthentication } from '@/composables/useAuthentication'
 //toast
 const toast = useToast()
 
-const showToast = (message: string) => {
+const showToast = (message: string, severity: string, sumary: string) => {
   toast.add({
-    severity: 'success',
-    summary: 'Éxito',
+    severity: severity,
+    summary: sumary,
     detail: message,
     life: 3000,
   })
@@ -46,8 +46,9 @@ const showToast = (message: string) => {
 
 //methods
 
-const { loading, error, searchPets, createPet, getPetById, updatePet, deletePet, activatePet } =
-  usePet()
+const { loading, error, searchPets, createPet, getPetById, updatePet, deletePet, activatePet } = usePet()
+
+const typedError = error as Record<string, string | null>
 
 const { getMainRole } = useAuthentication()
 
@@ -213,6 +214,8 @@ const addPet = async () => {
     props: {
       modal: true,
       header: 'Agregar mascota',
+      blockScroll: true,
+      dismissableMask: true,
     },
     data: {
       speciesOptions: speciesToOptionsSelect(await getAllSpecies()),
@@ -220,9 +223,18 @@ const addPet = async () => {
     onClose: async (options) => {
       const data = options?.data as AddEditPetSchema
       if (data) {
-        await createPet(data)
-        loadPets()
-        showToast('Mascota agregada exitosamente: ' + data.name)
+        try {
+          await createPet(data)
+          loadPets()
+          showToast('Mascota agregada exitosamente: ' + data.name, 'success', 'Éxito')
+        } catch (error) {
+          console.error(error)
+          if (typedError.createPet) {
+            showToast('Error al agregar la mascota: ' + data.name + typedError.createPet, 'warn', 'Error')
+          } else {
+            showToast('Error al agregar la mascota' + data.name, 'warn', 'Error')
+          }
+        }
       }
     },
   })
@@ -246,6 +258,8 @@ const editPet = async (petData: PetList) => {
     props: {
       modal: true,
       header: `${petData.name}`,
+      blockScroll: true,
+      dismissableMask: true,
     },
     data: {
       petData: {
@@ -266,9 +280,18 @@ const editPet = async (petData: PetList) => {
     onClose: async (options) => {
       const data = options?.data as AddEditPetSchema
       if (data) {
-        await updatePet(petData.id, data)
-        loadPets()
-        showToast('Mascota editada exitosamente: ' + data.name)
+        try {
+          await updatePet(petData.id, data)
+          loadPets()
+          showToast('Mascota editada exitosamente: ' + data.name, 'success', 'Éxito')
+        } catch (error) {
+          console.error(error)
+          if (typedError.updatePet) {
+            showToast('Error al editar la mascota: ' + data.name + typedError.updatePet, 'warn', 'Error')
+          } else {
+            showToast('Error al editar la mascota: ' + data.name, 'warn', 'Error')
+          }
+        }
       }
     },
   })
@@ -297,7 +320,7 @@ const confirmDeletePet = (event: MouseEvent | KeyboardEvent, pet: PetList) => {
       console.log('Eliminando mascota: ', pet.id)
       await deletePet(pet.id) // esta es la que viene de usePet()
       loadPets()
-      showToast('Mascota eliminada exitosamente: ' + pet.name)
+      showToast('Mascota eliminada exitosamente: ' + pet.name, 'success', 'Éxito')
     },
     reject: () => {
       console.log('Cancelando eliminación')
@@ -326,7 +349,7 @@ const confirmActivatePet = (event: MouseEvent | KeyboardEvent, pet: PetList) => 
       console.log('Activando mascota: ', pet.id)
       await activatePet(pet.id)
       loadPets()
-      showToast('Mascota activada exitosamente: ' + pet.name)
+      showToast('Mascota activada exitosamente: ' + pet.name, 'success', 'Éxito')
     },
     reject: () => {
       console.log('Cancelando activación')

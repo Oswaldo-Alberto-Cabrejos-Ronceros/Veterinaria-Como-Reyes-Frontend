@@ -29,10 +29,10 @@ import { useAuthentication } from '@/composables/useAuthentication'
 //toast
 const toast = useToast()
 
-const showToast = (message: string) => {
+const showToast = (message: string, severity: string, sumary: string) => {
   toast.add({
-    severity: 'success',
-    summary: 'Éxito',
+    severity: severity,
+    summary: sumary,
     detail: message,
     life: 3000,
   })
@@ -54,6 +54,8 @@ const {
   activateBreed,
   searchBreeds,
 } = useBreed()
+
+const typedError = error as Record<string, string | null>
 
 const { getAllSpecies } = useSpecie()
 
@@ -131,6 +133,8 @@ const addBreed = () => {
     props: {
       modal: true,
       header: 'Agregar raza',
+      blockScroll: true,
+      dismissableMask: true,
     },
     data: {
       speciesOptions: speciesOptions,
@@ -138,10 +142,19 @@ const addBreed = () => {
     onClose: async (options) => {
       const data = options?.data as AddEditBreedSchema
       if (data) {
-        const breed = await createBreed(data)
-        console.log('Datos recibidos', breed)
-        loadBreeds()
-        showToast('Raza agregada exitosamente: ' + breed.name)
+        try {
+          const breed = await createBreed(data)
+          console.log('Datos recibidos', breed)
+          loadBreeds()
+          showToast('Raza agregada exitosamente: ' + breed.name, 'success', 'Éxito')
+        } catch (error) {
+          console.error(error)
+          if(typedError.createBreed){
+            showToast('Error al crear la raza: ' + data.name + typedError.createBreed, 'warn', 'Error')
+          } else {
+            showToast('Error al crear la raza', 'warn', 'Error')
+          }
+        }
       }
     },
   })
@@ -153,6 +166,8 @@ const editBreed = async (breedData: BreedList) => {
     props: {
       modal: true,
       header: `${breedData.name}`,
+      blockScroll: true,
+      dismissableMask: true,
     },
     data: {
       breedData: {
@@ -164,10 +179,19 @@ const editBreed = async (breedData: BreedList) => {
     onClose: async (options) => {
       const data = options?.data as AddEditBreedSchema
       if (data) {
-        const breed = await updateBreed(breedData.id, data)
-        console.log('Datos recibidos', breed)
-        loadBreeds()
-        showToast('Raza editada exitosamente: ' + breed.name)
+        try {
+          const breed = await updateBreed(breedData.id, data)
+          console.log('Datos recibidos', breed)
+          loadBreeds()
+          showToast('Raza editada exitosamente: ' + breed.name, 'success', 'Éxito')
+        } catch (error) {
+          console.error(error)
+          if (typedError.updateBreed) {
+            showToast('Error al editar la raza: ' + data.name + typedError.updateBreed, 'warn', 'Error')
+          } else {
+            showToast('Error al editar la raza', 'warn', 'Error')
+          }
+        }
       }
     },
   })
@@ -198,10 +222,10 @@ const handleDeleteReactiveBreed = (event: MouseEvent | KeyboardEvent, breedData:
     accept: async () => {
       if (isActive) {
         await deleteBreed(breedData.id)
-        showToast('Raza eliminada exitosamente: ' + breedData.name)
+        showToast('Raza eliminada exitosamente: ' + breedData.name, 'success', 'Éxito')
       } else {
         await activateBreed(breedData.id)
-        showToast('Raza reactivada exitosamente: ' + breedData.name)
+        showToast('Raza reactivada exitosamente: ' + breedData.name, 'success', 'Éxito')
       }
 
       loadBreeds()

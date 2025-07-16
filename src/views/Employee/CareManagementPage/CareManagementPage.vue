@@ -44,6 +44,8 @@ const { loading, error, searchCares, completeCare, createCareFromRequest } = use
 const { getMainRole, getEntityId } = useAuthentication()
 const { getEmployeeMyInfo } = useEmployee()
 
+const typedError = error as Record<string, string | null>
+
 const roleMain = ref<string>('')
 //for cares
 
@@ -97,10 +99,10 @@ const searchCaresDebounced = debounce(() => {
 const onCompleteCare = async (careId: number) => {
   try {
     await completeCare(careId)
-    showToast('Completada correctamente')
+    showToast('Completada correctamente', 'success', 'Éxito')
     await loadCares()
   } catch (err) {
-    console.error('Error al completar atención', err)
+    console.error('Error al completar atención' + err, 'warn', 'Error')
   }
 }
 
@@ -171,10 +173,10 @@ const exportCSV = () => {
 //for toast
 const toast = useToast()
 
-const showToast = (message: string) => {
+const showToast = (message: string, severity: string, sumary: string) => {
   toast.add({
-    severity: 'success',
-    summary: 'Exito',
+    severity: severity,
+    summary: sumary,
     detail: message,
     life: 3000,
   })
@@ -189,6 +191,8 @@ const addCare = async () => {
     props: {
       modal: true,
       header: 'Crear atención',
+      blockScroll: true,
+      dismissableMask: true,
     },
     data: {
       paymentMethodsOptions: headquartersServicesToOptionsSelect(await getAllPaymentMethods()),
@@ -198,9 +202,18 @@ const addCare = async () => {
           router.replace({ query: { ...route.query, add: undefined } })
       console.log(data)
       if (data) {
-        const care = await createCareFromRequest(data)
-        loadCares()
-        showToast(`Atención creada: ${care.dateTime}`)
+        try {
+          const care = await createCareFromRequest(data)
+          loadCares()
+          showToast(`Atención creada: ${care.dateTime}`, 'success', 'Éxito')
+        } catch (error) {
+          console.error(error)
+          if(typedError.createCareFromRequest) {
+            showToast('Error al crear la atención: ' + typedError.createCareFromRequest, 'warn', 'Error')
+          } else {
+            showToast('Error al crear la atención', 'warn', 'Error')
+          }
+        }
       }
     },
   })

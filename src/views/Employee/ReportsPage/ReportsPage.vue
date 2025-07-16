@@ -18,6 +18,8 @@ const generateReportCaresForVeterinary = () => {
     props: {
       modal: true,
       header: 'Citas por veterinario',
+      blockScroll: true,
+      dismissableMask: true,
     },
     onClose: async (options) => {
       const data = options?.data as SchemaGenerateReport
@@ -43,6 +45,8 @@ const generateIncomeByPeriodAndServicePdf = () => {
     props: {
       modal: true,
       header: 'Ingresos por periodo y servicios',
+      blockScroll: true,
+      dismissableMask: true,
     },
     onClose: async (options) => {
       const data = options?.data as SchemaGenerateReport
@@ -69,6 +73,8 @@ const generateIncomeByHeadquarterPeriodPdf = () => {
     props: {
       modal: true,
       header: 'Ingresos por sede y periodo',
+      blockScroll: true,
+      dismissableMask: true,
     },
     onClose: async (options) => {
       const data = options?.data as SchemaGenerateReport
