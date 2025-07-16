@@ -102,11 +102,6 @@ const onSubmit = handleSubmit((values) => {
 
 //for export
 
-const dt = ref()
-const exportCSV = () => {
-  dt.value.exportCSV()
-}
-
 //for dialof
 
 const dialog = useDialog()
@@ -311,7 +306,7 @@ const statusOptions: OptionSelect[] = [
                   v-if="roleMain === 'Administrador'"
                   @click="addSpecie"
                 />
-                <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
+
               </div>
             </template>
 

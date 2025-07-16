@@ -14,6 +14,7 @@ import type { Ref } from 'vue'
 import { inject, onMounted,ref } from 'vue'
 import { useReniec } from '@/composables/useReniec'
 import type { OptionSelect } from '@/models/OptionSelect'
+import InputMask from 'primevue/inputmask'
 
 //methods
 
@@ -143,12 +144,14 @@ const searchInfoReniec = async () => {
           <InputGroupAddon class="text-neutral-400">
             <i class="pi pi-id-card"></i>
           </InputGroupAddon>
-          <InputText
+          <InputMask
+            id="basic"
+            :invalid="Boolean(errors.dni)"
+            fluid
             v-bind="dniAttrs"
             v-model="dni"
-            :invalid="Boolean(errors.dni)"
-            type="text"
-            placeholder="Ej: 74512351"
+            mask="99999999"
+            placeholder="74852321"
           />
           <InputGroupAddon>
             <Button

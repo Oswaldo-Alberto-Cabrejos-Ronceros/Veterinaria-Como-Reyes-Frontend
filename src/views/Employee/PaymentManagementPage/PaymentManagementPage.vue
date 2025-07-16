@@ -2,7 +2,6 @@
 import Card from 'primevue/card'
 import { schema } from '@/validation-schemas-forms/schema-search-payment'
 import type { FormValues as SearchPaymentMethodSchema } from '@/validation-schemas-forms/schema-search-payment'
-import InputText from 'primevue/inputtext'
 import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
 import { useForm } from 'vee-validate'
@@ -28,6 +27,8 @@ import { useToast } from 'primevue/usetoast'
 import { useAuthentication } from '@/composables/useAuthentication'
 import { useEmployee } from '@/composables/useEmployee'
 import { usePaymentTicket } from '@/composables/usePaymentTicket'
+import InputMask from 'primevue/inputmask'
+
 
 //methods
 
@@ -232,10 +233,7 @@ const confirmCompletePayment = (event: MouseEvent | KeyboardEvent, payment: Paym
 
 //for export
 
-const dt = ref()
-const exportCSV = () => {
-  dt.value.exportCSV()
-}
+
 </script>
 
 <template>
@@ -254,12 +252,14 @@ const exportCSV = () => {
                 <InputGroupAddon class="text-neutral-400">
                   <i class="pi pi-id-card"></i>
                 </InputGroupAddon>
-                <InputText
-                  v-bind="dniAttrs"
+                <InputMask
                   v-model="dni"
+                  v-bind="dniAttrs"
                   :invalid="Boolean(errors.dni)"
-                  type="text"
-                  placeholder="Ej: 74512351"
+                  class="w-full"
+                  fluid
+                  mask="99999999"
+                  placeholder="74852321"
                   @update:model-value="searchPaymentsDebounce()"
                 />
               </InputGroup>
@@ -391,11 +391,7 @@ const exportCSV = () => {
             :rows-per-page-options="[1, 2, 3, 4]"
             ref="dt"
           >
-            <template #header>
-              <div class="w-full flex flex-col xs:flex-row justify-end gap-2 pb-4">
-                <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
-              </div>
-            </template>
+
             <Column field="clientDni" header="DNI" sortable style="width: 10%"></Column>
             <Column field="headquarterName" sortable style="width: 12%" header="Sede"></Column>
             <Column field="serviceName" sortable style="width: 15%" header="Servicio"></Column>

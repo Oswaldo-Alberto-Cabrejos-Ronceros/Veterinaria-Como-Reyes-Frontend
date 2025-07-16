@@ -18,6 +18,7 @@ import type { OptionSelect } from '@/models/OptionSelect'
 import { useClient } from '@/composables/useClient'
 import type { Breed } from '@/models/Breed'
 import { useBreed } from '@/composables/useBreed'
+import InputMask from 'primevue/inputmask'
 
 const { loading, getClientByDni } = useClient()
 const { getBreedsBySpecie } = useBreed()
@@ -148,12 +149,14 @@ onMounted(() => {
           <InputGroupAddon class="text-neutral-400">
             <i class="pi pi-user"></i>
           </InputGroupAddon>
-          <InputText
-            v-model="ownerDni"
-            v-bind="ownerDniAttrs"
+          <InputMask
+            id="basic"
             :invalid="Boolean(errors.ownerDni)"
-            class="w-full"
-            placeholder="Busque dueño por DNI"
+            fluid
+            v-bind="ownerDniAttrs"
+            v-model="ownerDni"
+            mask="99999999"
+            placeholder="74852321"
           />
           <InputGroupAddon>
             <Button

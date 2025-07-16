@@ -26,10 +26,11 @@ import { useEmployee } from '@/composables/useEmployee'
 import type { BasicServiceForAppointment } from '@/models/BasicServiceForAppointment'
 import type { TimesForTurn } from '@/models/TimesForTurn'
 import CascadeSelect from 'primevue/cascadeselect'
+import InputMask from 'primevue/inputmask'
 
 const { getEntityId } = useAuthentication()
 
-const { loading,getClientByDni } = useClient()
+const { loading, getClientByDni } = useClient()
 
 const { getAllHeadquarters } = useHeadquarter()
 
@@ -165,7 +166,6 @@ const petToOptionsSelect = (items: PetByClient[]): OptionSelect[] => {
   }))
 }
 
-
 //for convert to option select
 const serviceHeadquartersToOptionsSelect = (
   items: BasicServiceForAppointment[],
@@ -187,188 +187,189 @@ onMounted(() => {
 
 <template>
   <div class="card-dialog-form-layout">
-
-      <form @submit.prevent="onSubmit" class="form-dialog-layout">
-        <!-- owner dni -->
-        <div>
-          <label class="block mb-2">Dni del dueño</label>
-          <InputGroup>
-            <InputGroupAddon class="text-neutral-400">
-              <i class="pi pi-user"></i>
-            </InputGroupAddon>
-            <InputText
-              v-model="ownerDni"
-              v-bind="ownerDniAttrs"
-              :invalid="Boolean(errors.ownerDni)"
-              class="w-full"
-              placeholder="Busque dueño por DNI"
-            />
-            <InputGroupAddon>
-              <Button
-                icon="pi pi-search"
-                severity="secondary"
-                variant="text"
-                @click="searchClient()"
-                :loading="loading.getClientByDni"
-              />
-            </InputGroupAddon>
-          </InputGroup>
-
-          <Message v-if="errors.ownerDni" severity="error" size="small" variant="simple">
-            {{ errors.ownerDni }}
-          </Message>
-        </div>
-        <!-- owner name -->
-        <div>
-          <label class="block mb-2">Nombre del dueño</label>
-          <InputGroup>
-            <InputGroupAddon class="text-neutral-400">
-              <i class="pi pi-user"></i>
-            </InputGroupAddon>
-            <InputText
-              v-model="ownerName"
-              v-bind="ownerNameAttrs"
-              :invalid="Boolean(errors.ownerName)"
-              class="w-full"
-              placeholder="Nombre del dueño"
-              disabled
-            />
-          </InputGroup>
-
-          <Message v-if="errors.ownerName" severity="error" size="small" variant="simple">
-            {{ errors.ownerName }}
-          </Message>
-        </div>
-        <InputNumber v-model="ownerId" v-bind="ownerIdAttrs" hidden />
-
-        <div>
-          <label class="block mb-2">Mascota</label>
-          <Select
-            class="w-full"
-            v-bind="petIdAttrs"
-            v-model="petId"
-            :invalid="Boolean(errors.petId)"
-            :options="petsOptions"
-            optionLabel="name"
-            optionValue="value"
-            placeholder="Selecciona Mascota"
-            @change="loadHeadquartersService()"
-          />
-
-          <Message v-if="errors.petId" severity="error" size="small" variant="simple">
-            {{ errors.petId }}
-          </Message>
-        </div>
-
-        <div>
-          <label class="block mb-2">Servicio</label>
-          <Select
-            class="w-full"
-            v-bind="headquarterVetServiceIdAttrs"
-            v-model="headquarterVetServiceId"
-            :invalid="Boolean(errors.headquarterVetServiceId)"
-            :options="serviceHeadquarterOptions"
-            optionLabel="name"
-            optionValue="value"
-            placeholder="Selecciona Servicio"
-            @change="loadAvariablesTimes()"
-          />
-
-          <Message
-            v-if="errors.headquarterVetServiceId"
-            severity="error"
-            size="small"
-            variant="simple"
-          >
-            {{ errors.headquarterVetServiceId }}
-          </Message>
-        </div>
-
-        <div>
-          <label class="block mb-2">Fecha</label>
-          <DatePicker
-            v-bind="dateAttrs"
-            v-model="date"
-            :invalid="Boolean(errors.date)"
-            showIcon
+    <form @submit.prevent="onSubmit" class="form-dialog-layout">
+      <!-- owner dni -->
+      <div>
+        <label class="block mb-2">Dni del dueño</label>
+        <InputGroup>
+          <InputGroupAddon class="text-neutral-400">
+            <i class="pi pi-user"></i>
+          </InputGroupAddon>
+          <InputMask
+            id="basic"
+            :invalid="Boolean(errors.ownerDni)"
             fluid
-            iconDisplay="input"
-            @value-change="loadAvariablesTimes()"
+            v-bind="ownerDniAttrs"
+            v-model="ownerDni"
+            mask="99999999"
+            placeholder="74852321"
           />
-
-          <Message v-if="errors.date" severity="error" size="small" variant="simple">
-            {{ errors.date }}
-          </Message>
-        </div>
-
-        <div>
-          <label class="block mb-2">Horario</label>
-          <CascadeSelect
-            class="w-full"
-            v-bind="scheduleDateTimeAttrs"
-            v-model="scheduleDateTime"
-            :invalid="Boolean(errors.scheduleDateTime)"
-            :options="timesForTurn"
-            optionLabel="time"
-            optionGroupLabel="turn"
-            :optionGroupChildren="['times']"
-            optionValue="time"
-            placeholder="Selecciona Horario"
-            showClear
-          />
-
-          <Message v-if="errors.scheduleDateTime" severity="error" size="small" variant="simple">
-            {{ errors.scheduleDateTime }}
-          </Message>
-        </div>
-
-        <div>
-          <label class="block mb-2">Método de pago</label>
-          <Select
-            class="w-full"
-            v-bind="paymentMethodIdAttrs"
-            v-model="paymentMethodId"
-            :invalid="Boolean(errors.paymentMethodId)"
-            :options="paymentMethodsOptions"
-            optionLabel="name"
-            optionValue="value"
-            placeholder="Selecciona Método"
-          />
-
-          <Message v-if="errors.paymentMethodId" severity="error" size="small" variant="simple">
-            {{ errors.paymentMethodId }}
-          </Message>
-        </div>
-
-        <div>
-          <label class="block mb-2">Comentario</label>
-
-          <IftaLabel>
-            <Textarea
-              id="description"
-              v-model="comment"
-              v-bind="commentAttrs"
-              :invalid="Boolean(errors.comment)"
-              rows="5"
-              class="resize-none w-full"
+          <InputGroupAddon>
+            <Button
+              icon="pi pi-search"
+              severity="secondary"
+              variant="text"
+              @click="searchClient()"
+              :loading="loading.getClientByDni"
             />
-            <label for="description">Comentario</label>
-          </IftaLabel>
+          </InputGroupAddon>
+        </InputGroup>
 
-          <Message v-if="errors.comment" severity="error" size="small" variant="simple">
-            {{ errors.comment }}
-          </Message>
-        </div>
-        <div class="button-form-container-grid-end">
-          <Button
-            class="w-full max-w-md"
-            label="Agendar"
-            type="submit"
-            severity="success"
-            icon="pi pi-save"
-            iconPos="right"
+        <Message v-if="errors.ownerDni" severity="error" size="small" variant="simple">
+          {{ errors.ownerDni }}
+        </Message>
+      </div>
+      <!-- owner name -->
+      <div>
+        <label class="block mb-2">Nombre del dueño</label>
+        <InputGroup>
+          <InputGroupAddon class="text-neutral-400">
+            <i class="pi pi-user"></i>
+          </InputGroupAddon>
+          <InputText
+            v-model="ownerName"
+            v-bind="ownerNameAttrs"
+            :invalid="Boolean(errors.ownerName)"
+            class="w-full"
+            placeholder="Nombre del dueño"
+            disabled
           />
-        </div>
-      </form>
-    </div>
+        </InputGroup>
+
+        <Message v-if="errors.ownerName" severity="error" size="small" variant="simple">
+          {{ errors.ownerName }}
+        </Message>
+      </div>
+      <InputNumber v-model="ownerId" v-bind="ownerIdAttrs" hidden />
+
+      <div>
+        <label class="block mb-2">Mascota</label>
+        <Select
+          class="w-full"
+          v-bind="petIdAttrs"
+          v-model="petId"
+          :invalid="Boolean(errors.petId)"
+          :options="petsOptions"
+          optionLabel="name"
+          optionValue="value"
+          placeholder="Selecciona Mascota"
+          @change="loadHeadquartersService()"
+        />
+
+        <Message v-if="errors.petId" severity="error" size="small" variant="simple">
+          {{ errors.petId }}
+        </Message>
+      </div>
+
+      <div>
+        <label class="block mb-2">Servicio</label>
+        <Select
+          class="w-full"
+          v-bind="headquarterVetServiceIdAttrs"
+          v-model="headquarterVetServiceId"
+          :invalid="Boolean(errors.headquarterVetServiceId)"
+          :options="serviceHeadquarterOptions"
+          optionLabel="name"
+          optionValue="value"
+          placeholder="Selecciona Servicio"
+          @change="loadAvariablesTimes()"
+        />
+
+        <Message
+          v-if="errors.headquarterVetServiceId"
+          severity="error"
+          size="small"
+          variant="simple"
+        >
+          {{ errors.headquarterVetServiceId }}
+        </Message>
+      </div>
+
+      <div>
+        <label class="block mb-2">Fecha</label>
+        <DatePicker
+          v-bind="dateAttrs"
+          v-model="date"
+          :invalid="Boolean(errors.date)"
+          showIcon
+          fluid
+          iconDisplay="input"
+          @value-change="loadAvariablesTimes()"
+        />
+
+        <Message v-if="errors.date" severity="error" size="small" variant="simple">
+          {{ errors.date }}
+        </Message>
+      </div>
+
+      <div>
+        <label class="block mb-2">Horario</label>
+        <CascadeSelect
+          class="w-full"
+          v-bind="scheduleDateTimeAttrs"
+          v-model="scheduleDateTime"
+          :invalid="Boolean(errors.scheduleDateTime)"
+          :options="timesForTurn"
+          optionLabel="time"
+          optionGroupLabel="turn"
+          :optionGroupChildren="['times']"
+          optionValue="time"
+          placeholder="Selecciona Horario"
+          showClear
+        />
+
+        <Message v-if="errors.scheduleDateTime" severity="error" size="small" variant="simple">
+          {{ errors.scheduleDateTime }}
+        </Message>
+      </div>
+
+      <div>
+        <label class="block mb-2">Método de pago</label>
+        <Select
+          class="w-full"
+          v-bind="paymentMethodIdAttrs"
+          v-model="paymentMethodId"
+          :invalid="Boolean(errors.paymentMethodId)"
+          :options="paymentMethodsOptions"
+          optionLabel="name"
+          optionValue="value"
+          placeholder="Selecciona Método"
+        />
+
+        <Message v-if="errors.paymentMethodId" severity="error" size="small" variant="simple">
+          {{ errors.paymentMethodId }}
+        </Message>
+      </div>
+
+      <div>
+        <label class="block mb-2">Comentario</label>
+
+        <IftaLabel>
+          <Textarea
+            id="description"
+            v-model="comment"
+            v-bind="commentAttrs"
+            :invalid="Boolean(errors.comment)"
+            rows="5"
+            class="resize-none w-full"
+          />
+          <label for="description">Comentario</label>
+        </IftaLabel>
+
+        <Message v-if="errors.comment" severity="error" size="small" variant="simple">
+          {{ errors.comment }}
+        </Message>
+      </div>
+      <div class="button-form-container-grid-end">
+        <Button
+          class="w-full max-w-md"
+          label="Agendar"
+          type="submit"
+          severity="success"
+          icon="pi pi-save"
+          iconPos="right"
+        />
+      </div>
+    </form>
+  </div>
 </template>

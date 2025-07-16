@@ -194,11 +194,6 @@ const statusOptions: OptionSelect[] = [
 
 //for export
 
-const dt = ref()
-const exportCSV = () => {
-  dt.value.exportCSV()
-}
-
 //for dialog
 const dialog = useDialog()
 //toast
@@ -469,7 +464,7 @@ const attendAppointment = (appointmentId: number) => {
                   label="Agregar Cita"
                   @click="addAppointment()"
                 />
-                <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
+
               </div>
             </template>
             <Column

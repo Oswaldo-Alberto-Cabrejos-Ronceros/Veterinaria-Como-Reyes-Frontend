@@ -238,10 +238,6 @@ const handleDeleteReactiveBreed = (event: MouseEvent | KeyboardEvent, breedData:
 
 //for export
 
-const dt = ref()
-const exportCSV = () => {
-  dt.value.exportCSV()
-}
 
 const statusOptions: OptionSelect[] = [
   {
@@ -357,7 +353,7 @@ const statusOptions: OptionSelect[] = [
                   label="Agregar Raza"
                   @click="addBreed"
                 />
-                <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
+
               </div>
             </template>
             <Column field="name" sortable header="Nombre" style="width: 40%"></Column>

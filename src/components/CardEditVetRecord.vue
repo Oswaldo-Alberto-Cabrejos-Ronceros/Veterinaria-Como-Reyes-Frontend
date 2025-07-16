@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { OptionSelect } from '@/models/OptionSelect'
 import { inject, onMounted, type Ref } from 'vue'
 import { schema } from '@/validation-schemas-forms/schema-add-edit-veterinary-record'
 import type { FormValues } from '@/validation-schemas-forms/schema-add-edit-veterinary-record'
@@ -8,7 +7,6 @@ import { useForm } from 'vee-validate'
 import Textarea from 'primevue/textarea'
 import Button from 'primevue/button'
 import Message from 'primevue/message'
-import Select from 'primevue/select'
 
 const dialogRef = inject('dialogRef') as Ref<{
   close: (data?: FormValues) => void
@@ -44,7 +42,7 @@ const [diagnosis, diagnosisAttrs] = defineField('diagnosis')
 const [treatment, treatmentAttrs] = defineField('treatment')
 const [observation, observationAttrs] = defineField('observation')
 const [resultUrl, resultUrlAttrs] = defineField('resultUrl')
-const [status, statusAttrs] = defineField('status')
+
 
 onMounted(() => {
   if (dialogRef.value.data) {
@@ -55,24 +53,10 @@ onMounted(() => {
     treatment.value = params.treatment
     observation.value = params.observation
     resultUrl.value = params.resultUrl
-    status.value = params.status
   }
 })
 
-const statusOptions: OptionSelect[] = [
-  {
-    value: 'EN_CURSO',
-    name: 'En curso',
-  },
-  {
-    value: 'COMPLETADO',
-    name: 'Completado',
-  },
-  {
-    value: 'OBSERVACION',
-    name: 'Observación',
-  },
-]
+
 </script>
 
 <template>
@@ -128,22 +112,6 @@ const statusOptions: OptionSelect[] = [
       />
       <Message v-if="errors.resultUrl" severity="error" size="small" variant="simple">
         {{ errors.resultUrl }}
-      </Message>
-
-      <label class="block mb-2">Estado</label>
-      <Select
-        class="w-full"
-        v-bind="statusAttrs"
-        v-model="status"
-        :options="statusOptions"
-        :invalid="Boolean(errors.status)"
-        optionLabel="name"
-        optionValue="value"
-        placeholder="Selecciona Especie"
-      />
-
-      <Message v-if="errors.status" severity="error" size="small" variant="simple">
-        {{ errors.status }}
       </Message>
 
       <!-- Botón guardar -->

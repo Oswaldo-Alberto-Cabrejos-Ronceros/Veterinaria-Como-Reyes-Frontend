@@ -408,7 +408,7 @@ const redirect = (url: string) => {
                     loadingVeterinary.getTopServicesForAdmin
                   "
                 />
-                <ScrollPanel v-if="servicesTop.length > 0" class="56">
+                <ScrollPanel v-if="servicesTop.length > 0" class="h-56">
                   <ServiceRankingItem
                     v-for="(service, index) of servicesTop"
                     :key="index"
@@ -446,14 +446,16 @@ const redirect = (url: string) => {
                     loadingClient.getClientInfoPanelByHeadquarter
                   "
                 />
+                <ScrollPanel v-if="clientsRecent.length > 0" class="h-56">
+                  <ClientRankingItem
+                    v-for="(client, index) of clientsRecent"
+                    :key="index"
+                    :clientFullName="client.fullName"
+                    :clientInitials="client.initials"
+                    :clientDni="client.phone"
+                  ></ClientRankingItem>
+                </ScrollPanel>
 
-                <ClientRankingItem
-                  v-for="(client, index) of clientsRecent"
-                  :key="index"
-                  :clientFullName="client.fullName"
-                  :clientInitials="client.initials"
-                  :clientDni="client.phone"
-                ></ClientRankingItem>
                 <div
                   class="flex size-full items-center justify-center"
                   v-if="clientsRecent.length === 0"

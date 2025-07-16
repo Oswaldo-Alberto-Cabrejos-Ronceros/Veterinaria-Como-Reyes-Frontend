@@ -295,10 +295,6 @@ const deleteReactiveService = (event: MouseEvent | KeyboardEvent, serviceData: S
 
 //for export
 
-const dt = ref()
-const exportCSV = () => {
-  dt.value.exportCSV()
-}
 </script>
 
 <template>
@@ -436,7 +432,7 @@ const exportCSV = () => {
                   @click="addService"
                   v-if="roleMain === 'Administrador'"
                 />
-                <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
+
               </div>
             </template>
             <Column field="name" sortable header="Nombre" style="width: 18%"></Column>

@@ -15,10 +15,11 @@ import type { Ref } from 'vue'
 import { inject, onMounted, ref } from 'vue'
 import type { OptionSelect } from '@/models/OptionSelect'
 import { useReniec } from '@/composables/useReniec'
+import InputMask from 'primevue/inputmask'
 
 //methods
 
-const { loading,getInfoSimpleByReniec } = useReniec()
+const { loading, getInfoSimpleByReniec } = useReniec()
 
 //form
 
@@ -52,6 +53,8 @@ const fieldMap = {
 const [dni, dniAttrs] = defineField('dni')
 const [cmvp, cmvpAttrs] = defineField('cmvp')
 const [headquarterId, headquarterIdAttrs] = defineField('headquarterId')
+const [phone, phoneAttrs] = defineField('phone')
+const [dirImage, dirImageAttrs] = defineField('dirImage')
 const [birthdate, birthdateAttrs] = defineField('birthdate')
 const [roleId, roleIdAttrs] = defineField('roleId')
 const [email, emailAttrs] = defineField('email')
@@ -83,12 +86,7 @@ const textFields: {
     icon: 'pi-home',
     placeholder: 'Avenida, calle , número',
   },
-  {
-    title: 'Celular',
-    key: 'phone',
-    icon: 'pi-mobile',
-    placeholder: 'Ej: 945156123',
-  },
+
   {
     title: 'Imagen',
     key: 'dirImage',
@@ -152,15 +150,16 @@ const searchInfoReniec = async () => {
 
 //for cmvp
 
-const cmvpActive = (id:number):boolean=>{
-  const roleVeterinary =rolesOptions.value.find((item)=> item.name.toUpperCase()==='VETERINARIO')
-  if(roleVeterinary&&roleVeterinary.value===id){
+const cmvpActive = (id: number): boolean => {
+  const roleVeterinary = rolesOptions.value.find(
+    (item) => item.name.toUpperCase() === 'VETERINARIO',
+  )
+  if (roleVeterinary && roleVeterinary.value === id) {
     return false
-  }else{
+  } else {
     return true
   }
 }
-
 </script>
 
 <template>
@@ -175,12 +174,14 @@ const cmvpActive = (id:number):boolean=>{
           <InputGroupAddon class="text-neutral-400">
             <i class="pi pi-id-card"></i>
           </InputGroupAddon>
-          <InputText
+          <InputMask
+            id="basic"
+            :invalid="Boolean(errors.dni)"
+            fluid
             v-bind="dniAttrs"
             v-model="dni"
-            :invalid="Boolean(errors.dni)"
-            type="text"
-            placeholder="Ej: 74512351"
+            mask="99999999"
+            placeholder="74852321"
           />
           <InputGroupAddon>
             <Button
@@ -218,21 +219,22 @@ const cmvpActive = (id:number):boolean=>{
         </Message>
       </div>
 
-      <div      v-if="!cmvpActive(roleId)">
+      <div v-if="!cmvpActive(roleId)">
         <label class="block mb-2">CMVP</label>
 
         <InputGroup>
           <InputGroupAddon class="text-neutral-400">
             <i class="pi pi-id-card"></i>
           </InputGroupAddon>
-          <InputText
+          <InputMask
             v-model="cmvp"
             v-bind="cmvpAttrs"
             :invalid="Boolean(errors.cmvp)"
             type="text"
-            placeholder="Ej: 14125"
             :disabled="cmvpActive(roleId)"
-
+            fluid
+            mask="99999"
+            placeholder="45123"
           />
         </InputGroup>
 
@@ -259,6 +261,48 @@ const cmvpActive = (id:number):boolean=>{
           {{ errors[element.key] }}
         </Message>
       </div>
+
+      <div>
+        <label class="block mb-2">Celular</label>
+
+        <InputGroup>
+          <InputGroupAddon class="text-neutral-400">
+            <i class="pi pi-mobile"></i>
+          </InputGroupAddon>
+          <InputMask
+            :invalid="Boolean(errors.phone)"
+            fluid
+            v-bind="phoneAttrs"
+            v-model="phone"
+            mask="999999999"
+            placeholder="984521485"
+          />
+        </InputGroup>
+
+        <Message v-if="errors.phone" severity="error" size="small" variant="simple">
+          {{ errors.phone }}
+        </Message>
+      </div>
+
+      <div>
+        <label class="block mb-2">Imagen</label>
+        <InputGroup>
+          <InputGroupAddon class="text-neutral-400">
+            <i :class="`pi pi-image`"></i>
+          </InputGroupAddon>
+          <InputText
+            v-model="dirImage"
+            v-bind="dirImageAttrs"
+            :invalid="Boolean(errors.dirImage)"
+            class="w-full"
+            :placeholder="`Imagen`"
+          />
+        </InputGroup>
+        <Message v-if="errors.dirImage" severity="error" size="small" variant="simple">
+          {{ errors.dirImage }}
+        </Message>
+      </div>
+
       <div>
         <label class="block mb-2">Fecha de nacimiento</label>
         <DatePicker
@@ -320,7 +364,12 @@ const cmvpActive = (id:number):boolean=>{
           <InputGroupAddon class="text-neutral-400">
             <i class="pi pi-lock"></i>
           </InputGroupAddon>
-          <Password v-bind="passwordAttrs" v-model="password" :invalid="Boolean(errors.confirmPassword)" placeholder="Contraseña" />
+          <Password
+            v-bind="passwordAttrs"
+            v-model="password"
+            :invalid="Boolean(errors.confirmPassword)"
+            placeholder="Contraseña"
+          />
         </InputGroup>
         <Message v-if="errors.password" severity="error" size="small" variant="simple">
           {{ errors.password }}
@@ -348,6 +397,7 @@ const cmvpActive = (id:number):boolean=>{
           {{ errors.confirmPassword }}
         </Message>
       </div>
+
       <div class="button-form-container-grid-end">
         <Button
           class="w-full max-w-md"

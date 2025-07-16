@@ -248,10 +248,6 @@ const handleDeleteReactiveCategory = (
 
 //for export
 
-const dt = ref()
-const exportCSV = () => {
-  dt.value.exportCSV()
-}
 </script>
 
 <template>
@@ -335,7 +331,7 @@ const exportCSV = () => {
                   @click="addCategory"
                   v-if="roleMain === 'Administrador'"
                 />
-                <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
+
               </div>
             </template>
 
