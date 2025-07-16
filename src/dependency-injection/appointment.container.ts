@@ -26,7 +26,7 @@ import { GetAppointmentsByHeadquarterIdUseCase } from '@/services/Appointment/ap
 import { GetOperationalMonthlyStatsByHeadquarter } from '@/services/Appointment/aplication/GetOperationalMonthlyStatsByHeadquarter'
 import { GetDailyAppointmentStatsByHeadquarter } from '@/services/Appointment/aplication/GetDailyAppointmentStatsByHeadquarter'
 import { GetGeneralOperationalMonthlyStats } from '@/services/Appointment/aplication/GetGeneralOperationalMonthlyStats'
-import { GetDailyAppointmentStatsLast7Days } from '@/services/Appointment/aplication/getDailyAppointmentStatsLast7Days'
+import { GetDailyAppointmentStatsLast7Days } from '@/services/Appointment/aplication/GetDailyAppointmentStatsLast7Days'
 
 // Instancia de cliente HTTP
 const axiosHttpClient = new AxiosHttpClient()
