@@ -25,6 +25,7 @@ import { useSpecie } from '@/composables/useSpecie'
 import type { DataTablePageEvent } from 'primevue/datatable'
 import { debounce } from 'lodash'
 import { useAuthentication } from '@/composables/useAuthentication'
+import CardLoader from '@/components/CardLoader.vue'
 
 //toast
 const toast = useToast()
@@ -108,7 +109,7 @@ const speciesToOptionsSelect = (species: Specie[]): OptionSelect[] => {
 }
 
 //form
-const { handleSubmit, errors, defineField } = useForm<SearchBreedSchema>({
+const {resetForm,handleSubmit, errors, defineField } = useForm<SearchBreedSchema>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
     name: '',
@@ -116,6 +117,11 @@ const { handleSubmit, errors, defineField } = useForm<SearchBreedSchema>({
     status: true,
   },
 })
+
+const handleResetForm = () => {
+  resetForm()
+  loadBreeds()
+}
 
 const [name, nameAttrs] = defineField('name')
 const [specieId, specieIdAttrs] = defineField('specieId')
@@ -253,6 +259,9 @@ const statusOptions: OptionSelect[] = [
 
 <template>
   <div class="layout-principal-flex">
+        <CardLoader
+          v-if="loading.activateBreed || loading.updateBreed || loading.createBreed || loading.deleteBreed"
+        ></CardLoader>
     <Card class="card-principal-color-neutral">
       <template #title>
         <h3 class="h3">Gestión razas</h3>
@@ -320,6 +329,18 @@ const statusOptions: OptionSelect[] = [
                 {{ errors.status }}
               </Message>
             </div>
+                        <div class="form-button-search-container-grid-col-5-end">
+                          <Button
+                            size="small"
+                            class="py-2"
+                            severity="secondary"
+                            variant="outlined"
+                            label="Limpiar"
+                            iconPos="left"
+                            icon="pi pi-replay"
+                            @click="handleResetForm"
+                          />
+                        </div>
           </form>
 
           <!-- for messague loading  -->
