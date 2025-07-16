@@ -28,6 +28,7 @@ import { useAuthentication } from '@/composables/useAuthentication'
 import { useEmployee } from '@/composables/useEmployee'
 import { usePaymentTicket } from '@/composables/usePaymentTicket'
 import InputMask from 'primevue/inputmask'
+import CardLoader from '@/components/CardLoader.vue'
 
 
 //methods
@@ -37,7 +38,7 @@ const { error, loading, setPaymentStatusComplete, setPaymentStatusCancelled, sea
 const { getAllHeadquarters } = useHeadquarter()
 //for download ticket
 
-const { downloadPaymentTicket } = usePaymentTicket()
+const { loading:loadingTicket,downloadPaymentTicket } = usePaymentTicket()
 
 const { getAllVeterinaryServices } = useVeterinaryService()
 
@@ -103,7 +104,7 @@ const loadPayments = async (event?: DataTablePageEvent) => {
 }
 
 //form
-const { handleSubmit, errors, defineField } = useForm<SearchPaymentMethodSchema>({
+const { resetForm,handleSubmit, errors, defineField } = useForm<SearchPaymentMethodSchema>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
     dni: '',
@@ -114,6 +115,12 @@ const { handleSubmit, errors, defineField } = useForm<SearchPaymentMethodSchema>
     endDate: undefined,
   },
 })
+
+const handleResetForm = () => {
+  resetForm()
+  loadPayments()
+}
+
 
 const [dni, dniAttrs] = defineField('dni')
 const [headquarterId, headquarterIdAttrs] = defineField('headquarterId')
@@ -238,6 +245,9 @@ const confirmCompletePayment = (event: MouseEvent | KeyboardEvent, payment: Paym
 
 <template>
   <div class="layout-principal-flex">
+        <CardLoader
+      v-if="loading.setPaymentStatusCancelled || loading.setPaymentStatusComplete||loadingTicket.downloadPaymentTicket"
+    ></CardLoader>
     <Card class="card-principal-color-neutral">
       <template #title>
         <h3 class="h3">Pagos</h3>
@@ -352,6 +362,18 @@ const confirmCompletePayment = (event: MouseEvent | KeyboardEvent, payment: Paym
                 optionValue="value"
                 placeholder="Selecciona Estado"
                 @update:model-value="searchPaymentsDebounce()"
+              />
+            </div>
+                        <div class="form-button-search-container-grid-col-5-end">
+              <Button
+                size="small"
+                class="py-2"
+                severity="secondary"
+                variant="outlined"
+                label="Limpiar"
+                iconPos="left"
+                icon="pi pi-replay"
+                @click="handleResetForm"
               />
             </div>
           </form>

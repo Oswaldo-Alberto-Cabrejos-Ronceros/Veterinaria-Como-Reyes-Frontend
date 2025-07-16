@@ -69,21 +69,13 @@ const periods: OptionSelect[] = [
           {{ errors.period }}
         </Message>
       </div>
-      <div class="w-full grid grid-cols-2 gap-2">
+      <div class="w-full grid grid-cols-1 gap-2">
         <Button
           class="w-full"
           label="Generar Pdf"
           type="submit"
           severity="danger"
           icon="pi pi-file-pdf"
-          iconPos="right"
-        />
-        <Button
-          class="w-full"
-          label="Generar Excel"
-          type="submit"
-          severity="success"
-          icon="pi pi-file-excel"
           iconPos="right"
         />
       </div>
