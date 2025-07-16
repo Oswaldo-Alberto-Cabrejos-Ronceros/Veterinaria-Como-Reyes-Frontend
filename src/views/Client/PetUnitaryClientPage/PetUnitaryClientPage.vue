@@ -19,6 +19,7 @@ import CardEditVetRecord from '../../../components/CardEditVetRecord.vue'
 import { useDialog } from 'primevue/usedialog'
 import type { FormValues as AddEditVeterinaryRecord } from '@/validation-schemas-forms/schema-add-edit-veterinary-record'
 import { useToast } from 'primevue/usetoast'
+import { useConfirm } from 'primevue'
 
 const props = defineProps<{
   petId: string
@@ -35,6 +36,7 @@ const { getMainRole } = useAuthentication()
 const {
   loading: veterinaryRecordLoading,
   error: veterinaryRecordError,
+  setVeterinaryRecordCompletado,
   updateVeterinaryRecord,
   findVeterinaryRecordById,
   getAllInfoVeterinaryRecordsByPet,
@@ -108,7 +110,7 @@ const editRecord = async (recordInfoTable: VeterinaryRecordInfoTable) => {
         diagnosis: record.diagnosis,
         treatment: record.treatment,
         observation: record.observation,
-        resultUrl: record.resultUrl,
+        resultUrl: record.resultUrl??undefined,
         status: record.status,
       } as AddEditVeterinaryRecord,
     },
@@ -116,7 +118,7 @@ const editRecord = async (recordInfoTable: VeterinaryRecordInfoTable) => {
       const data = options?.data as AddEditVeterinaryRecord
       if (data) {
         try {
-          await updateVeterinaryRecord(recordInfoTable.id,data)
+          await updateVeterinaryRecord(recordInfoTable.id, data)
           loadVeterinaryRecords()
           showToast('Reporte medico editado correctamente', 'success', 'Exito')
         } catch (error) {
@@ -136,12 +138,53 @@ const editRecord = async (recordInfoTable: VeterinaryRecordInfoTable) => {
   })
 }
 
-//for export
+//toast
 
-const dt = ref()
-const exportCSV = () => {
-  dt.value.exportCSV()
+const confirm = useConfirm()
+
+const confirmCompleteRecord = (
+  event: MouseEvent | KeyboardEvent,
+  record: VeterinaryRecordInfoTable,
+) => {
+  confirm.require({
+    group: 'confirmPopupGeneral',
+    target: event.currentTarget as HTMLElement,
+    message: '¿Seguro que quiere cancelar este pago?',
+    icon: 'pi pi-exclamation-triangle',
+    rejectProps: {
+      label: 'Cancelar',
+      severity: 'secondary',
+      outlined: true,
+    },
+    acceptProps: {
+      label: 'Completar',
+      severity: 'success',
+    },
+    accept: async () => {
+      try {
+        await setVeterinaryRecordCompletado(record.id)
+        loadVeterinaryRecords()
+        showToast('Informe completado correctamente', 'success', 'Éxito')
+      } catch (error) {
+        console.error(error)
+        if (typedError.updateVeterinaryRecord) {
+          showToast(
+            `Error al completar reporte medico: ${typedError.updateEmployee}`,
+            'warn',
+            'Error',
+          )
+        } else {
+          showToast('Error al completar el reporte medico: ', 'warn', 'Error')
+        }
+      }
+    },
+    reject: () => {
+      console.log('Cancelando eliminación')
+    },
+  })
 }
+
+//for export
 </script>
 <template>
   <div class="layout-principal-flex">
@@ -248,11 +291,6 @@ const exportCSV = () => {
             :rows-per-page-options="[4, 8, 12]"
             ref="dt"
           >
-            <template #header>
-              <div class="w-full flex flex-col xs:flex-row justify-end gap-2 pb-4">
-                <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
-              </div>
-            </template>
             <Column field="date" sortable header="Fecha" style="width: 10%"></Column>
             <Column field="nameHeadquarter" sortable header="Sede" style="width: 12%"></Column>
             <Column field="nameEmployee" header="Empleado" sortable style="width: 15%"></Column>
@@ -288,7 +326,20 @@ const exportCSV = () => {
                     aria-label="Editar"
                     rounded
                     @click="editRecord(data)"
+                    v-if="data.status !== 'Completado'"
                   ></Button>
+
+                  <Button
+                    icon="pi pi-check"
+                    severity="success"
+                    variant="text"
+                    size="small"
+                    aria-label="Completar"
+                    rounded
+                    v-if="data.status === 'En observacion' || data.status === 'En curso'"
+                    @click="confirmCompleteRecord($event, data)"
+                  ></Button>
+
                   <Button
                     icon="pi pi-file"
                     severity="success"

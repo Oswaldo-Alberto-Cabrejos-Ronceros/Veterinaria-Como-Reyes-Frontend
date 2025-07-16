@@ -36,6 +36,7 @@ import BlockCardPrimary from '@/components/BlockCardPrimary.vue'
 import type { FormValues as BlockSchema } from '@/validation-schemas-forms/schema-block-employee-client'
 import { useAuthentication } from '@/composables/useAuthentication'
 import CardLoader from '@/components/CardLoader.vue'
+import InputMask from 'primevue/inputmask'
 //toast
 const toast = useToast()
 
@@ -172,7 +173,7 @@ const headquartersToOptionsSelect = (headquarters: Headquarter[]): OptionSelect[
 
 //form
 
-const { resetForm,errors, defineField } = useForm<FormValues>({
+const { resetForm, errors, defineField } = useForm<FormValues>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
     dni: '',
@@ -185,7 +186,7 @@ const { resetForm,errors, defineField } = useForm<FormValues>({
   },
 })
 
-const handleResetForm =()=>{
+const handleResetForm = () => {
   resetForm()
   loadEmployees()
 }
@@ -200,18 +201,9 @@ const fieldMap = {
 const [rol, rolAttrs] = defineField('rol')
 const [headquarter, headquarterAttrs] = defineField('headquarter')
 const [status, statusAttrs] = defineField('status')
-
+const [dni, dniAttrs] = defineField('dni')
+const [cmvp, cmvpAttrs] = defineField('cmvp')
 const searchElementsEmployee: { title: string; key: keyof typeof fieldMap; icon: string }[] = [
-  {
-    title: 'DNI',
-    key: 'dni',
-    icon: 'pi-id-card',
-  },
-  {
-    title: 'CMVP',
-    key: 'cmvp',
-    icon: 'pi-id-card',
-  },
   {
     title: 'Nombres',
     key: 'names',
@@ -414,16 +406,18 @@ const restoreEmployeeConfirm = (event: MouseEvent | KeyboardEvent, employee: Emp
 //for open modal of bloc
 
 //for export
-
-const dt = ref()
-const exportCSV = () => {
-  dt.value.exportCSV()
-}
 </script>
 
 <template>
   <div class="layout-principal-flex">
-    <CardLoader v-if="loading.createEmployee||loading.updateEmployee||loading.restoreEmployee||loading.blockEmployee"/>
+    <CardLoader
+      v-if="
+        loading.createEmployee ||
+        loading.updateEmployee ||
+        loading.restoreEmployee ||
+        loading.blockEmployee
+      "
+    />
     <Card class="card-principal-color-neutral">
       <template #title>
         <h3 class="h3">Gestión de empleados</h3>
@@ -431,6 +425,50 @@ const exportCSV = () => {
       <template #content>
         <div class="flex flex-col gap-6">
           <form class="form-search-grid-col-5">
+            <div>
+              <label class="block mb-2">DNI</label>
+              <InputGroup>
+                <InputGroupAddon class="text-neutral-400">
+                  <i :class="`pi pi-id-card`"></i>
+                </InputGroupAddon>
+                <InputMask
+                  v-model="dni"
+                  v-bind="dniAttrs"
+                  :invalid="Boolean(errors.dni)"
+                  class="w-full"
+                  fluid
+                  mask="99999999"
+                  placeholder="74852321"
+                  @update:model-value="searchEmployeeDebounce()"
+                />
+              </InputGroup>
+              <Message v-if="errors.dni" severity="error" size="small" variant="simple">
+                {{ errors.dni }}
+              </Message>
+            </div>
+
+            <div>
+              <label class="block mb-2">CMVP</label>
+              <InputGroup>
+                <InputGroupAddon class="text-neutral-400">
+                  <i :class="`pi pi-id-card`"></i>
+                </InputGroupAddon>
+                <InputMask
+                  v-model="cmvp"
+                  v-bind="cmvpAttrs"
+                  :invalid="Boolean(errors.cmvp)"
+                  class="w-full"
+                  fluid
+                  mask="99999"
+                  placeholder="45123"
+                  @update:model-value="searchEmployeeDebounce()"
+                />
+              </InputGroup>
+              <Message v-if="errors.cmvp" severity="error" size="small" variant="simple">
+                {{ errors.cmvp }}
+              </Message>
+            </div>
+
             <div v-for="element in searchElementsEmployee" :key="element.key">
               <label class="block mb-2">{{ element.title }}</label>
               <InputGroup>
@@ -503,7 +541,16 @@ const exportCSV = () => {
               </Message>
             </div>
             <div class="form-button-search-container-grid-col-5-end">
-              <Button size="small" class="py-2" severity="secondary" variant="outlined" label="Limpiar" iconPos="left" icon="pi pi-replay" @click="handleResetForm"/>
+              <Button
+                size="small"
+                class="py-2"
+                severity="secondary"
+                variant="outlined"
+                label="Limpiar"
+                iconPos="left"
+                icon="pi pi-replay"
+                @click="handleResetForm"
+              />
             </div>
           </form>
 
@@ -541,7 +588,6 @@ const exportCSV = () => {
                   label="Agregar Empleado"
                   @click="addEmployee"
                 />
-                <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
             </template>
             <Column field="names" header="Nombres" sortable style="width: 18%"></Column>

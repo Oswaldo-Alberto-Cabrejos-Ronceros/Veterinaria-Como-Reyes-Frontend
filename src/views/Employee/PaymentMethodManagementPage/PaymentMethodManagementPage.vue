@@ -227,10 +227,6 @@ const handleDeleteReactivePaymentMethod = (
 
 //for export
 
-const dt = ref()
-const exportCSV = () => {
-  dt.value.exportCSV()
-}
 
 const statusOptions: OptionSelect[] = [
   {
@@ -332,7 +328,7 @@ const statusOptions: OptionSelect[] = [
                   @click="addPaymentMethod"
                   v-if="roleMain === 'Administrador'"
                 />
-                <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
+
               </div>
             </template>
 

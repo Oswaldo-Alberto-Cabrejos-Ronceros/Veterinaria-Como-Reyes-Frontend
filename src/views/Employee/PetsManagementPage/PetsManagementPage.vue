@@ -190,12 +190,12 @@ const searchTextElementsClient: { title: string; key: keyof typeof textFields; i
   {
     title: 'Nombre',
     key: 'name',
-    icon: 'pi-info',
+    icon: 'fa-solid fa-paw',
   },
   {
     title: 'Dueño',
     key: 'ownerDni',
-    icon: 'pi-user',
+    icon: 'pi pi-user',
   },
 ]
 
@@ -359,10 +359,6 @@ const confirmActivatePet = (event: MouseEvent | KeyboardEvent, pet: PetList) => 
 
 //for export
 
-const dt = ref()
-const exportCSV = () => {
-  dt.value.exportCSV()
-}
 
 //for watch specieId
 
@@ -390,7 +386,7 @@ watch(
               <label class="block mb-2">{{ element.title }}</label>
               <InputGroup>
                 <InputGroupAddon class="text-neutral-400">
-                  <i :class="`pi ${element.icon}`"></i>
+                  <i :class="`${element.icon}`"></i>
                 </InputGroupAddon>
                 <InputText
                   v-model="textFields[element.key][0].value"
@@ -513,7 +509,7 @@ watch(
                   @click="addPet"
                   v-if="mainRole !== 'Veterinario'"
                 />
-                <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
+
               </div>
             </template>
             <Column field="name" sortable style="width: 18%" header="Nombre"></Column>

@@ -18,6 +18,7 @@ import { useDialog, useToast } from 'primevue'
 import AddClientCard from './components/AddClientCard.vue'
 import EditClientCard from './components/EditClientCard.vue'
 //form
+import InputMask from 'primevue/inputmask'
 import type { FormValues as SchemaEditClient } from '@/validation-schemas-forms/schema-edit-client'
 import type { FormValues as SchemaClientAdd } from '@/validation-schemas-forms/schema-add-client'
 import { useClient } from '@/composables/useClient'
@@ -43,7 +44,7 @@ const showToast = (message: string, severity: string, sumary: string) => {
 }
 
 //methods
-const { loading, error,createClient, updateClient, blockClient, searchClient, getClientById } =
+const { loading, error, createClient, updateClient, blockClient, searchClient, getClientById } =
   useClient()
 
 const { getAllHeadquarters } = useHeadquarter()
@@ -109,7 +110,7 @@ const fieldMap = {
 //aditionals fields
 const [status, statusAttrs] = defineField('status')
 const [headquarterId, headquarterIdAttrs] = defineField('headquarterId')
-
+const [dni, dniAttrs] = defineField('dni')
 //for dialog
 const dialog = useDialog()
 
@@ -135,8 +136,8 @@ const addClient = async () => {
       blockScroll: true,
       dismissableMask: true,
     },
-    data:{
-  headquartersOptions: headquartersToOptionsSelect(await getAllHeadquarters()),
+    data: {
+      headquartersOptions: headquartersToOptionsSelect(await getAllHeadquarters()),
     },
     onClose: async (options) => {
       const data = options?.data as SchemaClientAdd
@@ -149,7 +150,11 @@ const addClient = async () => {
         } catch (error) {
           console.error(error)
           if (typedError.createClient) {
-            showToast('Error al crear el cliente: ' + data.names + typedError.createClient, 'warn', 'Error')
+            showToast(
+              'Error al crear el cliente: ' + data.names + typedError.createClient,
+              'warn',
+              'Error',
+            )
           } else {
             showToast('Error al crear el cliente' + data.names, 'warn', 'Error')
           }
@@ -172,7 +177,7 @@ const editClient = async (clientData: ClientList) => {
         birthdate: new Date(client.birthdate),
         headquarterId: client.headquarter.headquarterId,
       } as SchemaEditClient,
-       headquartersOptions: headquartersToOptionsSelect(await getAllHeadquarters()),
+      headquartersOptions: headquartersToOptionsSelect(await getAllHeadquarters()),
     },
     props: {
       modal: true,
@@ -191,7 +196,11 @@ const editClient = async (clientData: ClientList) => {
         } catch (error) {
           console.error(error)
           if (typedError.updateClient) {
-            showToast('Error al editar el cliente: ' + data.names + typedError.updateClient, 'warn', 'Error')
+            showToast(
+              'Error al editar el cliente: ' + data.names + typedError.updateClient,
+              'warn',
+              'Error',
+            )
           } else {
             showToast('Error al editar el cliente: ' + data.names, 'warn', 'Error')
           }
@@ -271,7 +280,6 @@ const restoreClientAction = (event: MouseEvent | KeyboardEvent, client: ClientLi
     accept: async () => {
       console.log('Restaurando cliente ', client.id)
 
-
       loadClients()
       showToast('Cliente restaurado exitosamente: ' + client.names, 'success', 'Éxito')
     },
@@ -282,11 +290,6 @@ const restoreClientAction = (event: MouseEvent | KeyboardEvent, client: ClientLi
 }
 
 const searchElementsClient: { title: string; key: keyof typeof fieldMap; icon: string }[] = [
-  {
-    title: 'DNI',
-    key: 'dni',
-    icon: 'pi-id-card',
-  },
   {
     title: 'Nombres',
     key: 'names',
@@ -300,11 +303,6 @@ const searchElementsClient: { title: string; key: keyof typeof fieldMap; icon: s
 ]
 
 //for export
-
-const dt = ref()
-const exportCSV = () => {
-  dt.value.exportCSV()
-}
 
 //options
 const statusOptions: OptionSelect[] = [
@@ -338,6 +336,29 @@ const headquartersToOptionsSelect = (headquarters: Headquarter[]): OptionSelect[
         <div class="flex flex-col gap-6">
           <!-- form -->
           <form class="form-search-grid-col-5">
+
+                        <div>
+              <label class="block mb-2">DNI</label>
+              <InputGroup>
+                <InputGroupAddon class="text-neutral-400">
+                  <i :class="`pi pi-id-card`"></i>
+                </InputGroupAddon>
+                <InputMask
+                  v-model="dni"
+                  v-bind="dniAttrs"
+                  :invalid="Boolean(errors.dni)"
+                  class="w-full"
+                  fluid
+                  mask="99999999"
+                  placeholder="74852321"
+                  @update:model-value="searchClientsDebounce()"
+                />
+              </InputGroup>
+              <Message v-if="errors.dni" severity="error" size="small" variant="simple">
+                {{ errors.dni }}
+              </Message>
+            </div>
+
             <div v-for="element in searchElementsClient" :key="element.key">
               <label class="block mb-2">{{ element.title }}</label>
               <InputGroup>
@@ -426,29 +447,12 @@ const headquartersToOptionsSelect = (headquarters: Headquarter[]): OptionSelect[
                   label="Agregar Cliente"
                   @click="addClient"
                 />
-                <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
               </div>
             </template>
-            <Column
-              field="dni"
-              sortable
-              style="width: 18%"
-              header="DNI"
-            ></Column>
+            <Column field="dni" sortable style="width: 18%" header="DNI"></Column>
             <Column header="Nombres" field="names" sortable style="width: 18%"></Column>
-            <Column
-              field="lastnames"
-              sortable
-              style="width: 15%"
-              header="Apellidos"
-            ></Column>
-            <Column
-              field="headquarterName"
-              sortable
-              style="width: 15%"
-              header="Sede"
-            >
-            </Column>
+            <Column field="lastnames" sortable style="width: 15%" header="Apellidos"></Column>
+            <Column field="headquarterName" sortable style="width: 15%" header="Sede"> </Column>
             <Column header="Acciones">
               <template #body="{ data }">
                 <div class="flex items-center flex-row lg:flex-col xl:flex-row gap-1">

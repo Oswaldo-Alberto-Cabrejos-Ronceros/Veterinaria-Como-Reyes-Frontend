@@ -222,10 +222,6 @@ const headquartersToOptionsSelect = (headquarters: Headquarter[]): OptionSelect[
 
 //for export
 
-const dt = ref()
-const exportCSV = () => {
-  dt.value.exportCSV()
-}
 
 const dialog = useDialog()
 
@@ -453,11 +449,6 @@ const inanctivedHeadquarterService = ref<boolean>(false)
             removableSort
             ref="dt"
           >
-            <template #header>
-              <div class="w-full flex flex-col xs:flex-row justify-end gap-2 pb-4">
-                <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
-              </div>
-            </template>
             <Column
               field="name"
               sortable

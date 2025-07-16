@@ -21,7 +21,7 @@ import { useEmployee } from '@/composables/useEmployee'
 import { useAppointment } from '@/composables/useAppointment'
 import { useHeadquarterVetService } from '@/composables/useHeadquarterVetService'
 import type { EmployeeBasicInfo } from '@/models/EmployeeBasicInfo'
-
+import InputMask from 'primevue/inputmask'
 //for methods
 const { getEntityId } = useAuthentication()
 
@@ -207,12 +207,14 @@ onMounted(async () => {
           <InputGroupAddon class="text-neutral-400">
             <i class="pi pi-user"></i>
           </InputGroupAddon>
-          <InputText
-            v-model="ownerDni"
-            v-bind="ownerDniAttrs"
+          <InputMask
+            id="basic"
             :invalid="Boolean(errors.ownerDni)"
-            class="w-full"
-            placeholder="Busque dueño por DNI"
+            fluid
+            v-bind="ownerDniAttrs"
+            v-model="ownerDni"
+            mask="99999999"
+            placeholder="74852321"
           />
           <InputGroupAddon>
             <Button

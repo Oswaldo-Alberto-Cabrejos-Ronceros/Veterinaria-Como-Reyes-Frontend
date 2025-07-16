@@ -331,11 +331,6 @@ const activeHeadquarterAction = (
 }
 
 //for export
-
-const dt = ref()
-const exportCSV = () => {
-  dt.value.exportCSV()
-}
 </script>
 
 <template>
@@ -455,7 +450,7 @@ const exportCSV = () => {
                   label="Agregar Sede"
                   @click="addHeadquarter"
                 />
-                <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
+
               </div>
             </template>
             <Column

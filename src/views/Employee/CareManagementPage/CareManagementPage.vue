@@ -165,11 +165,6 @@ const statusOptions: OptionSelect[] = [
 
 //for export
 
-const dt = ref()
-const exportCSV = () => {
-  dt.value.exportCSV()
-}
-
 //for toast
 const toast = useToast()
 
@@ -355,7 +350,7 @@ const viewCare = (careId: number) => {
                   label="Agregar Atencíon"
                   @click="addCare()"
                 />
-                <Button icon="pi pi-external-link" label="Export" @click="exportCSV" />
+
               </div>
             </template>
             <Column

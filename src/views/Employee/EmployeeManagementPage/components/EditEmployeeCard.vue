@@ -14,6 +14,7 @@ import type { Ref } from 'vue'
 import { inject, onMounted, ref } from 'vue'
 import type { OptionSelect } from '@/models/OptionSelect'
 import { useReniec } from '@/composables/useReniec'
+import InputMask from 'primevue/inputmask'
 
 //methods
 
@@ -49,7 +50,8 @@ const fieldMap = {
 //fields additionals
 const [dni, dniAttrs] = defineField('dni')
 const [cmvp, cmvpAttrs] = defineField('cmvp')
-
+const [phone, phoneAttrs] = defineField('phone')
+const [dirImage, dirImageAttrs] = defineField('dirImage')
 const [headquarterId, headquarterIdAttrs] = defineField('headquarterId')
 const [birthdate, birthdateAttrs] = defineField('birthdate')
 const [roleId, roleIdAttrs] = defineField('roleId')
@@ -79,18 +81,6 @@ const textFields: {
     key: 'address',
     icon: 'pi-home',
     placeholder: 'Avenida, calle , número',
-  },
-  {
-    title: 'Celular',
-    key: 'phone',
-    icon: 'pi-mobile',
-    placeholder: 'Ej: 945156123',
-  },
-  {
-    title: 'Imagen',
-    key: 'dirImage',
-    icon: 'pi-image',
-    placeholder: 'Imagen del empleado',
   },
 ]
 
@@ -162,11 +152,13 @@ const searchInfoReniec = async () => {
   }
 }
 
-const cmvpActive = (id:number):boolean=>{
-  const roleVeterinary =rolesOptions.value.find((item)=> item.name.toUpperCase()==='VETERINARIO')
-  if(roleVeterinary&&roleVeterinary.value===id){
+const cmvpActive = (id: number): boolean => {
+  const roleVeterinary = rolesOptions.value.find(
+    (item) => item.name.toUpperCase() === 'VETERINARIO',
+  )
+  if (roleVeterinary && roleVeterinary.value === id) {
     return false
-  }else{
+  } else {
     return true
   }
 }
@@ -183,14 +175,14 @@ const cmvpActive = (id:number):boolean=>{
           <InputGroupAddon class="text-neutral-400">
             <i class="pi pi-id-card"></i>
           </InputGroupAddon>
-          <InputText
+          <InputMask
             v-bind="dniAttrs"
             v-model="dni"
             :invalid="Boolean(errors.dni)"
-            type="text"
-            placeholder="Ej: 74512351"
+            mask="99999999"
+            placeholder="74852321"
           />
-                  <InputGroupAddon>
+          <InputGroupAddon>
             <Button
               icon="pi pi-search"
               severity="secondary"
@@ -228,18 +220,18 @@ const cmvpActive = (id:number):boolean=>{
       <div v-if="!cmvpActive(roleId)">
         <label class="block mb-2">CMVP</label>
 
-        <InputGroup         >
+        <InputGroup>
           <InputGroupAddon class="text-neutral-400">
             <i class="pi pi-id-card"></i>
           </InputGroupAddon>
-          <InputText
+          <InputMask
             v-bind="cmvpAttrs"
             v-model="cmvp"
             :invalid="Boolean(errors.cmvp)"
-            type="text"
-            placeholder="Ej: 14125"
+            fluid
+            mask="99999"
+            placeholder="45123"
             :disabled="cmvpActive(roleId)"
-
           />
         </InputGroup>
 
@@ -266,6 +258,48 @@ const cmvpActive = (id:number):boolean=>{
           {{ errors[element.key] }}
         </Message>
       </div>
+
+      <div>
+        <label class="block mb-2">Celular</label>
+
+        <InputGroup>
+          <InputGroupAddon class="text-neutral-400">
+            <i class="pi pi-mobile"></i>
+          </InputGroupAddon>
+          <InputMask
+            :invalid="Boolean(errors.phone)"
+            fluid
+            v-bind="phoneAttrs"
+            v-model="phone"
+            mask="999999999"
+            placeholder="984521485"
+          />
+        </InputGroup>
+
+        <Message v-if="errors.phone" severity="error" size="small" variant="simple">
+          {{ errors.phone }}
+        </Message>
+      </div>
+
+      <div>
+        <label class="block mb-2">Imagen</label>
+        <InputGroup>
+          <InputGroupAddon class="text-neutral-400">
+            <i :class="`pi pi-image`"></i>
+          </InputGroupAddon>
+          <InputText
+            v-model="dirImage"
+            v-bind="dirImageAttrs"
+            :invalid="Boolean(errors.dirImage)"
+            class="w-full"
+            :placeholder="`Imagen`"
+          />
+        </InputGroup>
+        <Message v-if="errors.dirImage" severity="error" size="small" variant="simple">
+          {{ errors.dirImage }}
+        </Message>
+      </div>
+
       <div>
         <label class="block mb-2">Fecha de nacimiento</label>
         <DatePicker

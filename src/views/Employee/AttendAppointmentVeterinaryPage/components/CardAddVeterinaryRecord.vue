@@ -14,7 +14,7 @@ const props = defineProps<{
   disabled:boolean
 }>()
 
-const { handleSubmit, errors, defineField } = useForm<FormValues>({
+const { resetForm,handleSubmit, errors, defineField } = useForm<FormValues>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
     careId: props.careId,
@@ -39,6 +39,7 @@ const [resultUrl, resultUrlAttrs] = defineField('resultUrl')
 const onSubmit = handleSubmit((values) => {
   console.log(values)
   emit('create-record',values)
+  resetForm()
 })
 
 const emit = defineEmits(['create-record'])
