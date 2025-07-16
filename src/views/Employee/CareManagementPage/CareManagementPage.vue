@@ -120,7 +120,7 @@ const { resetForm,handleSubmit, errors, defineField } = useForm<SearchCareSchema
 
 const handleResetForm = () => {
   resetForm()
-  loadAppoinments()
+  loadCares()
 }
 
 const [headquarterId, headquarterIdAttrs] = defineField('headquarterId')
