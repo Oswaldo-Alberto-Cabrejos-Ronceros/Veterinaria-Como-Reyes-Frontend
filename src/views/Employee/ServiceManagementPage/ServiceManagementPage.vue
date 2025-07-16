@@ -27,6 +27,7 @@ import type { DataTablePageEvent } from 'primevue/datatable'
 import { debounce } from 'lodash'
 import type { ServiceList } from '@/models/ServiceList'
 import { useAuthentication } from '@/composables/useAuthentication'
+import CardLoader from '@/components/CardLoader.vue'
 
 //toast
 const toast = useToast()
@@ -114,7 +115,7 @@ const loadServices = async (event?: DataTablePageEvent) => {
 }
 
 //form
-const { handleSubmit, errors, defineField } = useForm<SearchServiceSchema>({
+const { resetForm,handleSubmit, errors, defineField } = useForm<SearchServiceSchema>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
     name: '',
@@ -123,6 +124,11 @@ const { handleSubmit, errors, defineField } = useForm<SearchServiceSchema>({
     status: true,
   },
 })
+
+const handleResetForm = () => {
+  resetForm()
+  loadServices()
+}
 
 //fields
 const [name, nameAttrs] = defineField('name')
@@ -299,6 +305,14 @@ const deleteReactiveService = (event: MouseEvent | KeyboardEvent, serviceData: S
 
 <template>
   <div class="layout-principal-flex">
+       <CardLoader
+         v-if="
+           loading.activateVeterinaryService ||
+           loading.deleteVeterinaryService ||
+           loading.updateVeterinaryService ||
+           loading.createVeterinaryService
+         "
+       ></CardLoader>
     <Card class="card-principal-color-neutral">
       <template #title>
         <h3 class="h3">Gestión de servicios</h3>
@@ -386,6 +400,19 @@ const deleteReactiveService = (event: MouseEvent | KeyboardEvent, serviceData: S
                 {{ errors.status }}
               </Message>
             </div>
+            <div class="form-button-search-container-grid-col-5-end">
+              <Button
+                size="small"
+                class="py-2"
+                severity="secondary"
+                variant="outlined"
+                label="Limpiar"
+                iconPos="left"
+                icon="pi pi-replay"
+                @click="handleResetForm"
+              />
+            </div>
+
           </form>
 
           <!-- for messague loading  -->

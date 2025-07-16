@@ -231,7 +231,7 @@ export class AppointmentServiceImpl implements AppointmentService {
 
   async getTopVeterinariansPerformance(period: ReportPeriod): Promise<VeterinarianPerformance> {
     const response = await this.httpClient.get<VeterinarianPerformance>(
-      `panel-admin/cares/top-veterinarians/${period}`,
+      `panel-admin/top-veterinarians/${period}`,
     )
     return response.data
   }
@@ -241,7 +241,7 @@ export class AppointmentServiceImpl implements AppointmentService {
     headquarterId: number,
   ): Promise<VeterinarianPerformance> {
     const response = await this.httpClient.get<VeterinarianPerformance>(
-      `panel-manager/cares/top-veterinarians/${period}/headquarter/${headquarterId}`,
+      `panel-manager/top-veterinarians/${period}/headquarter/${headquarterId}`,
     )
     return response.data
   }

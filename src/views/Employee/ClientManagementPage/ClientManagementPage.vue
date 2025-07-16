@@ -30,6 +30,7 @@ import { debounce } from 'lodash'
 import type { ClientList } from '@/models/ClientList'
 import BlockCardPrimary from '@/components/BlockCardPrimary.vue'
 import type { FormValues as BlockSchema } from '@/validation-schemas-forms/schema-block-employee-client'
+import CardLoader from '@/components/CardLoader.vue'
 
 //toast
 const toast = useToast()
@@ -90,7 +91,7 @@ const loadClients = async (event?: DataTablePageEvent) => {
   headquartersOptions.value = headquartersToOptionsSelect(await getAllHeadquarters())
 }
 
-const { errors, defineField } = useForm<SchemaSearchClient>({
+const { resetForm,errors, defineField } = useForm<SchemaSearchClient>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
     dni: '',
@@ -100,6 +101,11 @@ const { errors, defineField } = useForm<SchemaSearchClient>({
     headquarterId: undefined,
   },
 })
+
+const handleResetForm = () => {
+  resetForm()
+  loadClients()
+}
 
 const fieldMap = {
   dni: defineField('dni'),
@@ -216,7 +222,7 @@ const confirm = useConfirm()
 const openModalBlock = async (client: ClientList) => {
   dialog.open(BlockCardPrimary, {
     data: {
-      title: 'Empleado',
+      title: 'Cliente',
     },
     props: {
       modal: true,
@@ -229,7 +235,7 @@ const openModalBlock = async (client: ClientList) => {
       if (data) {
         await blockClient(client.id, data.blockNote)
         loadClients()
-        showToast('Cliente eliminado exitosamente: ' + client.names, 'success', 'Éxito')
+        showToast('Cliente bloqueado exitosamente: ' + client.names, 'success', 'Éxito')
       }
     },
   })
@@ -240,7 +246,7 @@ const deleteClientAction = (event: MouseEvent | KeyboardEvent, client: ClientLis
   confirm.require({
     group: 'confirmPopupGeneral',
     target: event.currentTarget as HTMLElement,
-    message: '¿Seguro que quiere eliminar a este empleado?',
+    message: '¿Seguro que quiere bloquear a este cliente?',
     icon: 'pi pi-exclamation-triangle',
     rejectProps: {
       label: 'Cancelar',
@@ -248,7 +254,7 @@ const deleteClientAction = (event: MouseEvent | KeyboardEvent, client: ClientLis
       outlined: true,
     },
     acceptProps: {
-      label: 'Eliminar',
+      label: 'Bloquear',
       severity: 'danger',
     },
     accept: async () => {
@@ -328,6 +334,9 @@ const headquartersToOptionsSelect = (headquarters: Headquarter[]): OptionSelect[
 
 <template>
   <div class="layout-principal-flex">
+    <CardLoader v-if="loading.blockClient||loading.updateClient||loading.createClient"
+
+    ></CardLoader>
     <Card class="card-principal-color-neutral">
       <template #title>
         <h3 class="h3">Gestión de Clientes</h3>
@@ -336,8 +345,7 @@ const headquartersToOptionsSelect = (headquarters: Headquarter[]): OptionSelect[
         <div class="flex flex-col gap-6">
           <!-- form -->
           <form class="form-search-grid-col-5">
-
-                        <div>
+            <div>
               <label class="block mb-2">DNI</label>
               <InputGroup>
                 <InputGroupAddon class="text-neutral-400">
@@ -415,6 +423,18 @@ const headquartersToOptionsSelect = (headquarters: Headquarter[]): OptionSelect[
                 {{ errors.status }}
               </Message>
             </div>
+                        <div class="form-button-search-container-grid-col-5-end">
+                          <Button
+                            size="small"
+                            class="py-2"
+                            severity="secondary"
+                            variant="outlined"
+                            label="Limpiar"
+                            iconPos="left"
+                            icon="pi pi-replay"
+                            @click="handleResetForm"
+                          />
+                        </div>
           </form>
           <!-- for messague loading  -->
           <Message v-if="loading.getAllClients" severity="warn" size="small" variant="simple">

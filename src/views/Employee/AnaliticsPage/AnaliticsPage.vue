@@ -23,6 +23,7 @@ import { useAppointment } from '@/composables/useAppointment'
 import type {
   DailyAppointmentStats,
   OperationalMonthlyStats,
+  VeterinarianPerformance,
 } from '@/services/Appointment/domain/models/Appointment'
 import { useSpecie } from '@/composables/useSpecie'
 import type { TopSpeciesCare } from '@/services/Specie/domain/models/Specie'
@@ -62,11 +63,11 @@ const annualRevenue = ref<AnnualRevenue | null>(null)
 const incomePerHeadquarter = ref<IncomePerHeadquarter | null>(null)
 
 const veterinariansPerformance = ref<VeterinarianPerformance|null>(null)
-  
+
 const { getTopPaymentMethodsByHeadquarter, getTopPaymentMethods } = usePaymentMethod()
 
 const {getTopVeterinariansPerformanceByHeadquarter,getTopVeterinariansPerformance
-  getGeneralOperationalMonthlyStats,
+  ,getGeneralOperationalMonthlyStats,
   getOperationalMonthlyStatsByHeadquarter,
   getDailyAppointmentStatsLast7Days,
   getDailyAppointmentStatsByHeadquarter,

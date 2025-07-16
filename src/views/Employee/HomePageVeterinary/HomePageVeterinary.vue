@@ -27,6 +27,7 @@ import type {
   MonthlyCareStatsVeterinary,
   WeeklyCareStatsVeterinary,
 } from '@/services/Care/domain/models/Care'
+import type { StatsVeterinarianPanel } from '@/services/Employee/domain/models/Employee'
 
 const { getEntityId } = useAuthentication()
 const { getEmployeeMyInfo } = useEmployee()
@@ -39,7 +40,7 @@ const appointments = ref<CareAndAppointmentPanelEmployee[]>([])
 const {getVeterinarianPanelStatsToday} = useEmployee()
 
 const statsAdditionals = ref<StatsVeterinarianPanel|null>(null)
-  
+
   const statsRecords = ref<VeterinaryRecordStats | null>(null)
 
 const {
@@ -202,38 +203,39 @@ const handleRedirectPet = (petId: number) => {
       </template>
       <template #content>
         <!-- news -->
-        <div class="w-full grid grid-cols-2 gap-y-4 lg:grid-cols-4 gap-x-6 lg:gap-x-12 mt-4">
-          <CardNewsPrimary
-            v-if="appointmentStats"
-            title="Citas hoy"
-            icon="pi-calendar"
-            :content="appointmentStats.totalAppointments.toString()"
-          >
-          </CardNewsPrimary>
+ <div class="w-full grid grid-cols-2 gap-y-4 lg:grid-cols-4 gap-x-6 lg:gap-x-12 mt-4">
+  <CardNewsPrimary
+    v-if="appointmentStats"
+    title="Citas hoy"
+    icon="pi-calendar"
+    :content="appointmentStats.totalAppointments.toString()"
+  >
+  </CardNewsPrimary>
 
-<CardNewsPrimary
-            v-if="statsAdditionals"
-            title="Atenciones registradas hoy"
-            icon="pi-clipboard"
-            :content="statsAdditionals.totalCares"
-          >
-          </CardNewsPrimary>
-<CardNewsPrimary
-            v-if="statsAdditionals"
-            title="N° de mascotas atendidas hoy"
-            icon="pi-clipboard"
-            :content="statsAdditionals.totalPatients"
-          >
-          </CardNewsPrimary
-          <CardNewsPrimary
-            v-if="statsAdditionals"
-            title="N° de reportes hoy"
-            icon="pi-clipboard"
-            :content="statsAdditionals.totalRecords"
-          >
-          </CardNewsPrimary
-          
-        </div>
+  <CardNewsPrimary
+    v-if="statsAdditionals"
+    title="Atenciones registradas hoy"
+    icon="pi-clipboard"
+    :content="statsAdditionals.totalCares.toString()"
+  >
+  </CardNewsPrimary>
+
+  <CardNewsPrimary
+    v-if="statsAdditionals"
+    title="N° de mascotas atendidas hoy"
+    icon="pi-clipboard"
+    :content="statsAdditionals.totalPatients.toString()"
+  >
+  </CardNewsPrimary>
+
+  <CardNewsPrimary
+    v-if="statsAdditionals"
+    title="N° de reportes hoy"
+    icon="pi-clipboard"
+    :content="statsAdditionals.totalRecords.toString()"
+  >
+  </CardNewsPrimary>
+</div>
         <!-- quicky actions -->
         <Card class="card-primary min-h-24 mt-4">
           <template #title>

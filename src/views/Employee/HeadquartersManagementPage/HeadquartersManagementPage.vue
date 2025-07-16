@@ -22,6 +22,7 @@ import type { HeadquarterList } from '@/models/HeadquarterList'
 import { debounce } from 'lodash'
 import type { OptionSelect } from '@/models/OptionSelect'
 import { DateAdapter } from '@/adapters/DateAdapter'
+import CardLoader from '@/components/CardLoader.vue'
 
 //toast
 const toast = useToast()
@@ -87,7 +88,7 @@ const loadHeadquarters = async (event?: DataTablePageEvent) => {
 }
 
 //form
-const { errors, defineField } = useForm<SearchHeadquarterSchema>({
+const { resetForm,errors, defineField } = useForm<SearchHeadquarterSchema>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
     name: '',
@@ -99,6 +100,11 @@ const { errors, defineField } = useForm<SearchHeadquarterSchema>({
     status: true,
   },
 })
+
+const handleResetForm = () => {
+  resetForm()
+  loadHeadquarters()
+}
 
 //fieldMap
 
@@ -277,7 +283,7 @@ const deleteHeadquarterAction = (
   confirm.require({
     group: 'confirmPopupGeneral',
     target: event.currentTarget as HTMLElement,
-    message: '¿Seguro que quiere eliminar esta sede?',
+    message: '¿Seguro que quiere bloquear esta sede?',
     icon: 'pi pi-exclamation-triangle',
     rejectProps: {
       label: 'Cancelar',
@@ -285,7 +291,7 @@ const deleteHeadquarterAction = (
       outlined: true,
     },
     acceptProps: {
-      label: 'Eliminar',
+      label: 'Bloquear',
       severity: 'danger',
     },
     accept: async () => {
@@ -307,7 +313,7 @@ const activeHeadquarterAction = (
   confirm.require({
     group: 'confirmPopupGeneral',
     target: event.currentTarget as HTMLElement,
-    message: '¿Seguro que activar eliminar esta sede?',
+    message: '¿Seguro que activar activar esta sede?',
     icon: 'pi pi-exclamation-triangle',
     rejectProps: {
       label: 'Cancelar',
@@ -335,6 +341,9 @@ const activeHeadquarterAction = (
 
 <template>
   <div class="layout-principal-flex">
+        <CardLoader
+      v-if="loading.activateHeadquarter || loading.updateHeadquarter || loading.createHeadquarter || loading.deleteHeadquarter"
+    ></CardLoader>
     <Card class="card-principal-color-neutral">
       <template #title>
         <h3 class="h3">Gestión de sedes</h3>
@@ -414,6 +423,18 @@ const activeHeadquarterAction = (
               <Message v-if="errors.status" severity="error" size="small" variant="simple">
                 {{ errors.status }}
               </Message>
+            </div>
+                        <div class="form-button-search-container-grid-col-5-end">
+              <Button
+                size="small"
+                class="py-2"
+                severity="secondary"
+                variant="outlined"
+                label="Limpiar"
+                iconPos="left"
+                icon="pi pi-replay"
+                @click="handleResetForm"
+              />
             </div>
           </form>
 
