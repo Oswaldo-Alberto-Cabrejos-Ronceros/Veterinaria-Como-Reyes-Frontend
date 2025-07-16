@@ -45,6 +45,7 @@ export interface RecentMedicalRecord {
   treatment: string
   observations: string
   status: string
+  animalId:number
 }
 
 export interface VeterinaryRecordStats {

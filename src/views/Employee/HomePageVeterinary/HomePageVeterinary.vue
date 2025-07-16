@@ -504,6 +504,7 @@ const handleRedirectPet = (petId: number) => {
                     :diagnosis-content="record.diagnosis"
                     :treatment="record.treatment"
                     :observations="record.observations"
+                    :petId="record.petId"
                   ></CardVeterinaryRecord
                 ></ScrollPanel>
 
@@ -562,7 +563,7 @@ const handleRedirectPet = (petId: number) => {
                 class="flex min-h-120 max-h-122 items-center justify-center"
                 v-if="recentsPacients.length === 0"
               >
-                <p>No hay servicios que mostrar</p>
+                <p>No hay mascotas que mostrar</p>
               </div>
               <Button
                 class="mt-2 w-full"

@@ -56,6 +56,7 @@ export class VeterinaryRecordAdapter {
       id: record.veterinaryRecordId,
       careId: record.careId,
       petName: record.animalName,
+      petId:record.animalId,
       breedName: record.breedName,
       clientFullName: record.clientFullName,
       serviceName: record.serviceName,

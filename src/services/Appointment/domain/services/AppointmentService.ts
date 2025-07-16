@@ -17,8 +17,10 @@ import type {
   InfoBasicAppointment,
   OperationalMonthlyStats,
   TimesForTurn,
+  VeterinarianPerformance,
 } from '../models/Appointment'
 import type { PaymentInfoForAppointment } from '@/services/Payment/domain/models/Payment'
+import type { ReportPeriod } from '@/services/enums/ReportPeriod'
 
 export interface AppointmentService {
   getAllAppointments(): Promise<Appointment[]>
@@ -54,4 +56,9 @@ export interface AppointmentService {
   getDailyAppointmentStatsByHeadquarter(headquarterId: number): Promise<DailyAppointmentStats>
   getGeneralOperationalMonthlyStats(): Promise<OperationalMonthlyStats>
   getDailyAppointmentStatsLast7Days(): Promise<DailyAppointmentStats>
+  getTopVeterinariansPerformanceByHeadquarter(
+    period: ReportPeriod,
+    headquarterId: number,
+  ): Promise<VeterinarianPerformance>
+  getTopVeterinariansPerformance(period: ReportPeriod): Promise<VeterinarianPerformance>
 }

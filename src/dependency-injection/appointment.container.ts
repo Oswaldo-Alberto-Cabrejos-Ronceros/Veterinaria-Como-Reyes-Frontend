@@ -27,6 +27,8 @@ import { GetOperationalMonthlyStatsByHeadquarter } from '@/services/Appointment/
 import { GetDailyAppointmentStatsByHeadquarter } from '@/services/Appointment/aplication/GetDailyAppointmentStatsByHeadquarter'
 import { GetGeneralOperationalMonthlyStats } from '@/services/Appointment/aplication/GetGeneralOperationalMonthlyStats'
 import { GetDailyAppointmentStatsLast7Days } from '@/services/Appointment/aplication/GetDailyAppointmentStatsLast7Days'
+import { GetTopVeterinariansPerformanceByHeadquarter } from '@/services/Appointment/aplication/GetTopVeterinariansPerformanceByHeadquarter'
+import { GetTopVeterinariansPerformance } from '@/services/Appointment/aplication/GetTopVeterinariansPerformance'
 
 // Instancia de cliente HTTP
 const axiosHttpClient = new AxiosHttpClient()
@@ -75,4 +77,6 @@ export const appointmentUsesCases = {
   ),
   getGeneralOperationalMonthlyStats: new GetGeneralOperationalMonthlyStats(appointmentService),
   getDailyAppointmentStatsLast7Days: new GetDailyAppointmentStatsLast7Days(appointmentService),
+  getTopVeterinariansPerformanceByHeadquarter: new GetTopVeterinariansPerformanceByHeadquarter(appointmentService),
+  getTopVeterinariansPerformance: new GetTopVeterinariansPerformance(appointmentService)
 }

@@ -11,6 +11,7 @@ import { UpdateEmployee } from '@/services/Employee/aplication/UpdateEmployee'
 import { AxiosHttpClient } from '@/services/Http/infrastructure/AxiosHttpClient'
 //import service implemetation
 import { EmployeeServiceImpl } from '@/services/Employee/infrastructure/EmployeeServiceImpl'
+import { GetVeterinarianPanelStatsToday } from '@/services/Employee/aplication/GetVeterinarianPanelStatsToday'
 
 //instantiete AxiosHttpCliente
 const axiosHttpClient = new AxiosHttpClient()
@@ -29,4 +30,5 @@ export const employeeUsesCases = {
   restoreEmployee: new RestoreEmployee(employeeService),
   searchEmployees: new SearchEmployees(employeeService),
   updateEmployee: new UpdateEmployee(employeeService),
+  getVeterinarianPanelStatsToday: new GetVeterinarianPanelStatsToday(employeeService)
 }

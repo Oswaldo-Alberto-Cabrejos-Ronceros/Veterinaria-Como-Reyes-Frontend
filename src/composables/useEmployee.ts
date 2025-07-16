@@ -14,11 +14,12 @@ export function useEmployee() {
   //fet from useAsyncHandle
   const { loading, error, runUseCase } = useAsyncHandler()
 
-
   //expose use cases
 
-  const blockEmployee = async (employeeId: number,blockNote:string) => {
-    await runUseCase('blockEmployee', () => employeeUsesCases.blockEmployee.execute(employeeId,blockNote))
+  const blockEmployee = async (employeeId: number, blockNote: string) => {
+    await runUseCase('blockEmployee', () =>
+      employeeUsesCases.blockEmployee.execute(employeeId, blockNote),
+    )
   }
 
   //create
@@ -60,7 +61,7 @@ export function useEmployee() {
   const searchEmployees = async (
     status: boolean,
     dni?: string,
-    cmvp?:string,
+    cmvp?: string,
     name?: string,
     lastName?: string,
     headquarterName?: string,
@@ -104,6 +105,12 @@ export function useEmployee() {
     return EmployeeAdapter.toEmployeeView(employee)
   }
 
+  const getVeterinarianPanelStatsToday = async (veterinarianId: number) => {
+    return await runUseCase('getVeterinarianPanelStatsToday', () =>
+      employeeUsesCases.getVeterinarianPanelStatsToday.execute(veterinarianId),
+    )
+  }
+
   return {
     loading,
     error,
@@ -115,5 +122,6 @@ export function useEmployee() {
     restoreEmployee,
     searchEmployees,
     updateEmployee,
+    getVeterinarianPanelStatsToday,
   }
 }

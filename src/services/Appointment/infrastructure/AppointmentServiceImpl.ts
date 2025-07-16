@@ -16,10 +16,12 @@ import type {
   AppointmentStatsForReceptionist,
   OperationalMonthlyStats,
   DailyAppointmentStats,
+  VeterinarianPerformance,
 } from '../domain/models/Appointment'
 import type { SearchAppointmentParams } from '../domain/models/SearchAppointmentParams'
 import type { PageResponse } from '@/services/models/PageResponse'
 import type { PaymentInfoForAppointment } from '@/services/Payment/domain/models/Payment'
+import type { ReportPeriod } from '@/services/enums/ReportPeriod'
 
 export class AppointmentServiceImpl implements AppointmentService {
   constructor(private readonly httpClient: HttpClient) {}
@@ -223,6 +225,23 @@ export class AppointmentServiceImpl implements AppointmentService {
   async getDailyAppointmentStatsLast7Days(): Promise<DailyAppointmentStats> {
     const response = await this.httpClient.get<DailyAppointmentStats>(
       `/panel-admin/appointments/daily-stats`,
+    )
+    return response.data
+  }
+
+  async getTopVeterinariansPerformance(period: ReportPeriod): Promise<VeterinarianPerformance> {
+    const response = await this.httpClient.get<VeterinarianPerformance>(
+      `panel-admin/cares/top-veterinarians/${period}`,
+    )
+    return response.data
+  }
+
+  async getTopVeterinariansPerformanceByHeadquarter(
+    period: ReportPeriod,
+    headquarterId: number,
+  ): Promise<VeterinarianPerformance> {
+    const response = await this.httpClient.get<VeterinarianPerformance>(
+      `panel-manager/cares/top-veterinarians/${period}/headquarter/${headquarterId}`,
     )
     return response.data
   }

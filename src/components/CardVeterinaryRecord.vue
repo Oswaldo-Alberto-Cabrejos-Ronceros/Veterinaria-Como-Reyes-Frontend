@@ -7,13 +7,13 @@ const props = defineProps<{
   date: string
   petName: string
   breedName: string
-  petId?: number
+  petId: number
   status: string
   serviceName: string
   clientName: string
   diagnosisContent: string
   treatment: string
-  observations: string
+  observations?: string,
 }>()
 
 const emit = defineEmits(['view-history'])
@@ -54,8 +54,8 @@ const emitView = () => {
         {{ treatment }}
       </p>
 
-      <p class="font-semibold">Observaciones</p>
-      <p>
+      <p class="font-semibold" v-if="observations">Observaciones</p>
+      <p v-if="observations">
         {{ observations }}
       </p>
       <div class="flex justify-end w-full">
