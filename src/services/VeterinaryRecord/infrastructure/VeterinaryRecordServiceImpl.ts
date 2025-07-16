@@ -20,6 +20,7 @@ export class VeterinaryRecordServiceImpl implements VeterinaryRecordService {
       `${this.url}/${id}`,
       veterinaryRecordRequest,
     )
+    console.log('desde service',response)
     return response.data
   }
   async findAll(): Promise<VeterinaryRecord[]> {

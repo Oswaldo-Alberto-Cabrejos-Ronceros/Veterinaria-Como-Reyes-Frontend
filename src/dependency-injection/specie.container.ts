@@ -9,6 +9,8 @@ import { SearchSpecies } from '@/services/Specie/aplication/SearchSpecies'
 import { SpecieServiceImpl } from '@/services/Specie/infrastructure/SpecieServiceImpl'
 import { GetTopSpeciesGeneral } from '@/services/Specie/aplication/GetTopSpeciesGeneral'
 import { GetTopSpeciesByHeadquarter } from '@/services/Specie/aplication/GetTopSpeciesByHeadquarter'
+import { GetTopSpeciesByPeriod } from '@/services/Specie/aplication/GetTopSpeciesByPeriod'
+import { GetTopSpeciesByPeriodAndHeadquarter } from '@/services/Specie/aplication/GetTopSpeciesByPeriodAndHeadquarter'
 
 //instantiete AxiosHttpCliente
 const axiosHttpClient = new AxiosHttpClient()
@@ -27,5 +29,7 @@ export const specieUsesCases = {
   activateSpecie: new ActivateSpecie(specieService),
   searchSpecies: new SearchSpecies(specieService),
   getTopSpeciesGeneral: new GetTopSpeciesGeneral(specieService),
-  getTopSpeciesGeneralByHeadquarter: new GetTopSpeciesByHeadquarter(specieService)
+  getTopSpeciesGeneralByHeadquarter: new GetTopSpeciesByHeadquarter(specieService),
+  getTopSpeciesByPeriod: new GetTopSpeciesByPeriod(specieService),
+  getTopSpeciesByPeriodAndHeadquarter: new GetTopSpeciesByPeriodAndHeadquarter(specieService),
 }

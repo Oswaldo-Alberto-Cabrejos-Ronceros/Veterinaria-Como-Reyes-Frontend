@@ -6,6 +6,7 @@ import type { Specie as SpecieView } from '@/models/Specie'
 import type { FormValues as SpecieAddEditSchema } from '@/validation-schemas-forms/schema-add-edit-specie'
 import type { PageResponse } from '@/services/models/PageResponse'
 import type { SpecieList as SpecieListView } from '@/models/SpecieList'
+import type { ReportPeriod } from '@/services/enums/ReportPeriod'
 
 export function useSpecie() {
   //get from useAsyncHandle
@@ -85,6 +86,21 @@ export function useSpecie() {
     )
   }
 
+  const getTopSpeciesByPeriod = async (period: ReportPeriod) => {
+    return await runUseCase('getTopSpeciesByPeriod', () =>
+      specieUsesCases.getTopSpeciesByPeriod.execute(period),
+    )
+  }
+
+  const getTopSpeciesByPeriodAndHeadquarter = async (
+    period: ReportPeriod,
+    headquarterId: number,
+  ) => {
+    return await runUseCase('getTopSpeciesByPeriodAndHeadquarter', () =>
+      specieUsesCases.getTopSpeciesByPeriodAndHeadquarter.execute(period, headquarterId),
+    )
+  }
+
   return {
     loading,
     error,
@@ -96,6 +112,8 @@ export function useSpecie() {
     activateSpecie,
     searchSpecies,
     getTopSpeciesGeneral,
-    getTopSpeciesByHeadquarter
+    getTopSpeciesByHeadquarter,
+    getTopSpeciesByPeriod,
+    getTopSpeciesByPeriodAndHeadquarter,
   }
 }

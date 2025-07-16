@@ -5,7 +5,7 @@ import type { VeterinaryRecordInfoTable as VeterinaryRecordInfoTableView } from 
 import type { VeterinaryRecordRequest } from '@/services/VeterinaryRecord/domain/models/VeterinaryRecord'
 import type { FormValues } from '@/validation-schemas-forms/schema-add-edit-veterinary-record'
 import { DateAdapter } from './DateAdapter'
-import type { RecentMedicalRecord as RecentMedicalRecordView  } from '@/models/RecentMedicalRecord'
+import type { RecentMedicalRecord as RecentMedicalRecordView } from '@/models/RecentMedicalRecord'
 import type { RecentMedicalRecord } from '@/services/VeterinaryRecord/domain/models/VeterinaryRecord'
 import { FormatAdapter } from './FormatAdapter'
 
@@ -39,7 +39,7 @@ export class VeterinaryRecordAdapter {
     }
   }
 
-    static fromSchemaToVeterinaryRecordRequest(schema: FormValues): VeterinaryRecordRequest {
+  static fromSchemaToVeterinaryRecordRequest(schema: FormValues): VeterinaryRecordRequest {
     return {
       careId: schema.careId,
       employeeId: schema.employeeId,
@@ -47,13 +47,11 @@ export class VeterinaryRecordAdapter {
       diagnosis: schema.diagnosis,
       treatment: schema.treatment,
       observation: schema.observation,
-      resultUrl: schema.resultUrl
+      resultUrl: schema.resultUrl ?? undefined,
     }
   }
 
-  static toRecentMedicalRecordView(
-    record: RecentMedicalRecord
-  ): RecentMedicalRecordView {
+  static toRecentMedicalRecordView(record: RecentMedicalRecord): RecentMedicalRecordView {
     return {
       id: record.veterinaryRecordId,
       careId: record.careId,
@@ -68,5 +66,4 @@ export class VeterinaryRecordAdapter {
       status: FormatAdapter.toCaptalizeCaseWithout_(record.status),
     }
   }
-
 }

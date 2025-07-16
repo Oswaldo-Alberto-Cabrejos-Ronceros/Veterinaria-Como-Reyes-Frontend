@@ -7,6 +7,7 @@ import type { PageResponse } from '@/services/models/PageResponse'
 import type { IncomeStatsToday, WeeklyIncome } from '@/services/Payment/domain/models/Payment'
 import type { RecentPayment as RecentPaymentView } from '@/models/RecientPayment'
 import type { PaymentInfoForAppointment as PaymentInfoForAppointmentView } from '@/models/PaymentInfoForAppointment'
+import type { ReportPeriod } from '@/services/enums/ReportPeriod'
 export function usePayment() {
   const { loading, error, runUseCase } = useAsyncHandler()
 
@@ -154,6 +155,36 @@ export function usePayment() {
     return PaymentAdapter.toPaymentInfoForAppointmentView(paymentInf)
   }
 
+  const getIncomePerHeadquarterByPeriod = async (period: ReportPeriod) => {
+    return await runUseCase('getIncomePerHeadquarterByPeriod', () =>
+      paymentUsesCases.getIncomePerHeadquarterByPeriod.execute(period),
+    )
+  }
+
+  const getAnnualFinancialEvolutionByHeadquarter = async (headquarterId: number) => {
+    return await runUseCase('getAnnualFinancialEvolutionByHeadquarter', () =>
+      paymentUsesCases.getAnnualFinancialEvolutionByHeadquarter.execute(headquarterId),
+    )
+  }
+
+  const getAnnualFinancialEvolution = async () => {
+    return await runUseCase('getAnnualFinancialEvolution', () =>
+      paymentUsesCases.getAnnualFinancialEvolution.execute(),
+    )
+  }
+
+  const getGeneralMonthlyStats = async () => {
+    return await runUseCase('getGeneralMonthlyStats', () =>
+      paymentUsesCases.getGeneralMonthlyStats.execute(),
+    )
+  }
+
+  const getMonthlyStatsByHeadquarter = async (headquarterId: number) => {
+    return await runUseCase('getMonthlyStatsByHeadquarter', () =>
+      paymentUsesCases.getMonthlyStatsByHeadquarter.execute(headquarterId),
+    )
+  }
+
   return {
     loading,
     error,
@@ -175,5 +206,10 @@ export function usePayment() {
     getWeeklyIncomeGeneral,
     getWeeklyIncomeByHeadquarter,
     getPaymentInfoByCareId,
+    getIncomePerHeadquarterByPeriod,
+    getAnnualFinancialEvolutionByHeadquarter,
+    getAnnualFinancialEvolution,
+    getGeneralMonthlyStats,
+    getMonthlyStatsByHeadquarter,
   }
 }

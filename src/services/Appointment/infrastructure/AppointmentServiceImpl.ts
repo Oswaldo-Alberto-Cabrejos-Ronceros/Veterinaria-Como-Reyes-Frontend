@@ -14,6 +14,8 @@ import type {
   AppointmentInfoPanelAdmin,
   CareAndAppointmentPanelEmployee,
   AppointmentStatsForReceptionist,
+  OperationalMonthlyStats,
+  DailyAppointmentStats,
 } from '../domain/models/Appointment'
 import type { SearchAppointmentParams } from '../domain/models/SearchAppointmentParams'
 import type { PageResponse } from '@/services/models/PageResponse'
@@ -105,9 +107,9 @@ export class AppointmentServiceImpl implements AppointmentService {
 
     const response = await this.httpClient.get<PageResponse<AppointmentList>>(
       `${this.url}/search`,
-     {
-      params:queryParams
-     },
+      {
+        params: queryParams,
+      },
     )
     return response.data
   }
@@ -178,7 +180,7 @@ export class AppointmentServiceImpl implements AppointmentService {
     )
     return response.data
   }
-  async getStatsForReceptionist(headquarterId:number): Promise<AppointmentStatsForReceptionist> {
+  async getStatsForReceptionist(headquarterId: number): Promise<AppointmentStatsForReceptionist> {
     const response = await this.httpClient.get<AppointmentStatsForReceptionist>(
       `${this.url}/panel-receptionist/${headquarterId}/stats`,
     )
@@ -194,4 +196,34 @@ export class AppointmentServiceImpl implements AppointmentService {
     return response.data
   }
 
+  async getOperationalMonthlyStatsByHeadquarter(
+    headquarterId: number,
+  ): Promise<OperationalMonthlyStats> {
+    const response = await this.httpClient.get<OperationalMonthlyStats>(
+      `/panel-manager/cares/monthly/operational/by-headquarter/${headquarterId}`,
+    )
+    return response.data
+  }
+
+  async getDailyAppointmentStatsByHeadquarter(
+    headquarterId: number,
+  ): Promise<DailyAppointmentStats> {
+    const response = await this.httpClient.get<DailyAppointmentStats>(
+      `/panel-manager/cares/appointments/daily-stats/headquarter/${headquarterId}`,
+    )
+    return response.data
+  }
+
+  async getGeneralOperationalMonthlyStats(): Promise<OperationalMonthlyStats> {
+    const response = await this.httpClient.get<OperationalMonthlyStats>(
+      `/panel-admin/monthly-stats/operational/general`,
+    )
+    return response.data
+  }
+  async getDailyAppointmentStatsLast7Days(): Promise<DailyAppointmentStats> {
+    const response = await this.httpClient.get<DailyAppointmentStats>(
+      `/panel-admin/appointments/daily-stats`,
+    )
+    return response.data
+  }
 }

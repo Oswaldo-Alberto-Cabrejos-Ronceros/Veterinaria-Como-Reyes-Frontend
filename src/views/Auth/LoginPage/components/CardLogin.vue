@@ -146,8 +146,8 @@ const onSubmit = handleSubmit((values) => {
 </template>
 
 <style scoped>
-
-.p-togglebutton.p-togglebutton-checked{
-background-color: aqua;
+::v-deep(.p-togglebutton.p-togglebutton-checked) {
+  background-color: var(--p-primary-color) !important;
+  color: white;
 }
 </style>

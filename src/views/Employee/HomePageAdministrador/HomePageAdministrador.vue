@@ -206,6 +206,7 @@ const setChartOptions = () => {
 
 const setChartDataSpecies = () => {
   console.log('Desde function', topsSpeciesGeneral)
+  console.log(topsSpeciesGeneral)
   return {
     labels: topsSpeciesGeneral.value?.speciesNames,
     datasets: [

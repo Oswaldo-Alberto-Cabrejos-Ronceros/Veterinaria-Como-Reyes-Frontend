@@ -1,7 +1,10 @@
 import type { HttpClient } from '@/services/Http/model/HttpClient'
 import type { PaymentService } from '../domain/services/PaymentService'
 import type {
+  AnnualRevenue,
+  IncomePerHeadquarter,
   IncomeStatsToday,
+  MonthlyStats,
   Payment,
   PaymentInfoForAppointment,
   PaymentList,
@@ -10,6 +13,7 @@ import type {
   WeeklyIncome,
 } from '../domain/models/Payment'
 import type { PageResponse } from '@/services/models/PageResponse'
+import type { ReportPeriod } from '@/services/enums/ReportPeriod'
 
 export class PaymentServiceImpl implements PaymentService {
   constructor(private readonly httpClient: HttpClient) {}
@@ -169,4 +173,34 @@ export class PaymentServiceImpl implements PaymentService {
     return response.data
   }
 
+  async getIncomePerHeadquarterByPeriod(period: ReportPeriod): Promise<IncomePerHeadquarter> {
+    const response = await this.httpClient.get<IncomePerHeadquarter>(
+      `/panel-admin/income-by-headquarter/${period}`,
+    )
+    return response.data
+  }
+
+  async getAnnualFinancialEvolutionByHeadquarter(headquarterId: number): Promise<AnnualRevenue> {
+    const response = await this.httpClient.get<AnnualRevenue>(
+      `/panel-manager/payments/annual/headquarter/${headquarterId}`,
+    )
+    return response.data
+  }
+
+  async getAnnualFinancialEvolution(): Promise<AnnualRevenue> {
+    const response = await this.httpClient.get<AnnualRevenue>(`/panel-admin/annual`)
+    return response.data
+  }
+
+  async getGeneralMonthlyStats(): Promise<MonthlyStats> {
+    const response = await this.httpClient.get<MonthlyStats>(`/panel-admin/monthly-stats/general`)
+    return response.data
+  }
+
+  async getMonthlyStatsByHeadquarter(headquarterId: number): Promise<MonthlyStats> {
+    const response = await this.httpClient.get<MonthlyStats>(
+      `/panel-manager/monthly/by-headquarter/${headquarterId}`,
+    )
+    return response.data
+  }
 }

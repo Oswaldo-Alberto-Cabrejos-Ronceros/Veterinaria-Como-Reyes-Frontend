@@ -2,7 +2,10 @@ import { useAsyncHandler } from './useAsyncHandler'
 import type { Appointment as AppointmentView } from '@/models/Appointment'
 import { appointmentUsesCases } from '@/dependency-injection/appointment.container'
 import { AppointmentAdapter } from '@/adapters/AppointmentAdapter'
-import type { AppointmentRequest, AppointmentStatsForReceptionist } from '@/services/Appointment/domain/models/Appointment'
+import type {
+  AppointmentRequest,
+  AppointmentStatsForReceptionist,
+} from '@/services/Appointment/domain/models/Appointment'
 import type { TimesForTurn as TimesForTurnView } from '@/models/TimesForTurn'
 import { TimesForTurnAdapter } from '@/adapters/TimesForTurnAdapter'
 import type { BasicServiceForAppointment as BasicServiceForAppointmentView } from '@/models/BasicServiceForAppointment'
@@ -207,20 +210,46 @@ export function useAppointment() {
     return appoinments.map((ap) => AppointmentAdapter.toCareAndAppointmentPanelEmployeeView(ap))
   }
 
-  const getStatsForReceptionist = async (headquarterId:number): Promise<AppointmentStatsForReceptionist> => {
-  return await runUseCase('getStatsForReceptionist', () =>
-    appointmentUsesCases.getStatsForReceptionist.execute(headquarterId),
-  )
-}
+  const getStatsForReceptionist = async (
+    headquarterId: number,
+  ): Promise<AppointmentStatsForReceptionist> => {
+    return await runUseCase('getStatsForReceptionist', () =>
+      appointmentUsesCases.getStatsForReceptionist.execute(headquarterId),
+    )
+  }
 
-const getAppointmentsByHeadquarterId = async (
-  headquarterId: number,
-): Promise<CareAndAppointmentPanelEmployeeView[]> => {
-  const appointments = await runUseCase('getAppointmentsByHeadquarterId', () =>
-    appointmentUsesCases.getAppointmentsByHeadquarterId.execute(headquarterId),
-  )
-  return appointments.map(ap => AppointmentAdapter.toCareAndAppointmentPanelEmployeeView(ap))
-}
+  const getAppointmentsByHeadquarterId = async (
+    headquarterId: number,
+  ): Promise<CareAndAppointmentPanelEmployeeView[]> => {
+    const appointments = await runUseCase('getAppointmentsByHeadquarterId', () =>
+      appointmentUsesCases.getAppointmentsByHeadquarterId.execute(headquarterId),
+    )
+    return appointments.map((ap) => AppointmentAdapter.toCareAndAppointmentPanelEmployeeView(ap))
+  }
+
+  const getOperationalMonthlyStatsByHeadquarter = async (headquarterId: number) => {
+    return await runUseCase('getOperationalMonthlyStatsByHeadquarter', () =>
+      appointmentUsesCases.getOperationalMonthlyStatsByHeadquarter.execute(headquarterId),
+    )
+  }
+
+  const getDailyAppointmentStatsByHeadquarter = async (headquarterId: number) => {
+    return await runUseCase('getDailyAppointmentStatsByHeadquarter', () =>
+      appointmentUsesCases.getDailyAppointmentStatsByHeadquarter.execute(headquarterId),
+    )
+  }
+
+  const getGeneralOperationalMonthlyStats = async () => {
+    return await runUseCase('getDailyAppointmentStatsByHeadquarter', () =>
+      appointmentUsesCases.getGeneralOperationalMonthlyStats.execute(),
+    )
+  }
+
+  const getDailyAppointmentStatsLast7Days = async () => {
+    return await runUseCase('getDailyAppointmentStatsLast7Days', () =>
+      appointmentUsesCases.getDailyAppointmentStatsLast7Days.execute(),
+    )
+  }
 
   return {
     loading,
@@ -246,6 +275,10 @@ const getAppointmentsByHeadquarterId = async (
     getAppointmentsByDateForPanelAdmin,
     getCareAndAppointmentsForEmployee,
     getStatsForReceptionist,
-    getAppointmentsByHeadquarterId
+    getAppointmentsByHeadquarterId,
+    getOperationalMonthlyStatsByHeadquarter,
+    getDailyAppointmentStatsByHeadquarter,
+    getGeneralOperationalMonthlyStats,
+    getDailyAppointmentStatsLast7Days,
   }
 }

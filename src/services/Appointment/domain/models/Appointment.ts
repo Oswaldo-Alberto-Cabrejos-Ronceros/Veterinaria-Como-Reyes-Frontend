@@ -133,3 +133,16 @@ export interface AppointmentStatsForReceptionist {
   confirmedAppointmentsToday: number
   pendingAppointmentsToday: number
 }
+
+export interface OperationalMonthlyStats {
+  totalPatients: number
+  totalClients: number
+  activeVeterinarians: number
+  avgIncomePerVet: number
+}
+
+export interface DailyAppointmentStats {
+  dayLabels: string[]
+  completedCounts: number[]
+  cancelledCounts: number[]
+}

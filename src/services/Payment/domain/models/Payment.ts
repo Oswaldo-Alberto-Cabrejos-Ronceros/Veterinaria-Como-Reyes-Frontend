@@ -35,26 +35,25 @@ export interface PaymentStatsForPanelAdmin {
 }
 
 export interface IncomeStatsToday {
-  todayIncome: number;
+  todayIncome: number
 }
 
 export interface RecentPayment {
-  paymentId: number;
-  clientFullName: string;
-  clientInitials: string;
-  animalName: string;
-  serviceName: string;
-  amount: number;
-  paymentDate: string;
-  paymentTime: string;
-  paymentStatus: string;
+  paymentId: number
+  clientFullName: string
+  clientInitials: string
+  animalName: string
+  serviceName: string
+  amount: number
+  paymentDate: string
+  paymentTime: string
+  paymentStatus: string
 }
 
 export interface WeeklyIncome {
   days: string[]
   totals: number[]
 }
-
 
 export interface PaymentInfoForAppointment {
   paymentId: number
@@ -63,4 +62,21 @@ export interface PaymentInfoForAppointment {
   paymentMethodId: number
   paymentMethod: string
   paymentStatus: string
+}
+
+export interface IncomePerHeadquarter {
+  headquarterLabels: string[]
+  totalIncomes: number[]
+}
+
+export interface AnnualRevenue {
+  monthLabels: string
+  totalIncomes: number
+}
+
+export interface MonthlyStats {
+  totalIncomeThisMonth: number
+  totalCompletedCaresThisMonth: number
+  totalCompletedAppointmentsThisMonth: number
+  appointmentSuccessRate: number
 }

@@ -13,6 +13,19 @@ import type { TopPaymentMethods } from '@/services/PaymentMethod/domain/models/P
 import { ReportPeriod } from '@/services/enums/ReportPeriod'
 import { useAuthentication } from '@/composables/useAuthentication'
 import { useEmployee } from '@/composables/useEmployee'
+import { usePayment } from '@/composables/usePayment'
+import type {
+  AnnualRevenue,
+  IncomePerHeadquarter,
+  MonthlyStats,
+} from '@/services/Payment/domain/models/Payment'
+import { useAppointment } from '@/composables/useAppointment'
+import type {
+  DailyAppointmentStats,
+  OperationalMonthlyStats,
+} from '@/services/Appointment/domain/models/Appointment'
+import { useSpecie } from '@/composables/useSpecie'
+import type { TopSpeciesCare } from '@/services/Specie/domain/models/Specie'
 
 onMounted(async () => {
   await loadInfo()
@@ -20,9 +33,10 @@ onMounted(async () => {
   chartOptionsIncome.value = setChartOptionsIncome()
   chartDataPaymentMethods.value = setChartDataPaymentMethods()
   chartOptionsPaymentMethods.value = setChartOptionsPaymentMethods()
-  chartDataAppointments.value = setChartDataAppointments()
-  chartOptionsAppointments.value = setChartOptionsAppointments()
-
+  chartDataIncomeHeadquarter.value = setChartDataIncomeHeadquarter()
+  chartOptionsIncomeHeadquarter.value = setChartOptionsIncomeHeadquarter()
+  chartDataAppointmentWeek.value = setChartDataAppointmenstWeek()
+  chartOptionsAppointmentWeek.value = setChartOptionsAppointmenstWeek()
   //operationals
 
   chartDataPacients.value = setChartDataPacients()
@@ -43,13 +57,47 @@ const headquarterId = ref<number | null>(null)
 
 const topPaymentMethods = ref<TopPaymentMethods | null>(null)
 
+const annualRevenue = ref<AnnualRevenue | null>(null)
+
+const incomePerHeadquarter = ref<IncomePerHeadquarter | null>(null)
+
 const { getTopPaymentMethodsByHeadquarter, getTopPaymentMethods } = usePaymentMethod()
+
+const {
+  getGeneralOperationalMonthlyStats,
+  getOperationalMonthlyStatsByHeadquarter,
+  getDailyAppointmentStatsLast7Days,
+  getDailyAppointmentStatsByHeadquarter,
+} = useAppointment()
+
+const {getTopSpeciesByPeriod,getTopSpeciesByPeriodAndHeadquarter}= useSpecie()
+
+const statsMounthly = ref<MonthlyStats | null>(null)
+
+const operationalStats = ref<OperationalMonthlyStats | null>(null)
+
+const appointmentsDaily = ref<DailyAppointmentStats | null>(null)
+
+const topSpecies = ref<TopSpeciesCare|null>(null)
+
+const {
+  getMonthlyStatsByHeadquarter,
+  getGeneralMonthlyStats,
+  getIncomePerHeadquarterByPeriod,
+  getAnnualFinancialEvolutionByHeadquarter,
+  getAnnualFinancialEvolution,
+} = usePayment()
 
 const loadInfo = async () => {
   const role = getMainRole()
   if (role != null) {
     if (role === 'Administrador') {
       topPaymentMethods.value = await getTopPaymentMethods(ReportPeriod.WEEK)
+      annualRevenue.value = await getAnnualFinancialEvolution()
+      statsMounthly.value = await getGeneralMonthlyStats()
+      appointmentsDaily.value = await getDailyAppointmentStatsLast7Days()
+      operationalStats.value = await getGeneralOperationalMonthlyStats()
+      topSpecies.value = await getTopSpeciesByPeriod(ReportPeriod.WEEK)
     } else {
       const entityIdGet = getEntityId()
       if (entityIdGet) {
@@ -61,9 +109,17 @@ const loadInfo = async () => {
             ReportPeriod.WEEK,
             headquarterId.value,
           )
+          annualRevenue.value = await getAnnualFinancialEvolutionByHeadquarter(headquarterId.value)
+          statsMounthly.value = await getMonthlyStatsByHeadquarter(headquarterId.value)
+          appointmentsDaily.value = await getDailyAppointmentStatsByHeadquarter(headquarterId.value)
+          operationalStats.value = await getOperationalMonthlyStatsByHeadquarter(
+            headquarterId.value,
+          )
+          topSpecies.value = await getTopSpeciesByPeriodAndHeadquarter(ReportPeriod.WEEK,headquarterId.value)
         }
       }
     }
+    incomePerHeadquarter.value = await getIncomePerHeadquarterByPeriod(ReportPeriod.WEEK)
   }
 }
 
@@ -72,8 +128,11 @@ const chartOptionsIncome = ref()
 const chartDataPaymentMethods = ref()
 const chartOptionsPaymentMethods = ref()
 
-const chartDataAppointments = ref()
-const chartOptionsAppointments = ref()
+const chartDataIncomeHeadquarter = ref()
+const chartOptionsIncomeHeadquarter = ref()
+
+const chartDataAppointmentWeek = ref()
+const chartOptionsAppointmentWeek = ref()
 
 //operationals
 
@@ -91,11 +150,11 @@ const setChartDataIncome = () => {
   const documentStyle = getComputedStyle(document.documentElement)
 
   return {
-    labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+    labels: annualRevenue.value?.monthLabels,
     datasets: [
       {
         label: 'Ingresos',
-        data: [500, 600, 800, 500, 200, 660, 500, 1000, 800, 900, 400, 1200],
+        data: annualRevenue.value?.totalIncomes,
         fill: false,
         borderColor: documentStyle.getPropertyValue('--p-green-500'),
         tension: 0.4,
@@ -143,7 +202,7 @@ const setChartOptionsIncome = () => {
 
 const setChartDataPaymentMethods = () => {
   const documentStyle = getComputedStyle(document.body)
-
+  console.log(topPaymentMethods.value)
   return {
     labels: topPaymentMethods.value?.methodLabels,
     datasets: [
@@ -182,22 +241,87 @@ const setChartOptionsPaymentMethods = () => {
   }
 }
 
-const setChartDataAppointments = () => {
+const setChartDataIncomeHeadquarter = () => {
   const documentStyle = getComputedStyle(document.documentElement)
 
   return {
-    labels: ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo'],
+    labels: incomePerHeadquarter.value?.headquarterLabels,
     datasets: [
       {
-        label: 'Citas completadas',
+        label: 'Ingresos',
         backgroundColor: documentStyle.getPropertyValue('--p-cyan-500'),
         borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
-        data: [65, 59, 80, 81, 56, 55, 40],
+        data: incomePerHeadquarter.value?.totalIncomes,
       },
     ],
   }
 }
-const setChartOptionsAppointments = () => {
+const setChartOptionsIncomeHeadquarter = () => {
+  const documentStyle = getComputedStyle(document.documentElement)
+  const textColor = documentStyle.getPropertyValue('--p-text-color')
+  const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color')
+  const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color')
+
+  return {
+    maintainAspectRatio: false,
+    aspectRatio: 0.8,
+    plugins: {
+      legend: {
+        labels: {
+          color: textColor,
+        },
+      },
+    },
+    scales: {
+      x: {
+        ticks: {
+          color: textColorSecondary,
+          font: {
+            weight: 500,
+          },
+        },
+        grid: {
+          display: false,
+          drawBorder: false,
+        },
+      },
+      y: {
+        ticks: {
+          color: textColorSecondary,
+        },
+        grid: {
+          color: surfaceBorder,
+          drawBorder: false,
+        },
+      },
+    },
+  }
+}
+
+const setChartDataAppointmenstWeek = () => {
+  const documentStyle = getComputedStyle(document.documentElement)
+
+  return {
+    labels: appointmentsDaily.value?.completedCounts,
+    datasets: [
+      {
+        label: 'Completadas',
+        backgroundColor: documentStyle.getPropertyValue('--p-cyan-500'),
+        borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
+        data: appointmentsDaily.value?.completedCounts,
+      },
+      {
+        label: 'Canceladas',
+        fill: false,
+        borderColor: documentStyle.getPropertyValue('--p-gray-500'),
+        yAxisID: 'y1',
+        tension: 0.4,
+        data: appointmentsDaily.value?.cancelledCounts,
+      },
+    ],
+  }
+}
+const setChartOptionsAppointmenstWeek = () => {
   const documentStyle = getComputedStyle(document.documentElement)
   const textColor = documentStyle.getPropertyValue('--p-text-color')
   const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color')
@@ -245,18 +369,18 @@ const setChartDataPacients = () => {
   const documentStyle = getComputedStyle(document.documentElement)
 
   return {
-    labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+    labels: appointmentsDaily.value?.dayLabels,
     datasets: [
       {
-        label: 'Pacientes Recurrentes',
-        data: [65, 59, 80, 81, 56, 55, 40],
+        label: 'Completadas',
+        data: appointmentsDaily.value?.completedCounts,
         fill: true,
         tension: 0.4,
         borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
       },
       {
-        label: 'Pacientes nuevos',
-        data: [28, 48, 40, 19, 86, 27, 90],
+        label: 'Canceladas',
+        data: appointmentsDaily.value?.cancelledCounts,
         fill: true,
         tension: 0.4,
         borderColor: documentStyle.getPropertyValue('--p-orange-500'),
@@ -303,11 +427,11 @@ const setChartOptionsPacients = () => {
 
 const setChartDataSpecies = () => {
   const documentStyle = getComputedStyle(document.documentElement)
-
+console.log(topSpecies)
   return {
     datasets: [
       {
-        data: [11, 16, 7, 3, 14],
+        data: topSpecies.value?.totalCounts,
         backgroundColor: [
           documentStyle.getPropertyValue('--p-pink-500'),
           documentStyle.getPropertyValue('--p-gray-500'),
@@ -315,10 +439,10 @@ const setChartDataSpecies = () => {
           documentStyle.getPropertyValue('--p-purple-500'),
           documentStyle.getPropertyValue('--p-cyan-500'),
         ],
-        label: 'My dataset',
+        label: 'Citas',
       },
     ],
-    labels: ['Perro', 'Gato', 'Loro', 'Cuy', 'otros'],
+    labels: topSpecies.value?.speciesLabels,
   }
 }
 const setChartOptionsSpecies = () => {
@@ -425,203 +549,194 @@ const setChartOptionsVeterinarians = () => {
           </TabList>
           <TabPanels>
             <TabPanel value="0">
-              <div class="layout-principal-flex">
-                <div class="flex flex-col">
-                  <h2 class="p-card-title h2">Financieras</h2>
+              <div class="flex flex-col">
+                <h2 class="p-card-title h2">Financieras</h2>
 
-                  <p class="p-card-subtitle">Analisis de ingresos y rentabilidad</p>
+                <p class="p-card-subtitle">Analisis de ingresos y rentabilidad</p>
 
-                  <div
-                    class="w-full grid grid-cols-2 gap-y-4 lg:grid-cols-4 gap-x-6 lg:gap-x-12 mt-4"
+                <div
+                  v-if="statsMounthly"
+                  class="w-full grid grid-cols-2 gap-y-4 lg:grid-cols-4 gap-x-6 lg:gap-x-12 mt-4"
+                >
+                  <CardNewsPrimary
+                    :title="'Ingresos del mes'"
+                    icon="pi-money-bill"
+                    :content="`S/ ${statsMounthly.totalIncomeThisMonth}`"
                   >
-                    <CardNewsPrimary
-                      :title="'Ingresos del mes'"
-                      icon="pi-money-bill"
-                      :content="'S/ 9000'"
-                      :plus="'8.5% vs mes anterior'"
-                    >
-                    </CardNewsPrimary>
-                    <CardNewsPrimary
-                      :title="'Atenciones semanales'"
-                      icon="pi-clock"
-                      :content="'500'"
-                      :plus="'8.5% vs semana anterior'"
-                    >
-                    </CardNewsPrimary>
-                    <CardNewsPrimary
-                      :title="'Citas semanales'"
-                      icon="pi-calendar"
-                      :content="'350'"
-                      :plus="'8.5% vs semana anterior'"
-                    >
-                    </CardNewsPrimary>
-                    <CardNewsPrimary
-                      :title="'Tasa de exito'"
-                      icon="pi-chart-line"
-                      :content="'94.5%'"
-                      :plus="'Citas completadas exitosamente'"
-                    >
-                    </CardNewsPrimary>
-                  </div>
-                  <Card class="card-primary min-h-24 mt-4">
-                    <template #title>
-                      <h2 class="h2">Evolución financiera anual</h2>
-                    </template>
+                  </CardNewsPrimary>
+                  <CardNewsPrimary
+                    :title="'Atenciones del mes'"
+                    icon="pi-clock"
+                    :content="`${statsMounthly.totalCompletedCaresThisMonth}`"
+                  >
+                  </CardNewsPrimary>
+                  <CardNewsPrimary
+                    :title="'Citas del mes'"
+                    icon="pi-calendar"
+                    :content="`${statsMounthly.totalCompletedAppointmentsThisMonth}`"
+                  >
+                  </CardNewsPrimary>
+                  <CardNewsPrimary
+                    :title="'Tasa de exito'"
+                    icon="pi-chart-line"
+                    :content="`% ${statsMounthly.appointmentSuccessRate}`"
+                  >
+                  </CardNewsPrimary>
+                </div>
+                <Card class="card-primary min-h-24 mt-4">
+                  <template #title>
+                    <h2 class="h2">Evolución financiera anual</h2>
+                  </template>
 
-                    <template #subtitle>
-                      <p>Ingresos por mes</p>
-                    </template>
-                    <template #content>
+                  <template #subtitle>
+                    <p>Ingresos por mes</p>
+                  </template>
+                  <template #content>
                       <Chart
                         type="line"
                         :data="chartDataIncome"
                         :options="chartOptionsIncome"
-                        class="h-[30rem]"
+                        class="h-[30rem] w-full"
                       />
+                  </template>
+                </Card>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 lg:gap-x-12 mt-4">
+                  <!-- chart donut -->
+                  <Card class="card-primary min-h-24">
+                    <template #title>
+                      <h2 class="h2">Distribucion de metodos de pago</h2>
+                    </template>
+                    <template #subtitle>
+                      <p>Porcentaje por metodo de pago</p>
+                    </template>
+                    <template #content>
+                      <div class="card flex justify-center">
+                        <Chart
+                          type="doughnut"
+                          :data="chartDataPaymentMethods"
+                          :options="chartOptionsPaymentMethods"
+                          class="w-full md:w-[30rem]"
+                        />
+                      </div>
                     </template>
                   </Card>
-
-                  <div class="grid grid-cols-1 lg:grid-cols-2 lg:gap-x-12 mt-4">
-                    <!-- chart donut -->
-                    <Card class="card-primary min-h-24">
-                      <template #title>
-                        <h2 class="h2">Distribucion de metodos de pago</h2>
-                      </template>
-                      <template #subtitle>
-                        <p>Porcentaje por metodo de pago</p>
-                      </template>
-                      <template #content>
-                        <div class="card flex justify-center">
-                          <Chart
-                            type="doughnut"
-                            :data="chartDataPaymentMethods"
-                            :options="chartOptionsPaymentMethods"
-                            class="w-full md:w-[30rem]"
-                          />
-                        </div>
-                      </template>
-                    </Card>
-                    <!-- appointments -->
-                    <Card class="card-primary min-h-24">
-                      <template #title>
-                        <h2 class="h2">Ingresos por sede</h2>
-                      </template>
-                      <template #subtitle>
-                        <p>Distribucion de ingresos por sede</p>
-                      </template>
-                      <template #content>
-                        <div class="card flex justify-center">
-                          <Chart
-                            type="bar"
-                            :data="chartDataAppointments"
-                            :options="chartOptionsAppointments"
-                            class="h-[30rem] w-full"
-                          />
-                        </div>
-                      </template>
-                    </Card>
-                  </div>
+                  <!-- appointments -->
+                  <Card class="card-primary min-h-24">
+                    <template #title>
+                      <h2 class="h2">Ingresos por sede</h2>
+                    </template>
+                    <template #subtitle>
+                      <p>Distribucion de ingresos por sede</p>
+                    </template>
+                    <template #content>
+                      <div class="card flex justify-center">
+                        <Chart
+                          type="bar"
+                          :data="chartDataIncomeHeadquarter"
+                          :options="chartOptionsIncomeHeadquarter"
+                          class="h-[30rem] w-full"
+                        />
+                      </div>
+                    </template>
+                  </Card>
                 </div>
               </div>
             </TabPanel>
             <TabPanel value="1">
-              <div class="layout-principal-flex">
-                <div class="flex flex-col">
-                  <h2 class="p-card-title h2">Operacionales</h2>
+              <div class="flex flex-col">
+                <h2 class="p-card-title h2">Operacionales</h2>
 
-                  <p p-card-subtitle>Analisis de pacientes y veterinarios</p>
+                <p p-card-subtitle>Analisis de pacientes y veterinarios</p>
 
-                  <!-- news -->
-                  <div
-                    class="w-full grid grid-cols-2 gap-y-4 lg:grid-cols-4 gap-x-6 lg:gap-x-12 mt-4"
+                <!-- news -->
+                <div
+                  v-if="operationalStats"
+                  class="w-full grid grid-cols-2 gap-y-4 lg:grid-cols-4 gap-x-6 lg:gap-x-12 mt-4"
+                >
+                  <CardNewsPrimary
+                    :title="'Total de pacientes'"
+                    icon="pi-heart"
+                    :content="operationalStats.totalPatients.toString()"
                   >
-                    <CardNewsPrimary
-                      :title="'Total de pacientes'"
-                      icon="pi-heart"
-                      :content="'S/ 9000'"
-                      :plus="'+ 12% vs mes anterior'"
-                    >
-                    </CardNewsPrimary>
-                    <CardNewsPrimary
-                      :title="'Total de clientes'"
-                      icon="pi-user"
-                      :content="'100'"
-                      :plus="'+ 5% vs semana anterior'"
-                    >
-                    </CardNewsPrimary>
-                    <CardNewsPrimary
-                      :title="'Veterinarios activos'"
-                      icon="pi-users"
-                      :content="'50'"
-                      :plus="'Nuestro equipo'"
-                    >
-                    </CardNewsPrimary>
-                    <CardNewsPrimary
-                      :title="'Ingresos por veterinario'"
-                      icon="pi-money-bill"
-                      :content="'S/ 5000'"
-                      :plus="'promedio mensual'"
-                    >
-                    </CardNewsPrimary>
-                  </div>
-                  <Card class="card-primary min-h-24 mt-4">
+                  </CardNewsPrimary>
+                  <CardNewsPrimary
+                    :title="'Total de clientes'"
+                    icon="pi-user"
+                    :content="operationalStats.totalClients.toString()"
+                  >
+                  </CardNewsPrimary>
+                  <CardNewsPrimary
+                    :title="'Veterinarios activos'"
+                    icon="pi-users"
+                    :content="operationalStats.activeVeterinarians.toString()"
+                  >
+                  </CardNewsPrimary>
+                  <CardNewsPrimary
+                    :title="'Ingresos por veterinario'"
+                    icon="pi-money-bill"
+                    :content="operationalStats.avgIncomePerVet.toString()"
+                    plus="en promedio"
+                  >
+                  </CardNewsPrimary>
+                </div>
+                <Card class="card-primary min-h-24 mt-4">
+                  <template #title>
+                    <h2 class="h2">Evolución de pacientes</h2>
+                  </template>
+                  <template #subtitle>
+                    <p>Pacientes nuevos vs recurrentes por mes</p>
+                  </template>
+                  <template #content>
+                    <Chart
+                      type="line"
+                      :data="chartDataAppointmentWeek"
+                      :options="chartOptionsAppointmentWeek"
+                      class="h-[30rem]"
+                    />
+                  </template>
+                </Card>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 lg:gap-x-12 mt-4">
+                  <!-- species -->
+                  <Card class="card-primary min-h-24">
                     <template #title>
-                      <h2 class="h2">Evolución de pacientes</h2>
+                      <h2 class="h2">Distribucion por especies</h2>
                     </template>
                     <template #subtitle>
-                      <p>Pacientes nuevos vs recurrentes por mes</p>
+                      <p>Tipos de pacientes atendidos</p>
                     </template>
                     <template #content>
-                      <Chart
-                        type="line"
-                        :data="chartDataAppointments"
-                        :options="chartOptionsAppointments"
-                        class="h-[30rem]"
-                      />
+                      <div class="card flex justify-center">
+                        <Chart
+                          type="polarArea"
+                          :data="chartDataSpecies"
+                          :options="chartOptionsSpecies"
+                          class="w-full md:w-[30rem]"
+                        />
+                      </div>
                     </template>
                   </Card>
+                  <!-- veterinarians -->
 
-                  <div class="grid grid-cols-1 lg:grid-cols-2 lg:gap-x-12 mt-4">
-                    <!-- species -->
-                    <Card class="card-primary min-h-24">
-                      <template #title>
-                        <h2 class="h2">Distribucion por especies</h2>
-                      </template>
-                      <template #subtitle>
-                        <p>Tipos de pacientes atendidos</p>
-                      </template>
-                      <template #content>
-                        <div class="card flex justify-center">
-                          <Chart
-                            type="polarArea"
-                            :data="chartDataSpecies"
-                            :options="chartOptionsSpecies"
-                            class="w-full md:w-[30rem]"
-                          />
-                        </div>
-                      </template>
-                    </Card>
-                    <!-- veterinarians -->
-
-                    <Card class="card-primary min-h-24">
-                      <template #title>
-                        <h2 class="h2">Rendimiento por veterinario</h2>
-                      </template>
-                      <template #subtitle>
-                        <p>Pacientes atendidos</p>
-                      </template>
-                      <template #content>
-                        <div class="card flex justify-center">
-                          <Chart
-                            type="bar"
-                            :data="chartDataVeterinarians"
-                            :options="chartOptionsVeterinarians"
-                            class="h-[30rem] w-full"
-                          />
-                        </div>
-                      </template>
-                    </Card>
-                  </div>
+                  <Card class="card-primary min-h-24">
+                    <template #title>
+                      <h2 class="h2">Rendimiento por veterinario</h2>
+                    </template>
+                    <template #subtitle>
+                      <p>Pacientes atendidos</p>
+                    </template>
+                    <template #content>
+                      <div class="card flex justify-center">
+                        <Chart
+                          type="bar"
+                          :data="chartDataVeterinarians"
+                          :options="chartOptionsVeterinarians"
+                          class="h-[30rem] w-full"
+                        />
+                      </div>
+                    </template>
+                  </Card>
                 </div>
               </div>
             </TabPanel>

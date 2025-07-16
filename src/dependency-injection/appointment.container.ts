@@ -23,6 +23,10 @@ import { GetTodayAppointmentStatsByHeadquarter } from '@/services/Appointment/ap
 import { GetCareAndAppointmentsForEmployee } from '@/services/Appointment/aplication/GetCareAndAppointmentsForEmployee'
 import { GetStatsForReceptionistUseCase } from '@/services/Appointment/aplication/GetStatsForReceptionist'
 import { GetAppointmentsByHeadquarterIdUseCase } from '@/services/Appointment/aplication/GetAppointmentsByHeadquarterId'
+import { GetOperationalMonthlyStatsByHeadquarter } from '@/services/Appointment/aplication/GetOperationalMonthlyStatsByHeadquarter'
+import { GetDailyAppointmentStatsByHeadquarter } from '@/services/Appointment/aplication/GetDailyAppointmentStatsByHeadquarter'
+import { GetGeneralOperationalMonthlyStats } from '@/services/Appointment/aplication/GetGeneralOperationalMonthlyStats'
+import { GetDailyAppointmentStatsLast7Days } from '@/services/Appointment/aplication/getDailyAppointmentStatsLast7Days'
 
 // Instancia de cliente HTTP
 const axiosHttpClient = new AxiosHttpClient()
@@ -62,4 +66,13 @@ export const appointmentUsesCases = {
 
   getStatsForReceptionist: new GetStatsForReceptionistUseCase(appointmentService),
   getAppointmentsByHeadquarterId: new GetAppointmentsByHeadquarterIdUseCase(appointmentService),
+
+  getOperationalMonthlyStatsByHeadquarter: new GetOperationalMonthlyStatsByHeadquarter(
+    appointmentService,
+  ),
+  getDailyAppointmentStatsByHeadquarter: new GetDailyAppointmentStatsByHeadquarter(
+    appointmentService,
+  ),
+  getGeneralOperationalMonthlyStats: new GetGeneralOperationalMonthlyStats(appointmentService),
+  getDailyAppointmentStatsLast7Days: new GetDailyAppointmentStatsLast7Days(appointmentService),
 }

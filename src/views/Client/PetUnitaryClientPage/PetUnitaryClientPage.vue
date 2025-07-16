@@ -18,6 +18,7 @@ import type { Client } from '@/models/Client'
 import CardEditVetRecord from '../../../components/CardEditVetRecord.vue'
 import { useDialog } from 'primevue/usedialog'
 import type { FormValues as AddEditVeterinaryRecord } from '@/validation-schemas-forms/schema-add-edit-veterinary-record'
+import { useToast } from 'primevue/usetoast'
 
 const props = defineProps<{
   petId: string
@@ -34,9 +35,12 @@ const { getMainRole } = useAuthentication()
 const {
   loading: veterinaryRecordLoading,
   error: veterinaryRecordError,
+  updateVeterinaryRecord,
   findVeterinaryRecordById,
   getAllInfoVeterinaryRecordsByPet,
 } = useVeterinaryRecord()
+
+const typedError = veterinaryRecordError as Record<string, string | null>
 
 const petData = ref<Pet | null>(null)
 //for record
@@ -78,6 +82,17 @@ onMounted(async () => {
 //for dialog
 const dialog = useDialog()
 
+const toast = useToast()
+
+const showToast = (message: string, severity: string, sumary: string) => {
+  toast.add({
+    severity: severity,
+    summary: sumary,
+    detail: message,
+    life: 3000,
+  })
+}
+
 const editRecord = async (recordInfoTable: VeterinaryRecordInfoTable) => {
   const record = await findVeterinaryRecordById(recordInfoTable.id)
   dialog.open(CardEditVetRecord, {
@@ -96,6 +111,27 @@ const editRecord = async (recordInfoTable: VeterinaryRecordInfoTable) => {
         resultUrl: record.resultUrl,
         status: record.status,
       } as AddEditVeterinaryRecord,
+    },
+    onClose: async (options) => {
+      const data = options?.data as AddEditVeterinaryRecord
+      if (data) {
+        try {
+          await updateVeterinaryRecord(recordInfoTable.id,data)
+          loadVeterinaryRecords()
+          showToast('Reporte medico editado correctamente', 'success', 'Exito')
+        } catch (error) {
+          console.error(error)
+          if (typedError.updateVeterinaryRecord) {
+            showToast(
+              `Error al editar reporte medico: ${typedError.updateEmployee}`,
+              'warn',
+              'Error',
+            )
+          } else {
+            showToast('Error al editar el reporte medico: ', 'warn', 'Error')
+          }
+        }
+      }
     },
   })
 }

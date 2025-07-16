@@ -14,7 +14,7 @@ import Button from 'primevue/button'
 </script>
 
 <template>
-  <Card class="w-full overflow-hidden h-min border border-neutral-200 dark:border-neutral-50 shadow">
+  <Card class="w-full overflow-hidden h-min border border-neutral-300 dark:border-neutral-50 shadow">
     <template #header>
       <div
         class="w-full p-5 border-b justify-between border-neutral-300 dark:border-neutral-50 flex items-center text-lg font-medium"
