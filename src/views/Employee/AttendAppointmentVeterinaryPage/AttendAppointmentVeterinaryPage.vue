@@ -53,12 +53,13 @@ const showToast = (message: string, severity: string, sumary: string) => {
     life: 3000,
   })
 }
-
+const reloadKey = ref(0)
 const { createVeterinaryRecord } = useVeterinaryRecord()
 const handleCreateRecord = async (schema: CreateRecordSchema) => {
   await createVeterinaryRecord(schema)
   showToast('Diagostico creado exitosamente', 'success', 'Éxito')
   await loadInfo()
+  reloadKey.value++
 }
 
 const handleEditWeight = async (schema: SchemaEditWeight) => {
@@ -176,10 +177,11 @@ const handleCompleteCare = async () => {
               ></CardVitalSigns
             ></TabPanel>
             <TabPanel value="1">
-              <CardHistoryVeterinaryRecord v-if="pet" :pet-id="pet?.id" />
+              <CardHistoryVeterinaryRecord :key="reloadKey" v-if="pet" :pet-id="pet?.id" />
             </TabPanel>
             <TabPanel value="2"
               ><CardAddVeterinaryRecord
+
                 @create-record="handleCreateRecord($event)"
                 :disabled="care.statusCare === 'En espera' || care.statusCare === 'Completado'"
                 v-if="employee"

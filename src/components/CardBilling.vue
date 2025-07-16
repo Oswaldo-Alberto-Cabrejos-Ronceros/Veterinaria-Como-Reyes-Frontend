@@ -50,7 +50,7 @@ onMounted(async () => {
   paymentMethodIdref.value = props.paymentMethodId
 })
 
-const subtotal = ref<number>(props.price * 0.82)
+const subtotal = ref<number>(Number(props.price * 0.82).toFixed(1))
 const igv = ref<number>(Number((props.price - subtotal.value).toFixed(1)))
 </script>
 
