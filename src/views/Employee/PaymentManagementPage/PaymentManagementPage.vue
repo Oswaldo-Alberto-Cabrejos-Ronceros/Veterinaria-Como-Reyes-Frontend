@@ -162,10 +162,10 @@ const headquartersServicesToOptionsSelect = (items: Headquarter[] | Service[]): 
 //toast
 const toast = useToast()
 
-const showToast = (message: string) => {
+const showToast = (message: string, severity: string, sumary: string) => {
   toast.add({
-    severity: 'success',
-    summary: 'Éxito',
+    severity: severity,
+    summary: sumary,
     detail: message,
     life: 3000,
   })
@@ -193,7 +193,7 @@ const confirmCacelPayment = (event: MouseEvent | KeyboardEvent, payment: Payment
     accept: async () => {
       await setPaymentStatusCancelled(payment.id) // esta es la que viene de usePet()
       loadPayments()
-      showToast('Pago cancelado correctamente')
+      showToast('Pago cancelado correctamente', 'success', 'Éxito')
     },
     reject: () => {
       console.log('Cancelando eliminación')
@@ -222,7 +222,7 @@ const confirmCompletePayment = (event: MouseEvent | KeyboardEvent, payment: Paym
     accept: async () => {
       await setPaymentStatusComplete(payment.id) // esta es la que viene de usePet()
       loadPayments()
-      showToast('Pago completado correctamente')
+      showToast('Pago completado correctamente', 'success', 'Éxito')
     },
     reject: () => {
       console.log('Cancelando eliminación')

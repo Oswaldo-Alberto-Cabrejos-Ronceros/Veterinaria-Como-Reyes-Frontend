@@ -21,10 +21,10 @@ import { useConfirm } from 'primevue'
 //toast
 const toast = useToast()
 
-const showToast = (message: string) => {
+const showToast = (message: string, severity: string, sumary: string) => {
   toast.add({
-    severity: 'success',
-    summary: 'Éxito',
+    severity: severity,
+    summary: sumary,
     detail: message,
     life: 3000,
   })
@@ -33,6 +33,8 @@ const showToast = (message: string) => {
 //methods
 
 const { loading, error, getAllRoles, createRole, updateRole, activateRole } = useRole()
+
+const typedError = error as Record<string, string | null>
 
 //for roles
 
@@ -95,15 +97,26 @@ const addRole = () => {
   dialog.open(AddEditRoleCard, {
     props: {
       modal: true,
-      header:'Agregar rol'
+      header:'Agregar rol',
+      blockScroll: true,
+      dismissableMask: true,
     },
     onClose: async (options) => {
       const data = options?.data as AddEditRoleSchema
       if (data) {
-        const role = await createRole(data)
-        console.log('Datos recibidos', role)
-        showToast('Rol agregado exitosamente: ' + data.name)
-        loadRoles()
+        try {
+          const role = await createRole(data)
+          console.log('Datos recibidos', role)
+          showToast('Rol agregado exitosamente: ' + data.name, 'success', 'Éxito')
+          loadRoles()
+        } catch (error) {
+          console.error(error)
+          if (typedError.createRole) {
+            showToast('Error al agregar rol' + data.name + typedError.createRole, 'warn', 'Error')
+          } else {
+            showToast('Error al agregar rol' + data.name, 'warn', 'Error')
+          }
+        }
       }
     },
   })
@@ -114,7 +127,9 @@ const editRole = (roleData: Role) => {
   dialog.open(AddEditRoleCard, {
     props: {
       modal: true,
-      header:`${roleData.name}`
+      header:`${roleData.name}`,
+      blockScroll: true,
+      dismissableMask: true,
     },
     data: {
       roleData: roleData as AddEditRoleSchema,
@@ -122,10 +137,19 @@ const editRole = (roleData: Role) => {
     onClose: async (options) => {
       const data = options?.data as AddEditRoleSchema
       if (data) {
-        const role = await updateRole(roleData.id, data)
-        console.log('Datos recibidos', role)
-        showToast('Rol editado exitosamente: ' + data.name)
-        loadRoles()
+        try {
+          const role = await updateRole(roleData.id, data)
+          console.log('Datos recibidos', role)
+          showToast('Rol actualizado exitosamente: ' + data.name, 'success', 'Éxito')
+          loadRoles()
+        } catch (error) {
+          console.error(error)
+          if (typedError.updateRole) {
+            showToast('Error al actualizar rol: ' + data.name + typedError.updateRole, 'warn', 'Error')
+          } else {
+            showToast('Error al actualizar rol: ' + data.name, 'warn', 'Error')
+          }
+        }
       }
     },
   })
@@ -153,7 +177,7 @@ const confirmActivateRol = (event: MouseEvent | KeyboardEvent, role: Role) => {
       console.log('Activando rol: ', role.id)
       await activateRole(role.id)
       await loadRoles()
-      showToast('Rol activado exitosamente: ' + role.name)
+      showToast('Rol activado exitosamente: ' + role.name, 'success', 'Éxito')
     },
     reject: () => {
       console.log('Cancelando activación')

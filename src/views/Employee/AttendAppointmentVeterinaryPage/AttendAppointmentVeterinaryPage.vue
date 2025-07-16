@@ -45,18 +45,19 @@ const { completeCare, setOnGoingCare } = useCare()
 //toast
 const toast = useToast()
 
-const showToast = (message: string) => {
+const showToast = (message: string, severity: string, sumary: string) => {
   toast.add({
-    severity: 'success',
-    summary: 'Éxito',
+    severity: severity,
+    summary: sumary,
     detail: message,
     life: 3000,
   })
 }
+
 const { createVeterinaryRecord } = useVeterinaryRecord()
 const handleCreateRecord = async (schema: CreateRecordSchema) => {
   await createVeterinaryRecord(schema)
-  showToast('Diagostico creado exitosamente')
+  showToast('Diagostico creado exitosamente', 'success', 'Éxito')
   await loadInfo()
 }
 
@@ -66,10 +67,10 @@ const handleEditWeight = async (schema: SchemaEditWeight) => {
     if (petId) {
       const response = await updatePetWeight(petId, schema.weight)
       await loadInfo()
-      showToast(`Peso actualizado correctamente ${response.name}`)
+      showToast(`Peso actualizado correctamente ${response.name}`, 'success', 'Éxito')
     }
   } catch (error) {
-    console.error('Error al cambiar el peso', error)
+    console.error('Error al cambiar el peso', 'warn', 'Error', error)
   }
 }
 
@@ -101,7 +102,7 @@ const loadInfo = async () => {
 const setOnGoingTo = async () => {
   const response = await setOnGoingCare(Number(props.appointmentId))
   if (response) {
-    showToast('Cambiado en curso exitosamente')
+    showToast('Cambiado en curso exitosamente', 'success', 'Éxito')
     loadInfo()
   }
 }
@@ -109,7 +110,7 @@ const setOnGoingTo = async () => {
 const handleCompleteCare = async () => {
   const response = await completeCare(Number(props.appointmentId))
   if (response) {
-    showToast('Cambiado en curso exitosamente')
+    showToast('Cambiado en curso exitosamente', 'success', 'Éxito')
     loadInfo()
   }
 }

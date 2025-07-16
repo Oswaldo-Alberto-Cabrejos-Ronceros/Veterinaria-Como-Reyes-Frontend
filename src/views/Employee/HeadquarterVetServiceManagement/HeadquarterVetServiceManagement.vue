@@ -38,10 +38,10 @@ import type { ServiceList } from '@/models/ServiceList'
 //toast
 const toast = useToast()
 
-const showToast = (message: string) => {
+const showToast = (message: string, severity: string, sumary: string) => {
   toast.add({
-    severity: 'success',
-    summary: 'Éxito',
+    severity: severity,
+    summary: sumary,
     detail: message,
     life: 3000,
   })
@@ -53,6 +53,8 @@ const {
 
   searchVeterinaryServices,
 } = useVeterinaryService()
+
+const typedError = error as Record<string, string | null>
 
 const { getAllSpecies } = useSpecie()
 
@@ -232,6 +234,8 @@ const addHeadquarterService = (headquarter: Headquarter, service: ServiceList) =
     props: {
       modal: true,
       header: 'Agregar servicio por sede',
+      blockScroll: true,
+      dismissableMask: true,
     },
     data: {
       headquarterId: headquarter.id,
@@ -240,16 +244,18 @@ const addHeadquarterService = (headquarter: Headquarter, service: ServiceList) =
     onClose: async (options) => {
       const data = options?.data as AddHeadquarterVetServiceSchema
       if (data) {
-        console.log('data retornada', data)
-
         try {
           await createHeadquarterVetService(data)
-          showToast(
-            'Servicio por sede creado exitosamente' + ` ${headquarter.name} - ${service.name}`,
-          )
+          console.log('Datos recibidos', headquarter)
+          showToast('Servicio por sede creado exitosamente' + ` ${headquarter.name} - ${service.name}`, 'success', 'Éxito')
           loadData()
         } catch (error) {
-          console.error(error, 'Error al crear el servicio por sede')
+          console.error(error)
+          if (typedError.createHeadquarterVetService) {
+            showToast('Error al crear el servicio por sede: ' + typedError.createHeadquarterVetService, 'warn', 'Error')
+          } else {
+            showToast('Error al crear el servicio por sede', 'warn', 'Error')
+          }
         }
       }
     },
@@ -263,6 +269,8 @@ const editHeadquarterService = async (headquarterService: HeadquarterVetService 
       props: {
         modal: true,
         header: 'Editar servicio por sede',
+        blockScroll: true,
+        dismissableMask: true,
       },
       data: {
         simultaneousCapacity: headquarterService.simultaneousCapacity,
@@ -283,10 +291,10 @@ const editHeadquarterService = async (headquarterService: HeadquarterVetService 
           if (changeStatus) {
             if (data.status) {
               await enableHeadquarterVetService(headquarterService.id)
-              showToast('Habilitado con exito')
+              showToast('Habilitado con exito', 'success', 'Éxito')
             } else {
               await deleteHeadquarterVetService(headquarterService.id)
-              showToast('Desabilitado con exito con exito')
+              showToast('Desabilitado con exito con exito', 'success', 'Éxito')
             }
             loadData()
           }
@@ -298,11 +306,16 @@ const editHeadquarterService = async (headquarterService: HeadquarterVetService 
                 data.simultaneousCapacity,
               )
               console.log('respuesta de actualización', response)
-              showToast('Servicio por sede actualizado correctamente')
+              showToast('Servicio por sede actualizado correctamente', 'success', 'Éxito')
               loadData()
               loadData()
             } catch (error) {
-              console.error(error, 'Error al crear el servicio por sede')
+              console.error(error)
+              if (typedError.updateSimultaneousCapacity) {
+                showToast('Error al actualizar la capacidad: ' + typedError.updateSimultaneousCapacity, 'warn', 'Error')
+              } else {
+                showToast('Error al actualizar la capacidad', 'warn', 'Error')
+              }
             }
           }
         }

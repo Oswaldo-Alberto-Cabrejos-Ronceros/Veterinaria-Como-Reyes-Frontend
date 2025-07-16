@@ -25,10 +25,10 @@ const props = defineProps<{
 
 const toast = useToast()
 
-const showToast = (message: string) => {
+const showToast = (message: string, severity: string, sumary: string) => {
   toast.add({
-    severity: 'success',
-    summary: 'Éxito',
+    severity: severity,
+    summary: sumary,
     detail: message,
     life: 3000,
   })
@@ -45,7 +45,7 @@ const handleDownloadPaymentTicket = async () => {
 const handleCompletePayment = async () => {
   if (paymentInfo.value) {
     await setPaymentStatusComplete(paymentInfo.value.paymentId)
-    showToast('Pago completado')
+    showToast('Pago completado', 'success', 'Éxito')
     loadInfo()
   }
 }

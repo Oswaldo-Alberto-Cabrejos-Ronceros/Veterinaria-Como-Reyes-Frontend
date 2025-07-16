@@ -29,10 +29,10 @@ import Select from 'primevue/select'
 //toast
 const toast = useToast()
 
-const showToast = (message: string) => {
+const showToast = (message: string, severity: string, sumary: string) => {
   toast.add({
-    severity: 'success',
-    summary: 'Éxito',
+    severity: severity,
+    summary: sumary,
     detail: message,
     life: 3000,
   })
@@ -54,6 +54,8 @@ const {
   searchPaymentMethods,
   getPaymentMethodById,
 } = usePaymentMethod()
+
+const typedError = error as Record<string, string | null>
 
 //payment methods
 
@@ -109,14 +111,25 @@ const addPaymentMethod = () => {
     props: {
       modal: true,
       header: 'Agregar método de pago',
+      blockScroll: true,
+      dismissableMask: true,
     },
     onClose: async (options) => {
       const data = options?.data as AddEditPaymentMethodSchema
       if (data) {
-        const paymentMethod = await createPaymentMethod(data)
-        console.log('Datos recibidos del dialogo', paymentMethod)
-        loadPaymentMethods()
-        showToast('Método de pago agregado correctamente.')
+        try {
+          const paymentMethod = await createPaymentMethod(data)
+          console.log('Datos recibidos del dialogo', paymentMethod)
+          loadPaymentMethods()
+          showToast('Método de pago agregado correctamente.', 'success', 'Éxito')
+        } catch (error) {
+          console.error('Error al crear el método de pago', error)
+          if (typedError.createPaymentMethod) {
+            showToast('Error al crear el método de pago: ' + data.name + typedError.createPaymentMethod, 'warn', 'Error')
+          } else {
+            showToast('Error al crear el método de pago' + data.name, 'warn', 'Error')
+          }
+        }
       }
     },
   })
@@ -128,6 +141,8 @@ const viewPaymentMethod = async (paymentMethodData: PaymentMethodList) => {
     props: {
       modal: true,
       header: `${paymentMethodData.name}`,
+      blockScroll: true,
+      dismissableMask: true,
     },
     data: {
       paymentMethodData: paymentMethod,
@@ -141,6 +156,8 @@ const editPaymentMethod = async (paymentMethodData: PaymentMethodList) => {
     props: {
       modal: true,
       header: `${paymentMethodData.name}`,
+      blockScroll: true,
+      dismissableMask: true,
     },
     data: {
       paymentMethodData: paymentMethod as AddEditPaymentMethodSchema,
@@ -148,10 +165,19 @@ const editPaymentMethod = async (paymentMethodData: PaymentMethodList) => {
     onClose: async (options) => {
       const data = options?.data as AddEditPaymentMethodSchema
       if (data) {
-        const paymentMethod = await updatePaymentMethod(paymentMethodData.id, data)
+        try {
+          const paymentMethod = await updatePaymentMethod(paymentMethodData.id, data)
         console.log('Datos recibidos del dialogo', paymentMethod)
         loadPaymentMethods()
-        showToast('Método de pago editado correctamente.')
+        showToast('Método de pago editado correctamente.', 'success', 'Éxito')
+        } catch (error) {
+          console.error(error)
+          if (typedError.updatePaymentMethod) {
+            showToast('Error al actualizar el método de pago: ' + data.name + typedError.updatePaymentMethod, 'warn', 'Error')
+          } else {
+            showToast('Error al actualizar el método de pago' + data.name, 'warn', 'Error')
+          }
+        }
       }
     },
   })
@@ -185,10 +211,10 @@ const handleDeleteReactivePaymentMethod = (
     accept: async () => {
       if (isActive) {
         await deletePaymentMethod(paymentMethodData.id)
-        showToast('Método de pago eliminado exitosamente: ' + paymentMethodData.name)
+        showToast('Método de pago eliminado exitosamente: ' + paymentMethodData.name, 'success', 'Éxito')
       } else {
         await activatePaymentMethod(paymentMethodData.id)
-        showToast('Método de pago reactivado exitosamente: ' + paymentMethodData.name)
+        showToast('Método de pago reactivado exitosamente: ' + paymentMethodData.name, 'success', 'Éxito')
       }
 
       loadPaymentMethods()

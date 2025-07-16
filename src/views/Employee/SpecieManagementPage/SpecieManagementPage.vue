@@ -28,10 +28,10 @@ import Select from 'primevue/select'
 //toast
 const toast = useToast()
 
-const showToast = (message: string) => {
+const showToast = (message: string, severity: string, sumary: string) => {
   toast.add({
-    severity: 'success',
-    summary: 'Éxito',
+    severity: severity,
+    summary: sumary,
     detail: message,
     life: 3000,
   })
@@ -53,6 +53,8 @@ const {
   activateSpecie,
   searchSpecies,
 } = useSpecie()
+
+const typedError = error as Record<string, string | null>
 
 const species = ref<SpecieList[]>([])
 
@@ -114,14 +116,25 @@ const addSpecie = () => {
     props: {
       modal: true,
       header: 'Agregar especie',
+      blockScroll: true,
+      dismissableMask: true,
     },
     onClose: async (options) => {
       const data = options?.data as AddEditSpecieSchema
       if (data) {
-        const specie = await createSpecie(data)
-        console.log('Datos recibidos del dialogo', specie)
-        showToast('Especie agregada exitosamente: ' + data.name)
-        loadSpecies()
+        try {
+          const specie = await createSpecie(data)
+          console.log('Datos recibidos del dialogo', specie)
+          showToast('Especie agregada exitosamente: ' + data.name, 'success', 'Éxito')
+          loadSpecies()
+        } catch (error) {
+          console.error(error)
+          if (typedError.createSpecie) {
+            showToast('Error al agregar especie: ' + data.name + typedError.createSpecie, 'warn', 'Error')
+          } else {
+            showToast('Error al agregar especie: ' + data.name, 'warn', 'Error')
+          }
+        }
       }
     },
   })
@@ -133,6 +146,8 @@ const editSpecie = async (specieData: SpecieList) => {
     props: {
       modal: true,
       header: `${specieData.name}`,
+      blockScroll: true,
+      dismissableMask: true,
     },
     data: {
       specieData: {
@@ -143,10 +158,19 @@ const editSpecie = async (specieData: SpecieList) => {
     onClose: async (options) => {
       const data = options?.data as AddEditSpecieSchema
       if (data) {
-        const specie = await updateSpecie(specieData.id, data)
-        console.log('Datos recibidos del dialogo', specie)
-        showToast('Especie editada exitosamente: ' + data.name)
-        loadSpecies()
+        try {
+          const specie = await updateSpecie(specieData.id, data)
+          console.log('Datos recibidos del dialogo', specie)
+          showToast('Especie editada exitosamente: ' + data.name, 'success', 'Éxito')
+          loadSpecies()
+        } catch (error) {
+          console.error(error)
+          if (typedError.updateSpecie) {
+            showToast('Error al actualizar especie: ' + data.name + typedError.updateSpecie, 'warn', 'Error')
+          } else {
+            showToast('Error al actualizar especie: ' + data.name, 'warn', 'Error')
+          }
+        }
       }
     },
   })
@@ -177,10 +201,10 @@ const handleDeleteReactiveSpecie = (event: MouseEvent | KeyboardEvent, specieDat
       if (isActive) {
         await deleteSpecie(specieData.id)
 
-        showToast('Especie eliminada exitosamente: ' + specieData.name)
+        showToast('Especie eliminada exitosamente: ' + specieData.name, 'success', 'Éxito')
       } else {
         await activateSpecie(specieData.id)
-        showToast('Especie reactivado exitosamente: ' + specieData.name)
+        showToast('Especie reactivado exitosamente: ' + specieData.name, 'success', 'Éxito')
       }
 
       loadSpecies()
