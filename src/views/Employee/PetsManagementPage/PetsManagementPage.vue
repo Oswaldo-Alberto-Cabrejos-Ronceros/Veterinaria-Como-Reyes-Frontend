@@ -31,6 +31,7 @@ import { useClient } from '@/composables/useClient'
 import type { Client } from '@/models/Client'
 import { watch } from 'vue'
 import { useAuthentication } from '@/composables/useAuthentication'
+import CardLoader from '@/components/CardLoader.vue'
 
 //toast
 const toast = useToast()
@@ -46,7 +47,8 @@ const showToast = (message: string, severity: string, sumary: string) => {
 
 //methods
 
-const { loading, error, searchPets, createPet, getPetById, updatePet, deletePet, activatePet } = usePet()
+const { loading, error, searchPets, createPet, getPetById, updatePet, deletePet, activatePet } =
+  usePet()
 
 const typedError = error as Record<string, string | null>
 
@@ -162,7 +164,7 @@ const breedsNameToOptionsSelect = (breeds: Breed[]): OptionSelect[] => {
 
 //form
 
-const { errors, defineField } = useForm<SearchEmployeeSchema>({
+const { resetForm, errors, defineField } = useForm<SearchEmployeeSchema>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
     name: '',
@@ -177,6 +179,11 @@ const { errors, defineField } = useForm<SearchEmployeeSchema>({
 const textFields = {
   name: defineField('name'),
   ownerDni: defineField('ownerDni'),
+}
+
+const handleResetForm = () => {
+  resetForm()
+  loadPets()
 }
 
 //for selects field
@@ -230,7 +237,11 @@ const addPet = async () => {
         } catch (error) {
           console.error(error)
           if (typedError.createPet) {
-            showToast('Error al agregar la mascota: ' + data.name + typedError.createPet, 'warn', 'Error')
+            showToast(
+              'Error al agregar la mascota: ' + data.name + typedError.createPet,
+              'warn',
+              'Error',
+            )
           } else {
             showToast('Error al agregar la mascota' + data.name, 'warn', 'Error')
           }
@@ -287,7 +298,11 @@ const editPet = async (petData: PetList) => {
         } catch (error) {
           console.error(error)
           if (typedError.updatePet) {
-            showToast('Error al editar la mascota: ' + data.name + typedError.updatePet, 'warn', 'Error')
+            showToast(
+              'Error al editar la mascota: ' + data.name + typedError.updatePet,
+              'warn',
+              'Error',
+            )
           } else {
             showToast('Error al editar la mascota: ' + data.name, 'warn', 'Error')
           }
@@ -305,7 +320,7 @@ const confirmDeletePet = (event: MouseEvent | KeyboardEvent, pet: PetList) => {
   confirm.require({
     group: 'confirmPopupGeneral',
     target: event.currentTarget as HTMLElement,
-    message: '¿Seguro que quiere eliminar a esta mascota?',
+    message: '¿Seguro que quiere bloquear a esta mascota?',
     icon: 'pi pi-exclamation-triangle',
     rejectProps: {
       label: 'Cancelar',
@@ -313,7 +328,7 @@ const confirmDeletePet = (event: MouseEvent | KeyboardEvent, pet: PetList) => {
       outlined: true,
     },
     acceptProps: {
-      label: 'Eliminar',
+      label: 'Bloquear',
       severity: 'danger',
     },
     accept: async () => {
@@ -359,7 +374,6 @@ const confirmActivatePet = (event: MouseEvent | KeyboardEvent, pet: PetList) => 
 
 //for export
 
-
 //for watch specieId
 
 watch(
@@ -375,6 +389,9 @@ watch(
 
 <template>
   <div class="layout-principal-flex">
+    <CardLoader
+      v-if="loading.activatePet || loading.deletePet || loading.updatePet || loading.createPet"
+    ></CardLoader>
     <Card class="card-principal-color-neutral">
       <template #title>
         <h3 class="h3">Gestión de mascotas</h3>
@@ -473,6 +490,18 @@ watch(
                 {{ errors.status }}
               </Message>
             </div>
+            <div class="form-button-search-container-grid-col-5-end">
+              <Button
+                size="small"
+                class="py-2"
+                severity="secondary"
+                variant="outlined"
+                label="Limpiar"
+                iconPos="left"
+                icon="pi pi-replay"
+                @click="handleResetForm"
+              />
+            </div>
           </form>
 
           <!-- for messague loading  -->
@@ -509,7 +538,6 @@ watch(
                   @click="addPet"
                   v-if="mainRole !== 'Veterinario'"
                 />
-
               </div>
             </template>
             <Column field="name" sortable style="width: 18%" header="Nombre"></Column>
@@ -550,7 +578,7 @@ watch(
                     @click="confirmDeletePet($event, data)"
                   ></Button>
                   <Button
-                    v-if="data.status === 'Inactivado' && mainRole !== 'Veterinario'"
+                    v-if="data.status === 'Inactivo' && mainRole !== 'Veterinario'"
                     icon="pi pi-refresh"
                     severity="warn"
                     variant="text"

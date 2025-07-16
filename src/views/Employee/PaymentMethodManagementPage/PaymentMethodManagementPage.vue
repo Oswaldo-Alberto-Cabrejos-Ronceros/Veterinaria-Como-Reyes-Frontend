@@ -25,6 +25,7 @@ import type { PaymentMethodList } from '@/models/PaymentMethodList'
 import { useAuthentication } from '@/composables/useAuthentication'
 import type { OptionSelect } from '@/models/OptionSelect'
 import Select from 'primevue/select'
+import CardLoader from '@/components/CardLoader.vue'
 
 //toast
 const toast = useToast()
@@ -88,13 +89,18 @@ const loadPaymentMethods = async (event?: DataTablePageEvent) => {
 }
 
 //form
-const { handleSubmit, errors, defineField } = useForm<SearchPaymentMethotSchema>({
+const { resetForm, handleSubmit, errors, defineField } = useForm<SearchPaymentMethotSchema>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
     name: '',
     status: true,
   },
 })
+
+const handleResetForm = () => {
+  resetForm()
+  loadPaymentMethods()
+}
 
 const [name, nameAttrs] = defineField('name')
 const [status, statusAttrs] = defineField('status')
@@ -125,7 +131,11 @@ const addPaymentMethod = () => {
         } catch (error) {
           console.error('Error al crear el método de pago', error)
           if (typedError.createPaymentMethod) {
-            showToast('Error al crear el método de pago: ' + data.name + typedError.createPaymentMethod, 'warn', 'Error')
+            showToast(
+              'Error al crear el método de pago: ' + data.name + typedError.createPaymentMethod,
+              'warn',
+              'Error',
+            )
           } else {
             showToast('Error al crear el método de pago' + data.name, 'warn', 'Error')
           }
@@ -167,13 +177,19 @@ const editPaymentMethod = async (paymentMethodData: PaymentMethodList) => {
       if (data) {
         try {
           const paymentMethod = await updatePaymentMethod(paymentMethodData.id, data)
-        console.log('Datos recibidos del dialogo', paymentMethod)
-        loadPaymentMethods()
-        showToast('Método de pago editado correctamente.', 'success', 'Éxito')
+          console.log('Datos recibidos del dialogo', paymentMethod)
+          loadPaymentMethods()
+          showToast('Método de pago editado correctamente.', 'success', 'Éxito')
         } catch (error) {
           console.error(error)
           if (typedError.updatePaymentMethod) {
-            showToast('Error al actualizar el método de pago: ' + data.name + typedError.updatePaymentMethod, 'warn', 'Error')
+            showToast(
+              'Error al actualizar el método de pago: ' +
+                data.name +
+                typedError.updatePaymentMethod,
+              'warn',
+              'Error',
+            )
           } else {
             showToast('Error al actualizar el método de pago' + data.name, 'warn', 'Error')
           }
@@ -211,10 +227,18 @@ const handleDeleteReactivePaymentMethod = (
     accept: async () => {
       if (isActive) {
         await deletePaymentMethod(paymentMethodData.id)
-        showToast('Método de pago eliminado exitosamente: ' + paymentMethodData.name, 'success', 'Éxito')
+        showToast(
+          'Método de pago eliminado exitosamente: ' + paymentMethodData.name,
+          'success',
+          'Éxito',
+        )
       } else {
         await activatePaymentMethod(paymentMethodData.id)
-        showToast('Método de pago reactivado exitosamente: ' + paymentMethodData.name, 'success', 'Éxito')
+        showToast(
+          'Método de pago reactivado exitosamente: ' + paymentMethodData.name,
+          'success',
+          'Éxito',
+        )
       }
 
       loadPaymentMethods()
@@ -226,7 +250,6 @@ const handleDeleteReactivePaymentMethod = (
 }
 
 //for export
-
 
 const statusOptions: OptionSelect[] = [
   {
@@ -242,6 +265,14 @@ const statusOptions: OptionSelect[] = [
 
 <template>
   <div class="layout-principal-flex">
+    <CardLoader
+      v-if="
+        loading.deletePaymentMethod ||
+        loading.updatePaymentMethod ||
+        loading.activatePaymentMethod ||
+        loading.createPaymentMethod
+      "
+    ></CardLoader>
     <Card class="card-principal-color-neutral">
       <template #title>
         <h3 class="h3">Gestión de metodos de pago</h3>
@@ -287,6 +318,19 @@ const statusOptions: OptionSelect[] = [
                 {{ errors.status }}
               </Message>
             </div>
+
+            <div class="form-button-search-container-grid-col-5-end">
+              <Button
+                size="small"
+                class="py-2"
+                severity="secondary"
+                variant="outlined"
+                label="Limpiar"
+                iconPos="left"
+                icon="pi pi-replay"
+                @click="handleResetForm"
+              />
+            </div>
           </form>
 
           <!-- for messague loading  -->
@@ -328,7 +372,6 @@ const statusOptions: OptionSelect[] = [
                   @click="addPaymentMethod"
                   v-if="roleMain === 'Administrador'"
                 />
-
               </div>
             </template>
 

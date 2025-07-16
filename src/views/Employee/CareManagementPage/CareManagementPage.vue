@@ -28,6 +28,8 @@ import type { PaymentMethod } from '@/models/PaymentMethod'
 import { usePaymentMethod } from '@/composables/usePaymentMethod'
 import { useAuthentication } from '@/composables/useAuthentication'
 import { useEmployee } from '@/composables/useEmployee'
+import CardLoader from '@/components/CardLoader.vue'
+
 
 onMounted(async () => {
   headquartersOptions.value = headquartersServicesToOptionsSelect(await getAllHeadquarters())
@@ -106,7 +108,7 @@ const onCompleteCare = async (careId: number) => {
   }
 }
 
-const { handleSubmit, errors, defineField } = useForm<SearchCareSchema>({
+const { resetForm,handleSubmit, errors, defineField } = useForm<SearchCareSchema>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
     headquarterId: undefined,
@@ -115,6 +117,11 @@ const { handleSubmit, errors, defineField } = useForm<SearchCareSchema>({
     status: '',
   },
 })
+
+const handleResetForm = () => {
+  resetForm()
+  loadCares()
+}
 
 const [headquarterId, headquarterIdAttrs] = defineField('headquarterId')
 const [headquarterServiceId, headquarterServiceIdAttrs] = defineField('headquarterServiceId')
@@ -222,6 +229,9 @@ const viewCare = (careId: number) => {
 </script>
 <template>
   <div class="layout-principal-flex">
+            <CardLoader
+          v-if="loading.createCareFromRequest || loading.completeCare"
+        ></CardLoader>
     <Card class="card-principal-color-neutral">
       <template #title>
         <h3 class="h3">Gestión de atenciones</h3>
@@ -316,6 +326,18 @@ const viewCare = (careId: number) => {
                 {{ errors.status }}
               </Message>
             </div>
+                        <div class="form-button-search-container-grid-col-5-end">
+                          <Button
+                            size="small"
+                            class="py-2"
+                            severity="secondary"
+                            variant="outlined"
+                            label="Limpiar"
+                            iconPos="left"
+                            icon="pi pi-replay"
+                            @click="handleResetForm"
+                          />
+                        </div>
           </form>
 
           <!-- for messague loading  -->

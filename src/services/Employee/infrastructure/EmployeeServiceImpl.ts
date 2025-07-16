@@ -6,6 +6,7 @@ import type {
   EmployeeRequest,
   MyInfoEmployee,
   EmployeeList,
+  StatsVeterinarianPanel,
 } from '../domain/models/Employee'
 
 export class EmployeeServiceImpl implements EmployeeService {
@@ -36,7 +37,7 @@ export class EmployeeServiceImpl implements EmployeeService {
     const params: Record<string, string | number> = {
       reason: blockNote,
     }
-    await this.httpClient.patch(`${this.urlBase}/${employeeId}/block`, null, { params: params})
+    await this.httpClient.patch(`${this.urlBase}/${employeeId}/block`, null, { params: params })
   }
   async restoreEmployee(employeeId: number): Promise<void> {
     console.log(employeeId)
@@ -83,6 +84,12 @@ export class EmployeeServiceImpl implements EmployeeService {
   async getEmployeeMyInfo(employeeId: number): Promise<MyInfoEmployee> {
     const response = await this.httpClient.get<MyInfoEmployee>(
       `${this.urlBase}/${employeeId}/myInfo`,
+    )
+    return response.data
+  }
+  async getVeterinarianPanelStatsToday(veterinarianId: number): Promise<StatsVeterinarianPanel> {
+    const response = await this.httpClient.get<StatsVeterinarianPanel>(
+      `panel-veterinarians/employee/panel-stats/today/${veterinarianId}`,
     )
     return response.data
   }

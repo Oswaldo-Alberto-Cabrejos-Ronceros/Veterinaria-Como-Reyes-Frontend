@@ -27,6 +27,7 @@ import type {
   MonthlyCareStatsVeterinary,
   WeeklyCareStatsVeterinary,
 } from '@/services/Care/domain/models/Care'
+import type { StatsVeterinarianPanel } from '@/services/Employee/domain/models/Employee'
 
 const { getEntityId } = useAuthentication()
 const { getEmployeeMyInfo } = useEmployee()
@@ -34,7 +35,13 @@ const { getEmployeeMyInfo } = useEmployee()
 const { getCareAndAppointmentsForEmployee } = useAppointment()
 const appointments = ref<CareAndAppointmentPanelEmployee[]>([])
 
-const statsRecords = ref<VeterinaryRecordStats | null>(null)
+
+  //for stats
+const {getVeterinarianPanelStatsToday} = useEmployee()
+
+const statsAdditionals = ref<StatsVeterinarianPanel|null>(null)
+
+  const statsRecords = ref<VeterinaryRecordStats | null>(null)
 
 const {
   getWeeklyPerformanceGraphicByVeterinary,
@@ -143,29 +150,11 @@ const loadMyInfo = async () => {
     statsRecords.value = await getStatsByVeterinarian(entityIdGet)
     recentsPacients.value = await getRecentPatientsByEmployee(entityIdGet)
     recentRecords.value = await getRecentRecordsByEmployee(entityIdGet)
+  statsAdditionals.value = await getVeterinarianPanelStatsToday(entityIdGet)
   }
 }
 
-const news: { title: string; icon: string; content: string; plus?: string }[] = [
-  {
-    title: 'Atenciones registradas hoy',
-    icon: 'pi-clipboard',
-    content: '10',
-    plus: '+2 desde ayer',
-  },
-  {
-    title: 'N° de mascotas atendidas',
-    icon: 'pi-github',
-    content: '15',
-    plus: '+4 desde ayer',
-  },
-  {
-    title: 'Horas programadas',
-    icon: 'pi-clock',
-    content: 'S/ 150',
-    plus: '+5 desde ayer',
-  },
-]
+
 
 const recentRecords = ref<RecentMedicalRecord[]>([])
 
@@ -214,25 +203,39 @@ const handleRedirectPet = (petId: number) => {
       </template>
       <template #content>
         <!-- news -->
-        <div class="w-full grid grid-cols-2 gap-y-4 lg:grid-cols-4 gap-x-6 lg:gap-x-12 mt-4">
-          <CardNewsPrimary
-            v-if="appointmentStats"
-            title="Citas hoy"
-            icon="pi-calendar"
-            :content="appointmentStats.totalAppointments.toString()"
-          >
-          </CardNewsPrimary>
+ <div class="w-full grid grid-cols-2 gap-y-4 lg:grid-cols-4 gap-x-6 lg:gap-x-12 mt-4">
+  <CardNewsPrimary
+    v-if="appointmentStats"
+    title="Citas hoy"
+    icon="pi-calendar"
+    :content="appointmentStats.totalAppointments.toString()"
+  >
+  </CardNewsPrimary>
 
-          <CardNewsPrimary
-            v-for="(noticia, index) in news"
-            :key="index"
-            :title="noticia.title"
-            :icon="noticia.icon"
-            :content="noticia.content"
-            :plus="noticia.plus"
-          >
-          </CardNewsPrimary>
-        </div>
+  <CardNewsPrimary
+    v-if="statsAdditionals"
+    title="Atenciones registradas hoy"
+    icon="pi-clipboard"
+    :content="statsAdditionals.totalCares.toString()"
+  >
+  </CardNewsPrimary>
+
+  <CardNewsPrimary
+    v-if="statsAdditionals"
+    title="N° de mascotas atendidas hoy"
+    icon="pi-clipboard"
+    :content="statsAdditionals.totalPatients.toString()"
+  >
+  </CardNewsPrimary>
+
+  <CardNewsPrimary
+    v-if="statsAdditionals"
+    title="N° de reportes hoy"
+    icon="pi-clipboard"
+    :content="statsAdditionals.totalRecords.toString()"
+  >
+  </CardNewsPrimary>
+</div>
         <!-- quicky actions -->
         <Card class="card-primary min-h-24 mt-4">
           <template #title>
@@ -504,6 +507,7 @@ const handleRedirectPet = (petId: number) => {
                     :diagnosis-content="record.diagnosis"
                     :treatment="record.treatment"
                     :observations="record.observations"
+                    :petId="record.petId"
                   ></CardVeterinaryRecord
                 ></ScrollPanel>
 
@@ -562,7 +566,7 @@ const handleRedirectPet = (petId: number) => {
                 class="flex min-h-120 max-h-122 items-center justify-center"
                 v-if="recentsPacients.length === 0"
               >
-                <p>No hay servicios que mostrar</p>
+                <p>No hay mascotas que mostrar</p>
               </div>
               <Button
                 class="mt-2 w-full"

@@ -70,13 +70,19 @@ export interface EmployeeBasicInfo {
   fullName: string
 }
 
-export interface EmployeeList{
-    employeeId:number;
-    dni:string;
-    cmvp:string;
-    name:string;
-    lastName:string;
-    rolName:string;
-    nameHeadquarter:string;
-   status:string;
+export interface EmployeeList {
+  employeeId: number
+  dni: string
+  cmvp: string
+  name: string
+  lastName: string
+  rolName: string
+  nameHeadquarter: string
+  status: string
+}
+
+export interface StatsVeterinarianPanel {
+  totalCares: number
+  totalPatients: number
+  totalRecords: number
 }

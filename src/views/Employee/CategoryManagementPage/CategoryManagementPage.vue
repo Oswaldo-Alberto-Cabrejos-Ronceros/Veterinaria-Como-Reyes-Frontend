@@ -24,6 +24,7 @@ import { useAuthentication } from '@/composables/useAuthentication'
 import type { CategoryList } from '@/models/CategoryList'
 import type { OptionSelect } from '@/models/OptionSelect'
 import Select from 'primevue/select'
+import CardLoader from '@/components/CardLoader.vue'
 
 //for toast
 const toast = useToast()
@@ -92,13 +93,18 @@ const loadCategories = async (event?: DataTablePageEvent) => {
 }
 
 //form
-const { handleSubmit, errors, defineField } = useForm<SearchCategorySchema>({
+const { resetForm, handleSubmit, errors, defineField } = useForm<SearchCategorySchema>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
     name: '',
     status: true,
   },
 })
+
+const handleResetForm = () => {
+  resetForm()
+  loadCategories()
+}
 
 const [name, nameAttrs] = defineField('name')
 const [status, statusAttrs] = defineField('status')
@@ -136,13 +142,17 @@ const addCategory = () => {
       if (data) {
         try {
           const category = await createCategory(data)
-        console.log('Datos recibidos', category)
-        loadCategories()
-        showToast('Categoria agregada exitosamente: ' + category.name, 'success', 'Éxito')
+          console.log('Datos recibidos', category)
+          loadCategories()
+          showToast('Categoria agregada exitosamente: ' + category.name, 'success', 'Éxito')
         } catch (error) {
           console.error(error)
-          if(typedError.createCategory){
-            showToast('Error al crear la categoria: ' + data.name + typedError.createCategory, 'warn', 'Error')
+          if (typedError.createCategory) {
+            showToast(
+              'Error al crear la categoria: ' + data.name + typedError.createCategory,
+              'warn',
+              'Error',
+            )
           } else {
             showToast('Error al crear la categoria', 'warn', 'Error')
           }
@@ -173,11 +183,19 @@ const editCategory = async (categoryData: CategoryList) => {
           const updatedCategory = await updateCategory(categoryData.categoryId, data)
           console.log('Datos recibidos', updatedCategory)
           loadCategories()
-          showToast('Categoría actualizada exitosamente: ' + updatedCategory.name, 'success', 'Éxito')
+          showToast(
+            'Categoría actualizada exitosamente: ' + updatedCategory.name,
+            'success',
+            'Éxito',
+          )
         } catch (error) {
           console.error(error)
           if (typedError.updateCategory) {
-            showToast('Error al actualizar la categoría: ' + data.name + typedError.updateCategory, 'warn', 'Error')
+            showToast(
+              'Error al actualizar la categoría: ' + data.name + typedError.updateCategory,
+              'warn',
+              'Error',
+            )
           } else {
             showToast('Error al actualizar la categoría', 'warn', 'Error')
           }
@@ -217,7 +235,7 @@ const handleDeleteReactiveCategory = (
     group: 'confirmPopupGeneral',
     target: event.currentTarget as HTMLElement,
     message: isActive
-      ? '¿Seguro que quiere eliminar esta categoría?'
+      ? '¿Seguro que quiere bloquear esta categoría?'
       : 'Seguro que quiere reactivar esta categoria',
     icon: 'pi pi-exclamation-triangle',
     rejectProps: {
@@ -226,7 +244,7 @@ const handleDeleteReactiveCategory = (
       outlined: true,
     },
     acceptProps: {
-      label: isActive ? 'Desactivar' : 'Activar',
+      label: isActive ? 'Bloquear' : 'Activar',
       severity: isActive ? 'danger' : 'success',
     },
     accept: async () => {
@@ -235,7 +253,7 @@ const handleDeleteReactiveCategory = (
         showToast('Categoría eliminado exitosamente: ' + categoryData.name, 'success', 'Éxito')
       } else {
         await activateCategory(categoryData.categoryId)
-        showToast('Categoría reactivada exitosamente: ' + categoryData.name , 'success', 'Éxito')
+        showToast('Categoría reactivada exitosamente: ' + categoryData.name, 'success', 'Éxito')
       }
 
       loadCategories()
@@ -247,11 +265,18 @@ const handleDeleteReactiveCategory = (
 }
 
 //for export
-
 </script>
 
 <template>
   <div class="layout-principal-flex">
+    <CardLoader
+      v-if="
+        loading.deleteCategory ||
+        loading.activateCategory ||
+        loading.updateCategory ||
+        loading.createCategory
+      "
+    ></CardLoader>
     <Card class="card-principal-color-neutral">
       <template #title>
         <h3 class="h3">Gestión de categorias</h3>
@@ -297,6 +322,18 @@ const handleDeleteReactiveCategory = (
                 {{ errors.status }}
               </Message>
             </div>
+            <div class="form-button-search-container-grid-col-5-end">
+              <Button
+                size="small"
+                class="py-2"
+                severity="secondary"
+                variant="outlined"
+                label="Limpiar"
+                iconPos="left"
+                icon="pi pi-replay"
+                @click="handleResetForm"
+              />
+            </div>
           </form>
           <!-- for messague loading  -->
           <Message v-if="loading.getAllCategories" severity="warn" size="small" variant="simple">
@@ -331,7 +368,6 @@ const handleDeleteReactiveCategory = (
                   @click="addCategory"
                   v-if="roleMain === 'Administrador'"
                 />
-
               </div>
             </template>
 

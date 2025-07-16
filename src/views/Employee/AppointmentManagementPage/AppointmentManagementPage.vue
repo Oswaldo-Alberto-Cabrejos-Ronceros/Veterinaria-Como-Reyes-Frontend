@@ -32,10 +32,11 @@ import type { AppointmentList } from '@/models/AppointmentList'
 import { useConfirm } from 'primevue/useconfirm'
 import { useAuthentication } from '@/composables/useAuthentication'
 import { useEmployee } from '@/composables/useEmployee'
+import CardLoader from '@/components/CardLoader.vue'
 
 onMounted(async () => {
   loadAppoinments()
-    if (route.query.add === '1') {
+  if (route.query.add === '1') {
     addAppointment()
   }
 })
@@ -130,7 +131,7 @@ const handleChangeStatus = async (appointmentId: number, status: string) => {
 }
 
 //form
-const { errors, defineField } = useForm<SearchAppointmentSchema>({
+const { resetForm, errors, defineField } = useForm<SearchAppointmentSchema>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
     headquarter: undefined,
@@ -139,6 +140,11 @@ const { errors, defineField } = useForm<SearchAppointmentSchema>({
     status: undefined,
   },
 })
+
+const handleResetForm = () => {
+  resetForm()
+  loadAppoinments()
+}
 
 const [headquarter, headquarterAttrs] = defineField('headquarter')
 const [category, categoryAttrs] = defineField('category')
@@ -248,19 +254,19 @@ const addAppointment = async () => {
       paymentMethodsOptions: headquartersCategoriesIdsToOptionsSelect(await getAllPaymentMethods()),
     },
     onClose: async (options) => {
-      const data = options?.data as AddEditPaymentSchema;
-      router.replace({ query: { ...route.query, add: undefined } });
+      const data = options?.data as AddEditPaymentSchema
+      router.replace({ query: { ...route.query, add: undefined } })
       if (data) {
         console.log('Datos recibidos:', data)
         try {
           await sendConfirm(
-          data.petId,
-          data.headquarterVetServiceId,
-          data.scheduleDateTime,
-          data.date,
-          data.paymentMethodId,
-          data.comment
-          );
+            data.petId,
+            data.headquarterVetServiceId,
+            data.scheduleDateTime,
+            data.date,
+            data.paymentMethodId,
+            data.comment,
+          )
           loadAppoinments()
           showToast('Cita agendada exitosamente', 'success', 'Éxito')
         } catch (error) {
@@ -342,6 +348,9 @@ const attendAppointment = (appointmentId: number) => {
 
 <template>
   <div class="layout-principal-flex">
+        <CardLoader
+      v-if="loading.deleteAppointment || loading.completeAppointment || loading.confirmAppointment || loading.createAppointment"
+    ></CardLoader>
     <Card class="card-principal-color-neutral">
       <template #title>
         <h3 class="h3">Gestión de citas</h3>
@@ -404,7 +413,7 @@ const attendAppointment = (appointmentId: number) => {
                 showClear
                 @update:model-value="searchAppointmentsDebounce()"
                 filter
-                />
+              />
 
               <Message v-if="errors.category" severity="error" size="small" variant="simple">
                 {{ errors.category }}
@@ -429,6 +438,18 @@ const attendAppointment = (appointmentId: number) => {
               <Message v-if="errors.status" severity="error" size="small" variant="simple">
                 {{ errors.status }}
               </Message>
+            </div>
+            <div class="form-button-search-container-grid-col-5-end">
+              <Button
+                size="small"
+                class="py-2"
+                severity="secondary"
+                variant="outlined"
+                label="Limpiar"
+                iconPos="left"
+                icon="pi pi-replay"
+                @click="handleResetForm"
+              />
             </div>
           </form>
           <!-- for messague loading  -->
@@ -464,46 +485,14 @@ const attendAppointment = (appointmentId: number) => {
                   label="Agregar Cita"
                   @click="addAppointment()"
                 />
-
               </div>
             </template>
-            <Column
-            header="Fecha"
-              field="date"
-              sortable
-              style="width: 16%"
-            ></Column>
-                        <Column
-              field="petName"
-              header="Masctota"
-              sortable
-              style="width: 13%"
-            ></Column>
-                        <Column
-              field="petOwner"
-              header="Dueño"
-              sortable
-              style="width: 20%"
-            ></Column>
-            <Column
-              field="headquarter"
-              header="Sede"
-              sortable
-              style="width: 14%"
-            ></Column>
-            <Column
-              field="categoryService"
-              header="Categoria"
-              sortable
-              style="width: 15%"
-            ></Column>
-            <Column
-              field="appointmentStatus"
-              header="Estado"
-              sortable
-              style="width: 12%"
-            >
-            </Column>
+            <Column header="Fecha" field="date" sortable style="width: 16%"></Column>
+            <Column field="petName" header="Masctota" sortable style="width: 13%"></Column>
+            <Column field="petOwner" header="Dueño" sortable style="width: 20%"></Column>
+            <Column field="headquarter" header="Sede" sortable style="width: 14%"></Column>
+            <Column field="categoryService" header="Categoria" sortable style="width: 15%"></Column>
+            <Column field="appointmentStatus" header="Estado" sortable style="width: 12%"> </Column>
             <Column header="Acciones">
               <template #body="{ data }">
                 <div class="flex items-center flex-row lg:flex-col xl:flex-row gap-1">

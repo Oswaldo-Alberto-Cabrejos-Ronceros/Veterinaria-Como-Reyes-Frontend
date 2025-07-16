@@ -99,9 +99,9 @@ const openCreateCareConfirmArrive = () => {
       if (data) {
         try {
           console.log(data)
-          const care = await createCareFromAppointment(data)
+          await createCareFromAppointment(data)
           loadInfo()
-          showToast(`Atención creada correctamente: ${care.dateTime}`, 'success', 'Éxito')
+          showToast(`Atención creada correctamente`, 'success', 'Éxito')
         } catch (error) {
           console.error(error)
           if (typedError.createCareFromAppointment) {
@@ -200,6 +200,6 @@ const showToast = (message: string, severity: string, sumary: string) => {
 
     <!-- payment -->
 
-    <CardBilling :button-active="paymentInfo.status!=='Completada'" @complete-payment="handleCompletePayment" @download-ticket="handleDownloadPaymentTicket" v-if="paymentInfo" :payment-id="paymentInfo.paymentId" :status="paymentInfo.status" :payment-method-id="paymentInfo.paymentMethod.id" :serviceName="paymentInfo.serviceName" :price="paymentInfo.amount"/>
+    <CardBilling :button-active="paymentInfo.status==='Completada'" @complete-payment="handleCompletePayment" @download-ticket="handleDownloadPaymentTicket" v-if="paymentInfo" :payment-id="paymentInfo.paymentId" :status="paymentInfo.status" :payment-method-id="paymentInfo.paymentMethod.id" :serviceName="paymentInfo.serviceName" :price="paymentInfo.amount"/>
   </div>
 </template>

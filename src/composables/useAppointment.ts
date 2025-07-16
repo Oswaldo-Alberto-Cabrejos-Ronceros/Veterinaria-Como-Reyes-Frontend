@@ -23,6 +23,7 @@ import type { PaymentInfoForAppointment as PaymentInfoForAppointmentView } from 
 import type { AppointmentInfoPanelAdmin as AppointmentInfoPanelAdminView } from '@/models/AppointmentInfoPanelAdmin'
 import type { CareAndAppointmentPanelEmployee as CareAndAppointmentPanelEmployeeView } from '@/models/CareAndAppointmentPanelEmployee'
 import { PaymentAdapter } from '@/adapters/PaymentAdapter'
+import type { ReportPeriod } from '@/services/enums/ReportPeriod'
 
 export function useAppointment() {
   //get from useAsyncHandle
@@ -251,6 +252,24 @@ export function useAppointment() {
     )
   }
 
+  const getTopVeterinariansPerformance = async (period: ReportPeriod) => {
+    return await runUseCase('getTopVeterinariansPerformance', () =>
+      appointmentUsesCases.getTopVeterinariansPerformance.execute(period),
+    )
+  }
+
+  const getTopVeterinariansPerformanceByHeadquarter = async (
+    period: ReportPeriod,
+    headquarterId: number,
+  ) => {
+    return await runUseCase('getTopVeterinariansPerformanceByHeadquarter', () =>
+      appointmentUsesCases.getTopVeterinariansPerformanceByHeadquarter.execute(
+        period,
+        headquarterId,
+      ),
+    )
+  }
+
   return {
     loading,
     error,
@@ -280,5 +299,7 @@ export function useAppointment() {
     getDailyAppointmentStatsByHeadquarter,
     getGeneralOperationalMonthlyStats,
     getDailyAppointmentStatsLast7Days,
+    getTopVeterinariansPerformance,
+    getTopVeterinariansPerformanceByHeadquarter,
   }
 }

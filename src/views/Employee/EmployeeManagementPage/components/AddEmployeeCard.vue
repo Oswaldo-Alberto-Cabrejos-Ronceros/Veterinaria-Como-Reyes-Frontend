@@ -86,13 +86,6 @@ const textFields: {
     icon: 'pi-home',
     placeholder: 'Avenida, calle , número',
   },
-
-  {
-    title: 'Imagen',
-    key: 'dirImage',
-    icon: 'pi-image',
-    placeholder: 'Imagen del empleado',
-  },
 ]
 
 //for submit
@@ -295,7 +288,7 @@ const cmvpActive = (id: number): boolean => {
             v-bind="dirImageAttrs"
             :invalid="Boolean(errors.dirImage)"
             class="w-full"
-            :placeholder="`Imagen`"
+            :placeholder="`Imagen del empleado`"
           />
         </InputGroup>
         <Message v-if="errors.dirImage" severity="error" size="small" variant="simple">

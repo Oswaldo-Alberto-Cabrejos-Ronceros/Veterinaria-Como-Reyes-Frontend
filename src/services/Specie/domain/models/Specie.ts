@@ -13,7 +13,7 @@ export interface SpecieRequest {
 export interface SpecieList {
   specieId: number
   name: string
-  status: boolean
+  status: string
 }
 
 export interface TopSpeciesByAppointments {

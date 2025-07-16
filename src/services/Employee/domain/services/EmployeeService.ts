@@ -1,5 +1,5 @@
 import type { PageResponse } from '@/services/models/PageResponse'
-import type { Employee, EmployeeRequest, MyInfoEmployee } from '../models/Employee'
+import type { Employee, EmployeeRequest, MyInfoEmployee, StatsVeterinarianPanel } from '../models/Employee'
 import type { EmployeeList } from '../models/Employee'
 
 export interface EmployeeService {
@@ -21,4 +21,6 @@ export interface EmployeeService {
     size?: number,
   ): Promise<PageResponse<EmployeeList>>
   getEmployeeMyInfo(employeeId: number): Promise<MyInfoEmployee>
+getVeterinarianPanelStatsToday(veterinarianId: number): Promise<StatsVeterinarianPanel>
+
 }

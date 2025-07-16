@@ -146,3 +146,8 @@ export interface DailyAppointmentStats {
   completedCounts: number[]
   cancelledCounts: number[]
 }
+export interface VeterinarianPerformance {
+  employeesNames: string[]
+  totalPatients: number[]
+  totalAppointments: number[]
+}

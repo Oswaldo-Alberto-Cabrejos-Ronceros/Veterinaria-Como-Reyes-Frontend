@@ -80,7 +80,7 @@ const igv = ref<number>(Number((props.price - subtotal.value).toFixed(1)))
         <Divider />
         <div class="textLg flex items-center justify-between">
           <p>Subtotal:</p>
-          <p>S/ {{ subtotal }}</p>
+          <p>S/ {{ subtotal.toFixed(1) }}</p>
         </div>
         <div class="textLg flex items-center justify-between mt-2">
           <p>IGV (18%):</p>

@@ -24,6 +24,7 @@ import Tag from 'primevue/tag'
 import { useAuthentication } from '@/composables/useAuthentication'
 import type { OptionSelect } from '@/models/OptionSelect'
 import Select from 'primevue/select'
+import CardLoader from '@/components/CardLoader.vue'
 
 //toast
 const toast = useToast()
@@ -81,13 +82,18 @@ const loadSpecies = async (event?: DataTablePageEvent) => {
 }
 
 //form
-const { handleSubmit, errors, defineField } = useForm<SearchSpecieSchema>({
+const { resetForm,handleSubmit, errors, defineField } = useForm<SearchSpecieSchema>({
   validationSchema: toTypedSchema(schema),
   initialValues: {
     name: '',
     status: true,
   },
 })
+
+const handleResetForm = () => {
+  resetForm()
+  loadSpecies()
+}
 
 const [name, nameAttrs] = defineField('name')
 const [status, statusAttrs] = defineField('status')
@@ -175,12 +181,12 @@ const editSpecie = async (specieData: SpecieList) => {
 const confirm = useConfirm()
 
 const handleDeleteReactiveSpecie = (event: MouseEvent | KeyboardEvent, specieData: SpecieList) => {
-  const isActive = specieData.status
+  const isActive = specieData.status==='Activo'
   confirm.require({
     group: 'confirmPopupGeneral',
     target: event.currentTarget as HTMLElement,
     message: isActive
-      ? '¿Seguro que quiere eliminar esta especie?'
+      ? '¿Seguro que quiere bloquear esta especie?'
       : '¿Seguro que quiere reactivar esta especie?',
     icon: 'pi pi-exclamation-triangle',
     rejectProps: {
@@ -189,19 +195,17 @@ const handleDeleteReactiveSpecie = (event: MouseEvent | KeyboardEvent, specieDat
       outlined: true,
     },
     acceptProps: {
-      label: isActive ? 'Desactivar' : 'Activar',
+      label: isActive ? 'Bloquear' : 'Activar',
       severity: isActive ? 'danger' : 'success',
     },
     accept: async () => {
       if (isActive) {
         await deleteSpecie(specieData.id)
-
         showToast('Especie eliminada exitosamente: ' + specieData.name, 'success', 'Éxito')
       } else {
         await activateSpecie(specieData.id)
         showToast('Especie reactivado exitosamente: ' + specieData.name, 'success', 'Éxito')
       }
-
       loadSpecies()
     },
     reject: () => {
@@ -224,6 +228,9 @@ const statusOptions: OptionSelect[] = [
 
 <template>
   <div class="layout-principal-flex">
+        <CardLoader
+          v-if="loading.activateSpecie || loading.updateSpecie || loading.createSpecie || loading.deleteSpecie"
+        ></CardLoader>
     <Card class="card-principal-color-neutral">
       <template #title>
         <h3 class="h3">Gestión especies</h3>
@@ -270,6 +277,18 @@ const statusOptions: OptionSelect[] = [
                 {{ errors.status }}
               </Message>
             </div>
+                        <div class="form-button-search-container-grid-col-5-end">
+                          <Button
+                            size="small"
+                            class="py-2"
+                            severity="secondary"
+                            variant="outlined"
+                            label="Limpiar"
+                            iconPos="left"
+                            icon="pi pi-replay"
+                            @click="handleResetForm"
+                          />
+                        </div>
           </form>
 
           <!-- for messague loading  -->
@@ -347,7 +366,7 @@ const statusOptions: OptionSelect[] = [
                   <Button
                     v-if="data.status === 'Inactivo' && roleMain === 'Administrador'"
                     icon="pi pi-refresh"
-                    severity="warn"
+                    severity="success"
                     variant="text"
                     aria-label="Desbloquear"
                     rounded
