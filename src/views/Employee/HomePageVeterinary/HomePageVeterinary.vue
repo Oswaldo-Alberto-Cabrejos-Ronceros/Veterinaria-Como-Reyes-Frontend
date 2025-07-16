@@ -34,7 +34,13 @@ const { getEmployeeMyInfo } = useEmployee()
 const { getCareAndAppointmentsForEmployee } = useAppointment()
 const appointments = ref<CareAndAppointmentPanelEmployee[]>([])
 
-const statsRecords = ref<VeterinaryRecordStats | null>(null)
+
+  //for stats
+const {getVeterinarianPanelStatsToday} = useEmployee()
+
+const statsAdditionals = ref<StatsVeterinarianPanel|null>(null)
+  
+  const statsRecords = ref<VeterinaryRecordStats | null>(null)
 
 const {
   getWeeklyPerformanceGraphicByVeterinary,
@@ -143,29 +149,11 @@ const loadMyInfo = async () => {
     statsRecords.value = await getStatsByVeterinarian(entityIdGet)
     recentsPacients.value = await getRecentPatientsByEmployee(entityIdGet)
     recentRecords.value = await getRecentRecordsByEmployee(entityIdGet)
+  statsAdditionals.value = await getVeterinarianPanelStatsToday(entityIdGet)
   }
 }
 
-const news: { title: string; icon: string; content: string; plus?: string }[] = [
-  {
-    title: 'Atenciones registradas hoy',
-    icon: 'pi-clipboard',
-    content: '10',
-    plus: '+2 desde ayer',
-  },
-  {
-    title: 'N° de mascotas atendidas',
-    icon: 'pi-github',
-    content: '15',
-    plus: '+4 desde ayer',
-  },
-  {
-    title: 'Horas programadas',
-    icon: 'pi-clock',
-    content: 'S/ 150',
-    plus: '+5 desde ayer',
-  },
-]
+
 
 const recentRecords = ref<RecentMedicalRecord[]>([])
 
@@ -223,15 +211,28 @@ const handleRedirectPet = (petId: number) => {
           >
           </CardNewsPrimary>
 
-          <CardNewsPrimary
-            v-for="(noticia, index) in news"
-            :key="index"
-            :title="noticia.title"
-            :icon="noticia.icon"
-            :content="noticia.content"
-            :plus="noticia.plus"
+<CardNewsPrimary
+            v-if="statsAdditionals"
+            title="Atenciones registradas hoy"
+            icon="pi-clipboard"
+            :content="statsAdditionals.totalCares"
           >
           </CardNewsPrimary>
+<CardNewsPrimary
+            v-if="statsAdditionals"
+            title="N° de mascotas atendidas hoy"
+            icon="pi-clipboard"
+            :content="statsAdditionals.totalPatients"
+          >
+          </CardNewsPrimary
+          <CardNewsPrimary
+            v-if="statsAdditionals"
+            title="N° de reportes hoy"
+            icon="pi-clipboard"
+            :content="statsAdditionals.totalRecords"
+          >
+          </CardNewsPrimary
+          
         </div>
         <!-- quicky actions -->
         <Card class="card-primary min-h-24 mt-4">
