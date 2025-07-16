@@ -61,9 +61,11 @@ const annualRevenue = ref<AnnualRevenue | null>(null)
 
 const incomePerHeadquarter = ref<IncomePerHeadquarter | null>(null)
 
+const veterinariansPerformance = ref<VeterinarianPerformance|null>(null)
+  
 const { getTopPaymentMethodsByHeadquarter, getTopPaymentMethods } = usePaymentMethod()
 
-const {
+const {getTopVeterinariansPerformanceByHeadquarter,getTopVeterinariansPerformance
   getGeneralOperationalMonthlyStats,
   getOperationalMonthlyStatsByHeadquarter,
   getDailyAppointmentStatsLast7Days,
@@ -98,6 +100,7 @@ const loadInfo = async () => {
       appointmentsDaily.value = await getDailyAppointmentStatsLast7Days()
       operationalStats.value = await getGeneralOperationalMonthlyStats()
       topSpecies.value = await getTopSpeciesByPeriod(ReportPeriod.WEEK)
+    veterinariansPerformance.value = await getTopVeterinariansPerformance(ReportPeriod.WEEK)
     } else {
       const entityIdGet = getEntityId()
       if (entityIdGet) {
@@ -116,6 +119,7 @@ const loadInfo = async () => {
             headquarterId.value,
           )
           topSpecies.value = await getTopSpeciesByPeriodAndHeadquarter(ReportPeriod.WEEK,headquarterId.value)
+      veterinariansPerformance.value = await getTopVeterinariansPerformanceByHeadquarter(ReportPeriod.WEEK,headquarterId.value)
         }
       }
     }
@@ -472,19 +476,19 @@ const setChartDataVeterinarians = () => {
   const documentStyle = getComputedStyle(document.documentElement)
 
   return {
-    labels: ['Dra. Maria', 'Dr. Jesus', 'Dr. Carmen', 'Dr. Jorge', 'Dr. Karla'],
+    labels: veterinariansPerformance.value?.employeesNames,
     datasets: [
       {
         label: 'Pacientes',
         backgroundColor: documentStyle.getPropertyValue('--p-cyan-500'),
         borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
-        data: [65, 59, 80, 81, 56],
+        data: veterinariansPerformance.value?.totalPatients,
       },
       {
         label: 'Citas',
         backgroundColor: documentStyle.getPropertyValue('--p-gray-500'),
         borderColor: documentStyle.getPropertyValue('--p-gray-500'),
-        data: [28, 48, 40, 19, 86],
+        data: veterinariansPerformance.value?.totalAppointments,
       },
     ],
   }
