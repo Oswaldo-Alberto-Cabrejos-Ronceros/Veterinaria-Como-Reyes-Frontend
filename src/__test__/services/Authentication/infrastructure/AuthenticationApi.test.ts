@@ -32,7 +32,7 @@ describe('AuthenticationServiceImpl', () => {
     expect(user).toEqual(mockUser)
     //verify the request
     expect(safeFetch).toHaveBeenCalledWith(
-      'http://localhost:8080/api/auth/login/client',
+      'https://veterinaria-deployment-production.up.railway.app/api/auth/login/client',
       expect.objectContaining({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -61,7 +61,7 @@ describe('AuthenticationServiceImpl', () => {
 
     expect(user).toEqual(mockUser)
     expect(safeFetch).toHaveBeenCalledWith(
-      'http://localhost:8080/api/auth/register',
+      'https://veterinaria-deployment-production.up.railway.app/api/auth/register',
       expect.objectContaining({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -78,7 +78,7 @@ describe('AuthenticationServiceImpl', () => {
     await authApi.logout()
 
     expect(safeFetch).toHaveBeenCalledWith(
-      'http://localhost:8080/api/auth/logout',
+      'https://veterinaria-deployment-production.up.railway.app/api/auth/logout',
       expect.objectContaining({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
